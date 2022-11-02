@@ -1,0 +1,196 @@
+<?php
+    include "project-mgt-query.php";
+    include "project-mgt-func.php";
+    include "../lib/function.php";
+?>
+
+<div class="box-header">
+    <h3 class="box-title">Document for Part</h3>   
+
+    <div class="pull-right box-tools">
+         
+        <div class="btn-group">
+            <a href="#" data-toggle="dropdown"><i class="fa fa-bars"></i></a>
+            <ul class="dropdown-menu pull-right" role="menu">
+                <li><a href="home.php?<?php echo token(); ?>mnu=docmaster<?php token2(); ?>" data-toggle="modal" data-backdrop="static" data-keyboard="false">
+                    <i class="fa fa-table"></i>Document Master</a>
+                </li>
+            </ul>
+        </div>
+        
+    </div><!-- /. tools -->   
+</div><!-- /.box-header -->
+<hr style="margin-top: 1px;">
+
+<div class="box-body table-responsive">                        
+    <table id="example2" class="table table-bordered table-striped table-hover">                      
+                                
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>ID Doc</th>
+                <th>Doc Name</th>
+                <th>For Part</th>
+                <th>Last Change Date</th>
+                <th>Last Changed by</th>
+                <th>Status</th>
+                <!--
+                <th>Action</th>
+                -->
+            </tr>
+        </thead>
+        <tbody> 
+                                  
+           <?php
+                //PHP TAG
+                
+                $no =1;
+                $query_exec = get_doc_for_part_data();
+
+                while ($row = mysqli_fetch_assoc($query_exec)) {
+            ?>
+                <tr>
+                    <td><?php echo $no++;?></td>
+                    <td><?php echo $row['id_doc_part'];?></td>
+                    <td><?php echo $row['nm_doc_part'];?></td>
+                    <td><?php echo $row['nm_part'];?></td>
+                    <td><?php echo $row['modify_date'];?></td>
+                    <td><?php echo $row['nm_user'];?></td>
+                    <td><small class='label label-success'> Active</small></td>
+                    <!--
+                    <td align="center">
+                        <a href="home.php?mnu=partforprodedit&id=<?php echo $row['id_assign']; ?>" data-toggle='tooltip' title='edit'>   <button class='btn-flat btn-primary'><i class='fa fa-pencil'></i> Edit</button>
+                        </a> 
+                                    
+                        <a href='project_mgt/act-project-mgt.php?act=del&mod=partforprod&id=<?php echo $row['id_assign']; ?>' data-toggle='tooltip' title='delete' onclick="return confirm('Apakah anda yakin akan menghapus data ini?')">
+                            <button class='btn-flat btn-danger'><i class='fa fa-trash-o'></i> Delete</button>
+                        </a>
+                    </td>
+                    -->
+                </tr>
+
+            <?php
+
+                }   
+                
+            ?>                               
+        </tbody>
+    </table>
+</div><!-- /.box-body -->
+                        
+<div class="container">
+  
+  <!-- UPLOAD MODAL -->
+  <div class="modal fade" id="addModal" role="dialog">
+    <div class="modal-dialog">
+    
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Assign Document for Part</h4>
+            </div>
+            <div class="modal-body">
+                <form role=form name="myForm" id="myForm" onSubmit="return validateForm()" action="" method="post" enctype="multipart/form-data">
+                    
+                    <!--
+                    <div class="col-lg-10">
+
+                    </div>
+                    -->
+                    <?php 
+                        $id_part = $row['id_part']; // table, id, lebardata, lebar data yang diambil, start point, awalan
+                    ?>
+
+                     <div class="form-group">
+                        <label>Choose Product</label>
+                            <select class="form-control selectpicker" name="id_product" data-live-search="true" required>
+                                <?php
+                                    
+                                    $query_exec = get_all_prod_data();
+
+                                    while ($row2 = mysqli_fetch_assoc($query_exec)) {
+                                        echo "<option value=".$row2['id_product'].">".$row2['nm_product']."</option>";
+                                    }
+                                    
+                                ?>
+                            </select>
+                    </div>  
+
+                    <div class="form-group">
+                        <label>Assign Part</label>
+                            <select multiple class="form-control selectpicker" name="id_part[]" data-live-search="true" required>
+                                <?php
+                                    
+                                    $query_exec = get_all_part_data();
+
+                                    while ($row1 = mysqli_fetch_assoc($query_exec)) {
+                                        echo "<option value=".$row1['id_part'].">".$row1['nm_part']."</option>";
+                                    }
+                                    
+                                ?>
+                            </select>
+                    </div>  
+
+                    <div class="modal-footer">
+                        <button type="submit" name="submit-add" class="btn btn-primary"><i class="fa fa-check"></i> Submit</button>
+                    </div>
+        
+                </form>
+        </div>
+      
+    </div>
+  </div>
+  </div>
+</div>
+
+<?php 
+    if (isset($_POST['submit-add'])){
+
+        //$id_part     = $_POST['id_part'];
+        //$nm_part     = $_POST['nm_part'];
+        ////$id_user   = $_SESSION['id_user'];
+        $id_product     = $_POST['id_product'];
+        $id_part     = $_POST['id_part'];
+
+        $id_user    = "00006";
+
+        $count = count($id_part);
+
+        for($i=1; $i <= $count; $i++){
+
+            insert_part_for_product($id_product, $id_part[$i-1], $id_user);
+        }
+
+        //insert_part_data($id_part, $nm_part, $id_user);
+        echo "<script>window.location=('../view/home.php?mnu=partforprod')</script>";
+    }
+?>
+
+        <!-- jQuery 2.0.2 -->
+        <script src="../jquery-2/jquery.min.js"></script>
+        <!-- Bootstrap -->
+        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
+        <!-- DATA TABES SCRIPT -->
+        <script src="../js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
+        <script src="../js/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
+        <!-- AdminLTE App -->
+        <script src="../js/AdminLTE/app.js" type="text/javascript"></script>
+
+        <!-- page script -->
+        <script type="text/javascript">
+            $(function() {
+                $("#example1").dataTable();
+                $('#example2').dataTable({
+                    "bPaginate": true,
+                    "bLengthChange": false,
+                    "bFilter": true,
+                    "bSort": true,
+                    "bInfo": true,
+                    "bAutoWidth": false
+                });
+            });
+        </script>
+
+    </body>
+</html>

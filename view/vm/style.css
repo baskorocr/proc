@@ -1,0 +1,30 @@
+table#border-all{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table#border-all th{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+table#border-all  td{
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+
+
+.border-table {
+	border: 1px solid black;
+    border-collapse: collapse;
+}
+
+.no-border-table {
+	border: 1px solid black;
+    border-collapse: collapse;
+}
+
+@media print{
+		body {transform: scale(1.1,1.0);}
+   
+}
