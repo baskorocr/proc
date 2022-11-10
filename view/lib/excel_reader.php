@@ -76,7 +76,8 @@ function GetInt4d($data, $pos) {
 // http://uk.php.net/manual/en/function.getdate.php
 function gmgetdate($ts = null){
 	$k = array('seconds','minutes','hours','mday','wday','mon','year','yday','weekday','month',0);
-	return(array_comb($k,split(":",gmdate('s:i:G:j:w:n:Y:z:l:F:U',is_null($ts)?time():$ts))));
+	//return(array_comb($k,split(":",gmdate('s:i:G:j:w:n:Y:z:l:F:U',is_null($ts)?time():$ts))));
+	return(array_comb($k,explode(":",gmdate('s:i:G:j:w:n:Y:z:l:F:U',is_null($ts)?time():$ts))));
 	} 
 
 // Added for PHP4 compatibility
@@ -94,7 +95,8 @@ function v($data,$pos) {
 
 class OLERead {
 	var $data = '';
-	function OLERead(){	}
+	//Bugfix new PHP 7.4: https://github.com/nuovo/spreadsheet-reader/issues/117
+	//function OLERead(){	}
 
 	function read($sFileName){
 		// check if file exist and is readable (Darko Miljanovic)
@@ -841,7 +843,8 @@ class Spreadsheet_Excel_Reader {
 
 		// Custom pattern can be POSITIVE;NEGATIVE;ZERO
 		// The "text" option as 4th parameter is not handled
-		$parts = split(";",$format);
+		//$parts = split(";",$format);
+		$parts = explode(";",$format);
 		$pattern = $parts[0];
 		// Negative pattern
 		if (count($parts)>2 && $num==0) {
@@ -912,10 +915,29 @@ class Spreadsheet_Excel_Reader {
 	 *
 	 * Some basic initialisation
 	 */
-	function Spreadsheet_Excel_Reader($file='',$store_extended_info=true,$outputEncoding='') {
-		$this->_ole =& new OLERead();
+	/* function Spreadsheet_Excel_Reader($file='',$store_extended_info=true,$outputEncoding='') {
+		//$this->_ole =& new OLERead();
+		$this->_ole = new OLERead();
 		$this->setUTFEncoder('iconv');
 		if ($outputEncoding != '') { 
+			$this->setOutputEncoding($outputEncoding);
+		}
+		for ($i=1; $i<245; $i++) {
+			$name = strtolower(( (($i-1)/26>=1)?chr(($i-1)/26+64):'') . chr(($i-1)%26+65));
+			$this->colnames[$name] = $i;
+			$this->colindexes[$i] = $name;
+		}
+		$this->store_extended_info = $store_extended_info;
+		if ($file!="") {
+			$this->read($file);
+		}
+	} */
+	
+	//Bugfix new PHP 7.4: https://github.com/nuovo/spreadsheet-reader/issues/117
+	public function __construct($file='',$store_extended_info=true,$outputEncoding='') {
+		$this->_ole = new OLERead();
+		$this->setUTFEncoder('iconv');
+		if ($outputEncoding != '') {
 			$this->setOutputEncoding($outputEncoding);
 		}
 		for ($i=1; $i<245; $i++) {
