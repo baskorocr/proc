@@ -7,7 +7,7 @@ include "schedule-delivery-query.php";
         $query = get_vendor_user($id_user);
         $row = mysqli_fetch_assoc($query);
         //$id_vendor  = $row['id_vendor'];
-        $data['id_vendor'] = $row['id_vendor'];
+        $data['id_vendor'] = isset($row['id_vendor']) ? $row['id_vendor'] : '';
 
 ?>
 
