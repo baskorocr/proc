@@ -3,10 +3,12 @@
  * Copyright (c) 2018. Don't copy or use the source code without author permission for comercial purpose(s)
  */
 
+include "../../conn/conn.php";
 include "../../lib/function.php";
 
-$conn = mysqli_connect("localhost", "remote", "lact0bas1lus") or die(mysqli_error($conn));
-mysqli_select_db('purch_proc');
+//$conn = mysqli_connect("localhost", "remote", "lact0bas1lus") or die(mysqli_error($conn));
+$conn = get_connection();
+mysqli_select_db($conn,'purch_proc');
 
 $querymf = "SELECT h.manifest, h.delivery_date, h.po_num, h.id_vendor, h.stat, h.active, v.nm_vendor, d.material, 
             d.material_desc, sum(d.qty_pack) as qty_tot, count(d.kanban) as tot_kanban, SUM(d.qty_in) as tot_qty_in, 

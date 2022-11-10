@@ -33,7 +33,7 @@ include "function.php";
         $row = mysqli_fetch_assoc($query);
 
         //$data['id_vendor'] = $row['id_vendor'];
-        $id_vendor = $row['id_vendor'];
+        $id_vendor = isset($row['id_vendor']) ? $row['id_vendor'] : '';
         
         $role = $_SESSION['role'];
     ?>

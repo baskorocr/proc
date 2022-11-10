@@ -1,7 +1,7 @@
 <?php
     include "project-mgt-query.php";
     include "project-mgt-func.php";
-    include "../lib/function.php";
+    //include "../lib/function.php";
 ?>
 
 <div class="box-header">
