@@ -1,7 +1,7 @@
 <?php
-	//require_once '../vendor/autoload.php';
+	require_once '../vendor/autoload.php';
 	
-	function get_connectionxxx()
+	function get_connection_mongo()
 	{
         $client = new MongoDB\Client("mongodb://localhost:27017");
 		//$collection = $client->demo->beers;

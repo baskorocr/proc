@@ -178,23 +178,48 @@ function get_vendor_data_by_id($id_vendor){
 }
 //END OF VENDOR DATA
 
-function get_vendor_loginxx($username, $pass){
+function get_vendor_login_mongo($username, $pass){
 
-    $conn = get_connection();
+    $conn = get_connection_mongo();
 	/* $collection = $conn->dp_eproc->acc_code;
 	$result = $collection->find()->toArray();
 	 */
-	//$db = $conn->dp_eproc->user->findOne(["username" => $username, "password" => $pass]);
-	$result = $conn->dp_eproc->user->aggregate([
-                  ['$lookup' => [ 
-                      'from' => 'user',  
-                      'localField' => 'vendor.id_vendor',
-                      'foreignField'  =>  'foreign_id',
-                      'as'  => 'vendor',
-                   ]]
-				]);
-				   
-	print_r($result->toArray());die;
+	$filter_user = ["username" => $username, "password" => $pass, "status_user" => 'A'];
+	$coluser = $conn->dp_eproc->user;
+	$colvendor = $conn->dp_eproc->vendor;
+	$coltipeuser = $conn->dp_eproc->tipe_user;
+	$curuser = $coluser->find($filter_user);
+	$recuser = $curuser->toArray();
+	
+	//var_dump($recuser);die;
+	if(count($recuser) > 0) {
+		$id_vendor = null;
+		foreach($recuser as $m) {
+			$id_vendor = isset($m->foreign_id) ? $m->foreign_id : '';
+			$id_tipe_user = isset($m->id_tipe_user) ? $m->id_tipe_user : '';
+		}
+		$filter_vendor = ["id_vendor" => $id_vendor, "status_vendor" => "A"];
+		$filter_type_user = ["id_tipe_user" => $id_tipe_user];
+		$curvendor = $colvendor->find($filter_vendor);
+		$curtipeuser = $coltipeuser->find($filter_type_user);
+		$recvendor = $curvendor->toArray();
+		$rectipeuser = $curtipeuser->toArray();
+		
+		if(count($recvendor) > 0) {
+			$recuser[0]->nm_vendor = $recvendor[0]->nm_vendor;
+		}else{
+			$recuser[0]->nm_vendor = '';
+		}
+		if(count($rectipeuser) > 0) {
+			$recuser[0]->nm_tipe_user = $rectipeuser[0]->nm_tipe_user;
+		}else{
+			$recuser[0]->nm_tipe_user = '';
+		}
+		
+		//var_dump($curvendor->toArray()); die;
+	}
+	
+	return $recuser;
 	
     $query = "SELECT * FROM user u
               JOIN vendor v ON u.foreign_id=v.id_vendor

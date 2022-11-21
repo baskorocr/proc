@@ -97,18 +97,34 @@
                           echo "You don't have access to this site!";
                         }else{
                             //echo "<script>alert('asdfas')</script>";
-                            $model = get_vendor_login($username, $pass);
+                            //$model = get_vendor_login($username, $pass);
+                            $model = get_vendor_login_mongo($username, $pass);
                             
                             //$count = mysql_num_rows($model);
-                            $count = mysqli_num_rows($model);
+                            //$count = mysqli_num_rows($model);
+							//mongodb
+                            $count = count($model);
                             $menu_arr   = array();
                             $access_arr = array();
                             
                             if ($count > 0){
                                 
+								//mysql
                                 //$log = mysql_fetch_array($model);
-                                $log = mysqli_fetch_array($model);
-                                //$tgl_sekarang = date("Ymd");
+                                //$log = mysqli_fetch_array($model);
+								
+								//mongodb
+                                $log = array();
+								foreach($model as $m) {
+									$log['id_user'] = $m->id_user;
+									$log['username'] = $m->username;
+									$log['nm_user'] = $m->nm_user;
+									$log['nm_vendor'] = $m->nm_vendor;
+									$log['role'] = $m->role;
+									$log['nm_tipe_user'] = $m->nm_tipe_user;
+								}
+                                
+								//$tgl_sekarang = date("Ymd");
                                 //$ip = $_SERVER['REMOTE_ADDR'];
             
                                 include "lib/timeout.php";
