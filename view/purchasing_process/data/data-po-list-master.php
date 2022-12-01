@@ -4,8 +4,11 @@
  */
 
  /*change*/
-$conn = mysqli_connect("localhost", "remote", "lact0bas1lus") or die(mysqli_error($conn));
-mysqli_select_db('purch_proc');
+require_once "../../conn/conn.php";
+
+//$conn = mysqli_connect("localhost", "remote", "lact0bas1lus") or die(mysql_error($conn));
+$conn = get_connection();
+mysqli_select_db($conn,'purch_proc');
 
 $date_pick = "";
 if (isset($_GET['date_from']) &&
@@ -132,9 +135,10 @@ $querypo = "SELECT p.po_num, p.revno, p.plant, p.id_vendor, p.doc_date, p.pgr, p
 			*/
 $query_exec = mysqli_query($conn,$querypo) or die(mysqli_error($conn));
 
-$tdata = '';
+$data = array();
 
-if(mysqli_num_rows($query_exec) > 0 ){
+if(mysqli_num_rows($query_exec) > 0 )
+{
     $response = array();
     $response["data"] = array();
     while($row = mysqli_fetch_array($query_exec)){

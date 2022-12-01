@@ -19,8 +19,9 @@ function numbering_format($val){
 
 function autonum( $tabel, $kolom, $lebar, $ambil, $start, $id_data)
 {
-    $conn=mysqli_connect("localhost","remote","lact0bas1lus") or die(mysqli_error($conn));
-    mysqli_select_db("purch_proc");
+    //$conn=mysqli_connect("localhost","remote","lact0bas1lus") or die(mysqli_error($conn));
+    $conn = get_connection();
+	mysqli_select_db($conn,"purch_proc");
     unset($hasil);
     unset($query);
     $query="select $kolom from $tabel where SUBSTR($kolom,1,4) = '".date('Y')."' order by $kolom desc limit 1";

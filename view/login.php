@@ -78,9 +78,11 @@
                         $ip         = ip_detect();
                         function anti_injection($data){
 						  //get_connection();
-						  $conn = get_connection();
+						  //$conn = get_connection();
+						  $conn = get_connection_mongo();
                           //$filter = mysql_real_escape_string(stripslashes(strip_tags(htmlspecialchars($data,ENT_QUOTES))));
-                          $filter = mysqli_real_escape_string($conn,stripslashes(strip_tags(htmlspecialchars($data,ENT_QUOTES))));
+                          //$filter = mysqli_real_escape_string($conn,stripslashes(strip_tags(htmlspecialchars($data,ENT_QUOTES))));
+                          $filter = stripslashes(strip_tags(htmlspecialchars($data,ENT_QUOTES)));
                           return $filter;
                         }
 
@@ -107,7 +109,8 @@
                             $menu_arr   = array();
                             $access_arr = array();
                             
-                            if ($count > 0){
+                            if ($count > 0)
+							{
                                 
 								//mysql
                                 //$log = mysql_fetch_array($model);
@@ -138,7 +141,8 @@
                                 $_SESSION['nm_tipe_user']   = $log['nm_tipe_user'];
                                 
                                 //get user's menu group
-                                $get_menu_group = get_menu_group_by_id_user($log['id_user']);
+                                //$get_menu_group = get_menu_group_by_id_user($log['id_user']);
+                                $get_menu_group = get_menu_group_by_id_user_mongo($log['id_user']);
                                 //while ($row = mysql_fetch_assoc($get_menu_group)) {
                                 while ($row = mysqli_fetch_assoc($get_menu_group)) {
                                     array_push($menu_arr, $row['menu_group_object']);	
@@ -170,21 +174,24 @@
 
                                 
 
-                            }else{
+                            }
+							else
+							{
                                 /*
                                 $query = "SELECT * FROM user u JOIN tipe_user t on u.id_tipe_user = t.id_tipe_user WHERE username='$username' AND password='$pass'";
                                 $model = mysql_query($query);
                                 */
-                                $model = get_user_login($username, $pass);
+                                //$model = get_user_login($username, $pass);
+                                $model = get_user_login_mongo($username, $pass);
                                 //$count = mysql_num_rows($model);
-                                $count = mysqli_num_rows($model);
+                                $count = count($model);
 
                                 $menu_arr   = array();
                                 $access_arr = array();
 
                                 if ($count > 0){
                                     //$log = mysql_fetch_array($model);
-                                    $log = mysqli_fetch_array($model);
+                                    $log = $model;
                                     //$tgl_sekarang = date("Ymd");
                                     //$ip = $_SERVER['REMOTE_ADDR'];
             
@@ -198,15 +205,20 @@
                                     $_SESSION['nm_tipe_user']   = $log['nm_tipe_user'];
                                     
                                     //get user's menu group
-                                    $get_menu_group = get_menu_group_by_id_user($log['id_user']);
+                                    //$get_menu_group = get_menu_group_by_id_user($log['id_user']);
+                                    $get_menu_group = get_menu_group_by_id_user_mongo($log['id_user']);
                                     //while ($row = mysql_fetch_assoc($get_menu_group)) {
-                                    while ($row = mysqli_fetch_assoc($get_menu_group)) {
+                                    /* while ($row = mysqli_fetch_assoc($get_menu_group)) {
                                         array_push($menu_arr, $row['menu_group_object']);	
-                                    }
+                                    } */
+									foreach($get_menu_group as $m) {
+										array_push($menu_arr, $m['menu_group_object']);
+									}
                                     $_SESSION['menu_group']   = $menu_arr; 
                                     
                                     //get user's access group
-                                    $get_acccess_group = get_access_group_by_id_user($log['id_user']);
+                                    //$get_acccess_group = get_access_group_by_id_user($log['id_user']);
+                                    $get_acccess_group = get_access_group_by_id_user_mongo($log['id_user']);
                                     //while ($row = mysql_fetch_assoc($get_acccess_group)) {
                                     while ($row = mysqli_fetch_assoc($get_acccess_group)) {
                                         array_push($access_arr, $row['menu_object']);	

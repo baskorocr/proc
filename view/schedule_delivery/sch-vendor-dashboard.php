@@ -112,7 +112,7 @@ include "schedule-delivery-query.php";
 
         setInterval(function(){
             $("#example2").DataTable().ajax.reload(null, false);
-        }, 5000);
+        }, 30000);
 
     });
 </script>
