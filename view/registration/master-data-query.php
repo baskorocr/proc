@@ -23,7 +23,18 @@ function get_all_user_data(){
 	return $result;
 }
 
+//mongodb
+function get_user_data_by_id_mongo($id_user){
 
+	$conn = get_connection();
+	$query = "SELECT u.id_user, u.nm_user, t.nm_tipe_user, u.status_user, u.id_tipe_user, u.username, u.password, u.id_access_group FROM user u join tipe_user t ON u.id_tipe_user = t.id_tipe_user WHERE  u.id_user = '$id_user' ORDER BY u.id_user ASC";
+	/* $result = mysql_query($query) or die(mysqli_error($conn));
+	mysql_close($conn); */
+	$result = mysqli_query($conn,$query) or die(mysqli_error($conn));
+	mysqli_close($conn);
+	return $result;
+}
+//mysql
 function get_user_data_by_id($id_user){
 
 	$conn = get_connection();
@@ -178,24 +189,42 @@ function get_vendor_data_by_id($id_vendor){
 }
 //END OF VENDOR DATA
 
-function get_vendor_loginxx($username, $pass){
+function get_vendor_login_mongo($username, $pass){
 
-    $conn = get_connection();
+    $conn = get_connection_mongo();
 	/* $collection = $conn->dp_eproc->acc_code;
 	$result = $collection->find()->toArray();
 	 */
-	//$db = $conn->dp_eproc->user->findOne(["username" => $username, "password" => $pass]);
-	$result = $conn->dp_eproc->user->aggregate([
-                  ['$lookup' => [ 
-                      'from' => 'user',  
-                      'localField' => 'vendor.id_vendor',
-                      'foreignField'  =>  'foreign_id',
-                      'as'  => 'vendor',
-                   ]]
-				]);
-				   
-	print_r($result->toArray());die;
+	$vendor = $conn->user->aggregate([
+		['$lookup' => [
+			'from' => "vendor",
+			'localField' => "foreign_id",
+			'foreignField' => "id_vendor",
+			'as' => "vendor"
+			]
+		],
+		['$lookup' => [
+			'from' => "tipe_user",
+			'localField' => "id_tipe_user",
+			'foreignField' => "id_tipe_user",
+			'as' => "tipe_user"
+			]
+		],
+		
+		['$match' => [
+			"username" => $username, 
+			"password" => $pass, 
+			"status_user" => 'A',
+			"vendot.status_vendor" => 'A'
+			]
+		]
+	]);
 	
+	$result = $vendor->toArray();
+	//var_dump($results);die;
+	return $result;
+	
+	//mysql [old] ==unused==
     $query = "SELECT * FROM user u
               JOIN vendor v ON u.foreign_id=v.id_vendor
               JOIN tipe_user t on u.id_tipe_user = t.id_tipe_user WHERE username='$username' AND password='$pass' AND status_user = 'A' AND status_vendor = 'A'";
@@ -217,6 +246,64 @@ function get_vendor_login($username, $pass){
     return $result;
 }
 
+//mongodb
+function get_user_login_mongo($username, $pass){
+    $conn = get_connection_mongo();
+	
+	$user = $conn->user->aggregate([
+		['$lookup' => [
+			'from' => "tipe_user",
+			'localField' => "id_tipe_user",
+			'foreignField' => "id_tipe_user",
+			'as' => "tipe_user"
+			]
+		],
+		['$match' => [
+			"username" => $username, 
+			"password" => $pass, 
+			"status_user" => 'A'
+			]
+		],
+		['$project' => [
+			'_id' => 0, 
+			'id_user' => 1, 
+			'username' => 1,
+			'nm_user' => 1,
+			'role' => 1,
+			'tipe_user.nm_tipe_user' => 1,
+			]
+		]
+	]);
+	
+	$results = $user->toArray();
+	//var_dump($results);die;
+	$user = array(
+		'id_user'=>'','username'=>'','nm_user'=>'','role'=>'','nm_tipe_user'=>''
+	);
+	
+	foreach($results as $r) {
+		$user['id_user'] = $r->id_user;
+		$user['username'] = $r->username;
+		$user['nm_user'] = $r->nm_user;
+		$user['role'] = $r->role;
+		if(count($r->tipe_user) > 0) {
+			$user['nm_tipe_user'] = $r->tipe_user[0]->nm_tipe_user;
+		}
+	}
+	//var_dump($user);die;
+	return $user;
+	
+	//mysql [old] ==unused==
+    $conn = get_connection();
+    $query = "SELECT * FROM user u JOIN tipe_user t on u.id_tipe_user = t.id_tipe_user WHERE username='$username' AND password='$pass' AND status_user = 'A'";
+    /* $result = mysql_query($query) or die(mysqli_error($conn));
+    mysql_close($conn); */
+	$result = mysqli_query($conn, $query) or die(mysqli_error($conn));
+    mysqli_close($conn);
+    return $result;
+}
+
+//mysql
 function get_user_login($username, $pass){
     $conn = get_connection();
     $query = "SELECT * FROM user u JOIN tipe_user t on u.id_tipe_user = t.id_tipe_user WHERE username='$username' AND password='$pass' AND status_user = 'A'";
@@ -276,6 +363,158 @@ function get_all_user_log_data(){
     return $result;
 }
 
+//mongodb
+function get_menu_group_by_id_user_mongo($id_user)
+{
+	$conn = get_connection_mongo();
+		
+	$menu_group = $conn->user->aggregate([
+		['$lookup' => [
+			'from' => "tipe_user",
+			'localField' => "id_type_user",
+			'foreignField' => "id_type_user",
+			'as' => "tipe_user"
+			]
+		],['$lookup' => [
+			'from' => "access_group_list",
+			'localField' => "id_access_group",
+			'foreignField' => "id_access_group",
+			'as' => "access_group_list"
+			]
+		],['$lookup' => [
+			'from' => "menu_access_group",
+			'localField' => "access_group_list.id_access_group",
+			'foreignField' => "id_access_group",
+			'as' => "menu_access_group"
+			]
+		],['$lookup' => [
+			'from' => "menu_list",
+			'localField' => "menu_access_group.id_menu",
+			'foreignField' => "id_menu",
+			'as' => "menu_list"
+			]
+		],['$lookup' => [
+			'from' => "menu_group",
+			'localField' => "menu_list.id_menu",
+			'foreignField' => "id_menu",
+			'as' => "menu_group"
+			]
+		],['$lookup' => [
+			'from' => "menu_group_list",
+			'localField' => "menu_group.id_menu_group",
+			'foreignField' => "id_menu_group",
+			/* 'let' => ["id_menu_group" => '$id_menu_group'],
+			'pipeline' => [
+                ['$match' => ['id_menu_group' => '$id_menu_group']],
+				['$group' => [
+					"_id" => ["menu_group_list" => '$menu_group_list'],
+					"menu_group_list" => array('$addToSet' => '$menu_group_list'), 
+				]]
+            ], */
+			'as' => "menu_group_list"
+			]
+		],
+		['$match' => [
+			"id_user" => $id_user, 
+			"status_user" => 'A'
+			]
+		],
+		['$project' => [
+			'_id' => 0, 
+			'id_user' => 1, 
+			'username' => 1,
+			'nm_user' => 1,
+			'id_tipe_user' => 1,
+			'tipe_user.nm_tipe_user' => 1,
+			'role' => 1,
+			'status_user' => 1,
+			'access_group_list.id_access_group' => 1,
+			'access_group_list.access_group_name' => 1,
+			'menu_group_list.id_menu_group' => 1,
+			'menu_group_list.menu_group_name' => 1,
+			'menu_group_list.menu_group_object' => 1,
+			]
+		],
+		//['$unwind' => '$menu_group_list'],
+		/* [
+			'$group' => [
+				"_id" => ["menu_group_list" => '$menu_group_list'],
+				"menu_group_list" => array('$addToSet' => '$menu_group_list'), 
+			],
+		]  */
+		['$sort' => ['menu_group_list.id_menu_group' => 1]],
+	]);
+	
+	$results = $menu_group->toArray();
+	//var_dump($results[0]);die;
+	//var_dump($results[0]->tipe_user[0]);die;
+	//var_dump($results[0]->access_group_list[0]);die;
+	//var_dump($results[0]->menu_group_list[0]);die;
+	$menus = array();
+	$r = $results[0];
+	
+	foreach($r->menu_group_list as $m) {
+		$menu = array(
+			'id_user'=>'',
+			'nm_user'=>'',
+			'username'=>'',
+			'id_tipe_user'=>'',
+			'nm_tipe_user'=>'',
+			'role'=>'',
+			'status_user'=>'',
+			'id_access_group'=>'',
+			'access_group_name'=>'',
+			'id_menu_group'=>'',
+			'menu_group_name'=>'',
+			'menu_group_object'=>'',
+		);
+		
+		$menu['id_user'] = $r->id_user;
+		$menu['nm_user'] = $r->username;
+		$menu['username'] = $r->nm_user;
+		$menu['id_tipe_user'] = $r->id_tipe_user;
+		$menu['role'] = $r->role;
+		$menu['status_user'] = $r->status_user;
+		$menu['id_menu_group'] = $m->id_menu_group;
+		$menu['menu_group_name'] = $m->menu_group_name;
+		$menu['menu_group_object'] = $m->menu_group_object;
+		
+		if(count($r->tipe_user) > 0) {
+			$menu['nm_tipe_user'] = $r->tipe_user[0]->nm_tipe_user;
+		} 
+		/* if(count($r->menu_group) > 0) {
+			$menu['id_menu_group'] = $r->menu_group[0]->id_menu_group;
+		}  */
+		if(count($r->access_group_list) > 0) {
+			$menu['id_access_group'] = $r->access_group_list[0]->id_access_group;
+			$menu['access_group_name'] = $r->access_group_list[0]->access_group_name;
+		} 
+				
+		array_push($menus, $menu);
+	}
+	//var_dump($menus);die;
+	return $menus;
+	
+	//mysql ==[old] unused==
+    $conn = get_connection();
+    $query = "SELECT u.id_user, u.nm_user, u.username, u.id_tipe_user, u.role, u.status_user, 
+				ag.id_access_group, ag.access_group_name, mg.id_menu_group, mgl.menu_group_name, mgl.menu_group_object
+				FROM user u 
+				JOIN access_group_list ag ON ag.id_access_group = u.id_access_group 
+				JOIN menu_access_group mag ON ag.id_access_group = mag.id_access_group 
+				JOIN menu_list m ON mag.id_menu = m.id_menu 
+				JOIN menu_group mg ON mg.id_menu = m.id_menu 
+				JOIN menu_group_list mgl ON mgl.id_menu_group = mg.id_menu_group
+				WHERE u.id_user = '$id_user' AND u.status_user = 'A'
+				GROUP BY mg.id_menu_group
+				ORDER by mg.id_menu_group ASC";
+    /* $result = mysql_query($query) or die(mysqli_error($conn));
+    mysql_close($conn); */
+	$result = mysqli_query($conn,$query) or die(mysqli_error($conn));
+    mysqli_close($conn);
+    return $result;
+}
+//mysql
 function get_menu_group_by_id_user($id_user){
 
     $conn = get_connection();
@@ -295,7 +534,6 @@ function get_menu_group_by_id_user($id_user){
     mysqli_close($conn);
     return $result;
 }
-
 function get_menu_all_by_access_group($id_access_group){
 
     $conn = get_connection();
@@ -315,6 +553,156 @@ function get_menu_all_by_access_group($id_access_group){
     return $result;
 }
 
+function get_access_group_by_id_user_mongo($id_user){
+
+    $conn = get_connection_mongo();
+	
+	$ops = [
+			['$lookup' => [
+				'from' => "access_group_list",
+				'localField' => "id_access_group",
+				'foreignField' => "id_access_group",
+				'as' => "access_group_list"
+				]
+			],
+			['$lookup' => [
+				'from' => "menu_access_group",
+				'localField' => "access_group_list.id_access_group",
+				'foreignField' => "id_access_group",
+				'as' => "menu_access_group"
+				]
+			],
+			['$lookup' => [
+				'from' => "menu_list",
+				'localField' => "menu_access_group.id_menu",
+				'foreignField' => "id_menu",
+				'as' => "menu_list"
+				]
+			],
+			['$lookup' => [
+				'from' => "menu_group",
+				'localField' => "menu_list.id_menu",
+				'foreignField' => "id_menu",
+				'as' => "menu_group"
+				]
+			],
+			['$lookup' => [
+				'from' => "menu_group_list",
+				'localField' => "menu_group.id_menu_group",
+				'foreignField' => "id_menu_group",
+				/* 'let' => ["id_menu_group" => '$id_menu_group'],
+				'pipeline' => [
+					['$match' => ['id_menu_group' => '$id_menu_group']],
+					['$group' => [
+						"_id" => ["menu_group_list" => '$menu_group_list'],
+						"menu_group_list" => array('$addToSet' => '$menu_group_list'), 
+					]]
+				], */
+				'as' => "menu_group_list"
+				]
+			]/* ,
+			['$sort' => ['menu_group.id_menu_group' => 1]] */
+		];
+	
+	$SubjecID = [ // (2)
+		'$match' => ["id_user" => $id_user, "status_user" => 'A']
+		];
+	
+	$showDetails = ['$project' => [
+			'_id' => 0, 
+			'id_user' => 1, 
+			'username' => 1,
+			'nm_user' => 1,
+			'id_tipe_user' => 1,
+			'role' => 1,
+			'status_user' => 1,
+			'access_group_list.id_access_group' => 1,
+			'access_group_list.access_group_name' => 1,
+			'menu_group_list.id_menu_group' => 1,
+			'menu_group_list.menu_group_name' => 1,
+			'menu_list.id_menu' => 1,
+			'menu_list.menu_name' => 1,
+			'menu_list.menu_object' => 1,
+			'menu_list.object_path' => 1
+			]
+		];
+	
+	$pipeline = [];
+	$results = $conn->command(array(
+	  'aggregate' => 'user',
+	  'pipeline' => $pipeline,
+	  'allowDiskUse' => true
+	));
+	//$menu_group = $conn->user->aggregate([$SubjecID, $showDetails, $ops]);
+	
+	//$results = $menu_group->toArray();
+	var_dump($results);die;
+	//var_dump($results[0]->tipe_user[0]);die;
+	//var_dump($results[0]->menu_list);die;
+	//var_dump($results[0]->access_group_list[0]);die;
+	//var_dump($results[0]->menu_group_list);die;
+	$menus = array();
+	$r = $results[0];
+	
+	foreach($r->menu_list as $m) {
+		$menu = array(
+			'id_user'=>'',
+			'nm_user'=>'',
+			'username'=>'',
+			'id_tipe_user'=>'',
+			'role'=>'',
+			'status_user'=>'',
+			'id_access_group'=>'',
+			'access_group_name'=>'',
+			'id_menu_group'=>'',
+			'menu_group_name'=>'',
+			'id_menu'=>'',
+			'menu_name'=>'',
+			'menu_object'=>'',
+			'object_path'=>'',
+		);
+		
+		$menu['id_user'] = $r->id_user;
+		$menu['nm_user'] = $r->username;
+		$menu['username'] = $r->nm_user;
+		$menu['id_tipe_user'] = $r->id_tipe_user;
+		$menu['role'] = $r->role;
+		$menu['status_user'] = $r->status_user;
+		
+		
+		if(count($r->menu_group_list) > 0) {
+			$menu['id_menu_group'] = $r->menu_group_list[0]->id_menu_group;
+			$menu['menu_group_name'] = $r->menu_group_list[0]->menu_group_name;
+		} 
+		if(count($r->access_group_list) > 0) {
+			$menu['id_access_group'] = $r->access_group_list[0]->id_access_group;
+			$menu['access_group_name'] = $r->access_group_list[0]->access_group_name;
+		} 
+				
+		array_push($menus, $menu);
+	}
+	var_dump($menus);die;
+	return $menus;
+	
+	//mysql [==old==]]
+    $query = "SELECT u.id_user, u.nm_user, u.username, u.id_tipe_user, u.role, u.status_user, 
+				ag.id_access_group, ag.access_group_name, mg.id_menu_group, 
+				mgl.menu_group_name, m.id_menu, m.menu_name, m.menu_object, m.object_path
+				FROM user u 
+					JOIN access_group_list ag ON ag.id_access_group = u.id_access_group 
+					JOIN menu_access_group mag ON ag.id_access_group = mag.id_access_group 
+					JOIN menu_list m ON mag.id_menu = m.id_menu 
+					JOIN menu_group mg ON mg.id_menu = m.id_menu 
+					JOIN menu_group_list mgl ON mgl.id_menu_group = mg.id_menu_group
+				WHERE u.id_user = '$id_user' AND u.status_user = 'A'
+				ORDER by mg.id_menu_group ASC";
+    /* $result = mysql_query($query) or die(mysqli_error($conn));
+    mysql_close($conn); */
+	$result = mysqli_query($conn,$query) or die(mysqli_error($conn));
+    mysqli_close($conn);
+    return $result;
+}
+//mysql [==old==]
 function get_access_group_by_id_user($id_user){
 
     $conn = get_connection();

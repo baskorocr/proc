@@ -20,7 +20,7 @@ set_time_limit (400);
 
         $query = get_vendor_user($id_user);
         $row = mysqli_fetch_assoc($query);
-        $id_vendor  = $row['id_vendor'];
+        $id_vendor  = isset($row['id_vendor']) ? $row['id_vendor'] : '';
 
     ?>
         <div class="box-body">

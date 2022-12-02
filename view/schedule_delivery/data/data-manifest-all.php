@@ -3,7 +3,7 @@
  * Copyright (c) 2018. Don't copy or use the source code without author permission for comercial purpose(s)
  */
 
-include "../../conn/conn.php";
+require_once "../../conn/conn.php";
 include "../../lib/function.php";
 
 //$conn = mysqli_connect("localhost", "remote", "lact0bas1lus") or die(mysqli_error($conn));
@@ -24,7 +24,7 @@ $querymf = "SELECT h.manifest, h.delivery_date, h.po_num, h.id_vendor, h.stat, h
 
 $query_exec = mysqli_query($conn,$querymf) or die(mysqli_error($conn));
 
-$tdata = '';
+$data = array();
 
 if(mysqli_num_rows($query_exec) > 0 ){
     $response = array();
