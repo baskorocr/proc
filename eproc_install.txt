@@ -1,0 +1,48 @@
+Step instalasi Laravel Mongodb:
+- PHP v.7.4
+- Laravel v.8.75
+Step:
+1. composer create-project laravel/laravel TestProject
+
+or
+
+1.a composer global require laravel/installer
+1.b laravel new eproc
+
+2.a. composer require jenssegers/mongodb:^3.8
+2.b. Define provider in config/app.php: Jenssegers\Mongodb\MongodbServiceProvider::class,
+
+3. composer require laravel/ui 
+4. php artisan ui bootstrap --auth
+5. npm install && npm run dev
+
+6. Add connection string in config/database.php:
+--example--
+'mongodb' => [
+    'driver' => 'mongodb',
+    'host' => env('DB_HOST', '127.0.0.1'),
+    'port' => env('DB_PORT', 27017),
+    'database' => env('DB_DATABASE', 'dp_eproc'),
+    'username' => env('DB_USERNAME', ''),
+    'password' => env('DB_PASSWORD', ''),
+    'options' => [
+        'appname' => 'eproc',
+    ],
+],
+--end example--
+
+7. modify .env configuration:
+--example--
+DB_CONNECTION=mongodb
+DB_HOST=127.0.0.1
+DB_PORT=27017
+DB_DATABASE=dp_eproc
+DB_USERNAME=
+DB_PASSWORD=
+--end example--
+
+8. run: php artisan optimize
+
+9. sample password: satu2tiga
+bcrypt: $2y$10$hUSzKhpz7gRAclNDAecnqub8vKMpnJPjpRvk/hfHRlB0HDR8QwxB2
+md5: 57ab83937b71dc452b1e12c38e80e6dc

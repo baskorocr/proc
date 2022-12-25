@@ -1,3 +1,0 @@
-EPOC Improvement:
-- login.php (location: /view/)
-- conn.php (location: /view/conn/)
