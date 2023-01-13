@@ -14,10 +14,24 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+   // return view('welcome');
     return view('eproc.login');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+
+Route::get('/blank', function () {
+   return view('example/blank');
+});
+
+Route::prefix('component')->group(function () {
+    Route::get('/forminput', function () {
+         return view('example.form');
+    });
+    Route::get('/datatable', function () {
+        return view('example.table');
+   });
+});
