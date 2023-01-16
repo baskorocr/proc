@@ -12,7 +12,6 @@ use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use stdClass;
 use Traversable;
-
 use function array_map;
 use function array_merge;
 use function array_values;
@@ -28,7 +27,6 @@ use function MongoDB\BSON\toJSON;
 use function restore_error_handler;
 use function set_error_handler;
 use function sprintf;
-
 use const E_USER_DEPRECATED;
 
 abstract class TestCase extends BaseTestCase
@@ -38,7 +36,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return string
      */
-    public static function getUri(): string
+    public static function getUri()
     {
         return getenv('MONGODB_URI') ?: 'mongodb://127.0.0.1:27017';
     }
@@ -52,7 +50,7 @@ abstract class TestCase extends BaseTestCase
      * @param array|object $expectedDocument
      * @param array|object $actualDocument
      */
-    public function assertMatchesDocument($expectedDocument, $actualDocument): void
+    public function assertMatchesDocument($expectedDocument, $actualDocument)
     {
         $normalizedExpectedDocument = $this->normalizeBSON($expectedDocument);
         $normalizedActualDocument = $this->normalizeBSON($actualDocument);
@@ -86,7 +84,7 @@ abstract class TestCase extends BaseTestCase
      * @param array|object $expectedDocument
      * @param array|object $actualDocument
      */
-    public function assertSameDocument($expectedDocument, $actualDocument): void
+    public function assertSameDocument($expectedDocument, $actualDocument)
     {
         $this->assertEquals(
             toJSON(fromPHP($this->normalizeBSON($expectedDocument))),
@@ -94,7 +92,7 @@ abstract class TestCase extends BaseTestCase
         );
     }
 
-    public function assertSameDocuments(array $expectedDocuments, $actualDocuments): void
+    public function assertSameDocuments(array $expectedDocuments, $actualDocuments)
     {
         if ($actualDocuments instanceof Traversable) {
             $actualDocuments = iterator_to_array($actualDocuments);
@@ -117,7 +115,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Compatibility method as PHPUnit 9 no longer includes this method.
      */
-    public function dataDescription(): string
+    public function dataDescription() : string
     {
         $dataName = $this->dataName();
 
@@ -134,11 +132,11 @@ abstract class TestCase extends BaseTestCase
         return $this->wrapValuesForDataProvider($this->getInvalidDocumentValues());
     }
 
-    protected function assertDeprecated(callable $execution): void
+    protected function assertDeprecated(callable $execution)
     {
         $errors = [];
 
-        set_error_handler(function ($errno, $errstr) use (&$errors): void {
+        set_error_handler(function ($errno, $errstr) use (&$errors) {
             $errors[] = $errstr;
         }, E_USER_DEPRECATED);
 
@@ -156,7 +154,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return string
      */
-    protected function getCollectionName(): string
+    protected function getCollectionName()
     {
         $class = new ReflectionClass($this);
 
@@ -168,7 +166,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return string
      */
-    protected function getDatabaseName(): string
+    protected function getDatabaseName()
     {
         return getenv('MONGODB_DATABASE') ?: 'phplib_test';
     }
@@ -180,7 +178,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidArrayValues(bool $includeNull = false): array
+    protected function getInvalidArrayValues($includeNull = false)
     {
         return array_merge([123, 3.14, 'foo', true, new stdClass()], $includeNull ? [null] : []);
     }
@@ -192,7 +190,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidBooleanValues(bool $includeNull = false): array
+    protected function getInvalidBooleanValues($includeNull = false)
     {
         return array_merge([123, 3.14, 'foo', [], new stdClass()], $includeNull ? [null] : []);
     }
@@ -204,7 +202,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidDocumentValues(bool $includeNull = false): array
+    protected function getInvalidDocumentValues($includeNull = false)
     {
         return array_merge([123, 3.14, 'foo', true], $includeNull ? [null] : []);
     }
@@ -216,7 +214,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidIntegerValues(bool $includeNull = false): array
+    protected function getInvalidIntegerValues($includeNull = false)
     {
         return array_merge([3.14, 'foo', true, [], new stdClass()], $includeNull ? [null] : []);
     }
@@ -228,7 +226,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidReadConcernValues(bool $includeNull = false): array
+    protected function getInvalidReadConcernValues($includeNull = false)
     {
         return array_merge([123, 3.14, 'foo', true, [], new stdClass(), new ReadPreference(ReadPreference::RP_PRIMARY), new WriteConcern(1)], $includeNull ? [null] : []);
     }
@@ -240,7 +238,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidReadPreferenceValues(bool $includeNull = false): array
+    protected function getInvalidReadPreferenceValues($includeNull = false)
     {
         return array_merge([123, 3.14, 'foo', true, [], new stdClass(), new ReadConcern(), new WriteConcern(1)], $includeNull ? [null] : []);
     }
@@ -252,7 +250,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidSessionValues(bool $includeNull = false): array
+    protected function getInvalidSessionValues($includeNull = false)
     {
         return array_merge([123, 3.14, 'foo', true, [], new stdClass(), new ReadConcern(), new ReadPreference(ReadPreference::RP_PRIMARY), new WriteConcern(1)], $includeNull ? [null] : []);
     }
@@ -264,7 +262,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidStringValues(bool $includeNull = false): array
+    protected function getInvalidStringValues($includeNull = false)
     {
         return array_merge([123, 3.14, true, [], new stdClass()], $includeNull ? [null] : []);
     }
@@ -276,7 +274,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return array
      */
-    protected function getInvalidWriteConcernValues(bool $includeNull = false): array
+    protected function getInvalidWriteConcernValues($includeNull = false)
     {
         return array_merge([123, 3.14, 'foo', true, [], new stdClass(), new ReadConcern(), new ReadPreference(ReadPreference::RP_PRIMARY)], $includeNull ? [null] : []);
     }
@@ -286,7 +284,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return string
      */
-    protected function getNamespace(): string
+    protected function getNamespace()
     {
          return sprintf('%s.%s', $this->getDatabaseName(), $this->getCollectionName());
     }
@@ -297,7 +295,7 @@ abstract class TestCase extends BaseTestCase
      * @param array $values List of values
      * @return array
      */
-    protected function wrapValuesForDataProvider(array $values): array
+    protected function wrapValuesForDataProvider(array $values)
     {
         return array_map(function ($value) {
             return [$value];

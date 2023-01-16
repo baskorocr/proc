@@ -24,7 +24,6 @@ use MongoDB\Driver\Exception\RuntimeException as DriverRuntimeException;
 use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnexpectedValueException;
-
 use function array_column;
 
 /**
@@ -51,10 +50,14 @@ class ListDatabaseNames implements Executable
      *
      *  * filter (document): Query by which to filter databases.
      *
+     *    For servers < 3.6, this option is ignored.
+     *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
      *    run.
      *
      *  * session (MongoDB\Driver\Session): Client session.
+     *
+     *    Sessions are not supported for server versions < 3.6.
      *
      * @param array $options Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
@@ -73,7 +76,7 @@ class ListDatabaseNames implements Executable
      * @throws UnexpectedValueException if the command response was malformed
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
-    public function execute(Server $server): Iterator
+    public function execute(Server $server) : Iterator
     {
         $result = $this->listDatabases->execute($server);
 

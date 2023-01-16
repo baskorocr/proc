@@ -24,7 +24,6 @@ use MongoDB\Driver\Session;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Model\CachingIterator;
 use MongoDB\Operation\Executable;
-
 use function is_array;
 use function is_bool;
 use function is_integer;
@@ -49,11 +48,6 @@ class ListCollections implements Executable
      *
      * Supported options:
      *
-     *  * authorizedCollections (boolean): Determines which collections are
-     *    returned based on the user privileges.
-     *
-     *    For servers < 4.0, this option is ignored.
-     *
      *  * filter (document): Query by which to filter collections.
      *
      *  * maxTimeMS (integer): The maximum amount of time to allow the query to
@@ -65,16 +59,14 @@ class ListCollections implements Executable
      *
      *  * session (MongoDB\Driver\Session): Client session.
      *
+     *    Sessions are not supported for server versions < 3.6.
+     *
      * @param string $databaseName Database name
      * @param array  $options      Command options
      * @throws InvalidArgumentException for parameter/option parsing errors
      */
     public function __construct($databaseName, array $options = [])
     {
-        if (isset($options['authorizedCollections']) && ! is_bool($options['authorizedCollections'])) {
-            throw InvalidArgumentException::invalidType('"authorizedCollections" option', $options['authorizedCollections'], 'boolean');
-        }
-
         if (isset($options['filter']) && ! is_array($options['filter']) && ! is_object($options['filter'])) {
             throw InvalidArgumentException::invalidType('"filter" option', $options['filter'], 'array or object');
         }
@@ -111,10 +103,12 @@ class ListCollections implements Executable
             $cmd['filter'] = (object) $this->options['filter'];
         }
 
-        foreach (['authorizedCollections', 'maxTimeMS', 'nameOnly'] as $option) {
-            if (isset($this->options[$option])) {
-                $cmd[$option] = $this->options[$option];
-            }
+        if (isset($this->options['maxTimeMS'])) {
+            $cmd['maxTimeMS'] = $this->options['maxTimeMS'];
+        }
+
+        if (isset($this->options['nameOnly'])) {
+            $cmd['nameOnly'] = $this->options['nameOnly'];
         }
 
         $cursor = $server->executeReadCommand($this->databaseName, new Command($cmd), $this->createOptions());

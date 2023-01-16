@@ -2,62 +2,31 @@
 
 namespace App\Models;
 
-use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Jenssegers\Mongodb\Auth\User as Authenticable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-//use Illuminate\Foundation\Auth\User as Authenticatable;
-use Jenssegers\Mongodb\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
-use Jenssegers\Mongodb\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
-class User extends Authenticatable
+class User extends Authenticable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    protected $table = "user";
 
-	protected $table = 'user';
-	
-	protected $primaryKey = 'id_user';
-	
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
-    protected $fillable = [
-        /* 'name', */
-        'nm_user', 
-        'username',
-        'password',
-        'id_tipe_user',
-        'status_user',
-        'role',
-        'id_session',
-        'id_access_group',
-        'foreign_id',
-    ];
-
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
+    public $dates = ['deleted_at'];
+    
     protected $hidden = [
-        /* 'password', */
-        /* 'remember_token', */
+        'password', 
+        'api_token'
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
-    protected $casts = [
-        /* 'email_verified_at' => 'datetime', */
-    ];
-	
-	
-	public function vendor()
+    //protected $appends = ['photo_url'];
+    
+    // public function getPhotoUrlAttribute()
+    // {
+    //     return Storage::drive('images')->exists($this->photo) 
+    //     ? url('storage/images/'.$this->photo) : null;
+    // }
+
+    public function role()
     {
-        return $this->hasOne(Vendor::class, 'id_vendor', 'foreign_id');
+        return $this->belongsTo('App\Role');
     }
 }

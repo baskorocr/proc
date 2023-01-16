@@ -10,7 +10,6 @@ use MongoDB\Driver\Exception\ServerException;
 use PHPUnit\Framework\Assert;
 use stdClass;
 use Throwable;
-
 use function get_class;
 use function PHPUnit\Framework\assertArrayHasKey;
 use function PHPUnit\Framework\assertContainsOnly;
@@ -20,7 +19,6 @@ use function PHPUnit\Framework\assertIsArray;
 use function PHPUnit\Framework\assertIsBool;
 use function PHPUnit\Framework\assertIsInt;
 use function PHPUnit\Framework\assertIsString;
-use function PHPUnit\Framework\assertNotInstanceOf;
 use function PHPUnit\Framework\assertNotNull;
 use function PHPUnit\Framework\assertNull;
 use function PHPUnit\Framework\assertObjectHasAttribute;
@@ -68,7 +66,7 @@ final class ExpectedError
     /** @var ExpectedResult|null */
     private $expectedResult;
 
-    public function __construct(?stdClass $o, EntityMap $entityMap)
+    public function __construct(stdClass $o = null, EntityMap $entityMap)
     {
         if ($o === null) {
             return;
@@ -122,7 +120,7 @@ final class ExpectedError
      *
      * @param Throwable|null $e Exception (if any) from executing an operation
      */
-    public function assert(?Throwable $e = null): void
+    public function assert(Throwable $e = null)
     {
         if (! $this->isError && $e !== null) {
             Assert::fail(sprintf("Operation threw unexpected %s: %s\n%s", get_class($e), $e->getMessage(), $e->getTraceAsString()));
@@ -135,10 +133,6 @@ final class ExpectedError
         }
 
         assertNotNull($e);
-
-        if (isset($this->isClientError)) {
-            $this->assertIsClientError($e);
-        }
 
         if (isset($this->messageContains)) {
             assertStringContainsStringIgnoringCase($this->messageContains, $e->getMessage());
@@ -172,22 +166,7 @@ final class ExpectedError
         }
     }
 
-    private function assertIsClientError(Throwable $e): void
-    {
-        /* Note: BulkWriteException may proxy a previous exception. Unwrap it
-         * to check the original error. */
-        if ($e instanceof BulkWriteException && $e->getPrevious() !== null) {
-            $e = $e->getPrevious();
-        }
-
-        if ($this->isClientError) {
-            assertNotInstanceOf(ServerException::class, $e);
-        } else {
-            assertInstanceOf(ServerException::class, $e);
-        }
-    }
-
-    private function assertCodeName(ServerException $e): void
+    private function assertCodeName(ServerException $e)
     {
         /* BulkWriteException and ExecutionTimeoutException do not expose
          * codeName. Work around this by translating it to a numeric code.

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2015-present MongoDB, Inc.
+ * Copyright 2015-2017 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -53,13 +53,11 @@ use MongoDB\Operation\InsertMany;
 use MongoDB\Operation\InsertOne;
 use MongoDB\Operation\ListIndexes;
 use MongoDB\Operation\MapReduce;
-use MongoDB\Operation\RenameCollection;
 use MongoDB\Operation\ReplaceOne;
 use MongoDB\Operation\UpdateMany;
 use MongoDB\Operation\UpdateOne;
 use MongoDB\Operation\Watch;
 use Traversable;
-
 use function array_diff_key;
 use function array_intersect_key;
 use function current;
@@ -74,6 +72,15 @@ class Collection
         'document' => BSONDocument::class,
         'root' => BSONDocument::class,
     ];
+
+    /** @var integer */
+    private static $wireVersionForFindAndModifyWriteConcern = 4;
+
+    /** @var integer */
+    private static $wireVersionForReadConcern = 4;
+
+    /** @var integer */
+    private static $wireVersionForWritableCommandWriteConcern = 5;
 
     /** @var integer */
     private static $wireVersionForReadConcernWithWriteStage = 8;
@@ -128,11 +135,11 @@ class Collection
      */
     public function __construct(Manager $manager, $databaseName, $collectionName, array $options = [])
     {
-        if (strlen((string) $databaseName) < 1) {
+        if (strlen($databaseName) < 1) {
             throw new InvalidArgumentException('$databaseName is invalid: ' . $databaseName);
         }
 
-        if (strlen((string) $collectionName) < 1) {
+        if (strlen($collectionName) < 1) {
             throw new InvalidArgumentException('$collectionName is invalid: ' . $collectionName);
         }
 
@@ -216,17 +223,19 @@ class Collection
             $options['readPreference'] = $this->readPreference;
         }
 
-        $server = $hasWriteStage
-            ? select_server_for_aggregate_write_stage($this->manager, $options)
-            : select_server($this->manager, $options);
+        if ($hasWriteStage) {
+            $options['readPreference'] = new ReadPreference(ReadPreference::RP_PRIMARY);
+        }
+
+        $server = select_server($this->manager, $options);
 
         /* MongoDB 4.2 and later supports a read concern when an $out stage is
          * being used, but earlier versions do not.
          *
          * A read concern is also not compatible with transactions.
          */
-        if (
-            ! isset($options['readConcern']) &&
+        if (! isset($options['readConcern']) &&
+            server_supports_feature($server, self::$wireVersionForReadConcern) &&
             ! is_in_transaction($options) &&
             ( ! $hasWriteStage || server_supports_feature($server, self::$wireVersionForReadConcernWithWriteStage))
         ) {
@@ -237,7 +246,10 @@ class Collection
             $options['typeMap'] = $this->typeMap;
         }
 
-        if ($hasWriteStage && ! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if ($hasWriteStage &&
+            ! isset($options['writeConcern']) &&
+            server_supports_feature($server, self::$wireVersionForWritableCommandWriteConcern) &&
+            ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
@@ -291,7 +303,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['readConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['readConcern']) && server_supports_feature($server, self::$wireVersionForReadConcern) && ! is_in_transaction($options)) {
             $options['readConcern'] = $this->readConcern;
         }
 
@@ -320,7 +332,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['readConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['readConcern']) && server_supports_feature($server, self::$wireVersionForReadConcern) && ! is_in_transaction($options)) {
             $options['readConcern'] = $this->readConcern;
         }
 
@@ -382,7 +394,7 @@ class Collection
     {
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['writeConcern']) && server_supports_feature($server, self::$wireVersionForWritableCommandWriteConcern) && ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
@@ -464,7 +476,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['readConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['readConcern']) && server_supports_feature($server, self::$wireVersionForReadConcern) && ! is_in_transaction($options)) {
             $options['readConcern'] = $this->readConcern;
         }
 
@@ -491,7 +503,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['writeConcern']) && server_supports_feature($server, self::$wireVersionForWritableCommandWriteConcern) && ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
@@ -525,7 +537,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['writeConcern']) && server_supports_feature($server, self::$wireVersionForWritableCommandWriteConcern) && ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
@@ -552,7 +564,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['writeConcern']) && server_supports_feature($server, self::$wireVersionForWritableCommandWriteConcern) && ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
@@ -580,7 +592,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['readConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['readConcern']) && server_supports_feature($server, self::$wireVersionForReadConcern) && ! is_in_transaction($options)) {
             $options['readConcern'] = $this->readConcern;
         }
 
@@ -638,7 +650,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['readConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['readConcern']) && server_supports_feature($server, self::$wireVersionForReadConcern) && ! is_in_transaction($options)) {
             $options['readConcern'] = $this->readConcern;
         }
 
@@ -671,7 +683,7 @@ class Collection
 
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['readConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['readConcern']) && server_supports_feature($server, self::$wireVersionForReadConcern) && ! is_in_transaction($options)) {
             $options['readConcern'] = $this->readConcern;
         }
 
@@ -703,7 +715,7 @@ class Collection
     {
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['writeConcern']) && server_supports_feature($server, self::$wireVersionForFindAndModifyWriteConcern) && ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
@@ -740,7 +752,7 @@ class Collection
     {
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['writeConcern']) && server_supports_feature($server, self::$wireVersionForFindAndModifyWriteConcern) && ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
@@ -777,7 +789,7 @@ class Collection
     {
         $server = select_server($this->manager, $options);
 
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['writeConcern']) && server_supports_feature($server, self::$wireVersionForFindAndModifyWriteConcern) && ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
@@ -971,7 +983,7 @@ class Collection
          *
          * A read concern is also not compatible with transactions.
          */
-        if (! isset($options['readConcern']) && ! ($hasOutputCollection && $this->readConcern->getLevel() === ReadConcern::MAJORITY) && ! is_in_transaction($options)) {
+        if (! isset($options['readConcern']) && ! ($hasOutputCollection && $this->readConcern->getLevel() === ReadConcern::MAJORITY) && server_supports_feature($server, self::$wireVersionForReadConcern) && ! is_in_transaction($options)) {
             $options['readConcern'] = $this->readConcern;
         }
 
@@ -979,44 +991,11 @@ class Collection
             $options['typeMap'] = $this->typeMap;
         }
 
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['writeConcern']) && server_supports_feature($server, self::$wireVersionForWritableCommandWriteConcern) && ! is_in_transaction($options)) {
             $options['writeConcern'] = $this->writeConcern;
         }
 
         $operation = new MapReduce($this->databaseName, $this->collectionName, $map, $reduce, $out, $options);
-
-        return $operation->execute($server);
-    }
-
-    /**
-     * Renames the collection.
-     *
-     * @see RenameCollection::__construct() for supported options
-     * @param string  $toCollectionName New name of the collection
-     * @param ?string $toDatabaseName   New database name of the collection. Defaults to the original database.
-     * @param array   $options          Additional options
-     * @return array|object Command result document
-     * @throws UnsupportedException if options are not supported by the selected server
-     * @throws InvalidArgumentException for parameter/option parsing errors
-     * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
-     */
-    public function rename(string $toCollectionName, ?string $toDatabaseName = null, array $options = [])
-    {
-        if (! isset($toDatabaseName)) {
-            $toDatabaseName = $this->databaseName;
-        }
-
-        if (! isset($options['typeMap'])) {
-            $options['typeMap'] = $this->typeMap;
-        }
-
-        $server = select_server($this->manager, $options);
-
-        if (! isset($options['writeConcern']) && ! is_in_transaction($options)) {
-            $options['writeConcern'] = $this->writeConcern;
-        }
-
-        $operation = new RenameCollection($this->databaseName, $this->collectionName, $toDatabaseName, $toCollectionName, $options);
 
         return $operation->execute($server);
     }
@@ -1120,7 +1099,7 @@ class Collection
          * related to change streams being unsupported instead of an
          * UnsupportedException regarding use of the "readConcern" option from
          * the Aggregate operation class. */
-        if (! isset($options['readConcern']) && ! is_in_transaction($options)) {
+        if (! isset($options['readConcern']) && server_supports_feature($server, self::$wireVersionForReadConcern) && ! is_in_transaction($options)) {
             $options['readConcern'] = $this->readConcern;
         }
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2015-present MongoDB, Inc.
+ * Copyright 2015-2017 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,7 +25,6 @@ use MongoDB\Driver\WriteConcern;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
 use MongoDB\Model\IndexInput;
-
 use function array_map;
 use function is_array;
 use function is_integer;
@@ -44,6 +43,12 @@ use function sprintf;
 class CreateIndexes implements Executable
 {
     /** @var integer */
+    private static $wireVersionForCollation = 5;
+
+    /** @var integer */
+    private static $wireVersionForWriteConcern = 5;
+
+    /** @var integer */
     private static $wireVersionForCommitQuorum = 9;
 
     /** @var string */
@@ -54,6 +59,9 @@ class CreateIndexes implements Executable
 
     /** @var array */
     private $indexes = [];
+
+    /** @var boolean */
+    private $isCollationUsed = false;
 
     /** @var array */
     private $options = [];
@@ -72,7 +80,12 @@ class CreateIndexes implements Executable
      *
      *  * session (MongoDB\Driver\Session): Client session.
      *
+     *    Sessions are not supported for server versions < 3.6.
+     *
      *  * writeConcern (MongoDB\Driver\WriteConcern): Write concern.
+     *
+     *    This is not supported for server versions < 3.4 and will result in an
+     *    exception at execution time if used.
      *
      * @param string  $databaseName   Database name
      * @param string  $collectionName Collection name
@@ -95,6 +108,10 @@ class CreateIndexes implements Executable
 
             if (! is_array($index)) {
                 throw InvalidArgumentException::invalidType(sprintf('$index[%d]', $i), $index, 'array');
+            }
+
+            if (isset($index['collation'])) {
+                $this->isCollationUsed = true;
             }
 
             $this->indexes[] = new IndexInput($index);
@@ -133,11 +150,19 @@ class CreateIndexes implements Executable
      * @see Executable::execute()
      * @param Server $server
      * @return string[] The names of the created indexes
-     * @throws UnsupportedException if write concern is used and unsupported
+     * @throws UnsupportedException if collation or write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
     public function execute(Server $server)
     {
+        if ($this->isCollationUsed && ! server_supports_feature($server, self::$wireVersionForCollation)) {
+            throw UnsupportedException::collationNotSupported();
+        }
+
+        if (isset($this->options['writeConcern']) && ! server_supports_feature($server, self::$wireVersionForWriteConcern)) {
+            throw UnsupportedException::writeConcernNotSupported();
+        }
+
         $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
         if ($inTransaction && isset($this->options['writeConcern'])) {
             throw UnsupportedException::writeConcernNotSupportedInTransaction();

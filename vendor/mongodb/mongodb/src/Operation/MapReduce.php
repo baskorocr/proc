@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2015-present MongoDB, Inc.
+ * Copyright 2015-2017 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,6 @@ use MongoDB\Exception\UnexpectedValueException;
 use MongoDB\Exception\UnsupportedException;
 use MongoDB\MapReduceResult;
 use stdClass;
-
 use function current;
 use function is_array;
 use function is_bool;
@@ -40,8 +39,8 @@ use function is_object;
 use function is_string;
 use function MongoDB\create_field_path_type_map;
 use function MongoDB\is_mapreduce_output_inline;
+use function MongoDB\server_supports_feature;
 use function trigger_error;
-
 use const E_USER_DEPRECATED;
 
 /**
@@ -53,6 +52,18 @@ use const E_USER_DEPRECATED;
  */
 class MapReduce implements Executable
 {
+    /** @var integer */
+    private static $wireVersionForCollation = 5;
+
+    /** @var integer */
+    private static $wireVersionForDocumentLevelValidation = 4;
+
+    /** @var integer */
+    private static $wireVersionForReadConcern = 4;
+
+    /** @var integer */
+    private static $wireVersionForWriteConcern = 4;
+
     /** @var string */
     private $databaseName;
 
@@ -100,7 +111,13 @@ class MapReduce implements Executable
      *    circumvent document level validation. This only applies when results
      *    are output to a collection.
      *
+     *    For servers < 3.2, this option is ignored as document level validation
+     *    is not available.
+     *
      *  * collation (document): Collation specification.
+     *
+     *    This is not supported for server versions < 3.4 and will result in an
+     *    exception at execution time if used.
      *
      *  * finalize (MongoDB\BSON\JavascriptInterface): Follows the reduce method
      *    and modifies the output.
@@ -123,6 +140,9 @@ class MapReduce implements Executable
      *  * readConcern (MongoDB\Driver\ReadConcern): Read concern. This is not
      *    supported when results are returned inline.
      *
+     *    This is not supported for server versions < 3.2 and will result in an
+     *    exception at execution time if used.
+     *
      *  * readPreference (MongoDB\Driver\ReadPreference): Read preference.
      *
      *    This option is ignored if results are output to a collection.
@@ -131,6 +151,8 @@ class MapReduce implements Executable
      *    the map, reduce and finalize functions.
      *
      *  * session (MongoDB\Driver\Session): Client session.
+     *
+     *    Sessions are not supported for server versions < 3.6.
      *
      *  * sort (document): Sorts the input documents. This option is useful for
      *    optimization. For example, specify the sort key to be the same as the
@@ -145,6 +167,9 @@ class MapReduce implements Executable
      *
      *  * writeConcern (MongoDB\Driver\WriteConcern): Write concern. This only
      *    applies when results are output to a collection.
+     *
+     *    This is not supported for server versions < 3.4 and will result in an
+     *    exception at execution time if used.
      *
      * @param string              $databaseName   Database name
      * @param string              $collectionName Collection name
@@ -220,10 +245,6 @@ class MapReduce implements Executable
             throw InvalidArgumentException::invalidType('"writeConcern" option', $options['writeConcern'], WriteConcern::class);
         }
 
-        if (isset($options['bypassDocumentValidation']) && ! $options['bypassDocumentValidation']) {
-            unset($options['bypassDocumentValidation']);
-        }
-
         if (isset($options['readConcern']) && $options['readConcern']->isDefault()) {
             unset($options['readConcern']);
         }
@@ -262,17 +283,28 @@ class MapReduce implements Executable
      * @param Server $server
      * @return MapReduceResult
      * @throws UnexpectedValueException if the command response was malformed
-     * @throws UnsupportedException if read concern or write concern is used and unsupported
+     * @throws UnsupportedException if collation, read concern, or write concern is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
     public function execute(Server $server)
     {
+        if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
+            throw UnsupportedException::collationNotSupported();
+        }
+
+        if (isset($this->options['readConcern']) && ! server_supports_feature($server, self::$wireVersionForReadConcern)) {
+            throw UnsupportedException::readConcernNotSupported();
+        }
+
+        if (isset($this->options['writeConcern']) && ! server_supports_feature($server, self::$wireVersionForWriteConcern)) {
+            throw UnsupportedException::writeConcernNotSupported();
+        }
+
         $inTransaction = isset($this->options['session']) && $this->options['session']->isInTransaction();
         if ($inTransaction) {
             if (isset($this->options['readConcern'])) {
                 throw UnsupportedException::readConcernNotSupportedInTransaction();
             }
-
             if (isset($this->options['writeConcern'])) {
                 throw UnsupportedException::writeConcernNotSupportedInTransaction();
             }
@@ -280,7 +312,7 @@ class MapReduce implements Executable
 
         $hasOutputCollection = ! is_mapreduce_output_inline($this->out);
 
-        $command = $this->createCommand();
+        $command = $this->createCommand($server);
         $options = $this->createOptions($hasOutputCollection);
 
         /* If the mapReduce operation results in a write, use
@@ -328,9 +360,10 @@ class MapReduce implements Executable
     /**
      * Create the mapReduce command.
      *
+     * @param Server $server
      * @return Command
      */
-    private function createCommand()
+    private function createCommand(Server $server)
     {
         $cmd = [
             'mapReduce' => $this->collectionName,
@@ -339,7 +372,7 @@ class MapReduce implements Executable
             'out' => $this->out,
         ];
 
-        foreach (['bypassDocumentValidation', 'finalize', 'jsMode', 'limit', 'maxTimeMS', 'verbose'] as $option) {
+        foreach (['finalize', 'jsMode', 'limit', 'maxTimeMS', 'verbose'] as $option) {
             if (isset($this->options[$option])) {
                 $cmd[$option] = $this->options[$option];
             }
@@ -349,6 +382,12 @@ class MapReduce implements Executable
             if (isset($this->options[$option])) {
                 $cmd[$option] = (object) $this->options[$option];
             }
+        }
+
+        if (! empty($this->options['bypassDocumentValidation']) &&
+            server_supports_feature($server, self::$wireVersionForDocumentLevelValidation)
+        ) {
+            $cmd['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
         }
 
         return new Command($cmd);
