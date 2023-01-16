@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2016-present MongoDB, Inc.
+ * Copyright 2016-2017 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,15 +19,18 @@ namespace MongoDB\GridFS;
 
 use MongoDB\BSON\UTCDateTime;
 use stdClass;
-
+use Throwable;
 use function explode;
+use function get_class;
 use function in_array;
 use function is_integer;
+use function sprintf;
 use function stream_context_get_options;
 use function stream_get_wrappers;
 use function stream_wrapper_register;
 use function stream_wrapper_unregister;
-
+use function trigger_error;
+use const E_USER_WARNING;
 use const SEEK_CUR;
 use const SEEK_END;
 use const SEEK_SET;
@@ -157,7 +160,13 @@ class StreamWrapper
             return '';
         }
 
-        return $this->stream->readBytes($length);
+        try {
+            return $this->stream->readBytes($length);
+        } catch (Throwable $e) {
+            trigger_error(sprintf('%s: %s', get_class($e), $e->getMessage()), E_USER_WARNING);
+
+            return false;
+        }
     }
 
     /**
@@ -248,7 +257,13 @@ class StreamWrapper
             return 0;
         }
 
-        return $this->stream->writeBytes($data);
+        try {
+            return $this->stream->writeBytes($data);
+        } catch (Throwable $e) {
+            trigger_error(sprintf('%s: %s', get_class($e), $e->getMessage()), E_USER_WARNING);
+
+            return false;
+        }
     }
 
     /**
