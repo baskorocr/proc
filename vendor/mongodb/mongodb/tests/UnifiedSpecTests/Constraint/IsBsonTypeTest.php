@@ -18,12 +18,10 @@ use MongoDB\Tests\TestCase;
 use PHPUnit\Framework\Constraint\Constraint;
 use PHPUnit\Framework\ExpectationFailedException;
 use stdClass;
-
 use function fopen;
 use function MongoDB\BSON\fromJSON;
 use function MongoDB\BSON\toPHP;
 use function unserialize;
-
 use const PHP_INT_SIZE;
 
 class IsBsonTypeTest extends TestCase
@@ -31,7 +29,7 @@ class IsBsonTypeTest extends TestCase
     /**
      * @dataProvider provideTypes
      */
-    public function testConstraint($type, $value): void
+    public function testConstraint($type, $value)
     {
         $this->assertResult(true, new IsBsonType($type), $value, $this->dataName() . ' is ' . $type);
     }
@@ -74,17 +72,17 @@ class IsBsonTypeTest extends TestCase
     /**
      * @dataProvider provideTypes
      */
-    public function testAny($type, $value): void
+    public function testAny($type, $value)
     {
         $this->assertResult(true, IsBsonType::any(), $value, $this->dataName() . ' is a BSON type');
     }
 
-    public function testAnyExcludesStream(): void
+    public function testAnyExcludesStream()
     {
         $this->assertResult(false, IsBsonType::any(), fopen('php://temp', 'w+b'), 'stream is not a BSON type');
     }
 
-    public function testAnyOf(): void
+    public function testAnyOf()
     {
         $c = IsBsonType::anyOf('double', 'int');
 
@@ -93,7 +91,7 @@ class IsBsonTypeTest extends TestCase
         $this->assertResult(false, $c, 'foo', 'string is not double or int');
     }
 
-    public function testErrorMessage(): void
+    public function testErrorMessage()
     {
         $c = new IsBsonType('string');
 
@@ -105,7 +103,7 @@ class IsBsonTypeTest extends TestCase
         }
     }
 
-    public function testTypeArray(): void
+    public function testTypeArray()
     {
         $c = new IsBsonType('array');
 
@@ -120,7 +118,7 @@ class IsBsonTypeTest extends TestCase
         $this->assertResult(false, $c, new SerializableObject(), 'SerializableObject is not array');
     }
 
-    public function testTypeObject(): void
+    public function testTypeObject()
     {
         $c = new IsBsonType('object');
 
@@ -137,7 +135,7 @@ class IsBsonTypeTest extends TestCase
         $this->assertResult(false, $c, new ObjectId(), 'Type other than Serializable is not object');
     }
 
-    public function testTypeJavascript(): void
+    public function testTypeJavascript()
     {
         $c = new IsBsonType('javascript');
 
@@ -145,7 +143,7 @@ class IsBsonTypeTest extends TestCase
         $this->assertResult(false, $c, new Javascript('foo = 1;', ['x' => 1]), 'javascriptWithScope is not javascript');
     }
 
-    public function testTypeJavascriptWithScope(): void
+    public function testTypeJavascriptWithScope()
     {
         $c = new IsBsonType('javascriptWithScope');
 
@@ -153,7 +151,7 @@ class IsBsonTypeTest extends TestCase
         $this->assertResult(false, $c, new Javascript('foo = 1;'), 'javascript is not javascriptWithScope');
     }
 
-    private function assertResult($expected, Constraint $constraint, $value, string $message = ''): void
+    private function assertResult($expected, Constraint $constraint, $value, string $message = '')
     {
         $this->assertSame($expected, $constraint->evaluate($value, '', true), $message);
     }

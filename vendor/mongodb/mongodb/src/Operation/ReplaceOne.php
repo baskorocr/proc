@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2015-present MongoDB, Inc.
+ * Copyright 2015-2017 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,7 +22,6 @@ use MongoDB\Driver\Server;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
 use MongoDB\UpdateResult;
-
 use function is_array;
 use function is_object;
 use function MongoDB\is_first_key_operator;
@@ -48,7 +47,13 @@ class ReplaceOne implements Executable
      *  * bypassDocumentValidation (boolean): If true, allows the write to
      *    circumvent document level validation.
      *
+     *    For servers < 3.2, this option is ignored as document level validation
+     *    is not available.
+     *
      *  * collation (document): Collation specification.
+     *
+     *    This is not supported for server versions < 3.4 and will result in an
+     *    exception at execution time if used.
      *
      *  * hint (string|document): The index to use. Specify either the index
      *    name as a string or the index key pattern as a document. If specified,
@@ -58,6 +63,8 @@ class ReplaceOne implements Executable
      *    exception at execution time if used.
      *
      *  * session (MongoDB\Driver\Session): Client session.
+     *
+     *    Sessions are not supported for server versions < 3.6.
      *
      *  * upsert (boolean): When true, a new document is created if no document
      *    matches the query. The default is false.

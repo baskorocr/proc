@@ -7,14 +7,14 @@ use MongoDB\Operation\InsertMany;
 
 class InsertManyTest extends TestCase
 {
-    public function testConstructorDocumentsMustNotBeEmpty(): void
+    public function testConstructorDocumentsMustNotBeEmpty()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$documents is empty');
         new InsertMany($this->getDatabaseName(), $this->getCollectionName(), []);
     }
 
-    public function testConstructorDocumentsMustBeAList(): void
+    public function testConstructorDocumentsMustBeAList()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('$documents is not a list (unexpected index: "1")');
@@ -24,7 +24,7 @@ class InsertManyTest extends TestCase
     /**
      * @dataProvider provideInvalidDocumentValues
      */
-    public function testConstructorDocumentsArgumentElementTypeChecks($document): void
+    public function testConstructorDocumentsArgumentElementTypeChecks($document)
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessageMatches('/Expected \$documents[0\] to have type "array or object" but found "[\w ]+"/');
@@ -34,7 +34,7 @@ class InsertManyTest extends TestCase
     /**
      * @dataProvider provideInvalidConstructorOptions
      */
-    public function testConstructorOptionTypeChecks(array $options): void
+    public function testConstructorOptionTypeChecks(array $options)
     {
         $this->expectException(InvalidArgumentException::class);
         new InsertMany($this->getDatabaseName(), $this->getCollectionName(), [['x' => 1]], $options);

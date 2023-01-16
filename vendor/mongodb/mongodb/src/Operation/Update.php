@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright 2015-present MongoDB, Inc.
+ * Copyright 2015-2017 MongoDB, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,14 +25,12 @@ use MongoDB\Driver\WriteConcern;
 use MongoDB\Exception\InvalidArgumentException;
 use MongoDB\Exception\UnsupportedException;
 use MongoDB\UpdateResult;
-
 use function is_array;
 use function is_bool;
 use function is_object;
 use function is_string;
 use function MongoDB\is_first_key_operator;
 use function MongoDB\is_pipeline;
-use function MongoDB\is_write_concern_acknowledged;
 use function MongoDB\server_supports_feature;
 
 /**
@@ -47,7 +45,16 @@ use function MongoDB\server_supports_feature;
 class Update implements Executable, Explainable
 {
     /** @var integer */
-    private static $wireVersionForHint = 8;
+    private static $wireVersionForArrayFilters = 6;
+
+    /** @var integer */
+    private static $wireVersionForCollation = 5;
+
+    /** @var integer */
+    private static $wireVersionForDocumentLevelValidation = 4;
+
+    /** @var integer */
+    private static $wireVersionForHintServerSideError = 5;
 
     /** @var string */
     private $databaseName;
@@ -72,10 +79,19 @@ class Update implements Executable, Explainable
      *  * arrayFilters (document array): A set of filters specifying to which
      *    array elements an update should apply.
      *
+     *    This is not supported for server versions < 3.6 and will result in an
+     *    exception at execution time if used.
+     *
      *  * bypassDocumentValidation (boolean): If true, allows the write to
      *    circumvent document level validation.
      *
+     *    For servers < 3.2, this option is ignored as document level validation
+     *    is not available.
+     *
      *  * collation (document): Collation specification.
+     *
+     *    This is not supported for server versions < 3.4 and will result in an
+     *    exception at execution time if used.
      *
      *  * hint (string|document): The index to use. Specify either the index
      *    name as a string or the index key pattern as a document. If specified,
@@ -89,6 +105,8 @@ class Update implements Executable, Explainable
      *    document (i.e. contains no update operators). The default is false.
      *
      *  * session (MongoDB\Driver\Session): Client session.
+     *
+     *    Sessions are not supported for server versions < 3.6.
      *
      *  * upsert (boolean): When true, a new document is created if no document
      *    matches the query. The default is false.
@@ -154,10 +172,6 @@ class Update implements Executable, Explainable
             throw InvalidArgumentException::invalidType('"writeConcern" option', $options['writeConcern'], WriteConcern::class);
         }
 
-        if (isset($options['bypassDocumentValidation']) && ! $options['bypassDocumentValidation']) {
-            unset($options['bypassDocumentValidation']);
-        }
-
         if (isset($options['writeConcern']) && $options['writeConcern']->isDefault()) {
             unset($options['writeConcern']);
         }
@@ -175,17 +189,23 @@ class Update implements Executable, Explainable
      * @see Executable::execute()
      * @param Server $server
      * @return UpdateResult
-     * @throws UnsupportedException if hint or write concern is used and unsupported
+     * @throws UnsupportedException if array filters or collation is used and unsupported
      * @throws DriverRuntimeException for other driver errors (e.g. connection errors)
      */
     public function execute(Server $server)
     {
-        /* CRUD spec requires a client-side error when using "hint" with an
-         * unacknowledged write concern on an unsupported server. */
-        if (
-            isset($this->options['writeConcern']) && ! is_write_concern_acknowledged($this->options['writeConcern']) &&
-            isset($this->options['hint']) && ! server_supports_feature($server, self::$wireVersionForHint)
-        ) {
+        if (isset($this->options['arrayFilters']) && ! server_supports_feature($server, self::$wireVersionForArrayFilters)) {
+            throw UnsupportedException::arrayFiltersNotSupported();
+        }
+
+        if (isset($this->options['collation']) && ! server_supports_feature($server, self::$wireVersionForCollation)) {
+            throw UnsupportedException::collationNotSupported();
+        }
+
+        /* Server versions >= 3.4.0 raise errors for unknown update
+         * options. For previous versions, the CRUD spec requires a client-side
+         * error. */
+        if (isset($this->options['hint']) && ! server_supports_feature($server, self::$wireVersionForHintServerSideError)) {
             throw UnsupportedException::hintNotSupported();
         }
 
@@ -194,7 +214,15 @@ class Update implements Executable, Explainable
             throw UnsupportedException::writeConcernNotSupportedInTransaction();
         }
 
-        $bulk = new Bulk($this->createBulkWriteOptions());
+        $bulkOptions = [];
+
+        if (! empty($this->options['bypassDocumentValidation']) &&
+            server_supports_feature($server, self::$wireVersionForDocumentLevelValidation)
+        ) {
+            $bulkOptions['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
+        }
+
+        $bulk = new Bulk($bulkOptions);
         $bulk->update($this->filter, $this->update, $this->createUpdateOptions());
 
         $writeResult = $server->executeBulkWrite($this->databaseName . '.' . $this->collectionName, $bulk, $this->createExecuteOptions());
@@ -202,43 +230,21 @@ class Update implements Executable, Explainable
         return new UpdateResult($writeResult);
     }
 
-    /**
-     * Returns the command document for this operation.
-     *
-     * @see Explainable::getCommandDocument()
-     * @param Server $server
-     * @return array
-     */
     public function getCommandDocument(Server $server)
     {
         $cmd = ['update' => $this->collectionName, 'updates' => [['q' => $this->filter, 'u' => $this->update] + $this->createUpdateOptions()]];
-
-        if (isset($this->options['bypassDocumentValidation'])) {
-            $cmd['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
-        }
 
         if (isset($this->options['writeConcern'])) {
             $cmd['writeConcern'] = $this->options['writeConcern'];
         }
 
-        return $cmd;
-    }
-
-    /**
-     * Create options for constructing the bulk write.
-     *
-     * @see https://www.php.net/manual/en/mongodb-driver-bulkwrite.construct.php
-     * @return array
-     */
-    private function createBulkWriteOptions()
-    {
-        $options = [];
-
-        if (isset($this->options['bypassDocumentValidation'])) {
-            $options['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
+        if (! empty($this->options['bypassDocumentValidation']) &&
+            server_supports_feature($server, self::$wireVersionForDocumentLevelValidation)
+        ) {
+            $cmd['bypassDocumentValidation'] = $this->options['bypassDocumentValidation'];
         }
 
-        return $options;
+        return $cmd;
     }
 
     /**
