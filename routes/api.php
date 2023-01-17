@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-//Route::group(['middleware' => ['auth:api']], function () {
+Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('/role', 'RoleController@index');
     Route::post('/role', 'RoleController@store');
@@ -71,6 +71,6 @@ use Illuminate\Support\Facades\Route;
     Route::post('/regis-iso-doc/{id}', 'RegisIsoDocController@update');
     Route::delete('/regis-iso-doc/{id}', 'RegisIsoDocController@destroy');
 
-//});
+});
 
 Route::post('/login', 'AuthController@login');

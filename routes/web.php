@@ -22,10 +22,12 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-
+Route::group(['middleware' => ['auth:api']], function () {
+});
 Route::get('/blank', function () {
    return view('example/blank');
 });
+
 
 Route::prefix('component')->group(function () {
     Route::get('/forminput', function () {
