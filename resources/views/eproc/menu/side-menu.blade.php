@@ -346,7 +346,7 @@
                                     -->
                                     
                                     <li>
-                                        <a href="home.php?<?php echo token(); ?>mnu=dwldmfo<?php echo token2(); ?>">
+                                        <a href="{{route('delivery.schedule.mf')}}">
                                             <i class="fa fa-dot-circle-o" ></i> Download Mf Order </a>
                                     </li>
 
