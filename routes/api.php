@@ -71,6 +71,10 @@ use Illuminate\Support\Facades\Route;
     Route::post('/regis-iso-doc/{id}', 'RegisIsoDocController@update');
     Route::delete('/regis-iso-doc/{id}', 'RegisIsoDocController@destroy');
 
+    Route::get('/report-iso-doc', 'ReportIsoDocController@index');
+
+    Route::get('/dashboard-iso-doc', 'DashboardIsoDocController@index');
+
 //});
 
 Route::post('/login', 'AuthController@login');
