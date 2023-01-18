@@ -13,6 +13,8 @@ class Role extends Model
         'deleted_at'
     ];
 
+    protected $fillable = ['name'];
+
     public function permissions()
     {
         return $this->embedsMany(Permission::class);
