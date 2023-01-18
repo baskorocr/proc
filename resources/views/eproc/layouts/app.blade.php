@@ -22,9 +22,13 @@
     
     <link rel="icon" type="image/x-icon" href="../img/favicon3.png" />
     <!-- bootstrap 3.0.2 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" />
     <!-- font Awesome -->
      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.0.3/css/font-awesome.min.css" integrity="sha512-PIAUVU8u1vAd0Sz1sS1bFE5F1YjGqm/scQJ+VIUJL9kNa8jtAWFUDMu5vynXPDprRRBqHrE8KKEsjA7z22J1FA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.21/css/dataTables.bootstrap4.min.css" integrity="sha512-PIAUVU8u1vAd0Sz1sS1bFE5F1YjGqm/scQJ+VIUJL9kNa8jtAWFUDMu5vynXPDprRRBqHrE8KKEsjA7z22J1FA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.18/css/dataTables.bootstrap.min.css" integrity="sha512-0YVVtCCoMlojS9USh8nXXYNhCxaeqJqTPJtJhBvtzrashDrRU8N9VWOxaBA5gfDlXYIDhbB/IxoMGZeZivOjew==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/js/jquery.dataTables.min.js" integrity="sha512-BkpSL20WETFylMrcirBahHfSnY++H2O1W+UnEEO4yNIl+jI2+zowyoGJpbtk6bx97fBXf++WJHSSK2MV4ghPcg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <!-- Ionicons -->
     <link href="../css/ionicons.min.css" rel="stylesheet" type="text/css" />
     <!-- Morris chart -->
@@ -45,12 +49,12 @@
     <link href="../css/AdminLTE.css" rel="stylesheet" type="text/css" />
     <!-- DATA TABLES -->
         
-    <link href="../css/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables/1.10.21/css/dataTables.bootstrap.min.css" integrity="sha512-BMbq2It2D3J17/C7aRklzOODG1IQ3+MHw3ifzBHMBwGO/0yUqYmsStgBjI0z5EYlaDEFnvYV7gNYdD3vFLRKsA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <!--
     <link href="../css/datatables/jquery.dataTables.min.css" rel="stylesheet" type="text/css" />
     -->
-    <link href="../css/datatables/buttons.dataTables.min.css" rel="stylesheet" type="text/css" />
+
     
 
     <link rel="stylesheet" href="../select/dist/css/bootstrap-select.css">
@@ -140,9 +144,6 @@
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
 -->
 
-<script src="../ajax/ajax-jquery.min.js"></script>
-
-<script src="../jquery-2/jquery.min.js"></script>
 
 <!-- jQuery UI 1.10.3 -->
 <script src="../js/jquery-ui-1.10.3.min.js" type="text/javascript"></script>
@@ -191,16 +192,16 @@
 
 
 <!-- DATA TABLES SCRIPT -->
-<script src="../js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
-<script src="../js/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
+
+{{-- <script src="../js/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
 
 <script src="../js/plugins/datatables/addon/dataTables.buttons.min.js" type="text/javascript"></script>
 <script src="../js/plugins/datatables/addon/buttons.flash.min.js" type="text/javascript"></script>
 <script src="../js/plugins/datatables/addon/jszip.min.js" type="text/javascript"></script>
 <script src="../js/plugins/datatables/addon/pdfmake.min.js" type="text/javascript"></script>
 <script src="../js/plugins/datatables/addon/vfs_fonts.js" type="text/javascript"></script>
-<script src="../js/plugins/datatables/addon/buttons.html5.min.js" type="text/javascript"></script>
-<script src="../js/plugins/datatables/addon/buttons.print.min.js" type="text/javascript"></script>
+<script src="../js/plugins/datatables/addon/buttons.html5.min.js" type="text/javascript"></script> --}}
+{{-- <script src="../js/plugins/datatables/addon/buttons.print.min.js" type="text/javascript"></script> --}}
 
 <script src="../js/plugins/input-mask/jquery.inputmask.js" type="text/javascript"></script>
 <script src="../js/plugins/input-mask/jquery.inputmask.date.extensions.js" type="text/javascript"></script>
@@ -297,5 +298,6 @@
 
 
 </script>
+    @yield('javascript')
 </body>
 </html>
