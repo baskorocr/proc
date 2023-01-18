@@ -5,17 +5,18 @@ namespace App\Models;
 use Jenssegers\Mongodb\Auth\User as Authenticable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Role;
 
 class User extends Authenticable
 {
-    protected $table = "user";
-
     public $dates = ['deleted_at'];
     
     protected $hidden = [
         'password', 
         'api_token'
     ];
+
+    protected $fillable = ['role'];
 
     //protected $appends = ['photo_url'];
     
@@ -27,6 +28,6 @@ class User extends Authenticable
 
     public function role()
     {
-        return $this->belongsTo('App\Role');
+        return $this->belongsTo('App\Models\Role');
     }
 }
