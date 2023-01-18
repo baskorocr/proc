@@ -24,7 +24,7 @@
 --}}
 
 <?php include resource_path('views')."/eproc/menu/top-menu.php";?>
-<?php include resource_path('views')."/eproc//menu/side-menu.php";?>
+@include('eproc/menu/side-menu');
 
     <!-- Right side column. Contains the navbar and content of the page -->
     <aside class="right-side">

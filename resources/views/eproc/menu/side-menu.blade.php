@@ -14,7 +14,7 @@
                     <ul class="sidebar-menu">
                      <!-- in_array('1', $_SESSION['access_menu']) $_SESSION['role'] == 'admin' -->
                     <?php if( in_array('userreg', session('menu_group')) )
-					{ ?> <!-- or $_SESSION['role'] == 'proc' -->
+                    { ?> <!-- or $_SESSION['role'] == 'proc' -->
 
                         <!-- MENU FOR REGISTERING VENDOR-->
                         <li class="treeview">
@@ -121,7 +121,7 @@
                         <?php //if($_SESSION['role']=='admin' or $_SESSION['role']=='vendor' or $_SESSION['role']=='proc'  or $_SESSION['role']=='qa' or $_SESSION['role']=='eng'){ ?>
                         
                         <?php if( in_array('projectmgt', session('menu_group') ))
-						{ ?>
+                        { ?>
                         
                         <!-- MENU FOR DOCUMENT PROJECT -->
                         <li class="treeview">
@@ -237,7 +237,7 @@
                         <?php //if($_SESSION['role']=='admin' or $_SESSION['role']=='proc' or $_SESSION['role']=='vendor' ) { ?>
 
                         <?php if( in_array('purchproc', session('menu_group')) )
-						{ ?>    
+                        { ?>    
 
                             <li class="treeview">
                                 <a href="#">
@@ -323,7 +323,7 @@
                         <?php //if($_SESSION['role']=='admin' or $_SESSION['role']=='proc'){ ?>
                         
                         <?php if( in_array('deliverysch', session('menu_group')) )
-						{ ?>  
+                        { ?>  
 
                             <li class="treeview">
                                 <a href="#">    
@@ -346,12 +346,12 @@
                                     -->
                                     
                                     <li>
-                                        <a href="home.php?<?php echo token(); ?>mnu=dwldmfo<?php echo token2(); ?>">
+                                        <a href="{{route('delivery.schedule.mf')}}">
                                             <i class="fa fa-dot-circle-o" ></i> Download Mf Order </a>
                                     </li>
 
                                     <li>
-                                        <a href="home.php?<?php echo token(); ?>mnu=dwldspo<?php echo token2(); ?>">
+                                        <a href="{{route('delivery.schedule.spc')}}">
                                             <i class="fa fa-dot-circle-o" ></i> Download Spc Order </a>
                                     </li>
 
@@ -365,7 +365,7 @@
                         <?php } ?>
 
                         <?php if( in_array('dociso', session('menu_group')) )
-						{ ?>  
+                        { ?>  
 
                             <li class="treeview">
                                 <a href="#">    

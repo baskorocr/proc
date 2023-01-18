@@ -24,7 +24,7 @@ function ip_detect()
 
 
 function mac_detect(){
-    $_IP_SERVER = $_SERVER['SERVER_ADDR'];
+    $_IP_SERVER = empty($_SERVER['SERVER_ADDR'])?  $_SERVER['REMOTE_ADDR']:$_SERVER['SERVER_ADDR'];
     $_IP_ADDRESS = $_SERVER['REMOTE_ADDR']; 
     $mac;
     
