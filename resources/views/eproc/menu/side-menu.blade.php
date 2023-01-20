@@ -356,7 +356,7 @@
                                     </li>
 
                                     <li>
-                                        <a href="home.php?<?php echo token(); ?>mnu=dashsch<?php echo token2(); ?>">
+                                        <a href="{{route('monitoring.delivery')}}">
                                             <i class="fa fa-dot-circle-o" ></i> Monitoring Delivery </a>
                                     </li>
                                 </ul>
