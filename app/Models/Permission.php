@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Jenssegers\Mongodb\Eloquent\Model;
+use App\Models\Permission;
 
 class Permission extends Model
 {
@@ -20,6 +21,6 @@ class Permission extends Model
 
     public function children()
     {
-        return $this->hasMany('App\Permission', 'parent_id', '_id')->orderBy('order_number');
+        return $this->hasMany('App\Models\Permission', 'parent_id', '_id')->orderBy('order_number');
     }
 }

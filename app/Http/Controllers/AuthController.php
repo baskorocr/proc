@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use App\Models\Permission;
+use App\Models\Role;
 use Validator;
 
 class AuthController extends Controller
@@ -40,14 +41,14 @@ class AuthController extends Controller
                     'message' => 'Account not found',
                     'user' => $user,
                     'request' => $request->all(),
-                    'user' => User::all()
+                    //'user' => User::all()
                 ], 422);
 
             } else if (!Hash::check($request->password, $user->password)){
 
                 return response()->json([
                     'type' => 'error',
-                    'message' => 'Please check your email or password!',
+                    'message' => 'Please check username or password!'
                 ], 422);
 
             } else {
