@@ -9,6 +9,8 @@ use App\Models\Role;
 
 class User extends Authenticable
 {
+    protected $table = "user";
+
     public $dates = ['deleted_at'];
     
     protected $hidden = [
