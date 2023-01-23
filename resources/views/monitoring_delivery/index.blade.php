@@ -24,7 +24,7 @@
 							</div>
 						</div>
 						<hr>
-						<table  class="table table-bordered table-stripped table-sm" id="download-manifest">
+						<table  class="table table-bordered table-stripped table-sm" id="monitoring-delivery">
 							<thead>
 								<th>Manifest</th>
 								<th>Delivery Date</th>
@@ -49,8 +49,8 @@
         </section>
 @endsection
 @section('javascript')
-	{{-- <script>
-		 $('#download-manifest').DataTable({
+	<script>
+		 $('#monitoring-delivery').DataTable({
                                 "order": [[ 1, "asc" ]],
                                 processing: true,
                                 serverSide: true,
@@ -58,55 +58,43 @@
                                 "language": {
                 "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
               },
-                                ajax: "{{ route('api.schedule.delivery.datatables')}}",
+                                ajax: "{{ route('api.monitoring.delivery.datatables')}}",
                                 columns: [
                                 	{
-                                        data: 'download_check',
-                                        name: 'download_check'
-                                    },{
                                         data: 'manifest',
                                         name: 'manifest'
-                                    },
-                                    {
+                                    },{
                                         data: 'delivery_date',
                                         name: 'delivery_date'
-                                    },{
+                                    },
+                                    {
                                         data: 'po_num',
                                         name: 'po_num'
                                     },{
-                                        data: 'id_vendor',
-                                        name: 'id_vendor'
+                                        data: 'nm_vendor',
+                                        name: 'nm_vendor'
+                                    },{
+                                        data: 'kanban_stat',
+                                        name: 'kanban_stat'
                                     },
                                     {
-                                        data: 'vendor_name',
-                                        name: 'vendor_name'
+                                        data: 'scan_stat',
+                                        name: 'scan_stat'
                                     },
                                     {
-                                        data: 'vendor_email',
-                                        name: 'vendor_email'
+                                        data: 'receive_stat',
+                                        name: 'receive_stat'
                                     },
                                     {
-                                        data: 'mail_stat',
-                                        name: 'mail_stat'
+                                        data: 'active_stat',
+                                        name: 'active_stat'
                                     },
                                     {
-                                        data: 'downloaded',
-                                        name: 'downloaded'
-                                    },
-                                    {
-                                        data: 'file_stat',
-                                        name: 'file_stat'
-                                    },
-                                    {
-                                        data: 'active',
-                                        name: 'active'
-                                    },
-                                     {
-                                        data: 'file_nm',
-                                        name: 'file_nm'
+                                        data: 'button',
+                                        name: 'button'
                                     },
                                 ]
                             });
                    
-	</script> --}}
+	</script>
 @endsection

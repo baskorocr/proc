@@ -28,7 +28,7 @@ class User extends Authenticable
     //     ? url('storage/images/'.$this->photo) : null;
     // }
 
-    public function role()
+    public function roles()
     {
         return $this->belongsTo('App\Models\Role');
     }

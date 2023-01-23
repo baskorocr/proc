@@ -19,7 +19,13 @@ class DeliveryScheduleController extends Controller
 
     public function getDeliveryMf()
     {
-       $data = ManifestHeader::where('mf_type','MI')->get();
+       if(auth()->user()->role == 'vendor')
+       {
+             $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
+       } else {
+            $data = ManifestHeader::orderBy('delivery_date','DESC')->where('mf_type','MI')->get();
+       }
+ 
        return \DataTables::of($data)
           
             ->editColumn('delivery_date', function ($data) {
@@ -74,7 +80,12 @@ class DeliveryScheduleController extends Controller
 
     public function getDeliverySPC()
     {
-       $data = ManifestHeader::where('mf_type','SO')->get();
+        if(auth()->user()->role == 'vendor')
+       {
+             $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','SO')->get();
+       } else {
+            $data = ManifestHeader::orderBy('delivery_date','DESC')->where('mf_type','SO')->get();
+       }
        return \DataTables::of($data)
           
             ->editColumn('delivery_date', function ($data) {
