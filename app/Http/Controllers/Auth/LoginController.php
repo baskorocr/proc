@@ -57,7 +57,7 @@ class LoginController extends Controller
      */
     public function showLoginForm()
     {
-        return view('eproc.login');
+        return view('login_eproc.login');
     }
 	
 	/**
