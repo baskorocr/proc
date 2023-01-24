@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
    // return view('welcome');
-    return view('eproc.login');
+    return view('login_eproc.login');
 });
 
 Auth::routes();

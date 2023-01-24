@@ -1,4 +1,4 @@
-@extends('eproc.layouts.app')
+@extends('layouts.app')
 @section('content')
 <?php include resource_path('views')."/eproc/menu/top-menu.php";?>
 @include('eproc/menu/side-menu')
