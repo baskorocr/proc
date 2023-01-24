@@ -75,6 +75,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('/dashboard-iso-doc', 'DashboardIsoDocController@index');
 
-//});
+});
 
 Route::post('/login', 'AuthController@login');

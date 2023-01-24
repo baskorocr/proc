@@ -13,7 +13,7 @@ class ManifestDetail extends Model
 
     protected $fillable = ['kanban','seq_kanban','manifest','item','material','material_desc','qty_pack','qty_in','arrival_date','arrival_time','scan_by','issued_date','issued_time','active'];
     // type : spc,Mf
-    public $dates = ['deleted_at'];
+    public $dates = ['deleted_at','arrival_date','arrival_time'];
     
    
     public function manifestHeaders()
