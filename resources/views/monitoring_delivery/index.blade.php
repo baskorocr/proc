@@ -1,4 +1,5 @@
 @extends('layouts.main')
+@section('title',"Monitoring Delivery")
 @section('content')
 <main id="main" class="main">
     <div class="pagetitle">
