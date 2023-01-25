@@ -45,33 +45,33 @@ class DeliveryScheduleController extends Controller
             ->addColumn('mail_stat', function ($data) {
                if(!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00'))
                {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
+                return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
+                 return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             }) 
             ->addColumn('downloaded', function ($data) {
                if(!empty($data->downloaded) || ($data->downloaded != '0000-00-00 00:00:00'))
                {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
+                return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
+                 return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             })
              ->addColumn('file_stat', function ($data) {
                if(!empty($data->file_nm))
                {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
+                return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
+                 return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             }) 
              ->addColumn('active', function ($data) {
                if($data->active == "A")
                {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
+                return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
+                 return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             })
             ->rawColumns(['download_check','mail_stat','downloaded','file_stat','active'])
@@ -105,33 +105,33 @@ class DeliveryScheduleController extends Controller
             ->addColumn('mail_stat', function ($data) {
                if(!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00'))
                {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
+                return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
+                 return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             }) 
             ->addColumn('downloaded', function ($data) {
                if(!empty($data->downloaded) || ($data->downloaded != '0000-00-00 00:00:00'))
                {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
+                return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
+                 return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             })
              ->addColumn('file_stat', function ($data) {
                if(!empty($data->file_nm))
                {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
+                return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
+                 return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             }) 
              ->addColumn('active', function ($data) {
                if($data->active == "A")
                {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
+                return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
+                 return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             })
             ->rawColumns(['download_check','mail_stat','downloaded','file_stat','active'])
