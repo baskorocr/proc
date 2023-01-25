@@ -1,4 +1,4 @@
-@extends('eproc.layouts.app')
+@extends('layouts.app')
 @section('content')
 @include('eproc/menu/top-menu')
 @include('eproc/menu/side-menu')
@@ -10,7 +10,9 @@
             <div class="box">
                 <div class="box-body">
                 	<h3>
-						Monitoring Delivery
+						
+                    Monitoring Delivery Schedule - Detail Kanban
+
 						</h3>
 						<div class="row">
 							<div class="col-md-6">
@@ -24,17 +26,17 @@
 							</div>
 						</div>
 						<hr>
-						<table  class="table table-bordered table-stripped table-sm" id="monitoring-delivery">
+						<table  class="table table-bordered table-stripped table-sm" id="detail-kanban">
 							<thead>
-								<th>Manifest</th>
-								<th>Delivery Date</th>
-								<th>PO Number</th>
-								<th>Vendor Name</th>
-								<th>Total Kanban</th>
+								<th>Kanban</th>
+								<th>Arrival Date & Time</th>
+								<th>Material</th>
+								<th>Material Descr.</th>
+								<th>UoM</th>
+								<th>Qty</th>
 								<th>Scan Stat</th>
 								<th>GR Stat</th>
-								<th>MF Stat</th>
-								<th><i class="fa fa-list"></i></th>
+                                <th>Kanban Stat</th>
 							
 							</thead>
 							<tbody>
@@ -50,7 +52,7 @@
 @endsection
 @section('javascript')
 	<script>
-		 $('#monitoring-delivery').DataTable({
+		 $('#detail-kanban').DataTable({
                                 "order": [[ 1, "asc" ]],
                                 processing: true,
                                 serverSide: true,
@@ -58,24 +60,30 @@
                                 "language": {
                 "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
               },
-                                ajax: "{{ route('api.monitoring.delivery.datatables')}}",
+                                ajax: "{{ route('api.monitoring.delivery.detail.kanban.datatables',['manifest' => $manifest])}}",
                                 columns: [
                                 	{
-                                        data: 'manifest',
-                                        name: 'manifest'
+                                        data: 'kanban',
+                                        name: 'kanban'
                                     },{
-                                        data: 'delivery_date',
-                                        name: 'delivery_date'
+                                        data: 'arrival_date_time',
+                                        name: 'arrival_date_time'
                                     },
                                     {
-                                        data: 'po_num',
-                                        name: 'po_num'
-                                    },{
-                                        data: 'nm_vendor',
-                                        name: 'nm_vendor'
-                                    },{
-                                        data: 'kanban_stat',
-                                        name: 'kanban_stat'
+                                        data: 'material',
+                                        name: 'material'
+                                    },
+                                    {
+                                        data: 'material_desc',
+                                        name: 'material_desc'
+                                    },
+                                    {
+                                        data: 'uom',
+                                        name: 'uom'
+                                    },
+                                    {
+                                        data: 'qty',
+                                        name: 'qty'
                                     },
                                     {
                                         data: 'scan_stat',
@@ -86,12 +94,8 @@
                                         name: 'receive_stat'
                                     },
                                     {
-                                        data: 'active_stat',
-                                        name: 'active_stat'
-                                    },
-                                    {
-                                        data: 'button',
-                                        name: 'button'
+                                        data: 'kanban_stat',
+                                        name: 'kanban_stat'
                                     },
                                 ]
                             });

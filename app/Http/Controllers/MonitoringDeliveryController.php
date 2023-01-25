@@ -12,6 +12,16 @@ class MonitoringDeliveryController extends Controller
     {
         return view('monitoring_delivery/index');
     }
+    
+    public function detail_material($manifest)
+    {
+        return view('monitoring_delivery/detail_material')->with(['manifest' => $manifest]);
+    }
+
+    public function detail_kanban($manifest)
+    {
+        return view('monitoring_delivery/detail_kanban')->with(['manifest' => $manifest]);
+    }
 
     public function getDelivery(Request $request)
     {
@@ -133,64 +143,202 @@ class MonitoringDeliveryController extends Controller
             })
             ->editColumn('button', function ($data) {
                 
-                return view('monitoring_delivery/buttons');
+                return view('monitoring_delivery/buttons')->with(['data' => $data]);
             })
             ->rawColumns(['scan_stat','kanban_stat','active_stat','kanban_stat','receive_stat','button'])
             ->make(true);
     }
 
-    public function getDeliverySPC()
+    public function getMaterialDetail(Request $request)
     {
-       $data = ManifestHeader::where('mf_type','SO')->get();
+       
+        $data = ManifestDetail::where('manifest',$request->manifest)->orderBy('delivery_date','DESC')->get();
+      
        return \DataTables::of($data)
           
+            
+            ->editColumn('manifest', function ($data) {
+                
+               return  $data->manifest;
+            })
             ->editColumn('delivery_date', function ($data) {
                 
-               return  date('Y-m-d',strtotime($data->delivery_date));
-            }) 
-            ->addColumn('vendor_name', function ($data) {
-               return empty($data->vendors) ? "-":$data->vendors->nm_vendor;
+                return  date('Y-m-d',strtotime($data->manifestHeaders->delivery_date));
             })
-            ->addColumn('vendor_email', function ($data) {
-               return empty($data->vendors->user) ? "-":$data->vendors->user->username;
+            ->editColumn('po_num', function ($data) {
+                
+                return  $data->manifestHeaders->po_num;
+            })
+            ->editColumn('item', function ($data) {
+                
+                return  $data->item;
+            })
+            ->editColumn('id_vendor', function ($data) {
+                
+                return $data->manifestHeaders->id_vendor;
+            })
+            ->editColumn('nm_vendor', function ($data) {
+                
+                return $data->manifestHeaders->vendors->nm_vendor;
+            })
+            ->editColumn('material', function ($data) {
+                
+                return @$data->material;
+            })
+            ->editColumn('material_desc', function ($data) {
+                
+                return @$data->material_desc;
+            })
+            ->editColumn('scan_stat', function ($data) {
+
+                if($data->stat == "P")
+                {
+                    $stat = ManifestDetail::where('manifest', $data->manifest);
+                     if ($stat->sum('qty_pack') == $stat->sum('qty_in')) {
+                        $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                    } else {
+                        $scan_stat = "<small><h4><span class=\"badge bg-blue\">On Progress</span></h4></small>";
+                    }
+                } elseif($data->stat == "H")
+                {
+
+                 $scan_stat = "<small><h4><span class=\"badge bg-red\">Outstanding</span></h4></small>";
+
+                }elseif ($data->stat  == "D"){
+                    $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                } else {
+                    $scan_stat = "<small><h4><span class=\"badge bg-orange\">Waiting</span></h4></small>";
+                }
+                return $scan_stat;
+            })
+             ->editColumn('receive_stat', function ($data) {
+                $kanban_in = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+                $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
+                  if ($tot_kanban == $kanban_in) {
+                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                    } else {
+                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                    }
+                return $receive_stat;
+            })
+            ->editColumn('kanban_stat', function ($data) {
+                $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
+                  if ($data->count('kanban') == $kanban_received) {
+                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                    } else {
+                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                    }
+                return $receive_stat;
             })
 
-            ->addColumn('download_check', function ($data) {
-               return '<input type="checkbox" name="downloadchk[]" value="'.$data->id.'">';
+            ->addColumn('recieved_kanban', function ($data) {
+                
+                return ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
             })
-            ->addColumn('mail_stat', function ($data) {
-               if(!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00'))
-               {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
-               } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
-            
-            }) 
-            ->addColumn('downloaded', function ($data) {
-               if(!empty($data->downloaded) || ($data->downloaded != '0000-00-00 00:00:00'))
-               {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
-               } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
-            
+            ->addColumn('uom', function ($data) {
+                
+                return "PCE";
             })
-             ->addColumn('file_stat', function ($data) {
-               if(!empty($data->file_nm))
-               {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
-               } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
-            
-            }) 
-             ->addColumn('active', function ($data) {
-               if($data->active == "A")
-               {
-                return "<small><i class='fa fa-check-circle' style='color: green;'></i></small>";
-               } 
-                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'></i></small>";
-            
+            ->addColumn('qty', function ($data) {
+                
+                // return ManifestDetail::where('manifest', $data->manifest)->sum('qty_pack');
+               return $data->qty_pack;;
             })
-            ->rawColumns(['download_check','mail_stat','downloaded','file_stat','active'])
+            ->rawColumns(['scan_stat','kanban_stat','active_stat','kanban_stat','receive_stat'])
             ->make(true);
     }
+
+    public function getKanbanDetail(Request $request)
+    {
+       
+        $data = ManifestDetail::where('manifest',$request->manifest)->orderBy('delivery_date','DESC')->get();
+      
+       return \DataTables::of($data)
+          
+            
+            ->editColumn('kanban', function ($data) {
+                
+               return  $data->kanban;
+            })
+            ->editColumn('arrival_date_time', function ($data) {
+                
+                return  date('Y-m-d H:i:s',strtotime($data->arrival_date));
+            })
+            ->editColumn('material', function ($data) {
+                
+                return @$data->material;
+            })
+            ->editColumn('material_desc', function ($data) {
+                
+                return @$data->material_desc;
+            })
+            ->editColumn('scan_stat', function ($data) {
+
+                if($data->stat == "P")
+                {
+                    $stat = ManifestDetail::where('manifest', $data->manifest);
+                     if ($stat->sum('qty_pack') == $stat->sum('qty_in')) {
+                        $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                    } else {
+                        $scan_stat = "<small><h4><span class=\"badge bg-blue\">On Progress</span></h4></small>";
+                    }
+                } elseif($data->stat == "H")
+                {
+
+                 $scan_stat = "<small><h4><span class=\"badge bg-red\">Outstanding</span></h4></small>";
+
+                }elseif ($data->stat  == "D"){
+                    $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                } else {
+                    $scan_stat = "<small><h4><span class=\"badge bg-orange\">Waiting</span></h4></small>";
+                }
+                return $scan_stat;
+            })
+             ->editColumn('receive_stat', function ($data) {
+                $kanban_in = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+                $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
+                  if ($tot_kanban == $kanban_in) {
+                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                    } else {
+                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                    }
+                return $receive_stat;
+            })
+            ->editColumn('kanban_stat', function ($data) {
+                $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
+                  if ($data->count('kanban') == $kanban_received) {
+                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                    } else {
+                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                    }
+                return $receive_stat;
+            })
+             ->editColumn('active_stat', function ($data) {
+               if ($data->active == 'O') {
+                     $active_stat = "<small><h4><span class=\"badge bg-orange\">Open</span></h4></small>";
+                } else {
+                    $active_stat = "<small><h4><span class=\"badge bg-green\">Closed</span></h4></small>";
+                }
+                return $active_stat;
+            })
+
+            ->addColumn('recieved_kanban', function ($data) {
+                
+                return ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+            })
+            ->addColumn('uom', function ($data) {
+                
+                return "PCE";
+            })
+            ->addColumn('qty', function ($data) {
+                
+                // return ManifestDetail::where('manifest', $data->manifest)->sum('qty_pack');
+                return $data->qty_pack;
+            })
+            ->rawColumns(['scan_stat','kanban_stat','active_stat','kanban_stat','receive_stat'])
+            ->make(true);
+    }
+    
 }
