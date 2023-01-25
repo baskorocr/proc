@@ -61,7 +61,7 @@
 	@section('javascript')
 	<script>
 		$('#download-manifest').DataTable({
-	"order": [[ 1, "asc" ]],
+	"order": [[ 1, "DESC" ]],
 	processing: true,
 	serverSide: true,
 	autoWidth:false,
