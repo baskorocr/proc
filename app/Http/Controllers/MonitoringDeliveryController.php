@@ -69,19 +69,19 @@ class MonitoringDeliveryController extends Controller
                 if($data->stat == "P")
                 {
                      if ($data->manifestDetails->sum('qty_pack') == $data->manifestDetails->sum('qty_in')) {
-                        $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                        $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
                     } else {
-                        $scan_stat = "<small><h4><span class=\"badge bg-blue\">On Progress</span></h4></small>";
+                        $scan_stat = "<small><span class=\"badge bg-primary\">On Progress</span></small>";
                     }
                 } elseif($data->stat == "H")
                 {
 
-                 $scan_stat = "<small><h4><span class=\"badge bg-red\">Outstanding</span></h4></small>";
+                 $scan_stat = "<small><span class=\"badge bg-danger\">Outstanding</span></small>";
 
                 }elseif ($data->stat  == "D"){
-                    $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                    $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
                 } else {
-                    $scan_stat = "<small><h4><span class=\"badge bg-orange\">Waiting</span></h4></small>";
+                    $scan_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
                 }
                 return $scan_stat;
             })
@@ -109,9 +109,9 @@ class MonitoringDeliveryController extends Controller
                 $kanban_in = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                 $tot_kanban = $data->manifestDetails->count('kanban');
                   if ($tot_kanban == $kanban_in) {
-                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     } else {
-                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     }
                 return $receive_stat;
             })
@@ -119,17 +119,17 @@ class MonitoringDeliveryController extends Controller
                 $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                  $tot_kanban = $data->manifestDetails->count('kanban');
                   if ($data->manifestDetails->count('kanban') == $kanban_received) {
-                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     } else {
-                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     }
                 return $receive_stat;
             })
             ->editColumn('active_stat', function ($data) {
                if ($data->active == 'O') {
-                     $active_stat = "<small><h4><span class=\"badge bg-orange\">Open</span></h4></small>";
+                     $active_stat = "<small><span class=\"badge bg-warning text-dark\">Open</span></small>";
                 } else {
-                    $active_stat = "<small><h4><span class=\"badge bg-green\">Closed</span></h4></small>";
+                    $active_stat = "<small><span class=\"badge bg-success\">Closed</span></small>";
                 }
                 return $active_stat;
             })
@@ -195,19 +195,19 @@ class MonitoringDeliveryController extends Controller
                 {
                     $stat = ManifestDetail::where('manifest', $data->manifest);
                      if ($stat->sum('qty_pack') == $stat->sum('qty_in')) {
-                        $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                        $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
                     } else {
-                        $scan_stat = "<small><h4><span class=\"badge bg-blue\">On Progress</span></h4></small>";
+                        $scan_stat = "<small><span class=\"badge bg-primary\">On Progress</span></small>";
                     }
                 } elseif($data->stat == "H")
                 {
 
-                 $scan_stat = "<small><h4><span class=\"badge bg-red\">Outstanding</span></h4></small>";
+                 $scan_stat = "<small><span class=\"badge bg-danger\">Outstanding</span></small>";
 
                 }elseif ($data->stat  == "D"){
-                    $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                    $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
                 } else {
-                    $scan_stat = "<small><h4><span class=\"badge bg-orange\">Waiting</span></h4></small>";
+                    $scan_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
                 }
                 return $scan_stat;
             })
@@ -215,9 +215,9 @@ class MonitoringDeliveryController extends Controller
                 $kanban_in = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
                   if ($tot_kanban == $kanban_in) {
-                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     } else {
-                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     }
                 return $receive_stat;
             })
@@ -225,9 +225,9 @@ class MonitoringDeliveryController extends Controller
                 $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                  $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
                   if ($data->count('kanban') == $kanban_received) {
-                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     } else {
-                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     }
                 return $receive_stat;
             })
@@ -279,19 +279,19 @@ class MonitoringDeliveryController extends Controller
                 {
                     $stat = ManifestDetail::where('manifest', $data->manifest);
                      if ($stat->sum('qty_pack') == $stat->sum('qty_in')) {
-                        $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                        $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
                     } else {
-                        $scan_stat = "<small><h4><span class=\"badge bg-blue\">On Progress</span></h4></small>";
+                        $scan_stat = "<small><span class=\"badge bg-primary\">On Progress</span></small>";
                     }
                 } elseif($data->stat == "H")
                 {
 
-                 $scan_stat = "<small><h4><span class=\"badge bg-red\">Outstanding</span></h4></small>";
+                 $scan_stat = "<small><span class=\"badge bg-danger\">Outstanding</span></small>";
 
                 }elseif ($data->stat  == "D"){
-                    $scan_stat = "<small><h4><span class=\"badge bg-green\">Done</span></h4></small>";
+                    $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
                 } else {
-                    $scan_stat = "<small><h4><span class=\"badge bg-orange\">Waiting</span></h4></small>";
+                    $scan_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
                 }
                 return $scan_stat;
             })
@@ -299,9 +299,9 @@ class MonitoringDeliveryController extends Controller
                 $kanban_in = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
                   if ($tot_kanban == $kanban_in) {
-                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     } else {
-                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_in . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     }
                 return $receive_stat;
             })
@@ -309,17 +309,17 @@ class MonitoringDeliveryController extends Controller
                 $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                  $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
                   if ($data->count('kanban') == $kanban_received) {
-                        $receive_stat = "<small><h4><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     } else {
-                        $receive_stat = "<small><h4><span class=\"badge bg-orange\">" . $kanban_received . "/" . $tot_kanban . "</span></h4></small>";
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     }
                 return $receive_stat;
             })
              ->editColumn('active_stat', function ($data) {
                if ($data->active == 'O') {
-                     $active_stat = "<small><h4><span class=\"badge bg-orange\">Open</span></h4></small>";
+                     $active_stat = "<small><span class=\"badge bg-warning text-dark\">Open</span></small>";
                 } else {
-                    $active_stat = "<small><h4><span class=\"badge bg-green\">Closed</span></h4></small>";
+                    $active_stat = "<small><span class=\"badge bg-success\">Closed</span></small>";
                 }
                 return $active_stat;
             })

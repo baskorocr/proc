@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Storage;
 
 class ManifestDetail extends Model
 {
+    //Connect To Other DB
     protected $connection = "mongodbpurch_proc";
+    // END Connect
     protected $table = "manifest_detail";
 
     protected $fillable = ['kanban','seq_kanban','manifest','item','material','material_desc','qty_pack','qty_in','arrival_date','arrival_time','scan_by','issued_date','issued_time','active'];
