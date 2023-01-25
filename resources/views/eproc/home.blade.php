@@ -23,8 +23,8 @@
 </div>
 --}}
 
-<?php include resource_path('views')."/eproc/menu/top-menu.php";?>
-@include('eproc/menu/side-menu');
+@include('eproc/menu/top-menu')
+@include('eproc/menu/side-menu')
 
     <!-- Right side column. Contains the navbar and content of the page -->
     <aside class="right-side">
@@ -378,7 +378,7 @@
 
                                 //=========================DEFAULT PAGE============================================
                                 default:
-                                    require resource_path('views')."/eproc/project_mgt/dashboard-monitoring-project.php";
+                                    // require resource_path('views')."/eproc/project_mgt/dashboard-monitoring-project.php";
                             }
 
                         // ROLE VENDOR

@@ -1,7 +1,7 @@
 <?php
 
-//include_once "conn/conn.php";
-//include_once "conn/conn_proc.php";
+// include_once "conn/conn.php";
+// include_once "conn/conn_proc.php";
 
 date_default_timezone_set("Asia/Jakarta");
 

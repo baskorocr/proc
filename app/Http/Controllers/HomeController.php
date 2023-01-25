@@ -57,6 +57,6 @@ class HomeController extends Controller
 		//var_dump($user->id_user);die;
 		//var_dump($data);die;
 				
-        return view('eproc.home', ['user' => $data]);
+        return view('home', ['user' => $data]);
     }
 }

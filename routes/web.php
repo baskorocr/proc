@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -15,15 +16,19 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
    // return view('welcome');
+    if(Auth::check())
+    {
+        return redirect('home');
+    }
     return view('login_eproc.login');
 });
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-// DELIVERY SCHEDULE MF
-Route::group(['middleware' => ['auth']], function () {
 
+Route::group(['middleware' => ['auth']], function () {
+    // DELIVERY SCHEDULE ROUTES
     Route::prefix('delivery-schedule')->group(function(){
         Route::get('/mf', [App\Http\Controllers\DeliveryScheduleController::class, 'index'])->name('delivery.schedule.mf');
         Route::get('/spc', [App\Http\Controllers\DeliveryScheduleController::class, 'index_spo'])->name('delivery.schedule.spc');
@@ -31,6 +36,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/spc/get-data',[App\Http\Controllers\DeliveryScheduleController::class, 'getDeliverySPC'])->name('api.schedule.delivery.spc.datatables');
     });
 
+    // Monitoring Delivery Routes
     Route::prefix('monitoring-delivery')->group(function(){
         Route::get('/', [App\Http\Controllers\MonitoringDeliveryController::class, 'index'])->name('monitoring.delivery');
         Route::get('/detail/materials/{manifest}',[App\Http\Controllers\MonitoringDeliveryController::class, 'detail_material'])->name('monitoring.delivery.detail.material');

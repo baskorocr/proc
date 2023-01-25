@@ -26,7 +26,7 @@
   <link href="{{ URL::asset('assets/template/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/simple-datatables/style.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" integrity="sha512-rqQltXRuHxtPWhktpAZxLHUVJ3Eombn3hvk9PHjV/N5DMUYnzKPC1i3ub0mEXgFzsaZNeJcoE0YHq0j/GFsdGg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Template Main CSS File -->
   <link href="{{ URL::asset('assets/template/css/style.css') }}" rel="stylesheet">
@@ -64,13 +64,13 @@
         
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="{{ URL::asset('assets/template/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">Admin</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{auth()->user()->nm_user}}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>Ujang Roberts</h6>
-              <span>Web Designer</span>
+              <h6>{{auth()->user()->username}}</h6>
+              <span>{{auth()->user()->role}}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -87,10 +87,15 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="#">
+              <a class="dropdown-item d-flex align-items-center" href="{{route('logout')}}" onclick="event.preventDefault();
+                     document.getElementById('logout-form').submit();">
+            
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                            @csrf
+                          </form>
             </li>
 
           </ul><!-- End Profile Dropdown Items -->
@@ -101,40 +106,7 @@
 
   </header><!-- End Header -->
 
-  <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
-
-    <ul class="sidebar-nav" id="sidebar-nav">
-    <li class="nav-heading">Main Menu</li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="{{ url('/blank') }}">
-          <i class="bi bi-grid"></i>
-          <span>Blank Page</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Components</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{{ url('/component/forminput') }}">
-              <i class="bi bi-circle"></i><span>Form Input</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{ url('/component/datatable') }}">
-              <i class="bi bi-circle"></i><span>DataTable</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-      
-    </ul>
-
-  </aside><!-- End Sidebar-->
+  @include('menu.side-menu')
 
   @yield('content')
   
@@ -165,7 +137,7 @@
     
   <!-- Template Main JS File -->
   <script src="{{ URL::asset('assets/template/js/main.js') }}"></script>
-
+@yield('javascript')
   <script>
   $(document).ready(function () {
     $('.datatables').DataTable();

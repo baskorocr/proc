@@ -1,10 +1,8 @@
 
-<form name="myForm" action="{{route('monitoring.delivery.detail.material',['manifest' => $data->manifest])}}" method="post" enctype="multipart/form-data" target="_blank">
-    {{-- <input type="hidden" name="mf" value="" readonly='true'> --}}
-    <button type="submit" name="mfmat" class="btn-success"  data-toggle="" title="material detail {{$data->manifest}}"><i class="fa fa-sitemap"></i></button>
-</form>
-<form name="myForm1" action="{{route('monitoring.delivery.detail.kanban',['manifest' => $data->manifest])}}" method="post" enctype="multipart/form-data" target="_blank">
-    {{-- <input type="hidden" name="mf" value="" readonly='true'> --}}
-    <button type="submit" name="mfkan" class="btn-primary" data-toggle="" title="kanban detail {{$data->manifest}}"><i class="fa fa-files-o"></i></button>
-</form>
-            
+<div class="btn-group" role="group" aria-label="Basic example">
+
+    <a href="{{route('monitoring.delivery.detail.material',['manifest' => $data->manifest])}}" title="Detail Material {{$data->manifest}}" class="btn btn-success" target="_blank"><i class="fas fa-sitemap"></i></button>
+    
+    <a href="{{route('monitoring.delivery.detail.kanban',['manifest' => $data->manifest])}}" title="Detail Kanban {{$data->manifest}}" class="btn btn-primary" target="_blank"><i class="fas fa-file"></i></button>
+
+</div>
