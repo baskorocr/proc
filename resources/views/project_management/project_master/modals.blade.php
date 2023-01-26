@@ -42,3 +42,45 @@
   </div>
   
 </div>
+
+  <div class="modal fade" id="assignDetailModal" role="dialog">
+    <div class="modal-dialog">
+    
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+               
+                <h4 class="modal-title">Assign Project to Product</h4>
+            </div>
+            <div class="modal-body">
+                <form role=form name="assign-project-form" id="assign-project-form" onSubmit="" action="" method="post" enctype="multipart/form-data">
+            @csrf
+                     <div class="form-group">
+                        <label>Choose Project</label>
+                            <select  style="width: 100%;" class="form-control option-select2" id="id_project_assign" name="id_project" required>
+                               @foreach($project as $p)
+                               <option value="{{$p->id_project}}">{{$p->proj_num}} - {{$p->nm_project}}</option>
+                               @endforeach
+                            </select>
+                    </div>  
+
+                    <div class="form-group">
+                        <label>Assign Product</label>
+                            <select multiple style="width: 100%;"  class="form-control  option-select2" id="id_product_assign" name="id_product[]" required>
+                               @foreach($product as $p)
+                               <option value="{{$p->id_product}}">{{$p->nm_product}}</option>
+                               @endforeach
+                            </select>
+                    </div>  
+
+                    <div class="modal-footer">
+                        <button type="submit" name="submit-assign" class="btn btn-primary"><i class="fas fa-check-square-o"></i> Assign</button>
+                    </div>
+        
+                </form>
+        </div>
+      
+    </div>
+  </div>
+  
+</div>
