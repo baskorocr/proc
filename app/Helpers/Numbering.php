@@ -28,6 +28,14 @@ class Numbering {
 		return $angka;
 	}
 
+	public static function autoIncrement($model,$kolom)
+	{
+		$get = $model->select($kolom)->orderBy($kolom,"DESC")->first();
+		$int = empty($get->{$kolom}) ? 0:$get->{$kolom};
+		$hasil = intval($int) + 1;
+
+		return $hasil;
+	}
     // $conn=mysqli_connect("localhost","root","") or die(mysqli_error($conn));
     // mysql_select_db("dp_eproc");
     // unset($hasil);

@@ -1,13 +1,13 @@
 @extends('layouts.main')
-@section('title',"Project Master ")
+@section('title',"Product Master ")
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Project Master</h1>
+		<h1>Product Master</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active">Project Master</li>
+				<li class="breadcrumb-item">Product Master</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -22,22 +22,23 @@
 								<i class="bi bi-list"></i></a>
 								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
 									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
-									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-project" href="#"><i class="fas fa-plus-square"></i>Create Project</a></li>
-									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#assignDetailModal" href="#"><i class="fas fa-arrow-down"></i>Assign Project Details</a></li>
-									<li><a class="dropdown-item" href="{{route('project.management.assign.master')}}"><i class="fa fa-table"></i>Project Assignment Data</a></li>
+									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-product" href="#"><i class="fas fa-plus-square"></i>Create Product</a></li>
+									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#assignDetailModal" href="#"><i class="fas fa-arrow-down"></i>Assign Product Details</a></li>
+									<li><a class="dropdown-item" href="{{route('project.management.assign.master.product')}}"><i class="fa fa-table"></i>Product Assignment Data</a></li>
 								</ul>
 								
 							</div>
 
+
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-proj-master">
+								<table  class="table table-bordered table-stripped table-sm" id="tb-prod-master">
 									<thead>
 										<th>#</th>
-										<th>Project Number</th>
-										<th>Project Name</th>
+										<th>Product Number</th>
+										<th>Product Name</th>
 										<th>Last Change Date</th>
-										<th>Last Changed by</th>
-										<th>Product Ass.</th>
+										<th>Last Change By</th>
+										<th>Part Ass.</th>
 										<th>Action</th>
 									</thead>
 									<tbody>
@@ -51,7 +52,7 @@
 			</div>
 		</section>
 	</main>
-	@include('project_management.project_master.modals')
+	@include('project_management.product_master.modals')
 	@endsection
 	@section('javascript')
 	<script>
@@ -60,7 +61,7 @@
  	$('.option-select2').select2({
  		  dropdownParent: $('.modal')
  	});
-		window.table = $('#tb-proj-master').DataTable({
+		window.table = $('#tb-prod-master').DataTable({
 			columnDefs: [
 	{
 	searchable: false,
@@ -74,30 +75,31 @@
 			"language": {
 			"processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
 			},
-			ajax: "{{ route('datatables.project.management.master')}}",
+			ajax: "{{ route('datatables.project.management.product.master')}}",
 			columns: [
 						{
 						data: 'DT_RowIndex',
 						name: 'DT_RowIndex'
 						},
 						{
-						data: 'proj_num',
-						name: 'proj_num'
+						data: 'prod_num',
+						name: 'prod_num'
 						},
 						{
-						data: 'nm_project',
-						name: 'nm_project'
-						},{
-						data: 'modify_date',
-						name: 'modify_date'
+						data: 'nm_product',
+						name: 'nm_product'
+						},
+						{
+						data: 'last_change_date',
+						name: 'last_change_date'
 						},
 						{
 						data: 'last_change_by',
 						name: 'last_change_by'
 						},
 						{
-						data: 'prod_assc',
-						name: 'prod_assc'
+						data: 'part_ass',
+						name: 'part_ass'
 						},
 						{
 						data: 'action',
@@ -113,13 +115,13 @@
 		});
 		}).draw();
 		})
-
-		$('#create-project-form').submit(function(e){
+// CRUD
+		$('#create-product-form').submit(function(e){
 			e.preventDefault();
-			axios.post('{{route('api.project.management.create.project')}}', {
-			    id_project:$('#id_project').val(),
-			    proj_num: $('#proj_num').val(),
-			    nm_project:$('#nm_project').val(),
+			axios.post('{{route('api.project.management.create.product')}}', {
+			    id_product:$('#id_product').val(),
+			    prod_num: $('#prod_num').val(),
+			    nm_product:$('#nm_product').val(),
 			    _token:$("input[name=_token]").val(),
 			  })
 			  .then(function (response) {
@@ -131,9 +133,9 @@
 					  'success'
 					)
 					$('#id_project').val('')
-					$('#proj_num').val('')
-					$('#nm_project').val('')
-					$('#create-project').modal('hide')
+					$('#prod_num').val('')
+					$('#nm_product').val('')
+					$('#create-product').modal('hide')
 					$(".option-select2").select2("val", "");
 					window.table.ajax.reload();
 			  	} else if(response.data.type == "error")
@@ -151,11 +153,11 @@
 			  });
 		})
 
-		$('#assign-project-form').submit(function(e){
+		$('#assign-product-form').submit(function(e){
 			e.preventDefault();
-			axios.post('{{route('api.project.management.assign.project')}}', {
-			    id_project:$('#id_project_assign').val(),
-			    id_product: $('#id_product_assign').val(),
+			axios.post('{{route('api.project.management.assign.product')}}', {
+			    id_product:$('#id_product_assign').val(),
+			    id_part: $('#id_part_assign').val(),
 			    _token:$("input[name=_token]").val(),
 			  })
 			  .then(function (response) {
@@ -200,7 +202,6 @@
 				    window.location = url;
 				  }
 				})
-		}
-	
+			}
 	</script>
 	@endsection
