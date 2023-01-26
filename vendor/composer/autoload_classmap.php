@@ -6,6 +6,11 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Alfa6661\\AutoNumber\\AutoNumber' => $vendorDir . '/alfa6661/laravel-autonumber/src/AutoNumber.php',
+    'Alfa6661\\AutoNumber\\AutoNumberServiceProvider' => $vendorDir . '/alfa6661/laravel-autonumber/src/AutoNumberServiceProvider.php',
+    'Alfa6661\\AutoNumber\\AutoNumberTrait' => $vendorDir . '/alfa6661/laravel-autonumber/src/AutoNumberTrait.php',
+    'Alfa6661\\AutoNumber\\Models\\AutoNumber' => $vendorDir . '/alfa6661/laravel-autonumber/src/Models/AutoNumber.php',
+    'Alfa6661\\AutoNumber\\Observers\\AutoNumberObserver' => $vendorDir . '/alfa6661/laravel-autonumber/src/Observers/AutoNumberObserver.php',
     'App\\Console\\Kernel' => $baseDir . '/app/Console/Kernel.php',
     'App\\Exceptions\\Handler' => $baseDir . '/app/Exceptions/Handler.php',
     'App\\Http\\Controllers\\AccessGroupListController' => $baseDir . '/app/Http/Controllers/AccessGroupListController.php',
@@ -24,11 +29,9 @@ return array(
     'App\\Http\\Controllers\\EmailListGroupController' => $baseDir . '/app/Http/Controllers/EmailListGroupController.php',
     'App\\Http\\Controllers\\HomeController' => $baseDir . '/app/Http/Controllers/HomeController.php',
     'App\\Http\\Controllers\\MasterNotifyController' => $baseDir . '/app/Http/Controllers/MasterNotifyController.php',
-    'App\\Http\\Controllers\\MenuGroupController' => $baseDir . '/app/Http/Controllers/MenuGroupController.php',
-    'App\\Http\\Controllers\\MenuListController' => $baseDir . '/app/Http/Controllers/MenuListController.php',
     'App\\Http\\Controllers\\MonitoringDeliveryController' => $baseDir . '/app/Http/Controllers/MonitoringDeliveryController.php',
-    'App\\Http\\Controllers\\NumberRangeController' => $baseDir . '/app/Http/Controllers/NumberRangeController.php',
     'App\\Http\\Controllers\\PermissionController' => $baseDir . '/app/Http/Controllers/PermissionController.php',
+    'App\\Http\\Controllers\\ProjectManagementController' => $baseDir . '/app/Http/Controllers/ProjectManagementController.php',
     'App\\Http\\Controllers\\RegisIsoDocController' => $baseDir . '/app/Http/Controllers/RegisIsoDocController.php',
     'App\\Http\\Controllers\\ReportIsoDocController' => $baseDir . '/app/Http/Controllers/ReportIsoDocController.php',
     'App\\Http\\Controllers\\RoleController' => $baseDir . '/app/Http/Controllers/RoleController.php',
@@ -56,6 +59,7 @@ return array(
     'App\\Models\\MenuList' => $baseDir . '/app/Models/MenuList.php',
     'App\\Models\\NumberRange' => $baseDir . '/app/Models/NumberRange.php',
     'App\\Models\\Permission' => $baseDir . '/app/Models/Permission.php',
+    'App\\Models\\Project' => $baseDir . '/app/Models/Project.php',
     'App\\Models\\RegisIsoDoc' => $baseDir . '/app/Models/RegisIsoDoc.php',
     'App\\Models\\ReportIsoDoc' => $baseDir . '/app/Models/ReportIsoDoc.php',
     'App\\Models\\Role' => $baseDir . '/app/Models/Role.php',

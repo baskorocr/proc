@@ -199,6 +199,7 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         array (
             'Asm89\\Stack\\' => 12,
             'App\\' => 4,
+            'Alfa6661\\AutoNumber\\' => 20,
         ),
     );
 
@@ -585,6 +586,10 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         array (
             0 => __DIR__ . '/../..' . '/app',
         ),
+        'Alfa6661\\AutoNumber\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/alfa6661/laravel-autonumber/src',
+        ),
     );
 
     public static $prefixesPsr0 = array (
@@ -605,6 +610,11 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
     );
 
     public static $classMap = array (
+        'Alfa6661\\AutoNumber\\AutoNumber' => __DIR__ . '/..' . '/alfa6661/laravel-autonumber/src/AutoNumber.php',
+        'Alfa6661\\AutoNumber\\AutoNumberServiceProvider' => __DIR__ . '/..' . '/alfa6661/laravel-autonumber/src/AutoNumberServiceProvider.php',
+        'Alfa6661\\AutoNumber\\AutoNumberTrait' => __DIR__ . '/..' . '/alfa6661/laravel-autonumber/src/AutoNumberTrait.php',
+        'Alfa6661\\AutoNumber\\Models\\AutoNumber' => __DIR__ . '/..' . '/alfa6661/laravel-autonumber/src/Models/AutoNumber.php',
+        'Alfa6661\\AutoNumber\\Observers\\AutoNumberObserver' => __DIR__ . '/..' . '/alfa6661/laravel-autonumber/src/Observers/AutoNumberObserver.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\AccessGroupListController' => __DIR__ . '/../..' . '/app/Http/Controllers/AccessGroupListController.php',
@@ -623,11 +633,9 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'App\\Http\\Controllers\\EmailListGroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/EmailListGroupController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\MasterNotifyController' => __DIR__ . '/../..' . '/app/Http/Controllers/MasterNotifyController.php',
-        'App\\Http\\Controllers\\MenuGroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/MenuGroupController.php',
-        'App\\Http\\Controllers\\MenuListController' => __DIR__ . '/../..' . '/app/Http/Controllers/MenuListController.php',
         'App\\Http\\Controllers\\MonitoringDeliveryController' => __DIR__ . '/../..' . '/app/Http/Controllers/MonitoringDeliveryController.php',
-        'App\\Http\\Controllers\\NumberRangeController' => __DIR__ . '/../..' . '/app/Http/Controllers/NumberRangeController.php',
         'App\\Http\\Controllers\\PermissionController' => __DIR__ . '/../..' . '/app/Http/Controllers/PermissionController.php',
+        'App\\Http\\Controllers\\ProjectManagementController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProjectManagementController.php',
         'App\\Http\\Controllers\\RegisIsoDocController' => __DIR__ . '/../..' . '/app/Http/Controllers/RegisIsoDocController.php',
         'App\\Http\\Controllers\\ReportIsoDocController' => __DIR__ . '/../..' . '/app/Http/Controllers/ReportIsoDocController.php',
         'App\\Http\\Controllers\\RoleController' => __DIR__ . '/../..' . '/app/Http/Controllers/RoleController.php',
@@ -655,6 +663,7 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'App\\Models\\MenuList' => __DIR__ . '/../..' . '/app/Models/MenuList.php',
         'App\\Models\\NumberRange' => __DIR__ . '/../..' . '/app/Models/NumberRange.php',
         'App\\Models\\Permission' => __DIR__ . '/../..' . '/app/Models/Permission.php',
+        'App\\Models\\Project' => __DIR__ . '/../..' . '/app/Models/Project.php',
         'App\\Models\\RegisIsoDoc' => __DIR__ . '/../..' . '/app/Models/RegisIsoDoc.php',
         'App\\Models\\ReportIsoDoc' => __DIR__ . '/../..' . '/app/Models/ReportIsoDoc.php',
         'App\\Models\\Role' => __DIR__ . '/../..' . '/app/Models/Role.php',
