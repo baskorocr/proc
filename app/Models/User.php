@@ -9,6 +9,8 @@ use App\Models\Role;
 
 class User extends Authenticable
 {
+    protected $table = "user";
+
     public $dates = ['deleted_at'];
     
     protected $hidden = [
@@ -26,7 +28,7 @@ class User extends Authenticable
     //     ? url('storage/images/'.$this->photo) : null;
     // }
 
-    public function role()
+    public function roles()
     {
         return $this->belongsTo('App\Models\Role');
     }

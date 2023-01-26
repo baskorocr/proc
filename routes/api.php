@@ -75,41 +75,6 @@ use Illuminate\Support\Facades\Route;
 
     Route::get('/dashboard-iso-doc', 'DashboardIsoDocController@index');
 
-    Route::get('/menu-list', 'MenuListController@index');
-    Route::post('/menu-list', 'MenuListController@store');
-    Route::get('/menu-list/list', 'MenuListController@list');
-    Route::get('/menu-list/{id}', 'MenuListController@show');
-    Route::post('/menu-list/{id}', 'MenuListController@update');
-    Route::delete('/menu-list/{id}', 'MenuListController@destroy');
-
-    Route::get('/menu-group', 'MenuGroupController@index');
-    Route::post('/menu-group', 'MenuGroupController@store');
-    Route::get('/menu-group/list', 'MenuGroupController@list');
-    Route::get('/menu-group/{id}', 'MenuGroupController@show');
-    Route::post('/menu-group/{id}', 'MenuGroupController@update');
-    Route::delete('/menu-group/{id}', 'MenuGroupController@destroy');
-
-    Route::get('/user-log', 'UserLogController@index');
-    Route::post('/user-log', 'UserLogController@store');
-    Route::get('/user-log/list', 'UserLogController@list');
-    Route::get('/user-log/{id}', 'UserLogController@show');
-    Route::post('/user-log/{id}', 'UserLogController@update');
-    Route::delete('/user-log/{id}', 'UserLogController@destroy');
-
-    Route::get('/user-pda-access', 'UserPdaAccessController@index');
-    Route::post('/user-pda-access', 'UserPdaAccessController@store');
-    Route::get('/user-pda-access/list', 'UserPdaAccessController@list');
-    Route::get('/user-pda-access/{id}', 'UserPdaAccessController@show');
-    Route::post('/user-pda-access/{id}', 'UserPdaAccessController@update');
-    Route::delete('/user-pda-access/{id}', 'UserPdaAccessController@destroy');
-
-    Route::get('/number-range', 'NumberRangeController@index');
-    Route::post('/number-range', 'NumberRangeController@store');
-    Route::get('/number-range/list', 'NumberRangeController@list');
-    Route::get('/number-range/{id}', 'NumberRangeController@show');
-    Route::post('/number-range/{id}', 'NumberRangeController@update');
-    Route::delete('/number-range/{id}', 'NumberRangeController@destroy');
-
 //});
 
 Route::post('/login', 'AuthController@login');
