@@ -116,7 +116,7 @@
 <div class="container">
   
   <!-- UPLOAD MODAL -->
-  <div class="modal fade" id="addModalx" role="dialog">
+  <div class="modal fade" id="create-project" role="dialog">
     <div class="modal-dialog">
     
         <!-- Modal content-->
