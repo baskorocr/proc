@@ -5,11 +5,20 @@
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '1d9c8cda207ff46ec27d0a19acfdaaefbe9a1171',
+        'reference' => '31ed4753ba520d5029a72dbb463ac9ee4b0c81c0',
         'name' => 'laravel/laravel',
         'dev' => true,
     ),
     'versions' => array(
+        'alfa6661/laravel-autonumber' => array(
+            'pretty_version' => '1.2.5',
+            'version' => '1.2.5.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../alfa6661/laravel-autonumber',
+            'aliases' => array(),
+            'reference' => 'cb97bd9d6b7b44696aca5d14d385958a1ac41d95',
+            'dev_requirement' => false,
+        ),
         'asm89/stack-cors' => array(
             'pretty_version' => 'v2.1.1',
             'version' => '2.1.1.0',
@@ -445,7 +454,7 @@
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '1d9c8cda207ff46ec27d0a19acfdaaefbe9a1171',
+            'reference' => '31ed4753ba520d5029a72dbb463ac9ee4b0c81c0',
             'dev_requirement' => false,
         ),
         'laravel/sail' => array(

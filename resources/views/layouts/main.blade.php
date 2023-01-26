@@ -26,7 +26,7 @@
   <link href="{{ URL::asset('assets/template/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/simple-datatables/style.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.8.2/css/all.min.css" integrity="sha512-rqQltXRuHxtPWhktpAZxLHUVJ3Eombn3hvk9PHjV/N5DMUYnzKPC1i3ub0mEXgFzsaZNeJcoE0YHq0j/GFsdGg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Template Main CSS File -->
   <link href="{{ URL::asset('assets/template/css/style.css') }}" rel="stylesheet">
@@ -129,15 +129,17 @@
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/simple-datatables.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/php-email-form/validate.js') }}"></script>
-  
+  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <!-- Additional -->
   <script src="{{ URL::asset('assets/template/js/jquery-3.5.1.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/jquery.dataTables.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.js') }}"></script>
-    
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <!-- Template Main JS File -->
   <script src="{{ URL::asset('assets/template/js/main.js') }}"></script>
 @yield('javascript')
+
+
   <script>
   $(document).ready(function () {
     $('.datatables').DataTable();
@@ -187,4 +189,36 @@
   </script>
 </body>
 
+@if(Session::has('message_success'))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'success',
+            title: " {{Session::get('message_success')}}"
+          })
+    });
+    </script>
+@endif
+@if(Session::has('message_fail'))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'error',
+            title: " {{Session::get('message_fail')}}"
+          })
+    });
+    </script>
+@endif
 </html>
