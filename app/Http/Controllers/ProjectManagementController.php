@@ -55,6 +55,18 @@ class ProjectManagementController extends Controller
         $ret['doc_detail'] = $doc_select;
        }
         return view('project_management/list_check_master/modify_doc_params')->with($ret);
+    }  
+
+    public function DocMasterAssign(Request $request)
+    {
+    
+       $doc = DocPart::where('status','A')->where('assigned','N')->get();
+       $ret = ['doc' => $doc];
+       if(!empty($request->id_doc)){
+        $doc_select = DocPart::where('status','A')->where('assigned','N')->where('id_doc_part',$request->id_doc)->first();
+        $ret['doc_detail'] = $doc_select;
+       }
+        return view('project_management/list_check_master/assign_doc')->with($ret);
     } 
 
 
@@ -189,6 +201,7 @@ class ProjectManagementController extends Controller
         endforeach;
         if($prj)
         {
+            DocPart::where('id_doc_part', $request->id_doc_part)->update(['assigned' => 'Y']);
                  return redirect()->back()->with(['message_success' => 'Berhasil menambah additional parameter']);
 
         } 

@@ -79,6 +79,7 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/modify-document-check-list/doc-master', [App\Http\Controllers\ProjectManagementController::class, 'DocMaster'])->name('project.management.master.listcheck.modify.doc.docmaster');
         Route::post('/modify-document-check-list/doc-master/update', [App\Http\Controllers\ProjectManagementController::class, 'updateDocPart'])->name('project.management.master.listcheck.modify.doc.updateDocPart');
         Route::get('/modify-document-check-list/doc-master/edit/{id}', [App\Http\Controllers\ProjectManagementController::class, 'DocMasterEdit'])->name('project.management.master.listcheck.modify.doc.editdocpart');
+        Route::get('/modify-document-check-list/doc-assign', [App\Http\Controllers\ProjectManagementController::class, 'DocMasterAssign'])->name('project.management.master.listcheck.modify.doc.assigns');
 
         //Datatables
         Route::get('/datatables/get-project-master', [App\Http\Controllers\ProjectManagementController::class, 'getProjectMaster'])->name('datatables.project.management.master');

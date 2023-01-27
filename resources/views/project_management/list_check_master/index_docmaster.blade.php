@@ -23,8 +23,8 @@
 								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
 									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
 									<li><a class="dropdown-item"  href="#" data-bs-toggle="modal" data-bs-target="#create-doc" ><i class="fas fa-plus-square"></i>Create Doc Master</a></li>
-									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#assignDetailModal" href="#"><i class="fas fa-arrow-down"></i>Assign Document Check List</a></li>
-									<li><a class="dropdown-item" href="{{route('project.management.master.listcheck.modify.doc.docmaster')}}"><i class="fa fa-table"></i>Doc List Check Data</a></li>
+									<li><a class="dropdown-item" href="{{route('project.management.master.listcheck.modify.doc.assigns')}}"><i class="fas fa-arrow-down"></i>Assign Document Check List</a></li>
+									<li><a class="dropdown-item" href="{{route('project.management.master.listcheck')}}"><i class="fa fa-table"></i>Doc List Check Data</a></li>
 								</ul>
 								
 							</div>
