@@ -10,8 +10,8 @@ class DocCheckList extends Model
 {
     // END Connect
     protected $table = "doc_check_list";
-
-    protected $fillable = ['id_check','id_doc_part','modify_date','id_user'];
+    // protected $primaryKey = 'id';
+    protected $fillable = ['id_check','id_doc_part','modify_date','check_params','id_user'];
 
     public $dates = ['modify_date'];
     

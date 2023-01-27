@@ -10,7 +10,7 @@ class DocForPart extends Model
 {
     // END Connect
     protected $table = "doc_for_part";
-
+    
     protected $fillable = ['id_part','id_assign','id_doc_part','modify_date','id_user'];
 
     public $dates = ['modify_date'];

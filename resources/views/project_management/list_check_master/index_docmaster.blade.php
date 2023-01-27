@@ -1,13 +1,13 @@
 @extends('layouts.main')
-@section('title',"List Check Master ")
+@section('title',"Document Master ")
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>List Check Master</h1>
+		<h1>Document Master</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item">List Check Master</li>
+				<li class="breadcrumb-item">Document Master</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -22,24 +22,28 @@
 								<i class="bi bi-list"></i></a>
 								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
 									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
-									<li><a class="dropdown-item"  href="{{route('project.management.master.listcheck.modify.doc')}}"><i class="fas fa-plus-square"></i>Modify Doc Check List</a></li>
+									<li><a class="dropdown-item"  href="#" data-bs-toggle="modal" data-bs-target="#create-doc" ><i class="fas fa-plus-square"></i>Create Doc Master</a></li>
 									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#assignDetailModal" href="#"><i class="fas fa-arrow-down"></i>Assign Document Check List</a></li>
-									<li><a class="dropdown-item" href="{{route('project.management.master.listcheck.modify.doc.docmaster')}}"><i class="fa fa-table"></i>Document Master</a></li>
+									<li><a class="dropdown-item" href="{{route('project.management.master.listcheck.modify.doc.docmaster')}}"><i class="fa fa-table"></i>Doc List Check Data</a></li>
 								</ul>
 								
 							</div>
 
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-checklist-master">
+								<table  class="table table-bordered table-stripped table-sm" id="tb-doc-master">
 									<thead>
-										<th>#</th>
-										<th>ID Document</th>
+										<th >ID Document</th>
 						                <th>Doc Name</th>
-						                <th>Check Parameters</th>
+						                <th>Doc Type</th>
 						                <th>Last Change Date</th>
-										<th>Last Changed By</th>
-										<th>Action</th>
+						                <th>Last Changed by</th>
+						                <!--
+						                <th>Status</th>
+						                -->
+						                <th>Check Stat. </th>
+						                <th>Required</th>
+						                <th>Action</th>
 									</thead>
 									<tbody>
 										
@@ -52,7 +56,7 @@
 			</div>
 		</section>
 	</main>
-	{{-- @include('project_management.part_master.modals') --}}
+	@include('project_management.list_check_master.modals_doc_master')
 	@endsection
 	@section('javascript')
 	<script>
@@ -70,7 +74,7 @@
 		    return markup;
 		  }
  	});
-		window.table = $('#tb-checklist-master').DataTable({
+		window.table = $('#tb-doc-master').DataTable({
 			columnDefs: [
 	{
 	searchable: false,
@@ -84,23 +88,19 @@
 			"language": {
 			"processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
 			},
-			ajax: "{{ route('datatables.project.management.checklist.master')}}",
+			ajax: "{{ route('datatables.project.management.doc-master')}}",
 			columns: [
 						{
-						data: 'DT_RowIndex',
-						name: 'DT_RowIndex'
-						},
-						{
-						data: 'id_document',
-						name: 'id_document'
+						data: 'id_doc_part',
+						name: 'id_doc_part'
 						},
 						{
 						data: 'nm_doc',
 						name: 'nm_doc'
 						},
 						{
-						data: 'check_params',
-						name: 'check_params'
+						data: 'doc_type',
+						name: 'doc_type'
 						},
 						{
 						data: 'last_change_date',
@@ -111,26 +111,29 @@
 						name: 'last_change_by'
 						},
 						{
+						data: 'check_stat',
+						name: 'check_stat'
+						},
+						{
+						data: 'required_stat',
+						name: 'required_stat'
+						},
+						{
 						data: 'action',
 						name: 'action'
 						},
 			]
 			});
-		window.table.on('order.dt search.dt', function () {
-		let i = 1;
-		
-		window.table.cells(null, 0, { search: 'applied', order: 'applied' }).every(function (cell) {
-		this.data(i++);
-		});
-		}).draw();
+	
 		})
 		// CRUD
-		$('#create-part-form').submit(function(e){
+		$('#create-doc-form').submit(function(e){
 			e.preventDefault();
-			axios.post('{{route('api.project.management.create.part')}}', {
-			    id_part:$('#id_part').val(),
-			    part_num: $('#part_num').val(),
-			    nm_part:$('#nm_part').val(),
+			axios.post('{{route('api.project.management.create.doc')}}', {
+			    id_doc:$('#id_doc').val(),
+			    nm_doc: $('#nm_doc').val(),
+			    doc_type:$('#doc_type').val(),
+			    doc_required:$('#doc_required').val(),
 			    _token:$("input[name=_token]").val(),
 			  })
 			  .then(function (response) {
@@ -144,7 +147,7 @@
 					$('#id_project').val('')
 					$('#part_num').val('')
 					$('#nm_part').val('')
-					$('#create-part').modal('hide')
+					$('#create-doc').modal('hide')
 					$(".option-select2").select2("val", "");
 					window.table.ajax.reload();
 			  	} else if(response.data.type == "error")
