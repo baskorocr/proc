@@ -56,7 +56,7 @@
             </a>
           </li>
           <li>
-            <a href="{{route('project.management.master.part')}}">
+            <a href="{{route('project.management.upload.project')}}">
               <i class="bi bi-circle"></i><span>Upload Project Doc</span>
             </a>
           </li>

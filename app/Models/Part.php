@@ -20,6 +20,10 @@ class Part extends Model
         return $this->belongsTo(User::class,'id_user','id_user');
     }
 
+    public function partForProduct()
+    {
+        return $this->belongsTo(PartForProduct::class,'id_part','id_part');
+    }
 }
 
     

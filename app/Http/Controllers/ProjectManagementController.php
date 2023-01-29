@@ -26,8 +26,8 @@ class ProjectManagementController extends Controller
 
     public function productMaster()
     {
-         $prj = Part::where('status','A')->where('assigned','N')->get();
-        $prod = Product::where('status','A')->where('assigned','Y')->get();
+         $prj = Part::where('status','A')->where('assigned','Y')->get();
+        $prod = Product::where('status','A')->where('assigned','N')->get();
         return view('project_management/product_master/index')->with(['parts' => $prj,'product' => $prod]);
     }  
 
@@ -43,6 +43,36 @@ class ProjectManagementController extends Controller
          $prj = Part::where('status','A')->where('assigned','N')->get();
         $prod = Product::where('status','A')->where('assigned','Y')->get();
         return view('project_management/list_check_master/index_docmaster')->with(['parts' => $prj,'product' => $prod]);
+    } 
+
+    public function uploadProjectDoc(Request $request)
+    {
+        $prj = Project::where('status','A')->where('assigned','Y')->get();
+        
+        $ret = ['project' => $prj];
+       if(!empty($request->id_project)){
+        // DB::connection('mongodb')->enableQueryLog();
+        $pfp = ProductForProject::where('id_project',$request->id_project)->get();
+        // dd(DB::connection('mongodb')->getQueryLog());
+        // dd($pfp);
+        $wherein=[];
+        foreach($pfp as $pfp)
+        {
+            $wherein[]=$pfp->id_product;
+        }
+        $prod = PartForProduct::whereIn('id_product',$wherein)->get();
+        $ret['prodforProject'] = $prod;
+        if(!empty($request->prod_part)){
+            $exp =  explode("_", $request->prod_part);
+            $id_product = $exp[0];
+            $id_part    = $exp[1];
+
+            $ret['docpart'] = DocPart::get();
+        }
+       }
+
+
+        return view('project_management/upload_project_doc/index')->with($ret);
     }  
 
     public function DocCheckListModify(Request $request)
