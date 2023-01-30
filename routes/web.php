@@ -118,7 +118,17 @@ Route::group(['middleware' => ['auth']], function () {
         // List Check Master
         Route::get('/list-check-master', [App\Http\Controllers\ProjectManagementController::class, 'DocCheckListMaster'])->name('project.management.master.listcheck');
         Route::get('/modify-document-check-list', [App\Http\Controllers\ProjectManagementController::class, 'DocCheckListModify'])->name('project.management.master.listcheck.modify.doc');
-
+        Route::post('/modify-document-check-list/add', [App\Http\Controllers\ProjectManagementController::class, 'DocCheckListModifyAdd'])->name('project.management.master.listcheck.modify.doc.add');
+        Route::get('/modify-document-check-list/edit/{id}', [App\Http\Controllers\ProjectManagementController::class, 'DocCheckListModifyEdit'])->name('project.management.master.listcheck.modify.doc.edit');
+        Route::post('/modify-document-check-list/update', [App\Http\Controllers\ProjectManagementController::class, 'DocCheckListModifyUpdate'])->name('project.management.master.listcheck.modify.doc.update');
+        Route::get('/modify-document-check-list/doc-master', [App\Http\Controllers\ProjectManagementController::class, 'DocMaster'])->name('project.management.master.listcheck.modify.doc.docmaster');
+        Route::post('/modify-document-check-list/doc-master/update', [App\Http\Controllers\ProjectManagementController::class, 'updateDocPart'])->name('project.management.master.listcheck.modify.doc.updateDocPart');
+        Route::get('/modify-document-check-list/doc-master/edit/{id}', [App\Http\Controllers\ProjectManagementController::class, 'DocMasterEdit'])->name('project.management.master.listcheck.modify.doc.editdocpart');
+        Route::get('/modify-document-check-list/doc-assign', [App\Http\Controllers\ProjectManagementController::class, 'DocMasterAssign'])->name('project.management.master.listcheck.modify.doc.assigns');
+         //
+        // List Check Master
+        Route::get('/upload-project-doc', [App\Http\Controllers\ProjectManagementController::class, 'uploadProjectDoc'])->name('project.management.upload.project');
+        Route::get('/upload-project-doc/upload', [App\Http\Controllers\ProjectManagementController::class, 'DocCheckListMaster'])->name('project.management.upload.project.actUpload');
         //Datatables
         Route::get('/datatables/get-project-master', [App\Http\Controllers\ProjectManagementController::class, 'getProjectMaster'])->name('datatables.project.management.master');
         Route::get('/datatables/get-checklist-master', [App\Http\Controllers\ProjectManagementController::class, 'getMasterCheckList'])->name('datatables.project.management.checklist.master');
@@ -127,9 +137,12 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/datatables/get-product-master', [App\Http\Controllers\ProjectManagementController::class, 'getProductMaster'])->name('datatables.project.management.product.master');
         Route::get('/datatables/get-part-master', [App\Http\Controllers\ProjectManagementController::class, 'getPartMaster'])->name('datatables.project.management.part.master');
         Route::get('/datatables/get-part-assign', [App\Http\Controllers\ProjectManagementController::class, 'getPartAssign'])->name('datatables.project.management.assign.part.master');
+        Route::get('/datatables/get-checklist-modify', [App\Http\Controllers\ProjectManagementController::class, 'getCheckListModify'])->name('datatables.project.management.checklist-modify');
+        Route::get('/datatables/get-doc-master', [App\Http\Controllers\ProjectManagementController::class, 'getDocMaster'])->name('datatables.project.management.doc-master');
         // CRUD
        
          Route::post('/add-project', [App\Http\Controllers\ProjectManagementController::class, 'projectAdd'])->name('api.project.management.create.project');
+         Route::post('/add-document', [App\Http\Controllers\ProjectManagementController::class, 'docAdd'])->name('api.project.management.create.doc');
          Route::post('/add-part', [App\Http\Controllers\ProjectManagementController::class, 'partAdd'])->name('api.project.management.create.part');
          Route::post('/add-product', [App\Http\Controllers\ProjectManagementController::class, 'productAdd'])->name('api.project.management.create.product');
          Route::post('/assign-project', [App\Http\Controllers\ProjectManagementController::class, 'projectAssign'])->name('api.project.management.assign.project');

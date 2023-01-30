@@ -26,8 +26,8 @@ class ProjectManagementController extends Controller
 
     public function productMaster()
     {
-         $prj = Part::where('status','A')->where('assigned','N')->get();
-        $prod = Product::where('status','A')->where('assigned','Y')->get();
+         $prj = Part::where('status','A')->where('assigned','Y')->get();
+        $prod = Product::where('status','A')->where('assigned','N')->get();
         return view('project_management/product_master/index')->with(['parts' => $prj,'product' => $prod]);
     }  
 
@@ -38,11 +38,65 @@ class ProjectManagementController extends Controller
         return view('project_management/list_check_master/index')->with(['parts' => $prj,'product' => $prod]);
     }  
 
-    public function DocCheckListModify()
+    public function DocMaster()
+    {
+         $prj = Part::where('status','A')->where('assigned','N')->get();
+        $prod = Product::where('status','A')->where('assigned','Y')->get();
+        return view('project_management/list_check_master/index_docmaster')->with(['parts' => $prj,'product' => $prod]);
+    } 
+
+    public function uploadProjectDoc(Request $request)
+    {
+        $prj = Project::where('status','A')->where('assigned','Y')->get();
+        
+        $ret = ['project' => $prj];
+       if(!empty($request->id_project)){
+        // DB::connection('mongodb')->enableQueryLog();
+        $pfp = ProductForProject::where('id_project',$request->id_project)->get();
+        // dd(DB::connection('mongodb')->getQueryLog());
+        // dd($pfp);
+        $wherein=[];
+        foreach($pfp as $pfp)
+        {
+            $wherein[]=$pfp->id_product;
+        }
+        $prod = PartForProduct::whereIn('id_product',$wherein)->get();
+        $ret['prodforProject'] = $prod;
+        if(!empty($request->prod_part)){
+            $exp =  explode("_", $request->prod_part);
+            $id_product = $exp[0];
+            $id_part    = $exp[1];
+
+            $ret['docpart'] = DocPart::get();
+        }
+       }
+
+
+        return view('project_management/upload_project_doc/index')->with($ret);
+    }  
+
+    public function DocCheckListModify(Request $request)
     {
     
        $doc = DocPart::where('status','A')->where('assigned','Y')->get();
-        return view('project_management/list_check_master/modify_doc_params')->with(['doc' => $doc]);
+       $ret = ['doc' => $doc];
+       if(!empty($request->id_doc)){
+        $doc_select = DocPart::where('status','A')->where('assigned','Y')->where('id_doc_part',$request->id_doc)->first();
+        $ret['doc_detail'] = $doc_select;
+       }
+        return view('project_management/list_check_master/modify_doc_params')->with($ret);
+    }  
+
+    public function DocMasterAssign(Request $request)
+    {
+    
+       $doc = DocPart::where('status','A')->where('assigned','N')->get();
+       $ret = ['doc' => $doc];
+       if(!empty($request->id_doc)){
+        $doc_select = DocPart::where('status','A')->where('assigned','N')->where('id_doc_part',$request->id_doc)->first();
+        $ret['doc_detail'] = $doc_select;
+       }
+        return view('project_management/list_check_master/assign_doc')->with($ret);
     } 
 
 
@@ -71,12 +125,27 @@ class ProjectManagementController extends Controller
         return view('project_management/product_master/product_assigment');
     }  
 
-  
-
     public function editProject($id)
     {
         $prj = Project::where('id_project',$id)->firstOrFail();
         return view('project_management/project_master/edit')->with(['project' => $prj]);
+    }   
+
+    public function DocCheckListModifyEdit($id)
+    {
+
+        $prj = DocCheckList::where('id_check',intval($id))->firstOrFail();
+
+
+        return view('project_management/list_check_master/edit_checklist')->with(['checklist' => $prj]);
+    }
+    public function DocMasterEdit($id)
+    {
+
+        $prj = DocPart::where('id_doc_part',$id)->firstOrFail();
+
+
+        return view('project_management/list_check_master/edit_doc')->with(['doc' => $prj]);
     } 
 
     public function editPart($id)
@@ -108,6 +177,27 @@ class ProjectManagementController extends Controller
                     'message' => 'Gagal Menambahkan Project',
                     'data' =>  null,
                 ], 200);
+    } 
+
+
+    public function docAdd(Request $request)
+    {
+        $prj = DocPart::create($this->paramsDocPart($request));
+        if($prj)
+        {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Berhasil Menambahkan Dokumen',
+                    'data' =>  $prj,
+                ], 200);
+
+        } 
+
+         return response()->json([
+                    'type' => 'error',
+                    'message' => 'Gagal Menambahkan Dokumen',
+                    'data' =>  null,
+                ], 200);
     }
     public function productAdd(Request $request)
     {
@@ -127,6 +217,45 @@ class ProjectManagementController extends Controller
                     'message' => 'Gagal Menambahkan Produk',
                     'data' =>  null,
                 ], 200);
+    }
+    public function DocCheckListModifyAdd(Request $request)
+    {
+        foreach($request->check_params as $pd):
+            $prj = DocCheckList::create([
+                        'id_check' => Numbering::autoIncrement(new \App\Models\DocCheckList(),"id_check"),
+                        'id_doc_part' => $request->id_doc_part,
+                        'modify_date' => date('Y-m-d'),
+                        'id_user' => auth()->user()->id_user,
+                        'check_params' => $pd,
+                    ]);
+        endforeach;
+        if($prj)
+        {
+            DocPart::where('id_doc_part', $request->id_doc_part)->update(['assigned' => 'Y']);
+                 return redirect()->back()->with(['message_success' => 'Berhasil menambah additional parameter']);
+
+        } 
+
+         return redirect()->back()->with(['message_fail' => 'gagal menambah data.']);
+    }
+
+    public function DocCheckListModifyUpdate(Request $request)
+    {
+       
+            $prj = DocCheckList::where('id_check',intval($request->id_check))->update([
+                        'modify_date' => date('Y-m-d'),
+                        'id_user' => auth()->user()->id_user,
+                        'check_params' => $request->check_params,
+                    ]);
+     
+        if($prj)
+        {         
+                 $checklist = DocCheckList::where('id_check',intval($request->id_check))->first();
+                 return redirect()->route('project.management.master.listcheck',['id_doc' => $checklist->docParts->id_doc_part])->with(['message_success' => 'Berhasil mengubah additional parameter']);
+
+        } 
+
+         return redirect()->back()->with(['message_fail' => 'gagal mengubah data.']);
     }
 
     public function partAdd(Request $request)
@@ -263,6 +392,19 @@ class ProjectManagementController extends Controller
          return redirect()->route('project.management.master.product')->with(['message_fail' => 'Gagal mengubah data.']);
     }  
 
+
+    public function updateDocPart(Request $request)
+    {
+        $prj = DocPart::where('id_doc_part',$request->id_doc)->update($this->paramsDocPart($request,true));
+        if($prj)
+        {
+                return redirect()->route('project.management.master.listcheck.modify.doc.docmaster')->with(['message_success' => 'Berhasil mengubah data.']);
+
+        } 
+
+         return redirect()->route('project.management.master.listcheck.modify.doc.docmaster')->with(['message_fail' => 'Gagal mengubah data.']);
+    }  
+
     public function updatePart(Request $request)
     {
         $prj = Part::where('id_part',$request->id_part)->update($this->paramsPart($request,true));
@@ -319,7 +461,7 @@ class ProjectManagementController extends Controller
 
          return redirect()->route('project.management.master.product')->with(['message_fail' => 'Gagal menghapus data.']);
     }
-
+////////////DATATABLES/////////////////
      public function getPartMaster()
     {
         $data = Part::get();
@@ -556,6 +698,95 @@ class ProjectManagementController extends Controller
                  ->addIndexColumn()
                             ->make(true);
     }
+    public function getDocMaster()
+    {
+        $data = DocPart::get();
+                
+        return \DataTables::of($data)
+                ->editColumn('id_doc', function ($data) {
+                                
+                               return @$data->id_doc_part;
+                            })  
+                ->editColumn('nm_doc', function ($data) {
+                                
+                               return @$data->nm_doc_part;
+                            }) 
+                ->editColumn('last_change_by', function ($data) {
+                                
+                               return @$data->users->nm_user;
+                            })
+                ->editColumn('last_change_date', function ($data) {
+                                
+                               return date('d.m.y',strtotime($data->modify_date));
+                            })
+                ->editColumn('doc_type', function ($data) {
+                             if ($data->doc_type == "V") {
+                                $doc_type = "Doc for Vendor";
+                            } elseif($data->doc_type == "P"){
+                                $doc_type = "Doc for Procurement";
+                            }
+                             return $doc_type;  
+                            })
+                ->editColumn('required_stat', function ($data) {
+                            if ($data->doc_required == "M") {
+                                $doc_required = "<small class='badge bg-success'> Mandatory</small>" ;
+                            } elseif ($data->doc_required == "Y")  {
+                                $doc_required = "<small class='badge bg-primary'> Required</small>" ;
+                            } elseif ($data->doc_required == "N")  {
+                                $doc_required = "<small class='badge bg-warning'> Not-required</small>" ;
+                            }
+                                return $doc_required;
+                            })
+                ->editColumn('check_stat', function ($data) {
+                              if ($data->assigned == 'Y'){
+                                 $assigned = "<small class='badge bg-success'> Assigned</small>";
+                            }elseif ($data->assigned == 'N') {
+                                $assigned = "<small class='badge bg-warning'> Not-Assigned</small>";
+                            }  
+                              return $assigned;         
+                            })
+                ->editColumn('action', function ($data) {
+                                
+                               return  view('project_management/list_check_master/button_doc_master')->with(['data' => $data]);
+                            }) 
+                ->editColumn('number', function ($data) {
+                                
+                                  return 1;
+                            })
+                ->rawColumns(['status','check_stat','doc_type','required_stat'])
+                            ->make(true);
+    }
+
+    public function getCheckListModify(Request $request)
+    {
+        $data = DocCheckList::where('id_doc_part',$request->id_doc_part)->get();
+
+        return \DataTables::of($data)
+               
+                ->editColumn('check_params', function ($data) {
+                                ;
+                               return @$data->check_params;
+                            })
+                ->editColumn('last_change_by', function ($data) {
+                                
+                               return @$data->users->nm_user;
+                            })
+                ->editColumn('last_change_date', function ($data) {
+                                
+                               return date('d.m.y',strtotime($data->modify_date));
+                            })
+                ->editColumn('action', function ($data) {
+                                
+                               return  view('project_management/list_check_master/button_checklist')->with(['data' => $data]);
+                            }) 
+                ->editColumn('number', function ($data) {
+                                
+                                  return 1;
+                            })
+                ->rawColumns(['status'])
+                 ->addIndexColumn()
+                            ->make(true);
+    }
     public function getPartAssign()
     {
         $data = DocForPart::get();
@@ -650,6 +881,25 @@ class ProjectManagementController extends Controller
             $params['id_project'] = $request->id_project;
         }
         return $params;
+    }
+
+    private function paramsDocPart($request,$update=false)
+    {
+        $params = [
+                    'nm_doc_part' => $request->nm_doc,
+                    'modify_date' => date('Y-m-d'),
+                    'id_user' => auth()->user()->id_user,
+                    'status' => "A",
+                    'doc_required' => $request->doc_required,
+                    'doc_type' => $request->doc_type,
+                ];
+
+        if(!$update)
+        {
+            $params['assigned'] = "N";
+            $params['id_doc_part'] = $request->id_doc;
+        }
+        return $params;
     } 
 
     private function paramsProduct($request,$update=false)
@@ -686,5 +936,7 @@ class ProjectManagementController extends Controller
         }
         return $params;
     } 
+
+
 
 }
