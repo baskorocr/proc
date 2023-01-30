@@ -3,11 +3,11 @@
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Modify Document Check List Parameters</h1>
+		<h1>Assign Document Check List Parameter</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active">Modify Document Check List Parameters</li>
+				<li class="breadcrumb-item active">Assign Document Check List Parameter</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -54,26 +54,7 @@
 						</div>
 					</div>
 					@if(!empty($doc_detail))
-					<div class="col-12">
-						<div class="card">
-							<div class="card-header">
-								<h5 class="card-title">{{$doc_detail->nm_doc_part}}</h5>
-							</div>
-							<div class="card-body">
-								<table class="table table-bordered" id="tb-detail">
-									<thead>
-										<th>No</th>
-										<th>Check Parameters </th>
-										<th>Last Change Date</th>
-										<th>Last Changed by</th>
-										<th>Action</th>
-									</thead>
-									<tbody>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
+					
 					<div class="col-12">
 						<form action="{{route('project.management.master.listcheck.modify.doc.add')}}" method="POST">
 							@csrf
@@ -94,7 +75,7 @@
 									</div>
 									<div class="card-footer">
 										<div class="mt-3">
-											<button type="submit" id="modify-btn" disabled class="btn btn-primary btn-sm"><i class="fas fa-retweet"></i> Modify</button>
+											<button type="submit" id="modify-btn" disabled class="btn btn-primary btn-sm"><i class="fas fa-check-square"></i> Assign</button>
 										</div>
 									</div>
 								</div>
@@ -163,7 +144,7 @@
 				fieldID += 1;
 				$('#form-addlist').show();
 				$('#modify-btn').prop('disabled',false)
-				var html = '<div style="display: none;" class="mt-3 col-md-12" id="27'+fieldID+'"><label><b>Addition Check Parameter No. '+fieldID+'</b></label><input id="30'+fieldID+'" class="form-control additional-param" type="text" required name="check_params[]"><button type="button" onclick="removeField(27'+fieldID+',30'+fieldID+')" class="mt-2 btn btn-sm btn-danger"><i class="fas fa-minus"></i> Remove</button></div>';
+				var html = '<div style="display: none;" class="mt-3 col-md-12" id="27'+fieldID+'"><label><b>Check Parameter No. '+fieldID+'</b></label><input id="30'+fieldID+'" class="form-control additional-param" type="text" required name="check_params[]"><button type="button" onclick="removeField(27'+fieldID+',30'+fieldID+')" class="mt-2 btn btn-sm btn-danger"><i class="fas fa-minus"></i> Remove</button></div>';
 			      $('#form-addlist').append(html);
 			      $('#27'+fieldID).slideDown();
 			})

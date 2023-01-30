@@ -27,6 +27,11 @@ class ProductForProject extends Model
         return $this->belongsTo(Part::class,'id_product','id_product');
     }
 
+    public function parts()
+    {
+        return $this->hasMany(Part::class,'id_product','id_product');
+    }
+
     public function project()
     {
         return $this->belongsTo(Project::class,'id_project','id_project');
