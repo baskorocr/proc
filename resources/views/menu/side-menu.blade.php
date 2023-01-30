@@ -90,6 +90,38 @@
         </ul>
       </li>
 
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#doc-iso" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-truck"></i><span>Doc Iso</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="doc-iso" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <!-- <a href="{{route('delivery.schedule.mf')}}"> -->
+            <a href="{{ url('/doc-iso/master-notify') }}">
+              <i class="bi bi-circle"></i><span>Master Notify</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('doc-iso.register-iso') }}">
+            <!-- <a href ="data_table.php"> -->
+              <i class="bi bi-circle"></i><span>Register ISO Doc</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url('/doc-iso/master-notify/report-iso') }}">
+            <!-- <a href ="data_table.php"> -->
+              <i class="bi bi-circle"></i><span>Report ISO Doc</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ route('doc-iso.dashboard-iso') }}">
+            <!-- <a href ="data_table.php"> -->
+              <i class="bi bi-circle"></i><span>Dashboard ISO Doc</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
       
       
     </ul>

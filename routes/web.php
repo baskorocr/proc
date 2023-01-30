@@ -27,7 +27,52 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
+Route::prefix('doc-iso')->group(function(){
+
+    //Master Notify
+    Route::get('/master-notify', [App\Http\Controllers\MasterNotifyController::class, 'getMasterNotify'])->name('doc-iso.master-notify');
+    Route::post('/add-notify', [App\Http\Controllers\MasterNotifyController::class, 'notifyAdd'])->name('api.doc-iso.create.notify');
+   
+    Route::post('/master-notify/update', [App\Http\Controllers\MasterNotifyController::class, 'updateNotify'])->name('doc-iso.master-notify.update.notify');
+    Route::get('/master-notify/edit/{id}', [App\Http\Controllers\MasterNotifyController::class, 'editNotify'])->name('doc-iso.master-notify.edit.notify');
+    Route::get('/master-notify/delete/{id}', [App\Http\Controllers\MasterNotifyController::class, 'deleteNotify'])->name('doc-iso.master-notify.delete.notify');
+
+
+    //Datatables
+    Route::get('/datatables/get-master-notify', [App\Http\Controllers\MasterNotifyController::class, 'getDataMasterNotify'])->name('datatables.doc-iso.master.notify');
+
+    //ISO DOC Register
+    Route::get('/register-iso', [App\Http\Controllers\RegisIsoDocController::class, 'index'])->name('doc-iso.register-iso');
+    Route::post('/register-iso', [App\Http\Controllers\RegisIsoDocController::class, 'store'])->name('doc-iso.register-iso.store');
+    
+  
+     Route::get('/master-notify/report-iso', function () {
+        return view('doc_iso.master-notify.report-iso');
+     });
+  
+     Route::get('/dashboard-iso', [App\Http\Controllers\DashboardIsoDocController::class, 'index'])->name('doc-iso.dashboard-iso');
+     
+    
+});
+
+
 Route::group(['middleware' => ['auth']], function () {
+    // DOC ISO
+    // Route::prefix('doc-iso')->group(function(){
+
+    //     //Master Notify
+    //     Route::get('/master-notify', [App\Http\Controllers\MasterNotifyController::class, 'getMasterNotify'])->name('doc-iso.master-notify');
+    //     Route::post('/add-notify', [App\Http\Controllers\MasterNotifyController::class, 'notifyAdd'])->name('api.doc-iso.create.notify');
+       
+    //     Route::post('/master-notify/update', [App\Http\Controllers\MasterNotifyController::class, 'updateNotify'])->name('doc-iso.master-notify.update.product');
+    //     Route::get('/master-notify/edit/{id}', [App\Http\Controllers\MasterNotifyController::class, 'editNotify'])->name('doc-iso.master-notify.edit.product');
+    //     Route::get('/master-notify/delete/{id}', [App\Http\Controllers\MasterNotifyController::class, 'deleteNotify'])->name('doc-iso.master-notify.delete.product');
+
+
+    //     //Datatables
+    //     Route::get('/datatables/get-master-notify', [App\Http\Controllers\MasterNotifyController::class, 'getDataMasterNotify'])->name('datatables.doc-iso.master.notify');
+
+    // });
 
     // DELIVERY SCHEDULE ROUTES
     Route::prefix('delivery-schedule')->group(function(){
@@ -90,14 +135,14 @@ Route::group(['middleware' => ['auth']], function () {
          Route::post('/assign-project', [App\Http\Controllers\ProjectManagementController::class, 'projectAssign'])->name('api.project.management.assign.project');
          Route::post('/assign-part', [App\Http\Controllers\ProjectManagementController::class, 'partAssign'])->name('api.project.management.assign.part');
          Route::post('/assign-product', [App\Http\Controllers\ProjectManagementController::class, 'productAssign'])->name('api.project.management.assign.product');
-      
-    });
-
+         
+        });
 
 });
 Route::get('/blank', function () {
    return view('example/blank');
 });
+
 
 
 Route::prefix('component')->group(function () {

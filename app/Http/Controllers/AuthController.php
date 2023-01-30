@@ -20,8 +20,10 @@ class AuthController extends Controller
                 'username' => 'required',
                 'password' => 'required|min:6'
             ]
+            
         );
 
+        echo "masuk";
         if ($validator->fails()) {
 
             return response()->json([
@@ -33,7 +35,7 @@ class AuthController extends Controller
 
             $token = Str::random(25);
             $user = User::where('username', $request->username)->first();
-
+            echo 'masuk';   
             if ($user == null){
 
                 return response()->json([
