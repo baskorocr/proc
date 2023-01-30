@@ -1,13 +1,13 @@
 @extends('layouts.main')
-@section('title',"Modify Document Check List Parameters")
+@section('title',"Upload Document Project")
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Modify Document Check List Parameters</h1>
+		<h1>Upload Document Project</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active">Modify Document Check List Parameters</li>
+				<li class="breadcrumb-item active">Upload Document Project</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -30,19 +30,11 @@
 								
 								<div class="box-body mt-3">
 									
-									<label>Choose Document</label>
-									<select  style="width: 100%;"  class="form-control  option-select-doc" id="id_doc" name="id_doc" required>
+									<label>Choose Project</label>
+									<select  style="width: 100%;"  class="form-control  option-select-doc" id="id_project" name="id_project" required>
 										
-										
-										@foreach($doc as $d)
-										<option @if($d->id_doc_part == Request::get('id_doc')) selected @endif value="{{$d->id_doc_part}}">{{$d->nm_doc_part}}
-											( @if ($d->doc_required == "M")
-											{{$d->doc_type }}-Mandatory
-											@elseif ($d->doc_required == "Y")
-											{{$d->doc_type }}-Required
-											@elseif ($d->doc_required== "N")
-											{{$d->doc_type }}-Not-required
-										@endif )</option>
+										@foreach($project as $p)
+										<option value="{{$p->id_project}}">{{$p->nm_project}}</option>"
 										@endforeach
 									</select>
 									</div><!-- /.box-body -->
@@ -52,62 +44,79 @@
 								</form>
 							</div>
 						</div>
+					@if(!empty($prodforProject))
+					<div class="card">
+						<div class="card-body">
+							<form role=form name="myForm" id="myForm"  action="" method="get" enctype="multipart/form-data">
+								
+								<div class="box-body mt-3">
+									
+									<input type="hidden" name="id_project" value="{{Request::get('id_project')}}">
+									<label>Choose Product - Part</label>
+									<select  style="width: 100%;"  class="form-control  option-select-doc" id="prod_part" name="prod_part" required>
+										
+										@foreach($prodforProject as $p)
+										
+
+										<option value="{{$p->id_product}}_{{$p->part->id_part}}">{{$p->product->nm_product}} - {{$p->part->nm_part}}</option>
+										
+										@endforeach
+									</select>
+									</div><!-- /.box-body -->
+									<div class="box-footer">
+										<button type="submit"  class="btn btn-outline-secondary"><i class="fas fa-search"></i> Search</button>
+									</div>
+								</form>
+							</div>
+						</div>
 					</div>
-					@if(!empty($doc_detail))
+					@endif
+					@if(!empty($prodforProject))
 					<div class="col-12">
 						<div class="card">
 							<div class="card-header">
-								<h5 class="card-title">{{$doc_detail->nm_doc_part}}</h5>
+								<h5 class="card-title"></h5>
 							</div>
 							<div class="card-body">
-								<table class="table table-bordered" id="tb-detail">
+										 <div class="table-responsive">
+								<table class="table table-bordered" id="tb-detail-doc">
 									<thead>
-										<th>No</th>
-										<th>Check Parameters </th>
-										<th>Last Change Date</th>
-										<th>Last Changed by</th>
-										<th>Action</th>
+								        
+								            <th>Document name</th>
+								            <th>Upload File</th>
+								            <th> Status </th>
+								            <th>Required Type</th>
+								            <th>Version</th>
+								            <th>Upload n-Times</th>
+								  			<th>Permission</th>
 									</thead>
 									<tbody>
+										@foreach($docpart as $dp)
+											<tr>
+												<td>{{$dp->nm_doc_part}}</td>
+												<td><input type='file' id='file' name='doc[]' class="form-control" accept='.pdf' > 
+                    							<p class='text-secondary' id ="information">{{$dp->nm_doc_part}}.pdf</p></td>
+												<td>SUCCESS</td>
+												<td>{{$dp->doc_required}}</td>
+												<td>v1.0</td>
+												<td>2</td>
+												<td>xxx</td>
+											</tr>
+										@endforeach
 									</tbody>
 								</table>
 							</div>
 						</div>
 					</div>
-					<div class="col-12">
-						<form action="{{route('project.management.master.listcheck.modify.doc.add')}}" method="POST">
-							@csrf
-						<input type="hidden" name="id_doc_part" value="{{$doc_detail->id_doc_part}}">
-						<div class="card">
-							
-							<div class="card-body">
-								<div class="mt-3">
-									<button type="button" add-form class="btn btn-outline-secondary btn-sm"><i class="fas fa-plus"></i> Add List Check</button>
-								</div>
-								
-									<div class="mt-2 row" id="p-form-addlist">
-										<div class="col-md-4">
-											<div class="mt-2 row" style="display:none;" id="form-addlist">
-
-											</div>
-										
-									</div>
-									<div class="card-footer">
-										<div class="mt-3">
-											<button type="submit" id="modify-btn" disabled class="btn btn-primary btn-sm"><i class="fas fa-retweet"></i> Modify</button>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</form>
-						</div>
+				
 							@endif
 					</section>
 				</main>
 		@endsection
 		@section('javascript')
 		<script>
+			$('.option-select-doc').select2({
+		 	});
 			@if(!empty($doc_detail))
 			$(document).ready(function(){
 
