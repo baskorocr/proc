@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"Download Manifest Order ")
+@section('title',"Project Master ")
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
@@ -23,8 +23,8 @@
 								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
 									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
 									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-project" href="#"><i class="fas fa-plus-square"></i>Create Project</a></li>
-									<li><a class="dropdown-item" href="#"><i class="fas fa-arrow-down"></i>Assign Project Details</a></li>
-									<li><a class="dropdown-item" href="#"><i class="fa fa-table"></i>Project Assignment Data</a></li>
+									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#assignDetailModal" href="#"><i class="fas fa-arrow-down"></i>Assign Project Details</a></li>
+									<li><a class="dropdown-item" href="{{route('project.management.assign.master')}}"><i class="fa fa-table"></i>Project Assignment Data</a></li>
 								</ul>
 								
 							</div>
@@ -57,7 +57,9 @@
 	<script>
 		
 		$(document).ready(function(){
-
+ 	$('.option-select2').select2({
+ 		  dropdownParent: $('.modal')
+ 	});
 		window.table = $('#tb-proj-master').DataTable({
 			columnDefs: [
 	{
@@ -75,8 +77,8 @@
 			ajax: "{{ route('datatables.project.management.master')}}",
 			columns: [
 						{
-						data: 'number',
-						name: 'number'
+						data: 'DT_RowIndex',
+						name: 'DT_RowIndex'
 						},
 						{
 						data: 'proj_num',
@@ -132,6 +134,41 @@
 					$('#proj_num').val('')
 					$('#nm_project').val('')
 					$('#create-project').modal('hide')
+					$(".option-select2").select2("val", "");
+					window.table.ajax.reload();
+			  	} else if(response.data.type == "error")
+			  	{
+			  		Swal.fire(
+					  '',
+					  response.data.message,
+					  'error'
+					)
+			  	}
+			    
+			  })
+			  .catch(function (error) {
+			    console.log(error);
+			  });
+		})
+
+		$('#assign-project-form').submit(function(e){
+			e.preventDefault();
+			axios.post('{{route('api.project.management.assign.project')}}', {
+			    id_project:$('#id_project_assign').val(),
+			    id_product: $('#id_product_assign').val(),
+			    _token:$("input[name=_token]").val(),
+			  })
+			  .then(function (response) {
+			  	if(response.data.type == "success")
+			  	{
+			  		Swal.fire(
+					  '',
+					  response.data.message,
+					  'success'
+					)
+					
+					$(".option-select2").select2("val", "");
+				    $('#assignDetailModal').modal('hide')
 					window.table.ajax.reload();
 			  	} else if(response.data.type == "error")
 			  	{

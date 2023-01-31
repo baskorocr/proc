@@ -40,10 +40,14 @@
 							</div>
 						</div>
 						<div class="card-footer">
+							<form action="{{route('delivery.schedule.mf.download')}}" method="POST">
+								@csrf
 							<div class="row">
 								<div class="col-md-6 col-xs-12">
 									<div class="row">
 										<div class="col-md-6 col-xs-12">
+											<div id="download-list">
+											</div>
 											 <button type="submit" name="checked-po" class="btn btn-block btn-success"><i
 				                                        class="fas fa-download"></i> Download Checked
 				                            </button>
@@ -51,6 +55,7 @@
 									</div>
 								</div>
 							</div>
+						</form>
 						</div>
 					</div>
 				</div>
@@ -60,7 +65,49 @@
 	@endsection
 	@section('javascript')
 	<script>
-		$('#download-manifest').DataTable({
+Array.prototype.remove = function() {
+    var what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
+		var data = [];
+		function selectedDwn(id)
+		{
+			var val = $(id).val();
+			var dtval = $(id).data('filenm');
+			if(!$(id).is(':checked'))
+			{
+				data.remove(val);
+				$('#fl'+val).remove();
+			} else{
+				data.push(val);
+				$('#download-list').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" />');
+			}
+			console.log(data);
+
+		}
+		$('#download-manifest').on('draw.dt',   function () {
+			// console.log($('#63460809220e0000eb00d4b8').is('checked'))
+			// if($('#63460809220e0000eb00d4b8').is(':checked'))
+			// {
+			// 	alert('SS')
+			// } 
+
+			var all = $(".checked").map(function() {
+			    if(data.includes(this.value))
+			    {
+			    	$("#"+this.value).prop('checked', true);
+			    }
+			}).get();
+
+			console.log(all.join());
+		}
+			 ).DataTable({
 	"order": [[ 1, "DESC" ]],
 	processing: true,
 	serverSide: true,

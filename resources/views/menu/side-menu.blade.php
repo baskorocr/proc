@@ -44,9 +44,25 @@
             <a href="{{route('project.management.master.product')}}">
               <i class="bi bi-circle"></i><span>Product Master</span>
             </a>
-          </li><li>
+          </li>
+          <li>
             <a href="{{route('project.management.master.part')}}">
               <i class="bi bi-circle"></i><span>Part Master</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('project.management.master.listcheck')}}">
+              <i class="bi bi-circle"></i><span>List Check Master</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('project.management.upload.project')}}">
+              <i class="bi bi-circle"></i><span>Upload Project Doc</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('project.management.check.doc.eng')}}">
+              <i class="bi bi-circle"></i><span>Check Eng Doc</span>
             </a>
           </li>
         </ul>
