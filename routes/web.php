@@ -72,6 +72,17 @@ Route::get('/blank', function () {
    return view('example/blank');
 });
 
+// PURCHASING PROCESS Routes
+Route::prefix('purchasing-process')->group(function(){
+    Route::get('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'upload'])->name('purchasing.process.uploadpo');
+    Route::get('/list-po', [App\Http\Controllers\PurchasingProcessController::class, 'index'])->name('purchasing.process.listpo');
+    //Datatables
+    Route::get('/datatables/get-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPo'])->name('datatables.purchasing.process.listpo');
+
+    Route::get('/download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'download'])->name('purchasing.process.download.listpo');
+    //Datatables
+    Route::get('/datatables/get-download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getDownloadListPo'])->name('datatables.purchasing.process.download.listpo');
+});
 
 Route::prefix('component')->group(function () {
     Route::get('/forminput', function () {

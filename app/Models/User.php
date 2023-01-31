@@ -9,7 +9,7 @@ use App\Models\Role;
 
 class User extends Authenticable
 {
-    protected $table = "user";
+    protected $table = "users";
 
     public $dates = ['deleted_at'];
     

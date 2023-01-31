@@ -53,6 +53,28 @@
       </li>
 
       <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#purchasing-process" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-cart"></i><span>Purchasing Process</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="purchasing-process" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{route('purchasing.process.uploadpo')}}">
+              <i class="bi bi-circle"></i><span>Upload Approved PO</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('purchasing.process.listpo')}}">
+              <i class="bi bi-circle"></i><span>List PO</span>
+            </a>
+          </li><li>
+            <a href="{{route('purchasing.process.download.listpo')}}">
+              <i class="bi bi-circle"></i><span>Download PO</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#schedule-delivery" data-bs-toggle="collapse" href="#">
           <i class="bi bi-truck"></i><span>Delivery Schedule</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>

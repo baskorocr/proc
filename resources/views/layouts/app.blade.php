@@ -73,6 +73,7 @@
     <script src="{{asset('js/plugins/datepicker/bootstrap-datepicker.js')}}"></script>
     -->
     <link rel="stylesheet" href="{{asset('css/datepicker/datepicker.css')}}">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 <body  class="skin-black">
 {{--
@@ -229,6 +230,7 @@
     window.onmousemove = resetTimeout;
     window.onkeypress  = resetTimeout;
 </script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
 <!-- Page script -->
 <script type="text/javascript">
@@ -292,6 +294,8 @@
         $(".timepicker").timepicker({
             showInputs: false
         });
+
+        $('.select2').select2();
     });
 
         //Date Picker
