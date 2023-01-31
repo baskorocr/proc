@@ -31,8 +31,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     // DELIVERY SCHEDULE ROUTES
     Route::prefix('delivery-schedule')->group(function(){
+        Route::get('/dummy-file-act', [App\Http\Controllers\DeliveryScheduleController::class, 'createDummyFile'])->name('dummy-file');
         Route::get('/mf', [App\Http\Controllers\DeliveryScheduleController::class, 'index'])->name('delivery.schedule.mf');
+        Route::post('/mf/download', [App\Http\Controllers\DeliveryScheduleController::class, 'zipMF'])->name('delivery.schedule.mf.download');
         Route::get('/spc', [App\Http\Controllers\DeliveryScheduleController::class, 'index_spo'])->name('delivery.schedule.spc');
+        Route::post('/spc/download', [App\Http\Controllers\DeliveryScheduleController::class, 'zipMFSP'])->name('delivery.schedule.spc.download');
         //Datatables
         Route::get('/mf/get-data',[App\Http\Controllers\DeliveryScheduleController::class, 'getDeliveryMf'])->name('api.schedule.delivery.datatables');
         Route::get('/spc/get-data',[App\Http\Controllers\DeliveryScheduleController::class, 'getDeliverySPC'])->name('api.schedule.delivery.spc.datatables');
