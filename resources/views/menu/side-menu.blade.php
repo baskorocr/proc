@@ -61,7 +61,7 @@
             </a>
           </li>
           <li>
-            <a href="{{route('project.management.master.part')}}">
+            <a href="{{route('project.management.check.doc.eng')}}">
               <i class="bi bi-circle"></i><span>Check Eng Doc</span>
             </a>
           </li>

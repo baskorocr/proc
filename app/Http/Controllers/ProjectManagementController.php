@@ -11,8 +11,10 @@ use App\Models\DocForPart;
 use App\Models\DocCheckList;
 use App\Models\ProductForProject;
 use App\Models\PartForProduct;
+use App\Models\ProjectDocAssign;
 use Numbering;
 use DB;
+use PM;
 
 class ProjectManagementController extends Controller
 {
@@ -23,12 +25,25 @@ class ProjectManagementController extends Controller
         return view('project_management/project_master/index')->with(['project' => $prj,'product' => $prod]);
     }
 
-
     public function productMaster()
     {
          $prj = Part::where('status','A')->where('assigned','Y')->get();
         $prod = Product::where('status','A')->where('assigned','N')->get();
         return view('project_management/product_master/index')->with(['parts' => $prj,'product' => $prod]);
+    }  
+
+
+    public function checkDocEng(Request $request)
+    {
+       $prj = Project::where('status','A')->where('assigned','Y')->get();
+        $ret = ['project' => $prj];
+
+        if(!empty($request->id_project))
+        {
+            $project = Project::where('id_project',$request->id_project)->first();
+            $ret['project_name'] = !empty($project) ? "[".$project->nm_project."]":'-';
+        }
+        return view('project_management/check_doc_eng/index')->with($ret);
     }  
 
     public function DocCheckListMaster()
@@ -44,6 +59,41 @@ class ProjectManagementController extends Controller
         $prod = Product::where('status','A')->where('assigned','Y')->get();
         return view('project_management/list_check_master/index_docmaster')->with(['parts' => $prj,'product' => $prod]);
     } 
+
+   
+    public function uploadDocAct(Request $request)
+    {
+        $id_project_new     = $request->id_project;
+        $dest_path          = "DATA/$id_project_new";
+        $id_product_new     = $request->id_product;
+        $id_part_new        = $request->id_part;
+        $id_doc_part_new    = $request->doc_arr;
+
+        $upload_count = PM::get_upload_sequence($id_project_new, $id_product_new, $id_part_new);
+        $upload_n = intval($upload_count) + 1;
+
+        $upld_count = count($request->doc);
+
+        if($upld_count == 0){ //check doc choosen
+
+          return "RR";
+
+        } else {
+            $data = (object)PM::allJoin($request->id_project,"P");
+            foreach($data as $aj)
+            {
+                ProjectDocAssign::create(['id_assign' => Numbering::autoIncrement(new \App\Models\ProjectDocAssign(),"id_assign"),
+                                          'id_product' => $aj->id_product,
+                                            'id_part' => $aj->id_part,
+                                            'id_doc_part'  => $aj->id_doc_part,
+                                            'check_params'  => $aj->check_params
+                                        ]);
+            }
+
+        }
+
+        }
+
 
     public function uploadProjectDoc(Request $request)
     {
@@ -66,7 +116,8 @@ class ProjectManagementController extends Controller
             $exp =  explode("_", $request->prod_part);
             $id_product = $exp[0];
             $id_part    = $exp[1];
-
+            $ret['id_product'] = $id_product;
+            $ret['id_part'] = $id_part;
             $ret['docpart'] = DocPart::get();
         }
        }
