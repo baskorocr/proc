@@ -933,7 +933,7 @@ function get_group_all_join_proj_prod_part_data2($id_project, $id_product, $id_p
 	function get_proj_doc_has_uploaded_data($id_project){
 
 		$conn = get_connection(); 
-		$query = "SELECT a.id_project, b.proj_num, b.nm_project, a.id_product, c.nm_product, a.id_part, d.nm_part, a.id_doc_part, e.nm_doc_part, e.doc_required, a.file_nm, a.upload_path, a.upload_n, a.version_n, a.file_nm, date_format(a.upload_date, '%d.%m.%Y') as upload_date, a.uploader_id, f.nm_user, e.doc_required from proj_doc_upload a
+		$query = "SELECT a.id_project, b.proj_num, b.c, a.id_product, c.nm_product, a.id_part, d.nm_part, a.id_doc_part, e.nm_doc_part, e.doc_required, a.file_nm, a.upload_path, a.upload_n, a.version_n, a.file_nm, date_format(a.upload_date, '%d.%m.%Y') as upload_date, a.uploader_id, f.nm_user, e.doc_required from proj_doc_upload a
 				join project b on b.id_project = a.id_project
 				join product c on c.id_product = a.id_product
 				join part d on d.id_part = a.id_part

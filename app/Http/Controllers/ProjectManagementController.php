@@ -12,9 +12,13 @@ use App\Models\DocCheckList;
 use App\Models\ProductForProject;
 use App\Models\PartForProduct;
 use App\Models\ProjectDocAssign;
+use App\Models\ProjectDocUpload;
+use App\Models\ProjectVendorUpload;
+use App\Models\ProjectVendorAssign;
 use Numbering;
 use DB;
 use PM;
+use App\Models\Vendor;
 
 class ProjectManagementController extends Controller
 {
@@ -40,10 +44,39 @@ class ProjectManagementController extends Controller
 
         if(!empty($request->id_project))
         {
-            $project = Project::where('id_project',$request->id_project)->first();
-            $ret['project_name'] = !empty($project) ? "[".$project->nm_project."]":'-';
+            $project = ProjectDocUpload::where('id_project',$request->id_project)->get();
+            $ret['project_uploaded'] = $project;
         }
         return view('project_management/check_doc_eng/index')->with($ret);
+    }  
+
+    public function dashboardMonProject(Request $request)
+    {
+       $prj = ProjectVendorAssign::groupBy('id_project','id_vendor')->get();
+       $ret['project'] = $prj;
+        return view('project_management/project_monitoring/index')->with($ret);
+    }  
+
+    public function assignVendor(Request $request)
+    {
+       $prj = Project::where('status','A')->where('assigned','Y')->get();
+        $ret = ['project' => $prj];
+
+        if(!empty($request->id_project))
+        {
+            $pfp = ProductForProject::where('id_project',$request->id_project)->get();
+        
+            $ret['prodforProject'] = $pfp;
+        } 
+
+        if(!empty($request->prod_part))
+        {
+            $pfp = Vendor::get();
+            $prod = Vendor::get();
+        
+            $ret['vendor'] = $pfp;
+        }
+        return view('project_management/assign_doc_vendor/index')->with($ret);
     }  
 
     public function DocCheckListMaster()
