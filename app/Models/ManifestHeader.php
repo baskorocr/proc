@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Storage;
 
 class ManifestHeader extends Model
 {
+   //Connect To Other DB
     protected $connection = "mongodbpurch_proc";
+    // END Connect
     protected $table = "manifest_header";
 
     protected $fillable = ['manifest','mf_type','release_date','id_vendor','delivery_date','delivery_time','po_num','sent','downloaded','file_nm','stat','active'];

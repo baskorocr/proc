@@ -19,6 +19,9 @@ class Permission extends Model
         'allow'
     ];
 
+    protected $casts = [
+        'order_number' => 'float',
+    ];
     public function children()
     {
         return $this->hasMany('App\Models\Permission', 'parent_id', '_id')->orderBy('order_number');

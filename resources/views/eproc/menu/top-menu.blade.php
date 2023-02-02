@@ -2,35 +2,35 @@
 <?php
 
     /*
-    include_once "../conn/conn.php";
-    include_once "../project_mgt/project-mgt-query.php";
+    include_once "/conn/conn.php";
+    include_once "/project_mgt/project-mgt-query.php";
     */
 
 ?>
 <!-- bootstrap 3.0.2 -->
         <meta charset="UTF-8">
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
-        <link href="../css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/bootstrap.min.css')}}" rel="stylesheet" type="text/css" />
         <!-- font Awesome -->
-        <link href="../css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/font-awesome.min.css')}}" rel="stylesheet" type="text/css" />
         <!-- Ionicons -->
-        <link href="../css/ionicons.min.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/ionicons.min.css')}}" rel="stylesheet" type="text/css" />
         <!-- Morris chart -->
-        <link href="../css/morris/morris.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/morris/morris.css')}}" rel="stylesheet" type="text/css" />
         <!-- jvectormap -->
-        <link href="../css/jvectormap/jquery-jvectormap-1.2.2.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/jvectormap/jquery-jvectormap-1.2.2.css')}}" rel="stylesheet" type="text/css" />
         <!-- fullCalendar -->
-        <link href="../css/fullcalendar/fullcalendar.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/fullcalendar/fullcalendar.css')}}" rel="stylesheet" type="text/css" />
         <!-- Daterange picker -->
-        <link href="../css/daterangepicker/daterangepicker-bs3.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/daterangepicker/daterangepicker-bs3.css')}}" rel="stylesheet" type="text/css" />
         <!-- bootstrap wysihtml5 - text editor -->
-        <link href="../css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/bootstrap-wysihtml5/bootstrap3-wysihtml5.min.css')}}" rel="stylesheet" type="text/css" />
         <!-- Theme style -->
-        <link href="../css/AdminLTE.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/AdminLTE.css')}}" rel="stylesheet" type="text/css" />
          <!-- DATA TABLES -->
-        <link href="../css/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
+        <link href="{{asset('css/datatables/dataTables.bootstrap.css')}}" rel="stylesheet" type="text/css" />
 
-        <link rel="stylesheet" href="../select/dist/css/bootstrap-select.css">
+        <link rel="stylesheet" href="{{asset('select/dist/css/bootstrap-select.css')}}">
 
 <?php
     
@@ -665,43 +665,43 @@
 
 
 
-        <script src="../jquery-2/jquery.min.js"></script>
+        <script src="/jquery-2/jquery.min.js"></script>
         <!-- jQuery UI 1.10.3 -->
-        <script src="../js/jquery-ui-1.10.3.min.js" type="text/javascript"></script>
+        <script src="/js/jquery-ui-1.10.3.min.js" type="text/javascript"></script>
         <!-- Bootstrap -->
-        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/js/bootstrap.min.js" type="text/javascript"></script>
         <!-- Morris.js charts 
         <script src="//cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
         -->
-        <script src="../css/raphael/raphael-min.js"></script>
-        <script src="../js/plugins/morris/morris.min.js" type="text/javascript"></script>
+        <script src="/css/raphael/raphael-min.js"></script>
+        <script src="/js/plugins/morris/morris.min.js" type="text/javascript"></script>
         <!-- Sparkline -->
-        <script src="../js/plugins/sparkline/jquery.sparkline.min.js" type="text/javascript"></script>
+        <script src="/js/plugins/sparkline/jquery.sparkline.min.js" type="text/javascript"></script>
         <!-- jvectormap -->
-        <script src="../js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js" type="text/javascript"></script>
-        <script src="../js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js" type="text/javascript"></script>
+        <script src="/js/plugins/jvectormap/jquery-jvectormap-1.2.2.min.js" type="text/javascript"></script>
+        <script src="/js/plugins/jvectormap/jquery-jvectormap-world-mill-en.js" type="text/javascript"></script>
         <!-- fullCalendar -->
-        <script src="../js/plugins/fullcalendar/fullcalendar.min.js" type="text/javascript"></script>
+        <script src="/js/plugins/fullcalendar/fullcalendar.min.js" type="text/javascript"></script>
         <!-- jQuery Knob Chart -->
-        <script src="../js/plugins/jqueryKnob/jquery.knob.js" type="text/javascript"></script>
+        <script src="/js/plugins/jqueryKnob/jquery.knob.js" type="text/javascript"></script>
         <!-- daterangepicker -->
-        <script src="../js/plugins/daterangepicker/daterangepicker.js" type="text/javascript"></script>
+        <script src="/js/plugins/daterangepicker/daterangepicker.js" type="text/javascript"></script>
         <!-- Bootstrap WYSIHTML5 -->
-        <script src="../js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>
+        <script src="/js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js" type="text/javascript"></script>
         <!-- iCheck -->
-        <script src="../js/plugins/iCheck/icheck.min.js" type="text/javascript"></script>
+        <script src="/js/plugins/iCheck/icheck.min.js" type="text/javascript"></script>
 
         <!-- AdminLTE App -->
-        <script src="../js/AdminLTE/app.js" type="text/javascript"></script>
+        <script src="/js/AdminLTE/app.js" type="text/javascript"></script>
         
         <!-- AdminLTE dashboard demo (This is only for demo purposes) -->
-        <script src="../js/AdminLTE/dashboard.js" type="text/javascript"></script>        
+        <script src="/js/AdminLTE/dashboard.js" type="text/javascript"></script>        
 
         <!-- Bootstrap -->
-        <script src="../js/bootstrap.min.js" type="text/javascript"></script>
+        <script src="/js/bootstrap.min.js" type="text/javascript"></script>
         <!-- DATA TABES SCRIPT -->
-        <script src="../js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
-        <script src="../js/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
+        <script src="/js/plugins/datatables/jquery.dataTables.js" type="text/javascript"></script>
+        <script src="/js/plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
 
-        <script src="../select/dist/js/bootstrap-select.js"></script>
+        <script src="/select/dist/js/bootstrap-select.js"></script>
 </body>
