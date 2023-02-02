@@ -18,28 +18,23 @@
 					<div class="card ">
 						<div class="card-body">
 							<div class="table-responsive mt-3">
-								<table id="tb-proj" class="table table-bordered table-striped">
-									
-									<thead>
-										<tr>
-											<th><small>Project Number</small></th>
-											<th><small>Project Name</small></th>
-											<th><small>Upload (Eng)</small></th>
-											<th><small>Check (Proc)</small></th>
-											<th><small>Vendor Ass.</small></th>
-											<!--
-											<th><small>Dwld (Vdr)</small></th>
-											-->
-											<th><small>Upload (Vdr)</small></th>
-											<th><small>Fin. Check (Proc)</small></th>
-											<th><small>Fin. Check (QA)</small></th>
-											<!--
-											<th><small>Proj. Type</small></th>
-											-->
-											<th><small>Stat</small></th>
-										</tr>
-									</thead>
-									<tbody>
+								 <table id="example2" class="table table-bordered table-striped">                      
+        
+									        <thead>
+									            <tr>
+									                <th><small>Project Name</small></th>
+									                <!--
+									                <th><small>Dwld (Vdr)</small></th>
+									                -->
+									                <th><small>Doc Assignment (Proc)</small></th>
+									                <th><small>Upld (Vdr)</small></th>
+									                <th><small>Fin. Check (Proc)</small></th>
+									                <th><small>Fin. Check (QA)</small></th>
+									                <th><small>Stat</small></th>
+									            </tr>
+									        </thead>
+									        <tbody> 
+									       
 										@foreach($project as $p)
 										<?php 
 												$proj = PM::get_vendor_has_assigned_detail2($p->id_project, $p->id_vendor, "P");
@@ -230,15 +225,12 @@
 
 										?>
 											<tr>
-												<td>{{@$p->project->proj_num}}</td>
 												<td>{{@$p->project->nm_project}}</td>
-												<td>{!!$doc_assignment_stat!!}</td>
-												<td>{!!$stat_check_new!!}</td>
-												<td>{!!$vendor_ass!!}</td>
-												<td>{!!$upload_vendor_stat!!}</td>
+												 <td><?php echo $doc_assignment_stat; ?></td>
+                    							<td><?php echo $upload_vendor_stat; ?></td>
 												<td>{!!$stat_check_fin_proc!!}</td>
 												<td>{!!$stat_check_fin_qa!!}</td>
-												<td>{!!$proj_stat !!}</td>
+												<td>{!!$proj_stat!!}</td>
 											</tr>
 										@endforeach
 									</tbody>

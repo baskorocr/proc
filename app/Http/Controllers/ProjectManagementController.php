@@ -57,6 +57,18 @@ class ProjectManagementController extends Controller
         return view('project_management/project_monitoring/index')->with($ret);
     }  
 
+    public function dashboardMonVendor(Request $request)
+    {
+       $prj = ProjectVendorAssign::groupBy('id_project','id_vendor')->get();
+       $ret['project'] = $prj;
+        return view('project_management/vendor_monitoring/index')->with($ret);
+    }  
+    public function file_master(Request $request)
+    {
+    
+        return view('project_management/file_master/index');
+    }  
+
     public function assignVendor(Request $request)
     {
        $prj = Project::where('status','A')->where('assigned','Y')->get();

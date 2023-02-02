@@ -75,6 +75,15 @@
               <i class="bi bi-circle"></i><span>Dashboard Project</span>
             </a>
           </li> 
+           <li>
+            <a href="{{route('project.management.vendor.monitoring')}}">
+              <i class="bi bi-circle"></i><span>Vendor Monitoring</span>
+            </a>
+           <li>
+            <a href="{{route('project.management.file.master')}}">
+              <i class="bi bi-circle"></i><span>File Master</span>
+            </a>
+          </li> 
           {{-- <li>
             <a href="x">
               <i class="bi bi-circle"></i><span> View Doc (Vendor)</span>

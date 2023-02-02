@@ -11,9 +11,14 @@ class ProjectVendorAssign extends Model
  
     // END Connect
     protected $table = "proj_vendor_assign";
-    protected $fillable = [ 'id_assign','id_project','id_product','id_part','id_doc_part','check_params','comment','check_status','checker_id','check_date' ];
+    protected $fillable = [ 'id_assign','id_project','id_vendor','id_product','id_part','id_doc_part','check_params','comment','check_status','checker_id','check_date' ];
 
     public $dates = ['modify_date','check_date'];
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class,'id_vendor','id_vendor');
+    } 
 
     public function product()
     {
