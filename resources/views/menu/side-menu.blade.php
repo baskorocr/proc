@@ -27,6 +27,7 @@
           </li>
         </ul>
       </li>
+
        <!-- END EXAMPLE -->
 
       @foreach(Session::get('permissions') as $menu)

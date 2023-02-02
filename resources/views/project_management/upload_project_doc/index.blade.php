@@ -1,6 +1,12 @@
 @extends('layouts.main')
 @section('title',"Upload Document Project")
 @section('content')
+<?php
+	 $doc_arr        = array();
+    $data_arr       = array();
+    $checked_arr    = array();
+    $completed_arr  = array();
+ ?>
 <main id="main" class="main">
 	<div class="pagetitle">
 		<h1>Upload Document Project</h1>
@@ -71,7 +77,12 @@
 						</div>
 					</div>
 					@endif
-					@if(!empty($prodforProject))
+					@if(!empty($docpart))
+					<form id="upload" action="{{route('project.management.upload.project.actUpload')}}" method="POST" enctype="multipart/form-data">
+						<input type="hidden" name="id_project" value="{{Request::get('id_project')}}">
+						<input type="hidden" name="id_product" value="{{$id_product}}">
+						<input type="hidden" name="id_part" value="{{$id_part}}">
+						@csrf
 					<div class="col-12">
 						<div class="card">
 							<div class="card-header">
@@ -84,7 +95,7 @@
 								        
 								            <th>Document name</th>
 								            <th>Upload File</th>
-								            <th> Status </th>
+								            <th>Status </th>
 								            <th>Required Type</th>
 								            <th>Version</th>
 								            <th>Upload n-Times</th>
@@ -92,22 +103,96 @@
 									</thead>
 									<tbody>
 										@foreach($docpart as $dp)
+
+										<?php 
+
+										$sum_check = PM::get_proj_doc_assign_data_status(Request::get('id_project'),$id_product,$id_part,$dp->id_doc_part);
+										$count_row3 = count(PM::get_proj_doc_assign_data(Request::get('id_project'),$id_product,$id_part,$dp->id_doc_part)) ;
+										$upDoc = PM::getDocUploadData(Request::get('id_project'),$id_product,$id_part,$dp->id_doc_part);
+										$doc_version = !empty($upDoc->version_n) ? "<span class='badge bg-success'>Ver 0".$upDoc->version_n."</span>":"-";
+										$doc_upload  = !empty($upDoc->upload_n) ? "<center>$upDoc->upload_n</center>":"-";
+										$up_permit = !empty($upDoc->upload_n) ? $upDoc->upload_n:0;
+										$permit_n = PM::get_permit(Request::get('id_project'), $id_product, $id_part);
+
+										  if ($dp->doc_required == "M"){
+									                    $doc_required = "<label class='badge bg-success text-md-center'>Mandatory</label>";
+									                } elseif ($dp->doc_required == "Y") {
+									                    $doc_required = "<label class='badge bg-primary text-md-center'>Required</label>";
+									                } elseif ($dp->doc_required == "N") {
+									                    $doc_required = "<label class='badge bg-warning text-md-center'>Not-Required</label>";
+									                }
+										 if (empty($upDoc->upload_path)){
+							                    $stat_check = "<span class='badge bg-danger'>No upload</span>";
+							                    $dis_btn = "";
+							                    $doc_name = $dp->nm_doc_part.".pdf";
+							                    $doc_version = "<center>-</center>";
+							                    $doc_upload = "<center>-</center>";
+							                    $act    ="disabled";
+							                } 
+							            else {
+										if ($count_row3 == $sum_check){
+                        							$stat_check =  "<span class='badge bg-primary'>Completed ($sum_check/$count_row3)</span>";
+							                        array_push($completed_arr, 'completed');
+							                        $dis_btn = "style=\"display: none\"";
+							                        $doc_name = "<span class='badge bg-success'>Completed Check</span>"; //$doc_upl_nm
+							                    } else {
+												 	 $stat_check =  "<a href='home.php?mnu=checkdoceng'><span class='badge bg-orange btn-flat'>Uncomplete ($sum_check/$count_row3)</span></a>";
+							                        $dis_btn = "";
+							                        $doc_name = $dp->nm_doc_part.".pdf";
+												 }
+
+												
+
+
+							                      
+							                   }
+							                   	$ptext = "-";
+							                    if  ($up_permit >= 5) {
+							                           //echo $permit;
+
+							                            if ($permit_n == 0 ) {
+
+							                                 $ptext = "<label>N-1</label>". $permit;
+
+							                            } elseif ($permit_n == 1 ){
+
+							                                $ptext = "<label>N-2</label> ".$permit2;
+							                             
+
+							                            } elseif ($permit_n == 2 ) {
+
+							                                 $ptext = "<label>N-1</label>".$permit2."<br>";
+							                               
+							                                 $ptext .= "<label>N-2</label><br>". $permit2;
+
+							                            }//if ($permit_n == 0)
+
+							                       }//($upload_n >= 5)
+							                    ?>
 											<tr>
 												<td>{{$dp->nm_doc_part}}</td>
-												<td><input type='file' id='file' name='doc[]' class="form-control" accept='.pdf' > 
+												<td>
+													<input type="hidden" name="id_doc_part[]" disabled id="up_{{$dp->id_doc_part}}" value="{{$dp->id_doc_part}}">
+													<input type='file' id='file' name='doc[]' onchange="$('#up_{{$dp->id_doc_part}}').prop('disabled',false);" class="form-control" accept='.pdf' > 
+
                     							<p class='text-secondary' id ="information">{{$dp->nm_doc_part}}.pdf</p></td>
-												<td>SUCCESS</td>
-												<td>{{$dp->doc_required}}</td>
-												<td>v1.0</td>
-												<td>2</td>
-												<td>xxx</td>
+												<td>{!!$stat_check!!}</td>
+												<td>{!!$doc_required!!}</td>
+												<td>{!!$doc_version!!}</td>
+												<td>{!!$doc_upload!!}</td>
+												<td>{!!$ptext!!}</td>
 											</tr>
 										@endforeach
 									</tbody>
 								</table>
 							</div>
 						</div>
+						<div class="card-footer">
+							<button class="ml-4 btn btn-primary" type="submit"><i class="fas fa-upload"></i> Upload</button>
+						</div>
 					</div>
+					</div>
+				</form>
 				
 							@endif
 					</section>
@@ -118,6 +203,7 @@
 			$('.option-select-doc').select2({
 		 	});
 			@if(!empty($doc_detail))
+			
 			$(document).ready(function(){
 
 		window.table = $('#tb-detail').DataTable({

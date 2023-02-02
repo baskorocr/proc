@@ -231,6 +231,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
         'Numbering' => App\Helpers\Numbering::class,
+        'PM' => App\Helpers\ProjectManagementHelper::class,
 
     ],
 
