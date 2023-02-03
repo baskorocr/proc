@@ -1,13 +1,13 @@
 @extends('layouts.main')
-@section('title',"Master ISO Expired Notify ")
+@section('title',"Email Group ")
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Master ISO Expired Notify</h1>
+		<h1>Email Group</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Master ISO Expired Notify</a></li>
+				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Email Group</a></li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -17,20 +17,17 @@
 					<div class="card">
 						<div class="card-body">
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-notify">
+								<table  class="table table-bordered table-stripped table-sm" id="email-group">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
-										<th>Notify ID</th>
-										<th>Notify Sequence</th>
-										<th>Notify Before</th>
-										<th>Measurement</th>
+										<th>Dept Code</th>
+										<th>Abbreviation</th>
+										<th>Description</th>
 										<th>Last Changed by</th>
 										<th>Last Changed Date</th>
 										<th>Action</th>
-										
 									</thead>
 									<tbody>
-										
 									</tbody>
 								</table>
 							</div>
@@ -44,7 +41,7 @@
 
 	@section('javascript')
     <script>
-      $('#master-notify').DataTable({
+      $('#email-group').DataTable({
         "order": [[ 1, "DESC" ]],
         processing: true,
         serverSide: true,
@@ -52,39 +49,29 @@
         "language": {
         "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
         },
-        ajax: "{{ route('datatables.doc-iso.master.notify')}}",
+        ajax: "{{ route('datatables.regis-user.email.group')}}",
         columns: [
           {
 			data: 'DT_RowIndex', name: 'DT_RowIndex'
           },
           {
-            data: 'notif_id', name: 'notif_id'
+            data: 'dept_code', name: 'dept_code'
           },
           {
-            data: 'notif_seq', name: 'notif_seq'
+            data: 'abrev', name: 'abrev'
+          },
+		  {
+            data: 'dept_desc', name: 'dept_desc'
           },
           {
-            data: 'notif_before', name: 'notif_before'
+            data: 'last_changed_by', name: 'last_changed_by'
           },
           {
-            data: 'uom', name: 'uom'
+            data: 'last_changed', name: 'last_changed'
           },
           {
-            data: 'cr_by', name: 'cr_by'
-          },
-          {
-            data: 'cr_date', name: 'cr_date'
-          },
-          {
-						data: 'action', name: 'action'
-          },
-          // {
-          //   data: 'ch_by', name: 'ch_by'
-          // },
-          // {
-          //   data: 'ch_date', name: 'ch_date'
-          // },
-          
+			data: 'action', name: 'action'
+          },  
         ]
       });
 

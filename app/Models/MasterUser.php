@@ -9,15 +9,20 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 //Reference: https://github.com/jenssegers/laravel-mongodb#eloquent
 use Jenssegers\Mongodb\Eloquent\Model;
 
-class AccessGroupList extends Model
+class MasterUser extends Model
 {
     use HasFactory;
 	
-	protected $collection = 'access_group_list';
+	protected $collection = 'users';
 	
-	protected $primaryKey = 'id_access_group';
+	// protected $primaryKey = 'id_menu';
+
+	protected $fillable = ['id_user','nm_user','id_tipe_user','status_user','role'];
+
+	public $dates = ['last_changed'];
+
 	
 	//optional, already set in config::database
-	protected $connection = 'mongodb';
-	
+	//protected $connection = 'mongodb';
+
 }

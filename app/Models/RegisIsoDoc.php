@@ -38,6 +38,6 @@ class RegisIsoDoc extends Model
 
     public function vendor()
     {
-        return $this->belongsTo(Vendor::class,'id_vendor','id_vendor');
+        return $this->belongsTo(Vendor::class,'id_vendor','id_vendor'); 
     }
 }

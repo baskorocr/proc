@@ -102,8 +102,8 @@
                   <tbody>
                     @foreach($regis as $item)
                       <tr>
-                        <td>vendor</td>
-                        <td>{{ $item->vendor->name }}</td>
+                        <td>{{ $item->id_vendor }}</td>
+                        <td>{{ $item->vendor->nm_vendor }}</td>
                         <td>{{ $item->mat_supply }}</td>
                         <td>{{ $item->simply ? 'Ya' : 'Tidak' }}</td>
                         <td>{{ $item->cert_num }}</td>

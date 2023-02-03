@@ -10,115 +10,118 @@
           <li class="breadcrumb-item active">Report ISO</li>
         </ol>
       </nav>
-    </div><!-- End Page Title -->
+    </div>
 
     <section class="section dashboard">
       <div class="row">
-      <div class="flex-parent jc-center">
+        <div class="flex-parent jc-center">
           <div style="float:left"; >
-            <table>
+             <table>
                 <tr>
-                    <th id="table" >
-                    <div style="background-color:MediumBlue; width:153px;" class="card info-card revenue-card">
-                      <div class="card-body">
-                        <h5 style="color:white" class="card-title">Submitted Document</h5>
-                          <div class="ps-3">
-                            <h6 style="color:white">0</h6>
-                          </div>
-                        </div>
+                  <th id="table" >
+                  <div style="background-color:MediumBlue; width:153px"  class="card info-card sales-card">
+                    <div class="card-body">
+                      <h5 style="color:white" class="card-title">Submitted Document</h5>
+                      <div class="ps-3">
+                        <h6 style="color:white">{{ $regis->where('trn_type', 'S')->count() }}</h6>
                       </div>
                     </div>
-                    </th>
+                  </div>
+                  </th>
                 </tr>
             </table>
-            </div>
-            <div style="float:left; margin-left:10px;" >
-            <table>
+          </div>
+        <div style="float:left; margin-left:10px;" >
+          <table>
             <tr> 
               <th id="table" >
-                  <div style="background-color:Salmon; width:153px;"  class="card info-card sales-card">
+              <div style="background-color:Salmon; width:153px"   class="card info-card sales-card">
+                <div class="card-body">
+                  <h5 style ="color:white"class="card-title">Rejected Document</h5>
+                  <div class="ps-3">
+                    <h6 style="color:white">{{ $regis->where('trn_type', 'C')->count() }}</h6>
+                  </div>
+                </div>
+              </div>
+              </th>
+            </tr>
+          </table>
+        </div>
+        <div style="float:left; margin-left:10px" >
+          <table>
+            <tr> 
+              <th id="table" >
+              <div style="background-color:Orange; width:153px" class="card info-card revenue-card">
+                <div class="card-body">
+                  <h5 style="color:white"class="card-title">Updated Document</h5>
+                  <div class="ps-3">
+                    <h6 style ="color:white">{{ $regis->where('trn_type', 'U')->count() }}</h6>
+                  </div>
+                </div>
+              </div>
+              </th>
+            </tr>
+          </table>
+        </div>
+        <div style="float:left; margin-left:10px" >
+          <table>
+            <tr> 
+               <th id="table" >
+                <div class="col">
+                  <div style="background-color:#5cb85c;  width:153px" class="card info-card sales-card">
                     <div class="card-body">
-                      <h5 style ="color:white"class="card-title">Rejected Document</h5>
+                      <h5 style="color:white" class="card-title">Approved Document</h5>
                       <div class="d-flex align-items-center">
                         <div class="ps-3">
-                          <h6 style ="color:white">0</h6>
+                          <h6 style="color:white">{{ $regis->where('trn_type', 'R')->count() }}</h6>
                         </div>
                       </div>
                     </div>
                   </div>
-              </th>
-            </tr>
-            </table>
-            </div>
-            <div style="float:left; margin-left:10px" >
-            <table>
-            <tr> 
-              <th id="table" >
-                    <div style="background-color:Orange; width:153px;"class="card info-card revenue-card">
-                      <div class="card-body">
-                        <h5 style="color:white"class="card-title">Updated Document</h5>
-                          <div class="ps-3">
-                            <h6 style ="color:white">0</h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                </div>
                </th>
             </tr>
-            </table>
-            </div>
-            <div style="float:left; margin-left:10px" >
-            <table>
+          </table>
+        </div>
+        <div style="float:left; margin-left:10px" >
+          <table>
             <tr> 
                <th id="table" >
-                  <div style="background-color:#5cb85c; width:153px; "class="card info-card sales-card">
-                      <div class="card-body">
-                        <h5 style="color:white" class="card-title">Approved Document</h5>
-                        <div class="d-flex align-items-center">
-                          <div class="ps-3">
-                            <h6 style="color:white">0</h6>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                </th>
-            </tr>
-            </table>
-            </div>
-            <div style="float:left; margin-left:10px" >
-            <table>
-            <tr> 
-              <th id="table" > <div style="background-color:Orange; width:153px;"class="card info-card revenue-card">
+                <div class="col">
+                  <div style="background-color:Orange; width:153px" class="card info-card revenue-card">
                     <div class="card-body">
                       <h5 style="color:white"class="card-title">Notified Document</h5>
                         <div class="ps-3">
-                          <h6 style ="color:white">0</h6>
+                          <h6 style="color:white">{{ $regis->where('trn_type', 'I')->count() }}</h6>
                         </div>
                       </div>
                     </div>
                   </div>
-              </th>
+                </div>
+               </th>
             </tr>
-            </table>
-            </div>
-            <div style="float:left; margin-left:10px" >
-            <table>
+          </table>
+        </div>
+        <div style="float:left; margin-left:10px" >
+          <table>
             <tr> 
-              <th id="table" >
-                    <div style="background-color:MidnightBlue; width:153px;"class="card info-card revenue-card">
+               <th id="table" >
+                <div class="col-3">
+                  <div style="background-color:MidnightBlue; width:153px;"class="card info-card revenue-card">
                     <div class="card-body">
                       <h5 style="color:white"class="card-title">Total Document</h5>
                         <div class="ps-3">
-                          <h6 style ="color:white">0</h6>
+                          <h6 style ="color:white">{{ $regis->count() }}</h6>
                         </div>
                       </div>
                     </div>
                   </div>
-              </th>
+                </div>  
+               </th>
             </tr>
-            </table>
-            </div>
-      </div>
+          </table>
+        </div>
+    </section>
 
         <table  class="table table-striped datatables" style="width:100%">
                   <thead>
@@ -133,8 +136,29 @@
                       <th style="font-size:12px">Expire Status</th>
                       <th style="font-size:12px">Doc Process</th>
                     </tr>
-                  </thead>          
-         </table>
+                  </thead>   
+                  <tbody>
+                    @foreach($regis as $item)
+                      <tr>
+                        <td>Action</td>
+                        <td>{{ $item->vendor->id_vendor }}</td>
+                        <td>{{ $item->vendor->nm_vendor }}</td>
+                        <td>{{ $item->mat_supply }}</td>
+                        <td>{{ $item->simply ? 'Ya' : 'Tidak' }}</td>
+                        <td>{{ $item->cert_num }}</td>
+                        <td>{{ date('d-m-Y', strtotime($item->exp_date)) }}</td>
+                        <td>{{ $item->exp_date < date('Y-m-d') ? 'Expired' : 'Aktif' }}</td>
+                        <td>doc proces</td>
+                      </tr>
+                    @endforeach
+                  </tbody>    
+                </table>
+
+             </div>
     </section>
-  </main>
+
+
+
+  </main><!-- End #main -->
 @endsection
+

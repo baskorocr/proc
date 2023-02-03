@@ -9,15 +9,15 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 //Reference: https://github.com/jenssegers/laravel-mongodb#eloquent
 use Jenssegers\Mongodb\Eloquent\Model;
 
-class MenuList extends Model
+class MenuGroup extends Model
 {
     use HasFactory;
 	
-	protected $collection = 'menu_list';
+	protected $collection = 'menu_group_list';
 	
 	// protected $primaryKey = 'id_menu';
 
-	protected $fillable = ['menu_name','menu_object','object_path','last_changed_by','last_changed'];
+	protected $fillable = ['menu_group_name','menu_group_object','last_changed_by','last_changed'];
 
 	public $dates = ['last_changed'];
 

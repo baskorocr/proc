@@ -1,13 +1,13 @@
 @extends('layouts.main')
-@section('title',"Master ISO Expired Notify ")
+@section('title',"Master User ")
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Master ISO Expired Notify</h1>
+		<h1>Master User</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Master ISO Expired Notify</a></li>
+				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Master User</a></li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -17,17 +17,16 @@
 					<div class="card">
 						<div class="card-body">
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-notify">
+								<table  class="table table-bordered table-stripped table-sm" id="master-user">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
-										<th>Notify ID</th>
-										<th>Notify Sequence</th>
-										<th>Notify Before</th>
-										<th>Measurement</th>
-										<th>Last Changed by</th>
-										<th>Last Changed Date</th>
+										<th>ID User</th>
+										<th>Nama User</th>
+										<th>Tipe User</th>
+										<th>Login Username</th>
+										<th>Role</th>
+										<th>Status</th>
 										<th>Action</th>
-										
 									</thead>
 									<tbody>
 										
@@ -44,7 +43,7 @@
 
 	@section('javascript')
     <script>
-      $('#master-notify').DataTable({
+      $('#master-user').DataTable({
         "order": [[ 1, "DESC" ]],
         processing: true,
         serverSide: true,
@@ -52,39 +51,32 @@
         "language": {
         "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
         },
-        ajax: "{{ route('datatables.doc-iso.master.notify')}}",
+        ajax: "{{ route('datatables.regis-user.master.user')}}",
         columns: [
           {
 			data: 'DT_RowIndex', name: 'DT_RowIndex'
           },
           {
-            data: 'notif_id', name: 'notif_id'
+            data: 'id_user', name: 'id_user'
           },
           {
-            data: 'notif_seq', name: 'notif_seq'
+            data: 'nm_user', name: 'nm_user'
           },
           {
-            data: 'notif_before', name: 'notif_before'
+            data: 'id_tipe_user', name: 'id_tipe_user'
           },
           {
-            data: 'uom', name: 'uom'
+            data: 'username', name: 'username'
           },
+		  {
+			data: 'role', name: 'role'
+		  },
           {
-            data: 'cr_by', name: 'cr_by'
+			data: 'status_user', name: 'status_user'
           },
-          {
-            data: 'cr_date', name: 'cr_date'
-          },
-          {
-						data: 'action', name: 'action'
-          },
-          // {
-          //   data: 'ch_by', name: 'ch_by'
-          // },
-          // {
-          //   data: 'ch_date', name: 'ch_date'
-          // },
-          
+		  {
+			data: 'action', name: 'action'
+		  } 
         ]
       });
 

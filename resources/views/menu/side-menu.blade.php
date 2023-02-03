@@ -29,6 +29,49 @@
         </ul>
       </li>
 
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#regis_user" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-truck"></i><span>Registering User</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="regis_user" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+          <li>
+            <a href="{{ url('/regis-user/menu-list') }}">
+              <i class="bi bi-circle"></i><span>Menu List</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url('/regis-user/menu-group') }}">
+              <i class="bi bi-circle"></i><span>Menu Group</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url('/regis-user/access-group') }}">
+              <i class="bi bi-circle"></i><span>Access Group</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{ url('/regis-user/email-group') }}">
+              <i class="bi bi-circle"></i><span>Email Group</span>
+            </a>
+          </li>
+          <li>
+          <a href="{{ url('/regis-user/email-list-group') }}">
+              <i class="bi bi-circle"></i><span>Email List Group</span>
+            </a>
+          </li>
+          <li>
+          <a href="{{ url('/regis-user/master-user') }}">
+              <i class="bi bi-circle"></i><span>User Master</span>
+            </a>
+          </li>
+          <li>
+          <a href="{{ url('/regis-user/master-vendor') }}">
+              <i class="bi bi-circle"></i><span>Vendor Master</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#project-management" data-bs-toggle="collapse" href="#">
@@ -95,7 +138,8 @@
           <i class="bi bi-truck"></i><span>Doc Iso</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="doc-iso" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
+        
+        <li>
             <!-- <a href="{{route('delivery.schedule.mf')}}"> -->
             <a href="{{ url('/doc-iso/master-notify') }}">
               <i class="bi bi-circle"></i><span>Master Notify</span>
@@ -108,7 +152,7 @@
             </a>
           </li>
           <li>
-            <a href="{{ url('/doc-iso/master-notify/report-iso') }}">
+            <a href="{{ route('doc-iso.report-iso') }}">
             <!-- <a href ="data_table.php"> -->
               <i class="bi bi-circle"></i><span>Report ISO Doc</span>
             </a>
@@ -117,6 +161,21 @@
             <a href="{{ route('doc-iso.dashboard-iso') }}">
             <!-- <a href ="data_table.php"> -->
               <i class="bi bi-circle"></i><span>Dashboard ISO Doc</span>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link collapsed" data-bs-target="#purchasing-process" data-bs-toggle="collapse" href="#">
+          <i class="bi bi-truck"></i><span>Purchasing Process</span><i class="bi bi-chevron-down ms-auto"></i>
+        </a>
+        <ul id="purchasing-process" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+        
+        <li>
+            <!-- <a href="{{route('delivery.schedule.mf')}}"> -->
+            <a href="{{ url('/purchasing-process/list-po') }}">
+              <i class="bi bi-circle"></i><span>List PO</span>
             </a>
           </li>
         </ul>
