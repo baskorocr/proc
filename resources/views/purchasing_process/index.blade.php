@@ -36,7 +36,7 @@
                 </div>
               </div>
           </div>
-          <div class="col-lg-6">
+          <div class="col-lg-5">
             <div>
               <label class="col-sm-5 col-form-label">Vendor</label>
                   <div class="col-sm-10">
@@ -48,14 +48,15 @@
                       </select>
                   </div>
               </div>
+              <br>
+              <div>
+                <label>Purchase Order</label>
+                  <textarea class="form-control" rows="3" name="po_sel" id="po_textarea"  placeholder="5111000xxx"><?php if (isset($_POST['submit-find'])) { echo $list_po; } ?></textarea>
+              </div>
           </div>
         </div>
 
-        <div class="col-lg-5">              
-          <label>Purchase Order</label>
-          <textarea class="form-control" rows="3" name="po_sel" id="po_textarea"  placeholder="5111000xxx"><?php if (isset($_POST['submit-find'])) { echo $list_po; } ?></textarea>
-          <!-- <p class='text-right' ><a href="#" onclick="javascript:eraseText();">Clear</a></p> -->
-
+        <div class="col-lg-5">
           <div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
               <button type="submit" name="submit-find" class="btn btn-primary" onclick="search()">
                   <i class="fa fa-search"></i> Search
@@ -70,18 +71,17 @@
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="tb-list-po">
 									<thead>
-										<th>#</th>
-										<th>PO Number</th>
-                                        <th>Rev No</th>
-                                        <th>Plant</th>
-                                        <th>Vendor</th>
-                                        <th>Vendor Name</th>
-                                        <th>Vendor Mail</th>
-                                        <th>Doc Date</th>
-                                        <th>Pgr</th>
-                                        <th>Curr</th>
-                                        <th>Filename</th>
-									</thead>
+                      <th>PO Number</th>
+                      <th>Rev No</th>
+                      <th>Plant</th>
+                      <th>Vendor</th>
+                      <th>Vendor Name</th>
+                      <th>Vendor Mail</th>
+                      <th>Doc Date</th>
+                      <th>Pgr</th>
+                      <th>Curr</th>
+                      <th>Filename</th>
+								  </thead>
 									<tbody>
 										
 									</tbody>
@@ -153,10 +153,10 @@
             url: "{{ route('datatables.purchasing.process.listpo')}}"
         },
         columns: [
-          {
-            data: 'DT_RowIndex',
-            name: 'DT_RowIndex'
-          },
+          // {
+          //   data: 'DT_RowIndex',
+          //   name: 'DT_RowIndex'
+          // },
           {
             data: 'po_num',
             name: 'po_num'

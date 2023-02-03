@@ -48,10 +48,10 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
-         })
+        })
         // ->whereBetween('doc_date', [Carbon::parse($data->doc_date.' 00:00:00'), Carbon::parse($data->doc_date.' 23:59:59')])
         // ->where('id_vendor', $data->id_vendor)
-        ->rawColumns(['action'])->addIndexColumn()->make(true);
+        ->rawColumns(['action'])->make(true);
                 // ->editColumn('last_change_by', function ($data) {
                                 
                 //                return @$data->users->nm_user;
@@ -133,8 +133,11 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
-         }) 
-        ->rawColumns(['action'])->addIndexColumn()->make(true);
+        }) 
+        ->addColumn('download_check', function ($data) {
+            return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->po_num.'" onclick="selectedDwn(\'#'.$data->po_num.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+        })
+        ->rawColumns(['download_check','action'])->addIndexColumn()->make(true);
                 // ->editColumn('last_change_by', function ($data) {
                                 
                 //                return @$data->users->nm_user;

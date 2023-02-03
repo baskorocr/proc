@@ -37,7 +37,7 @@
                 </div>
               </div>
           </div>
-          <div class="col-lg-6">
+          <div class="col-lg-5">
             <div>
               <label class="col-sm-5 col-form-label">Vendor</label>
                   <div class="col-sm-10">
@@ -49,20 +49,18 @@
                       </select>
                   </div>
               </div>
+              <br>
+              <div>
+                <label>Purchase Order</label>
+                  <textarea class="form-control" rows="3" name="po_sel" id="po_textarea"  placeholder="5111000xxx"><?php if (isset($_POST['submit-find'])) { echo $list_po; } ?></textarea>
+              </div>
           </div>
         </div>
 
-        <div class="col-lg-5">              
-          <label>Purchase Order</label>
-          <textarea class="form-control" rows="3" name="po_sel" id="po_textarea"  placeholder="5111000xxx"><?php if (isset($_POST['submit-find'])) { echo $list_po; } ?></textarea>
-          <!-- <p class='text-right' ><a href="#" onclick="javascript:eraseText();">Clear</a></p> -->
-
+        <div class="col-lg-5">
           <div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
               <button type="submit" name="submit-find" class="btn btn-primary" onclick="search()">
                   <i class="fa fa-search"></i> Search
-              </button>
-              <button type="download" name="download-find" class="btn btn-primary" style="margin-left: 5px" onclick="download()">
-                  <i class="fa fa-download"> Download</i>
               </button>
           </div>
         </div>
@@ -73,7 +71,7 @@
 					<div class="card">
 						<div class="card-body">
 							
-							<div class="filter mt-2 " align="right">
+							<!-- <div class="filter mt-2 " align="right">
 								<a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
 								<i class="bi bi-list"></i></a>
 								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
@@ -83,28 +81,48 @@
 									<li><a class="dropdown-item" href="#"><i class="fa fa-table"></i>Project Assignment Data</a></li>
 								</ul>
 								
-							</div>
+							</div> -->
 
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="tb-download-list-po">
 									<thead>
-										<th>#</th>
+                    <th>
+                      <i class="fa fa-list"></i>
+                    </th>
 										<th>PO Number</th>
-                                        <th>Rev No</th>
-                                        <th>Plant</th>
-                                        <th>Vendor</th>
-                                        <th>Vendor Name</th>
-                                        <th>Vendor Mail</th>
-                                        <th>Doc Date</th>
-                                        <th>Pgr</th>
-                                        <th>Curr</th>
-                                        <th>Filename</th>
+                    <th>Rev No</th>
+                    <th>Plant</th>
+                    <th>Vendor</th>
+                    <th>Vendor Name</th>
+                    <th>Vendor Mail</th>
+                    <th>Doc Date</th>
+                    <th>Pgr</th>
+                    <th>Curr</th>
+                    <th>Filename</th>
 									</thead>
 									<tbody>
 										
 									</tbody>
 								</table>
 							</div>
+              <div class="card-footer">
+                <form action="{{route('delivery.schedule.spc.download')}}" method="POST">
+                  @csrf
+                  <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                      <div class="row">
+                        <div class="col-md-6 col-xs-12">
+                          <div id="download-list-checked">
+                          </div>
+                          <button type="submit" name="checked-po" class="btn btn-block btn-success">
+                            <i class="fas fa-download"></i> Download Checked
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+            </div>
 						</div>
 					</div>
 				</div>
@@ -153,6 +171,22 @@
 		// }).draw();
 		// })
 
+      var data = [];
+		  function selectedDwn(id)
+		  {
+        var val = $(id).val();
+        var dtval = $(id).data('filenm');
+        if(!$(id).is(':checked'))
+        {
+          data.remove(val);
+          $('#fl'+val).remove();
+        } else{
+          data.push(val);
+          $('#download-list-checked').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" />');
+        }
+        console.log(data);
+		  }
+
         var table = $('#tb-download-list-po').DataTable({
         "order": [[ 1, "DESC" ]],
         processing: true,
@@ -172,8 +206,8 @@
         },  
         columns: [
           {
-            data: 'DT_RowIndex',
-            name: 'DT_RowIndex'
+            data: 'download_check',
+            name: 'download_check'
           },
           {
             data: 'po_num',
