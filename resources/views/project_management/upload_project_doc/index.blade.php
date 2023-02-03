@@ -136,7 +136,7 @@
 							                        $dis_btn = "style=\"display: none\"";
 							                        $doc_name = "<span class='badge bg-success'>Completed Check</span>"; //$doc_upl_nm
 							                    } else {
-												 	 $stat_check =  "<a href='home.php?mnu=checkdoceng'><span class='badge bg-orange btn-flat'>Uncomplete ($sum_check/$count_row3)</span></a>";
+												 	 $stat_check =  "<a href='home.php?mnu=checkdoceng'><span class='badge bg-warning btn-flat'>Uncomplete ($sum_check/$count_row3)</span></a>";
 							                        $dis_btn = "";
 							                        $doc_name = $dp->nm_doc_part.".pdf";
 												 }
@@ -147,6 +147,21 @@
 							                      
 							                   }
 							                   	$ptext = "-";
+							                   	 if ($permit_n == 1 ){
+
+							                        $permit = "
+							                                <a href='' class='btn btn-flat' disabled>
+							                                    <span class='badge bg-green btn btn-flat'> ACTIVATED</span>
+							                                </a>
+							                        ";
+							                    }  else {
+
+							                        $permit = "
+							                                <a href='' data-toggle='tooltip' title='click to activate' class='btn btn-flat'>
+							                                    <span class='badge bg-red btn btn-flat'> OFF</span>
+							                                </a>
+							                        ";
+							                    }
 							                    if  ($up_permit >= 5) {
 							                           //echo $permit;
 
@@ -173,7 +188,7 @@
 												<td>{{$dp->nm_doc_part}}</td>
 												<td>
 													<input type="hidden" name="id_doc_part[]" disabled id="up_{{$dp->id_doc_part}}" value="{{$dp->id_doc_part}}">
-													<input type='file' id='file' name='doc[]' onchange="$('#up_{{$dp->id_doc_part}}').prop('disabled',false);" class="form-control" accept='.pdf' > 
+													<input type='file' id='file' name='doc[]' id onchange="$('#up_{{$dp->id_doc_part}}').prop('disabled',false);" class="form-control" accept='.pdf' > 
 
                     							<p class='text-secondary' id ="information">{{$dp->nm_doc_part}}.pdf</p></td>
 												<td>{!!$stat_check!!}</td>

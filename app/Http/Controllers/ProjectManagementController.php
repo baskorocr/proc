@@ -112,30 +112,304 @@ class ProjectManagementController extends Controller
         $dest_path          = "DATA/$id_project_new";
         $id_product_new     = $request->id_product;
         $id_part_new        = $request->id_part;
-        $id_doc_part_new    = $request->doc_arr;
-
+        $id_doc_part_new    = $request->id_doc_part;
+        // dd($id_project_new);
         $upload_count = PM::get_upload_sequence($id_project_new, $id_product_new, $id_part_new);
         $upload_n = intval($upload_count) + 1;
-
+        $upload_count_n =$upload_count;
         $upld_count = count($request->doc);
 
-        if($upld_count == 0){ //check doc choosen
+            $nm_product         = array();
+            $nm_part            = array();
+            $nm_doc_part        = array();
 
-          return "RR";
-
-        } else {
-            $data = (object)PM::allJoin($request->id_project,"P");
-            foreach($data as $aj)
+            $query_exec5 = PM::allJoin($request->id_project,"P");
+            foreach($query_exec5 as $aj)
             {
-                ProjectDocAssign::create(['id_assign' => Numbering::autoIncrement(new \App\Models\ProjectDocAssign(),"id_assign"),
-                                          'id_product' => $aj->id_product,
-                                            'id_part' => $aj->id_part,
-                                            'id_doc_part'  => $aj->id_doc_part,
-                                            'check_params'  => $aj->check_params
-                                        ]);
+                $product     = $aj['nm_product'];
+                $part        = $aj['nm_part'];
+                $doc_part    = $aj['nm_doc_part'];
+
+                array_push($nm_part, $part);
+                array_push($nm_doc_part, $doc_part);
+                array_push($nm_product, $product);
             }
 
-        }
+              $data_count       = PM::get_group_all_join_proj_prod_part_data_required($id_project_new, $id_product_new, $id_part_new, 'P', 'Y', 'M');
+                $row_data_count   = count($data_count);    
+                $count_doc        = count($id_doc_part_new);
+
+                $upload_array = array();
+                $upld_count = count($request->doc);
+                for ($x = 0; $x <= $upld_count; $x++){
+                    // dd($request->doc[$x]);
+                    if (!empty($request->doc[$x])){
+                        array_push($upload_array, $x);
+                    }
+                }
+                // dd(count($request->doc));
+                            //error
+                if(count($upload_array) == 0){ //check doc choosen
+
+                  return redirect()->back()->with(['message_fail' => "No File Choosen."]);
+
+                } else { 
+                     $row_query          = PM::get_all_proj_doc_upload_data($id_project_new);
+                    $row_proj_upload    = count($row_query);
+
+                    $row_query_ass      = PM::get_proj_assign_data($id_project_new);
+                    $row_project_assign = count($row_query_ass);
+                    // dd(PM::deleteUploaded($id_project_new) );
+                    if ($row_proj_upload == 0 AND $row_project_assign == 0) {
+                         $path = public_path("DATA/$id_project_new/" );
+                         if (!file_exists($path)) {
+                                                mkdir($path, 0777, true);
+                                            }
+
+                          $query_exec5 = PM::get_group_all_join_proj_prod_part_doc_data($id_project_new, "P");
+                            foreach($query_exec5 as $row5) {
+                                $id_product     = $row5['id_product'];
+                                $nm_product     = $row5['nm_product'];
+                                $id_part        = $row5['id_part'];
+                                $nm_part        = $row5['nm_part'];
+                                $id_doc_part    = $row5['id_doc_part'];
+                                $nm_doc         = $row5['nm_doc_part'];
+                                $doc_required   = $row5['doc_required'];
+
+                                PM::insert_proj_doc_upload($id_project_new, $id_product, $id_part, $id_doc_part, $doc_required, "", "", "", "", "");
+
+                            } //while ($row5 = mysqli_fetch_assoc($query_exec5))
+
+                             //insert detail data to proj_doc_assign
+                            $idproj_arr         = array();
+                            $idprod_arr         = array();
+                            $idpart_arr         = array();
+                            $iddoc_arr          = array();
+                            $checkparams_arr    = array();
+
+                            $i = 0;
+
+                            $query_exec6 = PM::allJoin($request->id_project,"P");
+                            // dd($query_exec6);
+                            foreach ($query_exec6 as $row6) {
+                                // code...
+                         
+
+                                $idproj_arr[]       = $request->id_project;
+                                $idprod_arr[]       = $row6['id_product'];
+                                $idpart_arr[]       = $row6['id_part'];
+                                $iddoc_arr[]        = $row6['id_doc_part'];
+                                $checkparams_arr[]  = $row6['check_params'];
+
+                                PM::insert_proj_doc_assign($idproj_arr[$i], $idprod_arr[$i], $idpart_arr[$i], $iddoc_arr[$i], $checkparams_arr[$i]);
+
+                                $i++;
+                            }
+
+                            foreach($_FILES['doc']['tmp_name'] as $key => $tmp_name)
+                                    {
+                                        if(!empty($_FILES['doc']['name'][$key]))
+                                        {
+                                             $file_name  = $_FILES['doc']['name'][$key];
+                                        $file_size  = $_FILES['doc']['size'][$key];
+                                        $file_tmp   = $_FILES['doc']['tmp_name'][$key];
+                                        $file_type  = $_FILES['doc']['type'][$key];
+                                        // dd(($request->file('doc')[$key]));
+                                        $file = $request->file('doc')[$key];
+                                        if ($file_tmp  != ""){
+
+                                            //$query_exec_data = get_upload_sequence($id_project_new, $id_product_new, $id_part_new, $id_doc_part_new[$key]);
+                                            /*
+                                            $query_exec_data = get_upload_sequence($id_project_new, $id_product_new, $id_part_new);
+                                            $upload_count   = mysqli_fetch_assoc($query_exec_data);
+                                            $upload_count_n = $upload_count['upload_n'];
+                                            $upload_n = intval($upload_count_n) + 1;
+                                            */
+
+                                            $query_exec_data2 = PM::get_doc_ver($id_project_new, $id_product_new, $id_part_new, $id_doc_part_new[$key]);
+                                            $version_count   = $query_exec_data2;
+                                            $version_count_n = $version_count->version_n;
+                                            $version_n      = intval($version_count_n) + 1;
+                                            $uploader_id = auth()->user()->id_user;
+
+                                            $query = PM::get_group_all_join_proj_prod_part_data($id_project_new, $id_product_new, $id_part_new, 'P');
+                                            $rows = $query;
+                                            $nm_product_file = $rows[0]['nm_product'];
+                                            $nm_part_file    = $rows[0]['nm_part'];
+
+                                            $temp = explode(".", $_FILES["doc"]["name"][$key]);
+                                            $newfilename = \Str::snake($nm_product_file."_ver".$version_n). '.' . end($temp);
+
+                                            $newfilename = str_replace(',', '', $newfilename);
+
+                                            /*
+                                                nama product pasti nama file di array
+                                                sehingga nama nya akan selalu restart ke product 1
+                                                begitu juga nama part
+                                                pasti akan selalu restart ke part A
+                                            */
+                                            $path = public_path("DATA/$id_project_new/" );
+                                            // dd($path);
+                                            if (!file_exists($path)) {
+                                                mkdir($path, 0777, true);
+                                            }
+                                            if ( $file->move($path,$newfilename)){
+                                                $upload_path    =$path;
+                                                $upload_n       = intval($upload_count_n) + 1;
+                                                $version_n      = intval($version_count_n) + 1;
+                                            } else {
+
+                                                $upload_path    ="";
+                                                $upload_n       = "";
+                                                $version_n      = "";
+                                            }
+                                             PM::update_proj_doc_upload($id_project_new, $id_product_new, $id_part_new, $id_doc_part_new[$key], $newfilename, $upload_n, $version_n, $uploader_id, $upload_path);
+                                        } else{
+                                          
+                                        }
+                                        
+                                            // dd("A");
+                                           
+
+                                            //echo "<script> alert('Upload success'); </script>";
+
+                                    } //if ($file_tmp  != "")
+                            return redirect()->back()->with(['message_success' => 'Upload Success']);
+
+                           
+                        }
+                    }
+                                    
+                    elseif ($row_proj_upload > 0 AND $row_project_assign > 0)
+                    {
+                              $query_exec = PM::get_upload_sequence($id_project_new, $id_product_new, $id_part_new);
+                                $upload_count   = $query_exec;
+                                $upload_count_x = $upload_count;
+                                $upload_x = intval($upload_count_x);
+
+                                //get permit 1
+                                $query_exec1 = PM::get_permit($id_project_new, $id_product_new, $id_part_new);
+                                $permit_count1   = $query_exec1;
+                                $permit_count_1 = $permit_count1;
+                                $permit_x = intval($permit_count_1);
+
+                                $permit_max1 = 6;
+                                $permit_max2 = 7;
+
+                                if ($permit_x == 1){
+                                    $permit1 = $permit_x;
+                                } elseif ($permit_x == 2) {
+                                    $permit2 = $permit_x;
+                                }
+
+
+                                if ($upload_x < 5 OR ($permit_max1 == ($upload_x + $permit1)) OR ($permit_max2 == ($upload_x + $permit2)) ) {
+
+                                    foreach($request->id_doc_part as $key => $tmp_name)
+                                    {
+                                        if(!empty($request->file('doc')[$key]))
+                                        {
+                                             $file_name  = $_FILES['doc']['name'][$key];
+                                        $file_size  = $_FILES['doc']['size'][$key];
+                                        $file_tmp   = $_FILES['doc']['tmp_name'][$key];
+                                        $file_type  = $_FILES['doc']['type'][$key];
+                                        // dd(($request->file('doc')[$key]));
+                                        $file = $request->file('doc')[$key];
+                                        if ($file_tmp  != ""){
+
+                                            //$query_exec_data = get_upload_sequence($id_project_new, $id_product_new, $id_part_new, $id_doc_part_new[$key]);
+                                            /*
+                                            $query_exec_data = get_upload_sequence($id_project_new, $id_product_new, $id_part_new);
+                                            $upload_count   = mysqli_fetch_assoc($query_exec_data);
+                                            $upload_count_n = $upload_count['upload_n'];
+                                            $upload_n = intval($upload_count_n) + 1;
+                                            */
+
+                                            $query_exec_data2 = PM::get_doc_ver($id_project_new, $id_product_new, $id_part_new, $id_doc_part_new[$key]);
+                                            $version_count   = $query_exec_data2;
+                                            $version_count_n = $version_count->version_n;
+                                            $version_n      = intval($version_count_n) + 1;
+                                            $uploader_id = auth()->user()->id_user;
+
+                                            $query = PM::get_group_all_join_proj_prod_part_data($id_project_new, $id_product_new, $id_part_new, 'P');
+                                            $rows = $query;
+                                            $nm_product_file = $rows[0]['nm_product'];
+                                            $nm_part_file    = $rows[0]['nm_part'];
+
+                                            $temp = explode(".", $_FILES["doc"]["name"][$key]);
+                                            $newfilename = \Str::snake($nm_product_file."_ver".$version_n). '.' . end($temp);
+
+                                            $newfilename = str_replace(',', '', $newfilename);
+
+                                            /*
+                                                nama product pasti nama file di array
+                                                sehingga nama nya akan selalu restart ke product 1
+                                                begitu juga nama part
+                                                pasti akan selalu restart ke part A
+                                            */
+                                            $path = public_path("DATA/$id_project_new/" );
+                                            // dd($path);
+                                            if (!file_exists($path)) {
+                                                mkdir($path, 0777, true);
+                                            }
+                                            if ( $file->move($path,$newfilename)){
+                                                $upload_path    ="DATA/$id_project_new/".$newfilename;
+                                                $upload_n       = intval($upload_count_n) + 1;
+                                                $version_n      = intval($version_count_n) + 1;
+                                            } else {
+                                                $upload_path    ="";
+                                                $upload_n       = "";
+                                                $version_n      = "";
+                                            }
+                                             PM::update_proj_doc_upload($id_project_new, $id_product_new, $id_part_new, $id_doc_part_new[$key], $newfilename, $upload_n, $version_n, $uploader_id, $upload_path);
+                                        } else{
+                                            
+                                        }
+                                        
+                                            // dd("A");
+                                           
+
+                                            //echo "<script> alert('Upload success'); </script>";
+
+                                        }//if ($file_tmp  != "")
+
+                                    }
+                                    //foreach($_FILES['doc']['tmp_name'] as $key => $tmp_name)
+
+                                    //echo "<script> alert('Upload success'); </script>";
+
+                                   return redirect()->back()->with(['message_success' => 'Upload Success']);
+
+                                }// if ($upload_n < 5)
+
+
+
+                    } else {
+                         return redirect()->back()->with(['message_success' => 'You\'ve reached maximum upload. Please contact administrator for re-upload permission!']);
+                                      
+
+                                    }
+                    }
+                
+           // dd($row_data_count);
+
+  
+        // if($upld_count == 0){ //check doc choosen
+
+        //   return "RR";
+
+        // } else {
+        //     $data = 
+           
+        //         ProjectDocAssign::create(['id_assign' => Numbering::autoIncrement(new \App\Models\ProjectDocAssign(),"id_assign"),
+        //                                   'id_product' => $aj->id_product,
+        //                                     'id_part' => $aj->id_part,
+        //                                     'id_doc_part'  => $aj->id_doc_part,
+        //                                     'check_params'  => $aj->check_params
+        //                                 ]);
+        //     }
+
+        // }
 
         }
 

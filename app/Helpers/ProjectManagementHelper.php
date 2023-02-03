@@ -149,6 +149,154 @@ class ProjectManagementHelper {
     return $result;
     }
 
+
+    function get_group_all_join_proj_prod_part_data_required($id_project, $id_product, $id_part, $doc_type, $required, $mandatory){
+    	$prodProject = ProductForProject::where('id_project',$id_project)->groupBy('id_product','id_part')->get(); //11
+		$arrd=[];
+		foreach($prodProject as $p)
+		{
+			$partProduct = PartForProduct::where('id_product',$p->id_product)->get();//1
+			foreach($partProduct as $p2)
+			{
+				$docofpart = DocForPart::where('id_part', $p2->id_part)->groupBy('id_doc_part')->get(); //3
+				foreach($docofpart as $d)
+				{
+					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->whereIn('doc_type', ['P', 'Y', 'M'])->first();
+					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					foreach($docChecklist as $d2)
+					{
+						if(in_array($getDoc->doc_type, ['P', 'Y', 'M']))
+						{
+							$arrd[] = ['id_project' => $p->id_project,'id_product' => $p->id_product,'id_part' => $p2->id_part,'id_doc_part' => $d->id_doc_part, 'nm_doc_part' => $getDoc->nm_doc_part, 'check_params' => $d2->check_params,'doc_type' => $getDoc->doc_type];	
+						}
+						
+
+					}
+				}
+			}
+		}
+
+		return $arrd;
+		
+	} 
+
+	function update_proj_doc_upload($id_project, $id_product, $id_part, $id_doc_part, $file_nm, $upload_n, $version_n, $uploader_id, $upload_path){
+
+	
+		$result = ProjectDocUpload::where(['id_project' => $id_project, 'id_product' => $id_product, 'id_part' => $id_part, 'id_doc_part' => $id_doc_part])->update(['file_nm' => $file_nm, 'upload_n' => $upload_n, 'version_n' => $version_n, 'uploader_id' => $uploader_id, 'upload_path' => $upload_path, 'upload_date' => date("Y-m-d H:i:s")]);
+		
+	return true;
+	}
+	function insert_proj_doc_assign($id_project, $id_product, $id_part, $id_doc_part, $check_params){
+
+	
+		$result = ProjectDocAssign::create(['id_assign' => Numbering::autoIncrement(new \App\Models\ProjectDocAssign(),"id_assign"),'id_project' => $id_project, 'id_product' => $id_product, 'id_part' => $id_part, 'id_doc_part' => $id_doc_part, 'check_params' => $check_params]);
+
+		return $result;
+	}
+
+
+	function insert_proj_doc_upload($id_project, $id_product, $id_part, $id_doc_part, $doc_required, $file_nm, $upload_n, $version_n, $uploader_id, $upload_path){
+		
+		
+		$result = ProjectDocUpload::create(['id_assign' => Numbering::autoIncrement(new \App\Models\ProjectDocUpload(),"id_assign"),
+											'id_project' => $id_project,
+											 'id_product' => $id_product,
+											 'id_part' => $id_part,
+											 'id_doc_part' => $id_doc_part,
+											 'file_nm' => $file_nm,
+											 'upload_n' => $upload_n,
+											 'version_n' => $version_n,
+											 'uploader_id' => $uploader_id,
+											 'doc_required' => $doc_required,
+											 'upload_path' => $upload_path,
+											 'upload_date' => date("Y-m-d H:i:s")
+											]);
+			return $result;
+	}
+
+	function get_group_all_join_proj_prod_part_doc_data($id_project, $doc_type){
+
+		
+		$prodProject = ProductForProject::where('id_project',$id_project)->groupBy('id_product')->get(); //11
+			$arrd=[];
+			foreach($prodProject as $p)
+			{
+				$partProduct = PartForProduct::where('id_product',$p->id_product)->groupBy('id_part')->get();//1
+				foreach($partProduct as $p2)
+				{
+					$docofpart = DocForPart::where('id_part', $p2->id_part)->groupBy('id_doc_part')->get(); //3
+					foreach($docofpart as $d)
+					{
+						$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->where('doc_type',$doc_type)->first();
+						$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+						foreach($docChecklist as $d2)
+						{
+							if(!empty($getDoc))
+							{
+								$arrd[] = ['id_project' => $p->id_project,'id_product' => $p->id_product,'nm_product' => $p->product->nm_product,'nm_part' => $p2->part->nm_part,'id_part' => $p2->id_part,'id_doc_part' => $d->id_doc_part, 'nm_doc_part' => $getDoc->nm_doc_part, 'check_params' => $d2->check_params,'doc_type' => $getDoc->doc_type,'doc_required' => $getDoc->doc_required];	
+							}
+							
+
+						}
+					}
+				}
+			}
+			// dd($arrd);
+			return $arrd;
+	}
+
+	function get_group_all_join_proj_prod_part_data($id_project, $id_product, $id_part, $doc_type){
+    	$prodProject = ProductForProject::where('id_project',$id_project)->get(); //11
+		$arrd=[];
+		foreach($prodProject as $p)
+		{
+			$partProduct = PartForProduct::where('id_product',$p->id_product)->get();//1
+			foreach($partProduct as $p2)
+			{
+				$docofpart = DocForPart::where('id_part', $p2->id_part)->groupBy('id_doc_part')->get(); //3
+				foreach($docofpart as $d)
+				{
+					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->where('doc_type',$doc_type)->first();
+					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					foreach($docChecklist as $d2)
+					{
+						if(!empty($getDoc))
+						{
+							$arrd[] = ['id_project' => $p->id_project,'id_product' => $p->id_product,'nm_product' => $p->product->nm_product,'nm_part' => $p2->part->nm_part,'id_part' => $p2->id_part,'id_doc_part' => $d->id_doc_part, 'nm_doc_part' => $getDoc->nm_doc_part, 'check_params' => $d2->check_params,'doc_type' => $getDoc->doc_type,'doc_required' => $getDoc->doc_required];	
+						}
+						
+
+					}
+				}
+			}
+		}
+		// dd($arrd);
+		return $arrd;
+		
+	}
+	function get_all_proj_doc_upload_data($id_project){
+
+		$result = ProjectDocUpload::where('id_project', $id_project)->get();
+		
+
+
+		return $result;
+	}
+	function deleteUploaded($id_project){
+
+		$result = ProjectDocUpload::where('id_project', $id_project)->delete();
+		
+
+
+		return $result;
+	}
+	function get_proj_assign_data($id_project){
+
+		$result = ProjectDocAssign::where('id_project', $id_project)->get();
+		return $result;
+	}
+	
     function get_proj_doc_assign_data3($id_project, $id_vendor)
     {
 
@@ -160,7 +308,7 @@ class ProjectManagementHelper {
 		// mysqli_close($conn);
 
 		$arrd = [];
-		$a = ProjectVendorAssign::where('id_project',$id_project)->where('id_vendor',$id_vendor)->groupBy('id_project','id_product','id_part','id_doc_part')->get();
+		$a = ProjectVendorAssign::where('id_project',$id_project)->where('id_vendor',$id_vendor)->get();
 		foreach($a as $a)
 		{
 			$b = DocPart::where('id_doc_part',$a->id_doc_part)->where('doc_type','V')->whereIn('doc_required',['Y','M'])->get();
@@ -280,14 +428,14 @@ class ProjectManagementHelper {
 
 	function allJoin($id_project, $docType)
 	{
-		$prodProject = ProductForProject::where('id_project',$id_project)->get(); //11
+		$prodProject = ProductForProject::where('id_project',$id_project)->groupBy('id_product')->get(); //11
 		$arrd=[];
 		foreach($prodProject as $p)
 		{
-			$partProduct = PartForProduct::where('id_product',$p->id_product)->get();//1
+			$partProduct = PartForProduct::where('id_product',$p->id_product)->groupBy('id_part')->get();//1
 			foreach($partProduct as $p2)
 			{
-				$docofpart = DocForPart::where('id_part', $p2->id_part)->get(); //3
+				$docofpart = DocForPart::where('id_part', $p2->id_part)->groupBy('id_doc_part')->get(); //3
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->first();
@@ -296,7 +444,7 @@ class ProjectManagementHelper {
 					{
 						if($getDoc->doc_type == "P")
 						{
-							$arrd[] = ['id_project' => $p->id_project,'id_product' => $p->id_product,'id_part' => $p2->id_part,'id_doc_part' => $d->id_doc_part, 'nm_doc_part' => $getDoc->nm_doc_part, 'check_params' => $d2->check_params,'doc_type' => $getDoc->doc_type];	
+							$arrd[] = ['id_project' => $p->id_project,'id_product' => $p->id_product,'nm_product' => $p->product->nm_product,'nm_part' => $p2->part->nm_part,'id_part' => $p2->id_part,'id_doc_part' => $d->id_doc_part, 'nm_doc_part' => $getDoc->nm_doc_part, 'check_params' => $d2->check_params,'doc_type' => $getDoc->doc_type];	
 						}
 						
 
@@ -307,11 +455,13 @@ class ProjectManagementHelper {
 
 		return $arrd;
 	}
+
+
 	function get_permit($id_project, $id_product, $id_part){
 
 		
 
-		$data = ProjectDocUpload::where(['id_project' => $id_project,'id_product' => $id_product, 'id_part' => $id_part])->sum('permit_n');
+		$data = ProjectDocUpload::where(['id_project' => $id_project,'id_product' => $id_product, 'id_part' => $id_part])->max('permit_n');
 		
 
 		return $data;
@@ -323,6 +473,14 @@ class ProjectManagementHelper {
 		$data = ProjectDocUpload::where(['id_project' => $id_project,'id_product' => $id_product, 'id_part' => $id_part])->max('upload_n');
 
 		return $data;
+	}
+
+	function get_doc_ver($id_project, $id_product, $id_part, $id_doc_part){
+
+		$result =  ProjectDocUpload::where(['id_project'=>$id_project,'id_product'=>$id_product,'id_part'=>$id_part,'id_doc_part'=>$id_doc_part])->first();
+	
+
+		return $result;
 	}
 
 
