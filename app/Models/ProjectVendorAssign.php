@@ -27,12 +27,22 @@ class ProjectVendorAssign extends Model
 
     public function part()
     {
-        return $this->belongsTo(Part::class,'id_product','id_product');
+        return $this->belongsTo(Part::class,'id_part','id_part');
     }
+
+    // public function vendor()
+    // {
+    //     return $this->belongsTo(Vendor::class,'id_vendor','id_vendor');
+    // }
 
     public function parts()
     {
         return $this->hasMany(Part::class,'id_product','id_product');
+    } 
+
+    public function ProjDocAssign()
+    {
+        return $this->belongsTo(ProjectDocUpload::class, 'id_project', 'id_project');
     }
 
     public function project()

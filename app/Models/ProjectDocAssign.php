@@ -22,7 +22,21 @@ class ProjectDocAssign extends Model
         return $this->belongsTo(User::class,'id_user','id_user');
     }
     
-   
+
+    public function part()
+    {
+        return $this->belongsTo(Part::class,'id_part','id_part');
+    }
+
+    public function docPart()
+    {
+        return $this->belongsTo(DocPart::class,'id_doc_part','id_doc_part');
+    }
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class,'id_product','id_product');
+    }
 }
 
     

@@ -41,10 +41,7 @@ class ProjectVendorUpload extends Model
         return $this->belongsTo(DocPart::class,'id_doc_part','id_doc_part');
     }
 
-    public function product()
-    {
-        return $this->belongsTo(Product::class,'id_product','id_product');
-    }
+   
     
 
 }

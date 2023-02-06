@@ -87,11 +87,18 @@ Route::group(['middleware' => ['auth']], function () {
         // Upload Doc Project
         Route::get('/upload-project-doc', [App\Http\Controllers\ProjectManagementController::class, 'uploadProjectDoc'])->name('project.management.upload.project');
         Route::post('/upload-project-doc/upload', [App\Http\Controllers\ProjectManagementController::class, 'uploadDocAct'])->name('project.management.upload.project.actUpload');
+        Route::post('/upload-req-doc/upload', [App\Http\Controllers\ProjectManagementController::class, 'uploadDocReqAct'])->name('project.management.upload.doc.actUpload');
         // Check Doc Eng
         Route::get('/check-doc-eng', [App\Http\Controllers\ProjectManagementController::class, 'checkDocEng'])->name('project.management.check.doc.eng');
+        Route::get('/check-doc-vendor', [App\Http\Controllers\ProjectManagementController::class, 'checkDocVendor'])->name('project.management.check.doc.vendor');
         Route::get('/doc-assign-vendor', [App\Http\Controllers\ProjectManagementController::class, 'assignVendor'])->name('project.management.assign.vendor');
+        Route::post('/doc-assign-vendor/assign', [App\Http\Controllers\ProjectManagementController::class, 'assignVendorAct'])->name('project.management.assign.vendor.act');
         // Check Doc Eng
-         Route::get('/dashboard-monitoring-project', [App\Http\Controllers\ProjectManagementController::class, 'dashboardMonProject'])->name('project.management.project.monitoring'); 
+         Route::get('/dashboard-monitoring-project', [App\Http\Controllers\ProjectManagementController::class, 'dashboardMonProject'])->name('project.management.project.monitoring');  
+
+         // view Doc 
+         Route::get('/view-doc-vendor', [App\Http\Controllers\ProjectManagementController::class, 'viewDocVendor'])->name('project.management.project.view.doc'); 
+         Route::get('/upl-req-doc', [App\Http\Controllers\ProjectManagementController::class, 'uplReqDoc'])->name('project.management.project.upl.req.doc'); 
          // Vendor Project
          Route::get('/dashboard-monitoring-vendor', [App\Http\Controllers\ProjectManagementController::class, 'dashboardMonVendor'])->name('project.management.vendor.monitoring'); 
          // File Master
