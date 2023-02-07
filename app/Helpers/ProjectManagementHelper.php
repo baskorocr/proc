@@ -39,6 +39,40 @@ class ProjectManagementHelper {
 
 		return $result;
 	}
+
+	function get_vendor_doc_has_uploaded_data($id_project, $id_vendor){
+
+		// $conn = get_connection(); 
+		// $query = "SELECT a.id_project, b.nm_project, a.id_product, c.nm_product, a.id_part, d.nm_part, a.id_doc_part, e.nm_doc_part, e.doc_required, a.file_nm, a.upload_path, a.upload_n, a.version_n, a.file_nm, date_format(a.upload_date, '%d.%m.%Y') as upload_date, a.uploader_id, f.nm_user, e.doc_required from proj_vendor_upload a
+		// 		join project b on b.id_project = a.id_project
+		// 		join product c on c.id_product = a.id_product
+		// 		join part d on d.id_part = a.id_part
+		// 		join doc_part e on e.id_doc_part = a.id_doc_part
+		// 		left join user f on f.id_user = a.uploader_id
+		// 		where a.id_project ='$id_project' AND a.id_vendor = '$id_vendor'
+		// 		order by a.id_product";
+		// /* $result = mysql_query($query) or die(mysqli_error($conn));
+		// mysql_close($conn); */
+		// $result = mysqli_query($conn,$query) or die(mysqli_error($conn));
+		// mysqli_close($conn);
+		$result = ProjectVendorUpload::where('id_project',$id_project)->where('id_vendor', $id_vendor)->get();
+	return $result;
+	}
+
+	function get_vendor_assign_data($id_project){
+
+		// $conn = get_connection(); 
+		// $query = "SELECT distinct(a.id_project), a.id_vendor, b.nm_vendor, b.allias FROM `proj_vendor_upload` a
+		// 		left join vendor b on a.id_vendor = b.id_vendor
+		// 		WHERE a.id_project = '$id_project'";
+		// /* $result = mysql_query($query) or die(mysqli_error($conn));
+		// mysql_close($conn); */
+		// $result = mysqli_query($conn,$query) or die(mysqli_error($conn));
+		// mysqli_close($conn);
+		$result = ProjectVendorAssign::where(['id_project' => $id_project])->groupBy('id_project')->get();
+
+		return $result;
+	}
 	function get_proj_vendor_assign_data_all($id_project, $id_vendor){
 
 		// $conn = get_connection(); 

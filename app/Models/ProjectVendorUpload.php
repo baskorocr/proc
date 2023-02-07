@@ -16,6 +16,11 @@ class ProjectVendorUpload extends Model
 
     public $dates = ['modify_date'];
 
+       public function vendor()
+    {
+        return $this->belongsTo(Vendor::class,'id_vendor','id_vendor');
+    } 
+
     public function product()
     {
         return $this->belongsTo(Product::class,'id_product','id_product');
@@ -39,6 +44,10 @@ class ProjectVendorUpload extends Model
     public function docPart()
     {
         return $this->belongsTo(DocPart::class,'id_doc_part','id_doc_part');
+    }
+    public function uploader()
+    {
+        return $this->belongsTo(User::class,'id_user','id_doc_part');
     }
 
    

@@ -54,8 +54,9 @@ class ProjectManagementController extends Controller
         $ret = ['project' => $prj];
          if(!empty($request->id_project))
         {
-            $project = Project::where('id_project',$request->id_project)->get();
-            $ret['detail'] =$project;
+            $vendor = Vendor::get();
+            $ret['vendor'] =$vendor;
+            $ret['id_project'] =$request->id_project;
         }
            return view('project_management/check_uploaded_vendor/index')->with($ret);
     }
