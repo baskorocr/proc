@@ -31,8 +31,11 @@ Route::group(['middleware' => ['auth']], function () {
 
     // DELIVERY SCHEDULE ROUTES
     Route::prefix('delivery-schedule')->group(function(){
+        Route::get('/dummy-file-act', [App\Http\Controllers\DeliveryScheduleController::class, 'createDummyFile'])->name('dummy-file');
         Route::get('/mf', [App\Http\Controllers\DeliveryScheduleController::class, 'index'])->name('delivery.schedule.mf');
+        Route::post('/mf/download', [App\Http\Controllers\DeliveryScheduleController::class, 'zipMF'])->name('delivery.schedule.mf.download');
         Route::get('/spc', [App\Http\Controllers\DeliveryScheduleController::class, 'index_spo'])->name('delivery.schedule.spc');
+        Route::post('/spc/download', [App\Http\Controllers\DeliveryScheduleController::class, 'zipMFSP'])->name('delivery.schedule.spc.download');
         //Datatables
         Route::get('/mf/get-data',[App\Http\Controllers\DeliveryScheduleController::class, 'getDeliveryMf'])->name('api.schedule.delivery.datatables');
         Route::get('/spc/get-data',[App\Http\Controllers\DeliveryScheduleController::class, 'getDeliverySPC'])->name('api.schedule.delivery.spc.datatables');
@@ -81,9 +84,25 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/modify-document-check-list/doc-master/edit/{id}', [App\Http\Controllers\ProjectManagementController::class, 'DocMasterEdit'])->name('project.management.master.listcheck.modify.doc.editdocpart');
         Route::get('/modify-document-check-list/doc-assign', [App\Http\Controllers\ProjectManagementController::class, 'DocMasterAssign'])->name('project.management.master.listcheck.modify.doc.assigns');
          //
-        // List Check Master
+        // Upload Doc Project
         Route::get('/upload-project-doc', [App\Http\Controllers\ProjectManagementController::class, 'uploadProjectDoc'])->name('project.management.upload.project');
-        Route::get('/upload-project-doc/upload', [App\Http\Controllers\ProjectManagementController::class, 'DocCheckListMaster'])->name('project.management.upload.project.actUpload');
+        Route::post('/upload-project-doc/upload', [App\Http\Controllers\ProjectManagementController::class, 'uploadDocAct'])->name('project.management.upload.project.actUpload');
+        Route::post('/upload-req-doc/upload', [App\Http\Controllers\ProjectManagementController::class, 'uploadDocReqAct'])->name('project.management.upload.doc.actUpload');
+        // Check Doc Eng
+        Route::get('/check-doc-eng', [App\Http\Controllers\ProjectManagementController::class, 'checkDocEng'])->name('project.management.check.doc.eng');
+        Route::get('/check-doc-vendor', [App\Http\Controllers\ProjectManagementController::class, 'checkDocVendor'])->name('project.management.check.doc.vendor');
+        Route::get('/doc-assign-vendor', [App\Http\Controllers\ProjectManagementController::class, 'assignVendor'])->name('project.management.assign.vendor');
+        Route::post('/doc-assign-vendor/assign', [App\Http\Controllers\ProjectManagementController::class, 'assignVendorAct'])->name('project.management.assign.vendor.act');
+        // Check Doc Eng
+         Route::get('/dashboard-monitoring-project', [App\Http\Controllers\ProjectManagementController::class, 'dashboardMonProject'])->name('project.management.project.monitoring');  
+
+         // view Doc 
+         Route::get('/view-doc-vendor', [App\Http\Controllers\ProjectManagementController::class, 'viewDocVendor'])->name('project.management.project.view.doc'); 
+         Route::get('/upl-req-doc', [App\Http\Controllers\ProjectManagementController::class, 'uplReqDoc'])->name('project.management.project.upl.req.doc'); 
+         // Vendor Project
+         Route::get('/dashboard-monitoring-vendor', [App\Http\Controllers\ProjectManagementController::class, 'dashboardMonVendor'])->name('project.management.vendor.monitoring'); 
+         // File Master
+         Route::get('/file-master', [App\Http\Controllers\ProjectManagementController::class, 'file_master'])->name('project.management.file.master');
         //Datatables
         Route::get('/datatables/get-project-master', [App\Http\Controllers\ProjectManagementController::class, 'getProjectMaster'])->name('datatables.project.management.master');
         Route::get('/datatables/get-checklist-master', [App\Http\Controllers\ProjectManagementController::class, 'getMasterCheckList'])->name('datatables.project.management.checklist.master');

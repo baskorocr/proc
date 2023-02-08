@@ -16,6 +16,86 @@ class DeliveryScheduleController extends Controller
     {
         return view('delivery_schedule/index_spc');
     }
+    public function createDummyFile()
+    {
+        foreach(ManifestHeader::get() as $mf){
+           $filenm = explode("#", $mf->file_nm);
+          \File::copy(storage_path('template_dummy/dummymf.pdf'), storage_path('MF_TEST/'.strtoupper($mf->mf_type).'/'.$filenm[0]));
+          \File::copy(storage_path('template_dummy/dummymf.pdf'), storage_path('MF_TEST/'.strtoupper($mf->mf_type).'-KANBAN/'.$filenm[1]));
+        }
+        return true;
+    }
+    public function zipMF(Request $request)
+    {
+
+        $zip = new \ZipArchive();
+        $fileName = "DHARMA_POLIMETAL_MI_MFPDF_".date("d-m-Y").".zip";
+        try{
+             if ($zip->open(storage_path('temp_zip/MI-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
+            
+            {
+
+                foreach ($request->download_doc as $k){
+                    $filenm = explode("#", $k);
+                      // dd($filenm);
+                 // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
+                    $file = storage_path('MF_TEST/MI/'.$filenm[0]);
+                    $relativeName = basename($file);
+                    // dd($filenm[0])
+                    $zip->addFile($file, $filenm[0]);
+
+                    $file = storage_path('MF_TEST/MI-KANBAN/'.$filenm[1]);
+                    $relativeName = basename($file);
+                    $zip->addFile($file, $filenm[1]);
+                }
+                $zip->close();
+
+                  return response()->download(storage_path('temp_zip/MI-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
+            }
+        } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
+        }
+
+      
+    }
+
+    public function zipMFSP(Request $request)
+    {
+
+        $zip = new \ZipArchive();
+        $fileName = "DHARMA_POLIMETAL_SO_MFPDF_".date("d-m-Y").".zip";
+        try{
+             if ($zip->open(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
+            
+            {
+                
+                foreach ($request->download_doc as $k){
+                    $filenm = explode("#", $k);
+                      // dd($filenm);
+                 // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
+                    $file = storage_path('MF_TEST/SO/'.$filenm[0]);
+                    $relativeName = basename($file);
+                    // dd($filenm[0])
+                    $zip->addFile($file, $filenm[0]);
+
+                    $file = storage_path('MF_TEST/SO-KANBAN/'.$filenm[1]);
+                    $relativeName = basename($file);
+                    $zip->addFile($file, $filenm[1]);
+                }
+                $zip->close();
+
+                  return response()->download(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
+            }
+        } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
+        }
+
+      
+    }
+
+   
 
     public function getDeliveryMf()
     {
@@ -40,7 +120,7 @@ class DeliveryScheduleController extends Controller
             })
 
             ->addColumn('download_check', function ($data) {
-               return '<input type="checkbox" name="downloadchk[]" value="'.$data->id.'">';
+               return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->manifest.'" onclick="selectedDwn(\'#'.$data->manifest.'\')"  name="downloadchk[]" value="'.$data->manifest.'">';
             })
             ->addColumn('mail_stat', function ($data) {
                if(!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00'))
@@ -100,7 +180,7 @@ class DeliveryScheduleController extends Controller
             })
 
             ->addColumn('download_check', function ($data) {
-               return '<input type="checkbox" name="downloadchk[]" value="'.$data->id.'">';
+                 return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->manifest.'" onclick="selectedDwn(\'#'.$data->manifest.'\')"  name="downloadchk[]" value="'.$data->manifest.'">';
             })
             ->addColumn('mail_stat', function ($data) {
                if(!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00'))
