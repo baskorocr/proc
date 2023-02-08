@@ -1,9 +1,8 @@
 <!-- ======= Sidebar ======= -->
-  <aside id="sidebar" class="sidebar">
-
-    <ul class="sidebar-nav" id="sidebar-nav">
+<aside id="sidebar" class="sidebar">
+  <ul class="sidebar-nav" id="sidebar-nav">
     <li class="nav-heading">Main Menu</li>
-
+      <!-- EXAMPLE -->
       <li class="nav-item">
         <a class="nav-link collapsed" href="{{ url('/blank') }}">
           <i class="bi bi-grid"></i>
@@ -13,7 +12,7 @@
 
       <li class="nav-item">
         <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-menu-button-wide"></i><span>Example</span><i class="bi bi-chevron-down ms-auto"></i>
+          <i class="bi bi-menu-button-wide"></i><span>Components</span><i class="bi bi-chevron-down ms-auto"></i>
         </a>
         <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
           <li>
@@ -29,118 +28,32 @@
         </ul>
       </li>
 
+       <!-- END EXAMPLE -->
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#project-management" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-file-earmark"></i><span>Project Management</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="project-management" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{{route('project.management.master')}}">
-              <i class="bi bi-circle"></i><span>Project Master</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.master.product')}}">
-              <i class="bi bi-circle"></i><span>Product Master</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.master.part')}}">
-              <i class="bi bi-circle"></i><span>Part Master</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.master.listcheck')}}">
-              <i class="bi bi-circle"></i><span>List Check Master</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.upload.project')}}">
-              <i class="bi bi-circle"></i><span>Upload Project Doc</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.check.doc.eng')}}">
-              <i class="bi bi-circle"></i><span>Check Eng Doc</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.assign.vendor')}}">
-              <i class="bi bi-circle"></i><span>Assign Vendor</span>
-            </a>
-          </li> 
-          <li>
-            <a href="{{route('project.management.project.view.doc')}}">
-              <i class="bi bi-circle"></i><span>View Doc (Vendor)</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.project.upl.req.doc')}}">
-              <i class="bi bi-circle"></i><span>Upload Required Doc</span>
-            </a>
-          </li> 
-           <li>
-            <a href="{{route('project.management.project.monitoring')}}">
-              <i class="bi bi-circle"></i><span>Dashboard Project</span>
-            </a>
-          </li> 
-           <li>
-            <a href="{{route('project.management.vendor.monitoring')}}">
-              <i class="bi bi-circle"></i><span>Vendor Monitoring</span>
-            </a>
-           <li>
-           <li>
-            <a href="{{route('project.management.check.doc.vendor')}}">
-              <i class="bi bi-circle"></i><span>Check Vendor Doc </span>
-            </a>
-           <li>
-            <a href="{{route('project.management.file.master')}}">
-              <i class="bi bi-circle"></i><span>File Master</span>
-            </a>
-          </li> 
-          {{-- <li>
-            <a href="x">
-              <i class="bi bi-circle"></i><span> View Doc (Vendor)</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.check.doc.eng')}}">
-              <i class="bi bi-circle"></i><span>  Upload Required Doc</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('project.management.check.doc.eng')}}">
-              <i class="bi bi-circle"></i><span>   Vendor Monitoring</span>
-            </a>
-          </li> --}}
-        </ul>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" data-bs-target="#schedule-delivery" data-bs-toggle="collapse" href="#">
-          <i class="bi bi-truck"></i><span>Delivery Schedule</span><i class="bi bi-chevron-down ms-auto"></i>
-        </a>
-        <ul id="schedule-delivery" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-          <li>
-            <a href="{{route('delivery.schedule.mf')}}">
-              <i class="bi bi-circle"></i><span>Download Manifest Order</span>
-            </a>
-          </li>
-          <li>
-            <a href="{{route('delivery.schedule.spc')}}">
-              <i class="bi bi-circle"></i><span>Download Spc Order</span>
-            </a>
-          </li><li>
-            <a href="{{route('monitoring.delivery')}}">
-              <i class="bi bi-circle"></i><span>Monitoring Delivery</span>
-            </a>
-          </li>
-        </ul>
-      </li>
-
-      
-      
-    </ul>
-
-  </aside><!-- End Sidebar-->
+      @foreach(Session::get('permissions') as $menu)
+        @if($menu['children']!=null)
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#{{$menu['name']}}" data-bs-toggle="collapse" href="{{ url($menu['url']) }}">
+            <i class="{{$menu['icon']}}"></i><span>{{$menu['name']}}</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="{{$menu['name']}}" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            @foreach($menu['children'] as $sub)
+            <li>
+              <a href="{{ url($sub['url']) }}">
+                <i class="bi bi-circle"></i><span>{{$sub['name']}}</span>
+              </a>
+            </li>
+            @endforeach
+          </ul>
+        </li>
+        @else
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{{ url($menu['url']) }}">
+            <i class="{{$menu['icon']}}"></i>
+            <span>{{$menu['name']}}</span>
+          </a>
+        </li>
+        @endif
+      @endforeach
+  </ul>
+</aside><!-- End Sidebar-->
