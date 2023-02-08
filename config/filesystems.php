@@ -34,6 +34,39 @@ return [
             'driver' => 'local',
             'root' => storage_path('app'),
         ],
+    /*
+    |--------------------------------------------------------------------------
+    | Manifest Order Location Folder for ZIP Download
+    |--------------------------------------------------------------------------
+    |
+    */
+        'mf_directory' => [
+                'driver' => 'local',
+                'root'   => 'D:/MF_TEST/MI', ///Lokasi File MF
+            ], 
+
+        'mf_kanban_directory' => [
+                'driver' => 'local',
+                'root'   => 'D:/MF_TEST/MI/MI-KANBAN', ///Lokasi File MF
+            ],
+     /////////////////////////////////////////////////////////////////////////
+            
+
+    /*
+    |--------------------------------------------------------------------------
+    | Special Order Location Folder for ZIP Download
+    |--------------------------------------------------------------------------
+    |
+    */
+        'so_directory' => [
+                'driver' => 'local',
+                'root'   => 'D:/MF_TEST/SO/', ///Lokasi File MF
+            ], 
+
+        'so_kanban_directory' => [
+                'driver' => 'local',
+                'root'   => 'D:/MF_TEST/SO-KANBAN/', ///Lokasi File MF
+            ],
 
         'public' => [
             'driver' => 'local',
@@ -41,6 +74,8 @@ return [
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
         ],
+    /////////////////////////////////////////////////////////////////////////
+
 
         's3' => [
             'driver' => 's3',
