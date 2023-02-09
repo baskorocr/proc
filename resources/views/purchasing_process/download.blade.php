@@ -106,7 +106,7 @@
 								</table>
 							</div>
               <div class="card-footer">
-                <form action="{{route('delivery.schedule.spc.download')}}" method="POST">
+                <form action="{{route('purchasing.process.download.zip')}}" method="POST">
                   @csrf
                   <div class="row">
                     <div class="col-md-6 col-xs-12">

@@ -172,4 +172,39 @@ class PurchasingProcessController extends Controller
                 // ->rawColumns(['prod_assc','action'])
                              
     }
+
+    public function zipPurchasingProcess(Request $request)
+    {
+
+        $zip = new \ZipArchive();
+        $fileName = "DHARMA_POLIMETAL_SO_MFPDF_".date("d-m-Y").".zip";
+        try{
+             if ($zip->open(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
+            
+            {
+                
+                foreach ($request->download_doc as $k){
+                    $filenm = explode("#", $k);
+                      // dd($filenm);
+                 // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
+                    $file = storage_path('MF_TEST/SO/'.$filenm[0]);
+                    $relativeName = basename($file);
+                    // dd($filenm[0])
+                    $zip->addFile($file, $filenm[0]);
+
+                    $file = storage_path('MF_TEST/SO-KANBAN/'.$filenm[1]);
+                    $relativeName = basename($file);
+                    $zip->addFile($file, $filenm[1]);
+                }
+                $zip->close();
+
+                  return response()->download(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
+            }
+        } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
+        }
+
+      
+    }
 }
