@@ -26,7 +26,6 @@
 									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#assignDetailModal" href="#"><i class="fas fa-arrow-down"></i>Assign Project Details</a></li>
 									<li><a class="dropdown-item" href="{{route('project.management.assign.master')}}"><i class="fa fa-table"></i>Project Assignment Data</a></li>
 								</ul>
-								
 							</div>
 
 							<div class="table-responsive mt-3">
@@ -113,7 +112,6 @@
 		});
 		}).draw();
 		})
-
 		$('#create-project-form').submit(function(e){
 			e.preventDefault();
 			axios.post('{{route('api.project.management.create.project')}}', {

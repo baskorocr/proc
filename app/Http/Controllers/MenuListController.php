@@ -7,32 +7,65 @@ use App\Models\MenuList;
 
 class MenuListController extends Controller
 {
-    public function index(Request $request)
+
+    public function editList($id)
     {
+        $data = MenuList::findOrFail($id);
+        return view('regis_user/menu-list/edit')->with(['list' => $data]);
+    } 
+
+    public function getMenuList()
+    {
+        $data = MenuList::all();
+        return view('regis_user/menu-list/index')->with(['list' => $data]);
+    }
+
+    public function getDataMenuList()
+    {
+        $data = MenuList::get();
+
+        return \DataTables::of($data)
+            ->editColumn('uom', function ($data) {
+                if (@$data->uom === "D") {
+                    return "Days";
+                } else {
+
+                    return 'Months';
+                }
+            })
+            ->editColumn('cr_by', function ($data) {
+                return @$data->users->nm_user;
+            })
+            ->editColumn('action', function ($data) {
+                return  view('regis_user/menu-list/buttons')->with(['data' => $data]);
+            })
+            ->editColumn('number', function ($data) {
+                return 1;
+            })
+            ->editColumn('last_changed', function ($data) {                    
+                return date('d/m/Y',strtotime($data->last_changed));
+            })->rawColumns(['action'])->addIndexColumn()->make(true);
+    }
+
+
+    public function index(Request $request){
         $skip = $request->perpage * ($request->page - 1);
-        $menu_list = MenuList::where(function($where) use ($request){
-            
-                        if (!empty($request->keyword)) {
-                            foreach ($request->columns as $index => $column) {
-                                if ($index == 0) {
-                                    $where->where($column, 'like', '%'.$request->keyword.'%');
-                                } else {
-                                    $where->orWhere($column, 'like', '%'.$request->keyword.'%');
-                                }
-                            }
-                                
-                        }
-
-                    })
-                    ->when(!empty($request->sort), function($query) use ($request){
-                        $query->orderBy($request->sort, $request->order == 'ascend' ? 'asc' : 'desc');
-                    })
-                    ->take((int)$request->perpage)
-                    ->skip((int)$skip)
-                    ->get();
-
-        $total = MenuList::where(function($where) use ($request){
-            
+        $index = MenuList::when(!empty($request->order_by), function($query) use ($request){
+            foreach($request->order_by as $order_by) {
+                $json = json_decode($order_by);
+                $query->orderBy($json->field, $json->order === 'ascend' ? 'asc' : 'desc');
+            }
+        })
+        ->where(function($query) use ($request){
+            if (!empty($request->search)) {
+                foreach ($request->search as $search) {
+                    $json = json_decode($search);
+                    $query->where($json->columns, 'like', '%'.$json->searchText.'%');
+                    $query->where($json->columns, 'like', '%'.$json->searchText.'%');
+                }
+            }
+        })
+        ->where(function($where) use ($request){
             if (!empty($request->keyword)) {
                 foreach ($request->columns as $index => $column) {
                     if ($index == 0) {
@@ -41,86 +74,61 @@ class MenuListController extends Controller
                         $where->orWhere($column, 'like', '%'.$request->keyword.'%');
                     }
                 }
-                    
             }
+        });
 
-        })
-        ->count();
+        $menu_list = (clone $index)->take((int)$request->perpage)
+            ->skip((int)$skip)
+            ->get();
+
+        $total = (clone $index)->count();
 
         return response()->json([
             'type' => 'success',
             'data' => $menu_list,
             'total' => $total
         ], 200);
+
     }
 
-    public function show(Request $request, $id)
-    {
-        $menu_list = MenuList::findOrFail($id);
-
-        return response()->json([
-            'type' => 'success',
-            'data' =>  $menu_list
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        // $request->validate([
-        //     // 'username' => 'required|string|unique:users,username,'.$id.',_id',
-        //     //'email' => 'required|string',
-        //     // 'full_name' => 'required|string',
-        // ]);
-
+    public function store(Request $request){
         $menu_list = new MenuList;
-        $menu_list->id_menu = $request->id_menu;
         $menu_list->menu_name = $request->menu_name;
         $menu_list->menu_object = $request->menu_object;
         $menu_list->object_path = $request->object_path;
-        $menu_list->status = $request->status;
-        $menu_list->assigned = $request->assigned;
         $menu_list->created_by = auth()->user()->full_name;
-        //$menu_list->changed_by = auth()->user()->full_name;
         $menu_list->save();
 
         return response()->json([
-            'type' => 'success',
-            'message' => 'Data created successfully!'
+            'message' => 'data created has been successfully',
+            'type' => 'success'
         ], 201);
     }
 
-    public function update(Request $request, $id)
-    {
-        // $request->validate([
-        //     // 'username' => 'required|string|unique:users,username,'.$id.',_id',
-        //     //'email' => 'required|string',
-        //     // 'full_name' => 'required|string',
-        // ]);
+    public function show($id){
+        $menu_list = MenuList::find($id);
+        return response()->json([
+            'type' => 'success',
+            'data' => $menu_list
+        ], 200);
+    }
 
-        $menu_list = MenuList::findOrFail($id);
-        $menu_list->id_menu = $request->id_menu;
+    public function updateList(Request $request){
+        
+        $menu_list = MenuList::find($request->id);
+        // dd($menu_list, $request);
         $menu_list->menu_name = $request->menu_name;
         $menu_list->menu_object = $request->menu_object;
         $menu_list->object_path = $request->object_path;
-        $menu_list->status = $request->status;
-        $menu_list->assigned = $request->assigned;
-        $menu_list->changed_by = auth()->user()->full_name;
         $menu_list->save();
 
-        return response()->json([
-            'type' => 'success',
-            'message' => 'Data updated successfully!'
-        ], 201);
+        return redirect()->route('regis-user.menu-list')->with(['message_success' => 'Berhasil mengubah data.']);
     }
 
-    public function destroy($id)
-    {
-        $menu_list = MenuList::findOrFail($id);
+    public function deleteList($id){
+        $menu_list = MenuList::find($id);
         $menu_list->delete();
 
-        return response()->json([
-            'type' => 'success',
-            'message' => 'Data Deleted Successfully!'
-        ], 201);
+        return redirect()->route('regis-user.menu-list')->with(['message_success' => 'Berhasil menghapus data.']);
     }
 }

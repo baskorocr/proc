@@ -25,7 +25,6 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $token = Str::random(25);
             $user = User::where('username', $request->username)->first();
-
             if ($user == null){
 
                 return response()->json([
