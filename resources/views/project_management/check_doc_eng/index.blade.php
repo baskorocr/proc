@@ -47,7 +47,7 @@ $completed_arr  = array();
 						<div class="card">
 							<div class="card-body">
 								<div class="mt-3">
-								<b >{{$project_name}}</b>
+									
 								</div>
 								<div class="tb-responsive mt-3">
 									
@@ -66,7 +66,47 @@ $completed_arr  = array();
 											<th>Check stat (C/N) </th>
 										</thead>
 										<tbody>
+											<?php $i=1; ?>
+											@foreach($project_uploaded as $p)
+											<?php 
+											if ($p->upload_path != ""){
+					                            $status = "<span class='badge bg-success'>Uploaded ($p->doc_required)</span>";
+					                         
+					 						} else {
+					                            $status = "<span class='badge bg-warning'> Waiting ($p->doc_required)...</span>";
+					                        }
+					                        $sum_check = PM::get_proj_doc_assign_data_status(Request::get('id_project'),$p->id_product,$p->id_part,$p->id_doc_part);
+											$count_row3 = count(PM::get_proj_doc_assign_data(Request::get('id_project'),$p->id_product,$p->id_part,$p->id_doc_part)) ;
+
+											if ($sum_check == $count_row3){
+					                            $stat_check =  "<span class='badge bg-primary'>Completed ($sum_check/$count_row3)</span>";
+					                        } else {
+					                            $stat_check =  "<span class='badge bg-danger'>Uncomplete ($sum_check/$count_row3)</span>";
+					                        }
+                        					?>
+											<tr>
+
+												<td>{{$i}}</td>
+												<td>{{@$p->project->proj_num}}</td>
+												<td>{{@$p->project->nm_project}}</td>
+												<td>{{@$p->product->nm_product}}</td>
+												<td>{{@$p->part->nm_part}}</td>
+												<td>{{@$p->docPart->nm_doc_part}}</td>
+												<td>Ver 0{{@$p->version_n}}</td>
+												<td>{{@date('d.m.Y',strtotime($p->upload_date))}}</td>
+												<td>{{@$p->users->nm_user}}</td>
+												<td>
+							                        <a href="#" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
+							                           <?php echo $status;?>
+							                        </a>
+							                    </td><td>
+							                        {!!$stat_check!!}
+							                    </td>
+											</tr>
+											<?php $i++; ?>
+											@endforeach
 										</tbody>
+										
 									</table>
 								</div>
 							</div>
@@ -85,7 +125,6 @@ $completed_arr  = array();
 			
 			$(document).ready(function(){
 			window.table = $('#tb-proj').DataTable({
-
 						});
 			});
 			

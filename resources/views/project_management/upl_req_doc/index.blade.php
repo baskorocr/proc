@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"Upload Document Project")
+@section('title',"Upload Required Document")
 @section('content')
 <?php
 	 $doc_arr        = array();
@@ -9,27 +9,18 @@
  ?>
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Upload Document Project</h1>
+		<h1>Upload Required Document</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active">Upload Document Project</li>
+				<li class="breadcrumb-item active">Upload Required Document</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
 		<section class="section">
 			<div class="row">
 				<div class="col-lg-12">
-					<div class="filter mt-2 mb-2 " align="right">
-								<a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-list"></i></a>
-								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
-									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
-									
-									<li><a class="dropdown-item" href="{{route('project.management.master.listcheck')}}"><i class="fa fa-table"></i>Doc List Check Data</a></li>
-								</ul>
-								
-							</div>
+					
 					<div class="card">
 						<div class="card-body">
 							<form role=form name="myForm" id="myForm"  action="" method="get" enctype="multipart/form-data">
@@ -40,7 +31,7 @@
 									<select  style="width: 100%;"  class="form-control  option-select-doc" id="id_project" name="id_project" required>
 										
 										@foreach($project as $p)
-										<option value="{{$p->id_project}}">{{$p->nm_project}}</option>"
+										<option value="{{$p->id_project}}">{{$p->project->nm_project}}</option>"
 										@endforeach
 									</select>
 									</div><!-- /.box-body -->
@@ -78,7 +69,7 @@
 					</div>
 					@endif
 					@if(!empty($docpart))
-					<form id="upload" action="{{route('project.management.upload.project.actUpload')}}" method="POST" enctype="multipart/form-data">
+					<form id="upload" action="{{route('project.management.upload.doc.actUpload')}}" method="POST" enctype="multipart/form-data">
 						<input type="hidden" name="id_project" value="{{Request::get('id_project')}}">
 						<input type="hidden" name="id_product" value="{{$id_product}}">
 						<input type="hidden" name="id_part" value="{{$id_part}}">
@@ -96,94 +87,80 @@
 								            <th>Document name</th>
 								            <th>Upload File</th>
 								            <th>Status </th>
-								            <th>Required Type</th>
+								            {{-- <th>Required Type</th> --}}
 								            <th>Version</th>
 								            <th>Upload n-Times</th>
-								  			<th>Permission</th>
+								  			{{-- <th>Permission</th> --}}
 									</thead>
 									<tbody>
 										@foreach($docpart as $dp)
 
-										<?php 
+										  <?php
 
-										$sum_check = PM::get_proj_doc_assign_data_status(Request::get('id_project'),$id_product,$id_part,$dp->id_doc_part);
-										$count_row3 = count(PM::get_proj_doc_assign_data(Request::get('id_project'),$id_product,$id_part,$dp->id_doc_part)) ;
-										$upDoc = PM::getDocUploadData(Request::get('id_project'),$id_product,$id_part,$dp->id_doc_part);
-										$doc_version = !empty($upDoc->version_n) ? "<span class='badge bg-success'>Ver 0".$upDoc->version_n."</span>":"-";
-										$doc_upload  = !empty($upDoc->upload_n) ? "<center>$upDoc->upload_n</center>":"-";
-										$up_permit = !empty($upDoc->upload_n) ? $upDoc->upload_n:0;
-										$permit_n = PM::get_permit(Request::get('id_project'), $id_product, $id_part);
+                    $doc_arr      = array();
+                    $completed_arr  = array();
+                    $query_exec_b = PM::get_vendor_prod_part_doc_data(Request::get('id_project'), $id_product, $id_part, $dp->doc_type, auth()->user()->vendor->id_vendor);
+                    foreach ($query_exec_b as $row_b) {
 
-										  if ($dp->doc_required == "M"){
-									                    $doc_required = "<label class='badge bg-success text-md-center'>Mandatory</label>";
-									                } elseif ($dp->doc_required == "Y") {
-									                    $doc_required = "<label class='badge bg-primary text-md-center'>Required</label>";
-									                } elseif ($dp->doc_required == "N") {
-									                    $doc_required = "<label class='badge bg-warning text-md-center'>Not-Required</label>";
-									                }
-										 if (empty($upDoc->upload_path)){
-							                    $stat_check = "<span class='badge bg-danger'>No upload</span>";
-							                    $dis_btn = "";
-							                    $doc_name = $dp->nm_doc_part.".pdf";
-							                    $doc_version = "<center>-</center>";
-							                    $doc_upload = "<center>-</center>";
-							                    $act    ="disabled";
-							                } 
-							            else {
-										if ($count_row3 == $sum_check){
-                        							$stat_check =  "<span class='badge bg-primary'>Completed ($sum_check/$count_row3)</span>";
-							                        array_push($completed_arr, 'completed');
-							                        $dis_btn = "style=\"display: none\"";
-							                        $doc_name = "<span class='badge bg-success'>Completed Check</span>"; //$doc_upl_nm
-							                    } else {
-												 	 $stat_check =  "<a href='home.php?mnu=checkdoceng'><span class='badge bg-warning btn-flat'>Uncomplete ($sum_check/$count_row3)</span></a>";
-							                        $dis_btn = "";
-							                        $doc_name = $dp->nm_doc_part.".pdf";
-												 }
+                        $id_doc_part    = $row_b['id_doc_part'];
+                        $nm_doc_part    = $row_b['nm_doc_part'];
+                        $upload_path    = $row_b['upload_path'];
+                        $doc_upl_nm     = $row_b['file_nm'];
 
-												
+                        $ver            = $row_b['version_n'];
+                        $upload_n       = $row_b['upload_n'];
 
+                        $nama_data = $row_b['file_nm'];
+                        $temp = explode(".", $nama_data);
+                        $filename = $temp[0];
+                        $pathname = auth()->user()->vendor->id_vendor."/".$filename;
 
-							                      
-							                   }
-							                   	$ptext = "-";
-							                   	 if ($permit_n == 1 ){
+                        $data = $row_b['id_project'].",".$row_b['id_product'].",".$row_b['id_part'].",".$row_b['id_doc_part'].",".auth()->user()->vendor->id_vendor;
 
-							                        $permit = "
-							                                <a href='' class='btn btn-flat' disabled>
-							                                    <span class='badge bg-green btn btn-flat'> ACTIVATED</span>
-							                                </a>
-							                        ";
-							                    }  else {
+                        if ($upload_path == ""){
+                            $stat_check = "<span class='badge bg-red'>No upload</span>";
+                            $dis_btn = "";
+                            $doc_name = $nm_doc_part.".pdf";
 
-							                        $permit = "
-							                                <a href='' data-toggle='tooltip' title='click to activate' class='btn btn-flat'>
-							                                    <span class='badge bg-red btn btn-flat'> OFF</span>
-							                                </a>
-							                        ";
-							                    }
-							                    if  ($up_permit >= 5) {
-							                           //echo $permit;
+                            $doc_version = "<center>-</center>";
+                            $doc_upload = "<center>-</center>";
+                            $act    ="disabled";
+                        } else {
 
-							                            if ($permit_n == 0 ) {
+                            $query_exec3 = PM::get_proj_doc_assign_data_vendor(Request::get('id_project'), $id_product, $id_part, $id_doc_part, auth()->user()->vendor->id_vendor);
+                            $row3 = $query_exec3;
 
-							                                 $ptext = "<label>N-1</label>". $permit;
+                            $query_exec4 = PM::get_proj_doc_assign_data_status_vendor(Request::get('id_project'), $id_product, $id_part, $id_doc_part, auth()->user()->vendor->id_vendor);
+                            $row4 =$query_exec4;
 
-							                            } elseif ($permit_n == 1 ){
+                            $query_exec5 = PM::get_proj_doc_assign_data_status_vendor2(Request::get('id_project'), $id_product, $id_part, $id_doc_part, auth()->user()->vendor->id_vendor);
+                            $row5 = $query_exec5;
 
-							                                $ptext = "<label>N-2</label> ".$permit2;
-							                             
+                            $count_row3 = count($query_exec3);
+                            $sum_check_a = $row4;
+                            $sum_check_b = $row5;
 
-							                            } elseif ($permit_n == 2 ) {
+                            $sum_tobe_checked   = $count_row3 + $count_row3;
+                            $sum_checked        = $sum_check_a + $sum_check_b;
 
-							                                 $ptext = "<label>N-1</label>".$permit2."<br>";
-							                               
-							                                 $ptext .= "<label>N-2</label><br>". $permit2;
+                            if ($sum_tobe_checked  == $sum_checked){
+                                $stat_check =  "<span class='badge bg-primary'>Completed ($sum_checked/$sum_tobe_checked)</span>";
+                                array_push($completed_arr, 'completed');
+                                $dis_btn = "style=\"display: none;\" ";
+                                $doc_name = "<span class='badge bg-success'>Completed Check</span>"; //$doc_upl_nm
+                            } else {
+                                $stat_check =  "<a href='home.php?mnu=checkvendview&id_data=".$data."'><span class='badge bg-orange btn-flat'>Uncomplete ($sum_checked/$sum_tobe_checked)</span></a>";
+                                $dis_btn = "";
+                                $doc_name = $nm_doc_part.".pdf";
+                            }
 
-							                            }//if ($permit_n == 0)
+                            $doc_version = "<span class='badge bg-success'>Ver 0".$ver."</span>";
+                            $doc_upload  = "<center>$upload_n</center>";
+                            $act    ="";
+                        }
+                    }
 
-							                       }//($upload_n >= 5)
-							                    ?>
+                ?>
 											<tr>
 												<td>{{$dp->nm_doc_part}}</td>
 												<td>
@@ -192,10 +169,10 @@
 
                     							<p class='text-secondary' id ="information">{{$dp->nm_doc_part}}.pdf</p></td>
 												<td>{!!$stat_check!!}</td>
-												<td>{!!$doc_required!!}</td>
+												{{-- <td>{!!$doc_required!!}</td> --}}
 												<td>{!!$doc_version!!}</td>
 												<td>{!!$doc_upload!!}</td>
-												<td>{!!$ptext!!}</td>
+												{{-- <td>{!!$ptext!!}</td> --}}
 											</tr>
 										@endforeach
 									</tbody>

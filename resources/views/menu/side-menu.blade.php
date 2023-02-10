@@ -65,6 +65,55 @@
               <i class="bi bi-circle"></i><span>Check Eng Doc</span>
             </a>
           </li>
+          <li>
+            <a href="{{route('project.management.assign.vendor')}}">
+              <i class="bi bi-circle"></i><span>Assign Vendor</span>
+            </a>
+          </li> 
+          <li>
+            <a href="{{route('project.management.project.view.doc')}}">
+              <i class="bi bi-circle"></i><span>View Doc (Vendor)</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('project.management.project.upl.req.doc')}}">
+              <i class="bi bi-circle"></i><span>Upload Required Doc</span>
+            </a>
+          </li> 
+           <li>
+            <a href="{{route('project.management.project.monitoring')}}">
+              <i class="bi bi-circle"></i><span>Dashboard Project</span>
+            </a>
+          </li> 
+           <li>
+            <a href="{{route('project.management.vendor.monitoring')}}">
+              <i class="bi bi-circle"></i><span>Vendor Monitoring</span>
+            </a>
+           <li>
+           <li>
+            <a href="{{route('project.management.check.doc.vendor')}}">
+              <i class="bi bi-circle"></i><span>Check Vendor Doc </span>
+            </a>
+           <li>
+            <a href="{{route('project.management.file.master')}}">
+              <i class="bi bi-circle"></i><span>File Master</span>
+            </a>
+          </li> 
+          {{-- <li>
+            <a href="x">
+              <i class="bi bi-circle"></i><span> View Doc (Vendor)</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('project.management.check.doc.eng')}}">
+              <i class="bi bi-circle"></i><span>  Upload Required Doc</span>
+            </a>
+          </li>
+          <li>
+            <a href="{{route('project.management.check.doc.eng')}}">
+              <i class="bi bi-circle"></i><span>   Vendor Monitoring</span>
+            </a>
+          </li> --}}
         </ul>
       </li>
 

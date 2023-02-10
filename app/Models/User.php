@@ -32,4 +32,9 @@ class User extends Authenticable
     {
         return $this->belongsTo('App\Models\Role');
     }
+
+    public function vendor()
+    {
+        return $this->belongsTo(Vendor::class,'foreign_id','id_vendor');
+    }
 }
