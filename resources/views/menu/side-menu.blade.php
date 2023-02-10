@@ -69,6 +69,20 @@
               <i class="bi bi-circle"></i><span>Vendor Master</span>
             </a>
           </li>
+          <li>
+          <a href="{{ url('/regis-user/master-pdauser') }}">
+              <i class="bi bi-circle"></i><span>User PDA Access</span>
+            </a>
+          </li>
+          <li>
+          <a href="{{ url('/regis-user/user-logrecord') }}">
+              <i class="bi bi-circle"></i><span>User Log Record</span>
+            </a>
+          </li>
+          <a href="{{ url('/regis-user/number-range') }}">
+              <i class="bi bi-circle"></i><span>Number Range</span>
+            </a>
+          </li>
         </ul>
       </li>
 

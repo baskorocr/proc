@@ -1,13 +1,13 @@
 @extends('layouts.main')
-@section('title',"Edit User")
+@section('title',"Edit Vendor")
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Master User</h1>
+		<h1>Master Vendor</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active">Edit Master User</li>
+				<li class="breadcrumb-item active">Edit Master Vendor</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -16,37 +16,32 @@
 				<div class="col-lg-12">
 					<div class="card">
 						<div class="card-body">
-							<form role=form name="myForm" id="myForm"  action="{{route('regis-user.master-user.update.user')}}" method="post" enctype="multipart/form-data">
+							<form role=form name="myForm" id="myForm"  action="{{route('regis-user.master-vendor.update.vendor')}}" method="post" enctype="multipart/form-data">
 								@csrf
-								<input type="hidden" name="id" value ="<?php echo $user->id; ?>">
+								<input type="hidden" name="id" value ="<?php echo $vendor->id; ?>">
 								<div class="box-body">
 									
 									
 									<div class="form-group">
-										<label>ID User</label>
-										<input type="text" class="form-control" id="id_user" name="id_user" value="<?php echo $user->id_user; ?>" required>
+										<label>ID Vendor</label>
+										<input type="text" class="form-control" id="id_vendor" name="id_vendor" value="<?php echo $vendor->id_vendor; ?>" required>
 									</div>
-								
+							
 									<div class="form-group">
-										<label>Name User </label>
-										<input type="text" class="form-control" id="nm_user" name="nm_user" value="<?php echo $user->nm_user ?>" placeholder="Name User" required>
-									</div>
-									
-									<div class="form-group">
-										<label>Tipe User</label>
-										<input type="text" class="form-control" id="id_tipe_user" name="id_tipe_user" value="<?php echo $user->id_tipe_user; ?>" required>
+										<label>Nama Vendor</label>
+										<input type="text" class="form-control" id="nm_vendor" name="nm_vendor" value="<?php echo $vendor->nm_vendor; ?>" required>
 									</div>
 									<div class="form-group">
-										<label>Username For Login</label>
-										<input type="text" class="form-control" id="username" name="username" value="<?php echo $user->username; ?>" required>
+										<label>Alias</label>
+										<input type="text" class="form-control" id="allias" name="allias" value="<?php echo $vendor->allias; ?>" >
 									</div>
 									<div class="form-group">
-										<label>Access Group</label>
-										<input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" >
+										<label>Street </label>
+										<input type="text" class="form-control" id="street" name="street" value="<?php echo $vendor->street; ?>" >
 									</div>
 									<div class="form-group">
-										<label>Status User</label>
-										<input type="text" class="form-control" id="status_user" name="status_user" value="<?php echo $user->status_user; ?>">
+										<label>Status Vendor</label>
+										<input type="text" class="form-control" id="status_vendor" name="status_vendor" value="<?php echo $vendor->status_vendor; ?>">
 									</div>
 									</div><!-- /.box-body -->
 									<div class="box-footer"><hr>

@@ -17,7 +17,7 @@
 					<div class="card">
 						<div class="card-body">
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-user">
+								<table  class="table table-bordered table-stripped table-sm" id="master-vendor">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>ID Vendor</th>
@@ -55,7 +55,7 @@
 
 	@section('javascript')
     <script>
-      $('#master-user').DataTable({
+      $('#master-vendor').DataTable({
         "order": [[ 1, "DESC" ]],
         processing: true,
         serverSide: true,
@@ -75,13 +75,13 @@
             data: 'purch_org', name: 'purch_org'
           },
           {
-            data: 'id_tipe_user', name: 'id_tipe_user'
-          },
-          {
             data: 'nm_vendor', name: 'nm_vendor'
           },
 		  {
-			data: 'alias', name: 'alias'
+            data: 'vend_email', name: 'vend_email'
+          },
+		  {
+			data: 'allias', name: 'allias'
 		  },
           {
 			data: 'street', name: 'street'
@@ -90,7 +90,7 @@
 			data: 'district', name: 'district'
 		  }, 
 		  {
-			data: 'post_code', name: 'post_code'
+			data: 'postal_code', name: 'postal_code'
 		  },
 		  {
 			data: 'city', name: 'city'

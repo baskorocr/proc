@@ -119,11 +119,44 @@ Route::prefix('regis-user')->group(function(){
     Route::get('/master-vendor', [App\Http\Controllers\MasterVendorController::class, 'getMasterVendor'])->name('regis-user.master-vendor');
     Route::post('/add-vendor', [App\Http\Controllers\MasterVendorController::class, 'vendorAdd'])->name('api.regis-user.create.vendor');
    
-    Route::post('/master-vendor/update', [App\Http\Controllers\MasterVendorController::class, 'updateVendor'])->name('regis-user.master-user.update.vendor');
-    Route::get('/master-vendor/edit/{id}', [App\Http\Controllers\MasterVendorController::class, 'editVendor'])->name('regis-user.master-user.edit.vendor');
-    Route::get('/master-vendor/delete/{id}', [App\Http\Controllers\MasterVendorController::class, 'deleteVendor'])->name('regis-user.master-user.delete.vendor');
+    Route::post('/master-vendor/update', [App\Http\Controllers\MasterVendorController::class, 'updateVendor'])->name('regis-user.master-vendor.update.vendor');
+    Route::get('/master-vendor/edit/{id}', [App\Http\Controllers\MasterVendorController::class, 'editVendor'])->name('regis-user.master-vendor.edit.vendor');
+    Route::get('/master-vendor/delete/{id}', [App\Http\Controllers\MasterVendorController::class, 'deleteVendor'])->name('regis-user.master-vendor.delete.vendor');
     //Datatables
     Route::get('/datatables/get-master-vendor', [App\Http\Controllers\MasterVendorController::class, 'getDataMasterVendor'])->name('datatables.regis-user.master.vendor');
+
+   //Number Range
+   Route::get('/number-range', [App\Http\Controllers\NumberRangeController::class, 'getNumberRange'])->name('regis-user.number-range');
+   Route::post('/add-number', [App\Http\Controllers\NumberRangeController::class, 'numberAdd'])->name('api.regis-user.create.number');
+  
+   Route::post('/number-range/update', [App\Http\Controllers\NumberRangeController::class, 'updateNumber'])->name('regis-user.number-range.update.number');
+   Route::get('/number-range/edit/{id}', [App\Http\Controllers\NumberRangeController::class, 'editNumber'])->name('regis-user.number-range.edit.number');
+   Route::get('/number-range/delete/{id}', [App\Http\Controllers\NumberRangeController::class, 'deleteNumber'])->name('regis-user.number-range.delete.number');
+   //Datatables
+   Route::get('/datatables/get-number-range', [App\Http\Controllers\NumberRangeController::class, 'getDataNumberRange'])->name('datatables.regis-user.number.range');
+
+   
+  //Master PDA User
+  Route::get('/master-pdauser', [App\Http\Controllers\MasterPDAUserController::class, 'getMasterPDAUser'])->name('regis-user.master-pdauser');
+  Route::post('/add-pdauser', [App\Http\Controllers\MasterPDAUserController::class, 'pdauserAdd'])->name('api.regis-user.create.pdauser');
+ 
+  Route::post('/master-pdauser/update', [App\Http\Controllers\MasterPDAUserController::class, 'updatePdauser'])->name('regis-user.master-pdauser.update.pdauser');
+  Route::get('/master-pdauser/edit/{id}', [App\Http\Controllers\MasterPDAUserController::class, 'editPdauser'])->name('regis-user.master-pdauser.edit.pdauser');
+  Route::get('/master-pdauser/delete/{id}', [App\Http\Controllers\MasterPDAUserController::class, 'deletePdauser'])->name('regis-user.master-pdauser.delete.pdauser');
+  //Datatables
+  Route::get('/datatables/get-master-pdauser', [App\Http\Controllers\MasterPDAUserController::class, 'getDataMasterPDAUser'])->name('datatables.regis-user.master.pdauser');
+
+
+   //User Log Record
+   Route::get('/user-logrecord', [App\Http\Controllers\UserLogRecordController::class, 'getUserLogRecord'])->name('regis-user.user-logrecord');
+   Route::post('/add-logrecord', [App\Http\Controllers\UserLogRecordController::class, 'logrecordAdd'])->name('api.regis-user.create.logrecord');
+  
+   Route::post('/user-logrecord/update', [App\Http\Controllers\UserLogRecordController::class, 'updateLogRecord'])->name('regis-user.user-logrecord.update.logrecord');
+   Route::get('/user-logrecord/edit/{id}', [App\Http\Controllers\UserLogRecordController::class, 'editLogRecord'])->name('regis-user.user-logrecord.edit.logrecord');
+   Route::get('/user-logrecord/delete/{id}', [App\Http\Controllers\UserLogRecordController::class, 'deleteLogRecord'])->name('regis-user.user-logrecord.delete.logrecord');
+   //Datatables
+   Route::get('/datatables/get-user-logrecord', [App\Http\Controllers\UserLogRecordController::class, 'getDataUserLogRecord'])->name('datatables.regis-user.user.logrecord');
+
 });
 
 
