@@ -77,4 +77,7 @@ Route::group(['middleware' => ['auth:api']], function () {
 
 });
 
+Route::get('/getdatas', 'ProjectManagementController@projectMaster');
+Route::get('/master-notify-test', 'MasterNotifyController@index');
+
 Route::post('/login', 'AuthController@login');

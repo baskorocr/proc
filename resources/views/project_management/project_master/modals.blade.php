@@ -58,7 +58,7 @@
                      <div class="form-group">
                         <label>Choose Project</label>
                             <select  style="width: 100%;" class="form-control option-select2" id="id_project_assign" name="id_project" required>
-                               @foreach($project as $p)
+                               @foreach($project ?? '' as $p)
                                <option value="{{$p->id_project}}">{{$p->proj_num}} - {{$p->nm_project}}</option>
                                @endforeach
                             </select>

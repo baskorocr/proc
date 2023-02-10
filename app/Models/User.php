@@ -9,7 +9,7 @@ use App\Models\Role;
 
 class User extends Authenticable
 {
-    protected $table = "user";
+    protected $table = "users";
 
     public $dates = ['deleted_at'];
     
@@ -30,7 +30,7 @@ class User extends Authenticable
 
     public function roles()
     {
-        return $this->belongsTo('App\Models\Role');
+        return $this->belongsTo(Role::class, 'role_id', '_id');
     }
 
     public function vendor()
