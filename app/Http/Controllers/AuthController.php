@@ -48,34 +48,64 @@ class AuthController extends Controller
                 $user->forceFill([
                     'api_token' => hash('sha256', $token)
                 ])->save();
-                
-                $role = Role::where('_id',$user->role_id)->first();
-                $permissions = Permission::whereNull('parent_id')->where('permission_type','page')->orderBy('order_number')->get();
-              
-                $permission_allowed = $permissions->map(function($permission) use ($role){
 
-                    $permission_allowed = collect($role->permissions)->where('allow', true);
+                
+                // $role = Role::where('_id',$user->role_id)->first();
+                // $permissions = Permission::whereNull('parent_id')->where('permission_type','page')->orderBy('order_number')->get();
+              
+                // $permission_allowed = $permissions->map(function($permission) use ($role){
+
+                //     $permission_allowed = collect($role->permissions)->where('allow', true);
+
+                //     if ($permission_allowed->pluck('permission_id')->contains($permission->id)) {
+                //         $xx = Permission::where('parent_id',$permission->id)->where('permission_type','page')->orderBy('order_number')->get();
+                //         return [
+                //             '_id' => $permission->id,
+                //             'name' => $permission->name,
+                //             'url' => $permission->url,
+                //             'icon' => $permission->parent_id,
+                //             'children' => $xx->map(function($child) use ($role){
+                //                 $permission_allowed2 = collect($role->permissions)->where('allow', true);
+                //                 if ($permission_allowed2->pluck('permission_id')->contains($child->parent_id)) {
+                //                     return [
+                //                         '_id' => $child->id,
+                //                         'name' => $child->name,
+                //                         'url' => $child->url
+                //                     ];
+                //                 }
+                //             })
+                //         ];
+                //     }
+                // });
+
+                $permissions = Permission::whereNull('parent_id')->orderBy('order_number')->get();
+                $permission_allowed = $permissions->map(function ($permission) use ($user) {
+                    $permission_allowed = collect($user->roles->permissions)->where('allow', true);
 
                     if ($permission_allowed->pluck('permission_id')->contains($permission->id)) {
-                        $xx = Permission::where('parent_id',$permission->id)->where('permission_type','page')->orderBy('order_number')->get();
+
                         return [
                             '_id' => $permission->id,
                             'name' => $permission->name,
                             'url' => $permission->url,
-                            'icon' => $permission->parent_id,
-                            'children' => $xx->map(function($child) use ($role){
-                                $permission_allowed2 = collect($role->permissions)->where('allow', true);
-                                if ($permission_allowed2->pluck('permission_id')->contains($child->parent_id)) {
+                            'icon' => $permission->icon,
+                            'permission_type' => $permission->permission_type,
+                            'children' => $permission->children->map(function ($child) use ($user) {
+                                $permission_allowed = collect($user->roles->permissions)->where('allow', true);
+                                if ($permission_allowed->pluck('permission_id')->contains($child->id)) {
                                     return [
                                         '_id' => $child->id,
                                         'name' => $child->name,
-                                        'url' => $child->url
+                                        'url' => $child->url,
+                                        'permission_type' => $child->permission_type,
                                     ];
                                 }
-                            })
+                            })->filter()->values()
                         ];
                     }
-                });
+                })->filter()->values();
+                
+                // var_dump($permission_allowed->toArray()); 
                
                 session(['id_user' =>  $user->id_user]);
                 session(['nm_user' =>  $user->nm_user]);
