@@ -29,4 +29,5 @@
         @endif
       @endforeach
   </ul>
-</aside><!-- End Sidebar-->
+</aside>
+<!-- End Sidebar-->

@@ -136,4 +136,19 @@ Route::group(['middleware' => ['auth']], function () {
          Route::post('/assign-product', [App\Http\Controllers\ProjectManagementController::class, 'productAssign'])->name('api.project.management.assign.product');
       
     });
+
+
+});
+Route::get('/blank', function () {
+   return view('example/blank');
+});
+
+
+Route::prefix('component')->group(function () {
+    Route::get('/forminput', function () {
+         return view('example.form');
+    });
+    Route::get('/datatable', function () {
+        return view('example.table');
+   });
 });

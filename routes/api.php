@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::group(['middleware' => ['auth:api']], function () {
+//Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('/role', 'RoleController@index');
     Route::post('/role', 'RoleController@store');
@@ -75,6 +75,6 @@ Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('/dashboard-iso-doc', 'DashboardIsoDocController@index');
 
-});
+//});
 
 Route::post('/login', 'AuthController@login');
