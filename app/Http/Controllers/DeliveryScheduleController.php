@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ManifestHeader;
+use Config;
+use Storage;
 
 class DeliveryScheduleController extends Controller
 {
@@ -27,10 +29,11 @@ class DeliveryScheduleController extends Controller
     }
     public function zipMF(Request $request)
     {
-
+        // dd(\Storage::disk('mf_directory')->path("/"));
+        // Storage::disk('mf_directory')->put('file.txt', 'Contents');
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_MI_MFPDF_".date("d-m-Y").".zip";
-        try{
+        // try{
              if ($zip->open(storage_path('temp_zip/MI-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
             
             {
@@ -38,13 +41,14 @@ class DeliveryScheduleController extends Controller
                 foreach ($request->download_doc as $k){
                     $filenm = explode("#", $k);
                       // dd($filenm);
+                    // dd(scandir("D:/MI_TEST/MI/"));
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = storage_path('MF_TEST/MI/'.$filenm[0]);
+                    $file = Storage::disk('mf_directory')->path("/").$filenm[0];
                     $relativeName = basename($file);
                     // dd($filenm[0])
                     $zip->addFile($file, $filenm[0]);
 
-                    $file = storage_path('MF_TEST/MI-KANBAN/'.$filenm[1]);
+                    $file = Storage::disk('mf_kanban_directory')->path("/").$filenm[1];
                     $relativeName = basename($file);
                     $zip->addFile($file, $filenm[1]);
                 }
@@ -52,10 +56,10 @@ class DeliveryScheduleController extends Controller
 
                   return response()->download(storage_path('temp_zip/MI-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
             }
-        } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
-        {
-            return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
-        }
+        // } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
+        // {
+        //     return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
+        // }
 
       
     }
@@ -74,12 +78,12 @@ class DeliveryScheduleController extends Controller
                     $filenm = explode("#", $k);
                       // dd($filenm);
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = storage_path('MF_TEST/SO/'.$filenm[0]);
+                    $file = Storage::disk('so_directory')->path("/").$filenm[0];
                     $relativeName = basename($file);
                     // dd($filenm[0])
                     $zip->addFile($file, $filenm[0]);
 
-                    $file = storage_path('MF_TEST/SO-KANBAN/'.$filenm[1]);
+                    $file = Storage::disk('so_kanban_directory')->path("/").$filenm[1];
                     $relativeName = basename($file);
                     $zip->addFile($file, $filenm[1]);
                 }
