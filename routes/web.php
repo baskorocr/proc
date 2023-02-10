@@ -246,6 +246,8 @@ Route::group(['middleware' => ['auth']], function () {
         });
 
 });
+
+
 Route::get('/blank', function () {
    return view('example/blank');
 });
