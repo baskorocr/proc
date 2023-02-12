@@ -127,6 +127,7 @@ $("#end").change(function(e){
 
 		}
 		$('#download-manifest').DataTable({
+
 	"order": [[ 1, "DESC" ]],
 	processing: true,
 	serverSide: true,
@@ -181,7 +182,8 @@ $("#end").change(function(e){
 	data: 'file_nm',
 	name: 'file_nm'
 	},
-	]
+	],
+	"oLanguage": {"sSearch": "Search No Manifest:"}
 	});
 	
 	</script>

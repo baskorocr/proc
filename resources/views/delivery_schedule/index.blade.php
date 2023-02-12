@@ -201,7 +201,7 @@ $("#end").change(function(e){
 	data: 'file_nm',
 	name: 'file_nm'
 	},
-	]
+	],"oLanguage": {"sSearch": "Search No Manifest:"}
 	});
 	
 	</script>
