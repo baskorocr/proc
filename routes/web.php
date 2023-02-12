@@ -13,7 +13,7 @@ Route::get('/', function () {
 })->name('login');
 
 Route::get('/logout',[AuthController::class,'logout'])->name('logout');
-//Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
 Route::prefix('doc-iso')->group(function(){
 
