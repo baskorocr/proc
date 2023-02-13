@@ -142,6 +142,7 @@ Route::prefix('purchasing-process')->group(function(){
     //Datatables
     Route::get('/datatables/get-download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getDownloadListPo'])->name('datatables.purchasing.process.download.listpo');
     Route::post('/zip/download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'zipPurchasingProcess'])->name('purchasing.process.download.zip');
+    Route::post('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'importPo'])->name('purchasing.process.import.po');
 });
 
 Route::prefix('component')->group(function () {
