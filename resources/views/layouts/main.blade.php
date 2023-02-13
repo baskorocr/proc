@@ -185,7 +185,60 @@
     $(this).addClass('active');
 
   });
+
   </script>
+
+ 
+  </script>
+  @if(!empty( session('message_success')))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'success',
+            title: " {{session('message_success')}}"
+          })
+    });
+    </script>
+@endif
+ @if(!empty( session('message_fail')))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'error',
+            title: " {{session('message_fail')}}"
+          })
+    });
+    </script>
+@endif
+@if(!empty( session('message_warning')))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'warning',
+            title: " {{session('message_warning')}}"
+          })
+    });
+    </script>
+@endif
+
   @yield('javascript')
 </body>
 

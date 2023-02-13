@@ -7,7 +7,7 @@ use App\Http\Controllers\AuthController;
 Route::get('/', function () {
     if(Auth::check())
     {
-        return redirect('blank');
+        return redirect('dashboard');
     }
     return view('eproc.login');
 })->name('login');
@@ -149,6 +149,21 @@ Route::prefix('regis-user')->group(function(){
 
 
 Route::group(['middleware' => ['auth']], function () {
+    Route::prefix('config')->group(function(){
+        Route::get('/permission', [App\Http\Controllers\ConfigController::class, 'permission'])->name('config.permission');
+        Route::get('/permission/delete/{id}', [App\Http\Controllers\ConfigController::class, 'deletePermission'])->name('config.permission.delete');
+        Route::get('/permission/edit/{id}', [App\Http\Controllers\ConfigController::class, 'editPermission'])->name('config.permission.edit');
+        Route::get('/permission/create', [App\Http\Controllers\ConfigController::class, 'createPermission'])->name('config.permission.create');
+        Route::post('/permission/save', [App\Http\Controllers\ConfigController::class, 'insertPermission'])->name('config.permission.save');
+        Route::post('/permission/update', [App\Http\Controllers\ConfigController::class, 'updatePermission'])->name('config.permission.update');
+        Route::get('/datatables/get-permission', [App\Http\Controllers\ConfigController::class, 'getDatatablePermission'])->name('api.permission.datatables');
+        // ROLES
+        Route::get('/role', [App\Http\Controllers\ConfigController::class, 'role'])->name('config.role');
+        Route::get('/role/create', [App\Http\Controllers\ConfigController::class, 'createRole'])->name('config.role.add');
+        Route::post('/role/save', [App\Http\Controllers\ConfigController::class, 'saveRole'])->name('config.role.save');
+        Route::get('/datatables/get-permission', [App\Http\Controllers\ConfigController::class, 'getDatatableRole'])->name('api.role.datatables');
+
+    });
     // DELIVERY SCHEDULE ROUTES
     Route::prefix('delivery-schedule')->group(function(){
         Route::get('/dummy-file-act', [App\Http\Controllers\DeliveryScheduleController::class, 'createDummyFile'])->name('dummy-file');
@@ -246,8 +261,9 @@ Route::group(['middleware' => ['auth']], function () {
         });
 
 });
-Route::get('/blank', function () {
-   return view('example/blank');
+Route::get('/dashboard', [App\Http\Controllers\ProjectManagementController::class, 'dashboardMonProject']);
+Route::get('/blank', function (){
+    return redirect('/dashboard');
 });
 
 
