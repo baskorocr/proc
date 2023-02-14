@@ -83,9 +83,10 @@
                                 <div class="col-md-6">
                                     <label>Parent ID</label>
                                     <select class="form-control select2" name="parent_id">
-                                            <option value="" @if($data->permission_type == null) selected @endif>-Kosong-</option>
+                                            <option value="" @if($data->permission_type == null)  @endif>-Kosong-</option>
                                         @foreach($parent as $p)
-                                            <option  value="{{$p->_id}}" @if($data->permission_type == $p->_id) selected @endif>{{$p->name}}</option>
+                                            <option  value="{{$p->_id}}" @if($data->parent_id == $p->_id) selected="selected" @endif>{{$p->name}}</option>
+                                            <option  value="{{$p->_id}}" @if($data->parent_id == $p->_id) selected="selected" @endif>{{$p->name}}</option>
                                         @endforeach
                                     </select>
                                      @error('parent_id')
@@ -97,8 +98,8 @@
                                 <div class="col-md-6">
                                     <label>Type</label>
                                    <select class="form-control select2" name="type">
-                                       <option value="page" @if($data->permission_type == "page") selected @endif>Page</option>
-                                       <option value="button" @if($data->permission_type == "button") selected @endif>Button</option>
+                                       <option value="page" @if($data->permission_type == "page") selected="selected" @endif>Page</option>
+                                       <option value="button" @if($data->permission_type == "button") selected="selected" @endif>Button</option>
                                    </select>
                                       @error('type')
                                        <span class="badge border-danger border-1 text-danger">{{$message}}</span>
