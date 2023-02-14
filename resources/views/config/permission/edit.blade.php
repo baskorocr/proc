@@ -44,7 +44,7 @@
                              <div class="row">
                                 <div class="col-md-6">
                                     <label>Icon</label>
-                                    <input type="text" placeholder="cth: fas fa-plus" class="form-control" value="{{$data->icon}}" required  name="icon">
+                                    <input type="text" placeholder="cth: bi bi-truck" class="form-control" value="{{$data->icon}}"   name="icon">
                                      @error('icon')
                                        <span class="badge border-danger border-1 text-danger">{{$message}}</span>
                                     @enderror
