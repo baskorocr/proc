@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
+class ComposerStaticInita69eec5696be6d2bc28b40d52b4504a0
 {
     public static $files = array (
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
@@ -619,6 +619,7 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Helpers\\Numbering' => __DIR__ . '/../..' . '/app/Helpers/Numbering.php',
         'App\\Helpers\\ProjectManagementHelper' => __DIR__ . '/../..' . '/app/Helpers/ProjectManagementHelper.php',
+        'App\\Http\\Controllers\\AccessGroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/AccessGroupController.php',
         'App\\Http\\Controllers\\AccessGroupListController' => __DIR__ . '/../..' . '/app/Http/Controllers/AccessGroupListController.php',
         'App\\Http\\Controllers\\AuthController' => __DIR__ . '/../..' . '/app/Http/Controllers/AuthController.php',
         'App\\Http\\Controllers\\Auth\\ConfirmPasswordController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/ConfirmPasswordController.php',
@@ -635,11 +636,14 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'App\\Http\\Controllers\\EmailListGroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/EmailListGroupController.php',
         'App\\Http\\Controllers\\HomeController' => __DIR__ . '/../..' . '/app/Http/Controllers/HomeController.php',
         'App\\Http\\Controllers\\MasterNotifyController' => __DIR__ . '/../..' . '/app/Http/Controllers/MasterNotifyController.php',
+        'App\\Http\\Controllers\\MasterPDAUserController' => __DIR__ . '/../..' . '/app/Http/Controllers/MasterPDAUserController.php',
+        'App\\Http\\Controllers\\MasterUserController' => __DIR__ . '/../..' . '/app/Http/Controllers/MasterUserController.php',
+        'App\\Http\\Controllers\\MasterVendorController' => __DIR__ . '/../..' . '/app/Http/Controllers/MasterVendorController.php',
         'App\\Http\\Controllers\\MenuGroupController' => __DIR__ . '/../..' . '/app/Http/Controllers/MenuGroupController.php',
         'App\\Http\\Controllers\\MenuListController' => __DIR__ . '/../..' . '/app/Http/Controllers/MenuListController.php',
         'App\\Http\\Controllers\\MonitoringDeliveryController' => __DIR__ . '/../..' . '/app/Http/Controllers/MonitoringDeliveryController.php',
-        'App\\Http\\Controllers\\NumberRangeController' => __DIR__ . '/../..' . '/app/Http/Controllers/NumberRangeController.php',
         'App\\Http\\Controllers\\PermissionController' => __DIR__ . '/../..' . '/app/Http/Controllers/PermissionController.php',
+        'App\\Http\\Controllers\\PoController' => __DIR__ . '/../..' . '/app/Http/Controllers/PoController.php',
         'App\\Http\\Controllers\\ProjectManagementController' => __DIR__ . '/../..' . '/app/Http/Controllers/ProjectManagementController.php',
         'App\\Http\\Controllers\\PurchasingProcessController' => __DIR__ . '/../..' . '/app/Http/Controllers/PurchasingProcessController.php',
         'App\\Http\\Controllers\\RegisIsoDocController' => __DIR__ . '/../..' . '/app/Http/Controllers/RegisIsoDocController.php',
@@ -648,6 +652,7 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'App\\Http\\Controllers\\SettingsController' => __DIR__ . '/../..' . '/app/Http/Controllers/SettingsController.php',
         'App\\Http\\Controllers\\UserController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserController.php',
         'App\\Http\\Controllers\\UserLogController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserLogController.php',
+        'App\\Http\\Controllers\\UserLogRecordController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserLogRecordController.php',
         'App\\Http\\Controllers\\UserPdaAccessController' => __DIR__ . '/../..' . '/app/Http/Controllers/UserPdaAccessController.php',
         'App\\Http\\Controllers\\VendorController' => __DIR__ . '/../..' . '/app/Http/Controllers/VendorController.php',
         'App\\Http\\Kernel' => __DIR__ . '/../..' . '/app/Http/Kernel.php',
@@ -660,7 +665,7 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'App\\Http\\Middleware\\TrustProxies' => __DIR__ . '/../..' . '/app/Http/Middleware/TrustProxies.php',
         'App\\Http\\Middleware\\VerifyCsrfToken' => __DIR__ . '/../..' . '/app/Http/Middleware/VerifyCsrfToken.php',
         'App\\Imports\\ImportPo' => __DIR__ . '/../..' . '/app/Imports/ImportPo.php',
-        'App\\Models\\AccessGroupList' => __DIR__ . '/../..' . '/app/Models/AccessGroupList.php',
+        'App\\Models\\AccessGroup' => __DIR__ . '/../..' . '/app/Models/AccessGroup.php',
         'App\\Models\\DocCheckList' => __DIR__ . '/../..' . '/app/Models/DocCheckList.php',
         'App\\Models\\DocForPart' => __DIR__ . '/../..' . '/app/Models/DocForPart.php',
         'App\\Models\\DocPart' => __DIR__ . '/../..' . '/app/Models/DocPart.php',
@@ -669,6 +674,9 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'App\\Models\\ManifestDetail' => __DIR__ . '/../..' . '/app/Models/ManifestDetail.php',
         'App\\Models\\ManifestHeader' => __DIR__ . '/../..' . '/app/Models/ManifestHeader.php',
         'App\\Models\\MasterNotify' => __DIR__ . '/../..' . '/app/Models/MasterNotify.php',
+        'App\\Models\\MasterPDAUser' => __DIR__ . '/../..' . '/app/Models/MasterPDAUser.php',
+        'App\\Models\\MasterUser' => __DIR__ . '/../..' . '/app/Models/MasterUser.php',
+        'App\\Models\\MasterVendor' => __DIR__ . '/../..' . '/app/Models/MasterVendor.php',
         'App\\Models\\MenuGroup' => __DIR__ . '/../..' . '/app/Models/MenuGroup.php',
         'App\\Models\\MenuList' => __DIR__ . '/../..' . '/app/Models/MenuList.php',
         'App\\Models\\NumberRange' => __DIR__ . '/../..' . '/app/Models/NumberRange.php',
@@ -689,6 +697,7 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'App\\Models\\Settings' => __DIR__ . '/../..' . '/app/Models/Settings.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\UserLog' => __DIR__ . '/../..' . '/app/Models/UserLog.php',
+        'App\\Models\\UserLogRecord' => __DIR__ . '/../..' . '/app/Models/UserLogRecord.php',
         'App\\Models\\UserPdaAccess' => __DIR__ . '/../..' . '/app/Models/UserPdaAccess.php',
         'App\\Models\\Vendor' => __DIR__ . '/../..' . '/app/Models/Vendor.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',
@@ -722,6 +731,7 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'Carbon\\CarbonInterface' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonInterface.php',
         'Carbon\\CarbonInterval' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonInterval.php',
         'Carbon\\CarbonPeriod' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonPeriod.php',
+        'Carbon\\CarbonPeriodImmutable' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonPeriodImmutable.php',
         'Carbon\\CarbonTimeZone' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/CarbonTimeZone.php',
         'Carbon\\Cli\\Invoker' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Cli/Invoker.php',
         'Carbon\\Doctrine\\CarbonDoctrineType' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Doctrine/CarbonDoctrineType.php',
@@ -3180,6 +3190,7 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
         'Laravel\\SerializableClosure\\Support\\ClosureStream' => __DIR__ . '/..' . '/laravel/serializable-closure/src/Support/ClosureStream.php',
         'Laravel\\SerializableClosure\\Support\\ReflectionClosure' => __DIR__ . '/..' . '/laravel/serializable-closure/src/Support/ReflectionClosure.php',
         'Laravel\\SerializableClosure\\Support\\SelfReference' => __DIR__ . '/..' . '/laravel/serializable-closure/src/Support/SelfReference.php',
+        'Laravel\\SerializableClosure\\UnsignedSerializableClosure' => __DIR__ . '/..' . '/laravel/serializable-closure/src/UnsignedSerializableClosure.php',
         'Laravel\\Tinker\\ClassAliasAutoloader' => __DIR__ . '/..' . '/laravel/tinker/src/ClassAliasAutoloader.php',
         'Laravel\\Tinker\\Console\\TinkerCommand' => __DIR__ . '/..' . '/laravel/tinker/src/Console/TinkerCommand.php',
         'Laravel\\Tinker\\TinkerCaster' => __DIR__ . '/..' . '/laravel/tinker/src/TinkerCaster.php',
@@ -6786,10 +6797,10 @@ class ComposerStaticInit52f80584e840e98e5fde6e755525c2f2
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit52f80584e840e98e5fde6e755525c2f2::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit52f80584e840e98e5fde6e755525c2f2::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit52f80584e840e98e5fde6e755525c2f2::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit52f80584e840e98e5fde6e755525c2f2::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInita69eec5696be6d2bc28b40d52b4504a0::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInita69eec5696be6d2bc28b40d52b4504a0::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInita69eec5696be6d2bc28b40d52b4504a0::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInita69eec5696be6d2bc28b40d52b4504a0::$classMap;
 
         }, null, ClassLoader::class);
     }

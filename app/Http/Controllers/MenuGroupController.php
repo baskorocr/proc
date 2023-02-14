@@ -7,32 +7,64 @@ use App\Models\MenuGroup;
 
 class MenuGroupController extends Controller
 {
-    public function index(Request $request)
+    public function editGroup($id)
     {
+        $data = MenuGroup::findOrFail($id);
+        return view('regis_user/menu-group/edit')->with(['group' => $data]);
+    } 
+
+    public function getMenuGroup()
+    {
+        $data = MenuGroup::all();
+        return view('regis_user/menu-group/index')->with(['group' => $data]);
+    }
+
+    public function getDataMenuGroup()
+    {
+        $data = MenuGroup::get();
+
+        return \DataTables::of($data)
+            ->editColumn('uom', function ($data) {
+                if (@$data->uom === "D") {
+                    return "Days";
+                } else {
+
+                    return 'Months';
+                }
+            })
+            ->editColumn('cr_by', function ($data) {
+                return @$data->users->nm_user;
+            })
+            ->editColumn('action', function ($data) {
+                return  view('regis_user/menu-group/buttons')->with(['data' => $data]);
+            })
+            ->editColumn('number', function ($data) {
+                return 1;
+            })
+            ->editColumn('last_changed', function ($data) {                    
+                return date('d/m/Y',strtotime($data->last_changed));
+            })->rawColumns(['action'])->addIndexColumn()->make(true);
+    }
+
+
+    public function index(Request $request){
         $skip = $request->perpage * ($request->page - 1);
-        $menu_group = MenuGroup::where(function($where) use ($request){
-            
-                        if (!empty($request->keyword)) {
-                            foreach ($request->columns as $index => $column) {
-                                if ($index == 0) {
-                                    $where->where($column, 'like', '%'.$request->keyword.'%');
-                                } else {
-                                    $where->orWhere($column, 'like', '%'.$request->keyword.'%');
-                                }
-                            }
-                                
-                        }
-
-                    })
-                    ->when(!empty($request->sort), function($query) use ($request){
-                        $query->orderBy($request->sort, $request->order == 'ascend' ? 'asc' : 'desc');
-                    })
-                    ->take((int)$request->perpage)
-                    ->skip((int)$skip)
-                    ->get();
-
-        $total = MenuGroup::where(function($where) use ($request){
-            
+        $index = MenuGroup::when(!empty($request->order_by), function($query) use ($request){
+            foreach($request->order_by as $order_by) {
+                $json = json_decode($order_by);
+                $query->orderBy($json->field, $json->order === 'ascend' ? 'asc' : 'desc');
+            }
+        })
+        ->where(function($query) use ($request){
+            if (!empty($request->search)) {
+                foreach ($request->search as $search) {
+                    $json = json_decode($search);
+                    $query->where($json->columns, 'like', '%'.$json->searchText.'%');
+                    $query->where($json->columns, 'like', '%'.$json->searchText.'%');
+                }
+            }
+        })
+        ->where(function($where) use ($request){
             if (!empty($request->keyword)) {
                 foreach ($request->columns as $index => $column) {
                     if ($index == 0) {
@@ -41,87 +73,59 @@ class MenuGroupController extends Controller
                         $where->orWhere($column, 'like', '%'.$request->keyword.'%');
                     }
                 }
-                    
             }
+        });
 
-        })
-        ->count();
+        $menu_group = (clone $index)->take((int)$request->perpage)
+            ->skip((int)$skip)
+            ->get();
+
+        $total = (clone $index)->count();
 
         return response()->json([
             'type' => 'success',
             'data' => $menu_group,
             'total' => $total
         ], 200);
+
     }
 
-    public function show(Request $request, $id)
-    {
-        $menu_group = MenuGroup::findOrFail($id);
-
-        return response()->json([
-            'type' => 'success',
-            'data' =>  $menu_group
-        ]);
-    }
-
-    public function store(Request $request)
-    {
-        // $request->validate([
-        //     // 'username' => 'required|string|unique:users,username,'.$id.',_id',
-        //     //'email' => 'required|string',
-        //     // 'full_name' => 'required|string',
-        // ]);
-
+    public function store(Request $request){
         $menu_group = new MenuGroup;
-        $menu_group->id_menu = $request->id_menu;
         $menu_group->menu_group_name = $request->menu_group_name;
         $menu_group->menu_group_object = $request->menu_group_object;
-        $menu_group->object_path = $request->object_path;
-        $menu_group->status = $request->status;
-        $menu_group->assigned = $request->assigned;
         $menu_group->created_by = auth()->user()->full_name;
-        //$menu_group->changed_by = auth()->user()->full_name;
         $menu_group->save();
 
         return response()->json([
-            'type' => 'success',
-            'message' => 'Data created successfully!'
+            'message' => 'data created has been successfully',
+            'type' => 'success'
         ], 201);
     }
 
-    public function update(Request $request, $id)
-    {
-        // $request->validate([
-        //     // 'username' => 'required|string|unique:users,username,'.$id.',_id',
-        //     //'email' => 'required|string',
-        //     // 'full_name' => 'required|string',
-        // ]);
-
-        $menu_group = MenuGroup::findOrFail($id);
-        $menu_group->id_menu = $request->id_menu;
-        $menu_group->menu_group_name = $request->menu_group_name;
-        $menu_group->menu_group_object = $request->menu_group_object;
-        $menu_group->object_path = $request->object_path;
-        $menu_group->status = $request->status;
-        $menu_group->assigned = $request->assigned;
-        $menu_group->created_by = auth()->user()->full_name;
-        //$menu_group->changed_by = auth()->user()->full_name;
-        $menu_group->save();
-
+    public function show($id){
+        $menu_group = MenuGroup::find($id);
         return response()->json([
             'type' => 'success',
-            'message' => 'Data created successfully!'
-        ], 201);
+            'data' => $menu_group
+        ], 200);
     }
 
-    public function destroy($id)
-    {
-        $menu_group = MenuGroup::findOrFail($id);
+    public function updateGroup(Request $request){
+        
+        $menu_group = MenuGroup::find($request->id);
+        // dd($menu_group, $request);
+        $menu_group->menu_group_name = $request->menu_group_name;
+        $menu_group->menu_group_object = $request->menu_group_object;
+        $menu_group->save();
+
+        return redirect()->route('regis-user.menu-group')->with(['message_success' => 'Berhasil mengubah data.']);
+    }
+
+    public function deleteGroup($id){
+        $menu_group = MenuGroup::find($id);
         $menu_group->delete();
 
-        return response()->json([
-            'type' => 'success',
-            'message' => 'Data Deleted Successfully!'
-        ], 201);
+        return redirect()->route('regis-user.menu-group')->with(['message_success' => 'Berhasil menghapus data.']);
     }
 }

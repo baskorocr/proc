@@ -10,6 +10,6 @@ class ReportIsoDoc extends Model
     use HasFactory;
 
     public function vendor(){
-        return $this->belongsTo('App\Models\Vendor', 'id_vendor', 'id_vendor');
+        return $this->belongsTo(Vendor::class, 'id_vendor', 'id_vendor');
     }
 }

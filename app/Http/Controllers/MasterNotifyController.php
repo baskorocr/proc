@@ -7,6 +7,44 @@ use App\Models\MasterNotify;
 
 class MasterNotifyController extends Controller
 {
+
+    public function editNotify($id)
+    {
+        $data = MasterNotify::find($id);
+        return view('doc_iso/master-notify/edit')->with(['notify' => $data]);
+    } 
+
+    public function getMasterNotify()
+    {
+        $data = MasterNotify::all();
+        return view('doc_iso/master-notify/index')->with(['notify' => $data]);
+    }
+
+    public function getDataMasterNotify()
+    {
+        $data = MasterNotify::get();
+
+        return \DataTables::of($data)
+            ->editColumn('uom', function ($data) {
+                if (@$data->uom === "D") {
+                    return "Days";
+                } else {
+
+                    return 'Months';
+                }
+            })
+            ->editColumn('cr_by', function ($data) {
+                return @$data->users->nm_user;
+            })
+            ->editColumn('action', function ($data) {
+                return  view('doc_iso/master-notify/buttons')->with(['data' => $data]);
+            })
+            ->editColumn('number', function ($data) {
+                return 1;
+            })->rawColumns(['action'])->addIndexColumn()->make(true);
+    }
+
+
     public function index(Request $request){
         $skip = $request->perpage * ($request->page - 1);
         $index = MasterNotify::when(!empty($request->order_by), function($query) use ($request){
@@ -76,28 +114,22 @@ class MasterNotifyController extends Controller
         ], 200);
     }
 
-    public function update(Request $request, $id){
-        $master_notify = MasterNotify::find($id);
+    public function updateNotify(Request $request){
+        
+        $master_notify = MasterNotify::find($request->id);
+        // dd($master_notify, $request);
         $master_notify->notify_id = $request->notify_id;
-        $master_notify->notify_sequence = $request->notify_sequence;
-        $master_notify->notify_before = $request->notify_before;
-        $master_notify->measurement = $request->measurement;
-        $master_notify->updated_by = auth()->user()->full_name;
+        $master_notify->notif_before = $request->notif_before;
+        $master_notify->uom = $request->uom;
         $master_notify->save();
 
-        return response()->json([
-            'type' => 'success',
-            'message' => 'data updated has been successfully'
-        ], 200);
+        return redirect()->route('doc-iso.master-notify')->with(['message_success' => 'Berhasil mengubah data.']);
     }
 
-    public function destroy($id){
+    public function deleteNotify($id){
         $master_notify = MasterNotify::find($id);
         $master_notify->delete();
 
-        return response()->json([
-            'type' => 'success',
-            'message' => 'data deleted has been successfully'
-        ], 200);
+        return redirect()->route('doc-iso.master-notify')->with(['message_success' => 'Berhasil menghapus data.']);
     }
 }
