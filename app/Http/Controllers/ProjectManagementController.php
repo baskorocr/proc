@@ -38,7 +38,9 @@ class ProjectManagementController extends Controller
 
     public function viewDocVendor(Request $request)
     {
-        $prj = ProjectVendorAssign::where('id_vendor',auth()->user()->vendor->id_vendor)->get();
+        // if(!empty(auth()->user()->vendor))
+        $id_vendor = empty(auth()->user()->vendor)? "":auth()->user()->vendor->id_vendor;
+        $prj = ProjectVendorAssign::where('id_vendor',$id_vendor)->get();
         $ret = ['project' => $prj];
          if(!empty($request->id_project))
         {
@@ -215,7 +217,8 @@ class ProjectManagementController extends Controller
 
     public function uplReqDoc(Request $request)
     {
-        $prj = ProjectVendorAssign::where('id_vendor',auth()->user()->vendor->id_vendor)->get();
+        $id_vendor = empty(auth()->user()->vendor)? "":auth()->user()->vendor->id_vendor;
+        $prj = ProjectVendorAssign::where('id_vendor',$id_vendor)->get();
         
         $ret = ['project' => $prj];
        if(!empty($request->id_project)){

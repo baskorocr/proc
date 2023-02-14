@@ -16,6 +16,29 @@
 				<div class="col-lg-12">
 					<div class="card">
 						<div class="card-body">
+							<form action="" method="get">
+							<div class="row mt-3">
+								<div class="col-md-12">
+									<h5>Set Date Ranges</h5>
+								</div>
+								<div class="col-md-6">
+									<div class="row">
+										<div class="col-md-6">
+											{{-- <label>Start</label> --}}
+											<input type="text" id="start" required onfocus="(this.type='date')" value="{{Request::get('start')}}"  placeholder="Start Date (dd/mm/yyyy)" name="start" class="form-control">
+										</div>
+										<div class="col-md-6">
+											{{-- <label>End</label> --}}
+											<input type="text" id="end"  required onfocus="(this.type='date')" @if(!empty(Request::get('end'))) min="{{Request::get('start')}}" @endif value="{{Request::get('end')}}"   placeholder="End Date (dd/mm/yyyy)" name="end" class="form-control">
+										</div>
+									</div>
+								</div>
+								<div class="col-md-3 col-xs-12">
+									<button class="btn btn-outline-secondary btn-block" type="submit"> <i class="fas fa-search"></i> Search</button>
+								</div>
+							</div>
+						</form>
+						@if(!empty(Request::get('start')) && !empty(Request::get('end')))
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="download-manifest">
 									<thead>
@@ -39,7 +62,9 @@
 								</table>
 							</div>
 						</div>
+						@endif
 						<div class="card-footer">
+						@if(!empty(Request::get('start')) && !empty(Request::get('end')))
 							<form action="{{route('delivery.schedule.mf.download')}}" method="POST">
 								@csrf
 							<div class="row">
@@ -56,6 +81,7 @@
 								</div>
 							</div>
 						</form>
+						@endif
 						</div>
 					</div>
 				</div>
@@ -75,6 +101,19 @@ Array.prototype.remove = function() {
     }
     return this;
 };
+
+$("#start").change(function(e){
+	$('#end').prop('min',$(this).val())
+	$('#end').val('')
+
+})
+$("#start").click(function(e){
+	$(this).removeProp('max')
+	
+})
+$("#end").change(function(e){
+	// $('#start').prop('max',$(this).val())
+})
 		var data = [];
 		function selectedDwn(id)
 		{
@@ -115,7 +154,7 @@ Array.prototype.remove = function() {
 	"language": {
 	"processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
 	},
-	ajax: "{{ route('api.schedule.delivery.datatables')}}",
+	ajax: "{!! route('api.schedule.delivery.datatables',['start' => Request::get('start'),'end' => Request::get('end'),])!!}",
 	columns: [
 	{
 	data: 'download_check',
@@ -162,7 +201,7 @@ Array.prototype.remove = function() {
 	data: 'file_nm',
 	name: 'file_nm'
 	},
-	]
+	],"oLanguage": {"sSearch": "Search No Manifest:"}
 	});
 	
 	</script>
