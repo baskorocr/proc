@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\ManifestHeader;
 use Config;
 use Storage;
+use MongoDB\BSON\UTCDateTime;
 
 class DeliveryScheduleController extends Controller
 {
@@ -101,13 +102,50 @@ class DeliveryScheduleController extends Controller
 
    
 
-    public function getDeliveryMf()
+    public function getDeliveryMf($start=null,$end=null)
     {
        if(auth()->user()->role == 'vendor')
        {
+            if(!empty($start) && !empty($end))
+            {
+                $sYear = date("Y",strtotime($start));
+                $sMonth = date("m",strtotime($start));
+                $sDay = date("d",strtotime($start));
+
+                $eYear = date("Y",strtotime($end));
+                $eMonth = date("m",strtotime($end));
+                $eDay = date("d",strtotime($end));
+                 $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
+                             'delivery_date', array(
+                                 \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
+                                  \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
+                             ))->where('mf_type','MI')->get();
+            }else{
              $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
+
+            }
        } else {
-            $data = ManifestHeader::orderBy('delivery_date','DESC')->where('mf_type','MI')->get();
+              // dd($start);
+           if(!empty($start) && !empty($end))
+            { 
+
+                $sYear = date("Y",strtotime($start));
+                $sMonth = date("m",strtotime($start));
+                $sDay = date("d",strtotime($start));
+
+                $eYear = date("Y",strtotime($end));
+                $eMonth = date("m",strtotime($end));
+                $eDay = date("d",strtotime($end));
+
+                 $data = ManifestHeader::whereBetween(
+                         'delivery_date', array(
+                             \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
+                              \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
+                         ))->where('mf_type','MI')->get();
+            }else{
+             $data = ManifestHeader::where('mf_type','MI')->get();
+
+            }
        }
  
        return \DataTables::of($data)
@@ -162,13 +200,50 @@ class DeliveryScheduleController extends Controller
             ->make(true);
     }
 
-    public function getDeliverySPC()
+    public function getDeliverySPC($start=null,$end=null)
     {
         if(auth()->user()->role == 'vendor')
        {
+            if(!empty($start) && !empty($end))
+            {
+                $sYear = date("Y",strtotime($start));
+                $sMonth = date("m",strtotime($start));
+                $sDay = date("d",strtotime($start));
+
+                $eYear = date("Y",strtotime($end));
+                $eMonth = date("m",strtotime($end));
+                $eDay = date("d",strtotime($end));
+                 $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
+                             'delivery_date', array(
+                                 \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
+                                  \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
+                             ))->where('mf_type','SO')->get();
+            }else{
              $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','SO')->get();
+
+            }
        } else {
-            $data = ManifestHeader::orderBy('delivery_date','DESC')->where('mf_type','SO')->get();
+              // dd($start);
+           if(!empty($start) && !empty($end))
+            { 
+
+                $sYear = date("Y",strtotime($start));
+                $sMonth = date("m",strtotime($start));
+                $sDay = date("d",strtotime($start));
+
+                $eYear = date("Y",strtotime($end));
+                $eMonth = date("m",strtotime($end));
+                $eDay = date("d",strtotime($end));
+
+                 $data = ManifestHeader::whereBetween(
+                         'delivery_date', array(
+                             \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
+                              \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
+                         ))->where('mf_type','SO')->get();
+            }else{
+             $data = ManifestHeader::where('mf_type','SO')->get();
+
+            }
        }
        return \DataTables::of($data)
           
