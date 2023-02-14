@@ -1,9 +1,9 @@
 @extends('layouts.main')
-@section('title',"Add New Role ")
+@section('title',"Edit Role ")
 @section('content')
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Add New Role</h1>
+        <h1>Edit Role</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
@@ -28,12 +28,13 @@
                         <div class="card-body mt-3">
 
                            
-                           <form action="{{route('config.role.save')}}" method="POST" enctype="multipart/form-data">
+                           <form action="{{route('config.role.update')}}" method="POST" enctype="multipart/form-data">
                             @csrf
+                            <input type="hidden" name="id" value="{{$data->_id}}">
                              <div class="row">
                                 <div class="col-md-6">
                                     <label>Role Name *</label>
-                                    <input type="text" placeholder="cth: Admin Purchasing" class="form-control" value="" required  name="name">
+                                    <input type="text" placeholder="cth: Admin Purchasing" class="form-control" value="{{$data->name}}" required  name="name">
                                     @error('name')
                                        <span class="badge border-danger border-1 text-danger">{{$message}}</span>
                                     @enderror
@@ -43,7 +44,7 @@
                              <div class="row">
                                 <div class="col-md-6">
                                     <label>Description</label>
-                                   <textarea class="form-control" placeholder="cth: Mengelola Purchasing" name="description" style="height: 100px"></textarea>
+                                   <textarea class="form-control" placeholder="cth: Mengelola Purchasing" name="description" style="height: 100px">{{$data->name}}</textarea>
                                     @error('description')
                                        <span class="badge border-danger border-1 text-danger">{{$message}}</span>
                                     @enderror
@@ -55,12 +56,12 @@
                                     <label>Permissions</label>
                                    <div class="form-check form-switch"> 
                                     @foreach($parent as $p)
-                                        <input class="form-check-input" show-detail data-detail="#show-{{$p->_id}}" value="{{$p->_id}}" name="permissions[]" type="checkbox" id="lbl-{{$p->_id}}" > 
+                                        <input class="form-check-input" show-detail {{in_array($p->_id, $arrPermisssion)?"checked":null}} data-detail="#show-{{$p->_id}}" value="{{$p->_id}}" name="permissions[]" type="checkbox" id="lbl-{{$p->_id}}" > 
                                         <label class="form-check-label" for="lbl-{{$p->_id}}">{{$p->name}}</label>
                                         @if(count($p->children) > 0)
-                                        <div  style="margin-left:40px; display: none;" id="show-{{$p->_id}}">
+                                        <div  style="margin-left:40px; display: none;" class="edit" id="show-{{$p->_id}}">
                                             @foreach($p->children as $c)
-                                             <input class="form-check-input" type="checkbox"  name="permissions[]" value="{{$c->_id}}" id="child-{{$c->_id}}" > <label class="form-check-label" for="child-{{$c->_id}}">{{$c->name}}</label><br>
+                                             <input class="form-check-input" {{in_array($c->_id, $arrPermisssion)?"checked":null}} type="checkbox"  name="permissions[]" value="{{$c->_id}}" id="child-{{$c->_id}}" > <label class="form-check-label" for="child-{{$c->_id}}">{{$c->name}}</label><br>
                                              @endforeach
                                         </div>
                                         @endif
@@ -89,6 +90,9 @@
         <script type="text/javascript">
             $(document).ready(function() {
                     $('.select2').select2();
+                    @foreach($arrPermisssion as $key =>$p)
+                        $('#show-{{$p}}').slideDown();
+                    @endforeach
                 });
 
             $('[show-detail]').click(function(){

@@ -156,12 +156,15 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/permission/create', [App\Http\Controllers\ConfigController::class, 'createPermission'])->name('config.permission.create');
         Route::post('/permission/save', [App\Http\Controllers\ConfigController::class, 'insertPermission'])->name('config.permission.save');
         Route::post('/permission/update', [App\Http\Controllers\ConfigController::class, 'updatePermission'])->name('config.permission.update');
-        Route::get('/datatables/get-permission', [App\Http\Controllers\ConfigController::class, 'getDatatablePermission'])->name('api.permission.datatables');
+        Route::get('/datatables/get-permission', [App\Http\Controllers\ConfigController::class, 'getDatatablePermission'])->name('api.perm.datatables');
         // ROLES
         Route::get('/role', [App\Http\Controllers\ConfigController::class, 'role'])->name('config.role');
+        Route::get('/role/edit/{id}', [App\Http\Controllers\ConfigController::class, 'editRole'])->name('config.role.edit');
+        Route::get('/role/delete/{id}', [App\Http\Controllers\ConfigController::class, 'deleteRole'])->name('config.role.delete');
         Route::get('/role/create', [App\Http\Controllers\ConfigController::class, 'createRole'])->name('config.role.add');
         Route::post('/role/save', [App\Http\Controllers\ConfigController::class, 'saveRole'])->name('config.role.save');
-        Route::get('/datatables/get-permission', [App\Http\Controllers\ConfigController::class, 'getDatatableRole'])->name('api.role.datatables');
+        Route::post('/role/update', [App\Http\Controllers\ConfigController::class, 'updateRole'])->name('config.role.update');
+        Route::get('/datatables/get-roles', [App\Http\Controllers\ConfigController::class, 'getDatatableRole'])->name('api.role.datatables');
 
     });
     // DELIVERY SCHEDULE ROUTES

@@ -58,7 +58,7 @@
         "language": {
         "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
         },
-        ajax: "{{ route('api.permission.datatables')}}",
+        ajax: "{{ route('api.perm.datatables')}}",
         columns: [
                 {
                 data: 'name',

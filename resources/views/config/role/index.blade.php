@@ -1,14 +1,14 @@
 @extends('layouts.main')
-@section('title',"Permission ")
+@section('title',"Roles ")
 @section('content')
 <main id="main" class="main">
     <div class="pagetitle">
-        <h1>Permission</h1>
+        <h1>Roles</h1>
         <nav>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
                 <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Settings</a></li>
-                <li class="breadcrumb-item active">Permission</li>
+                <li class="breadcrumb-item active">Roles</li>
             </ol>
         </nav>
         </div><!-- End Page Title -->
@@ -21,7 +21,7 @@
                                 <div class="col-md-3 col-xs-12">
                                     <div class="row">
                                          <div class="col-12">
-                                            <a href="{{route('config.role.add')}}" class="btn btn-primary btn-block"> <i class="fas fa-plus"></i> Add Permission</a>
+                                            <a href="{{route('config.role.add')}}" class="btn btn-primary btn-block"> <i class="fas fa-plus"></i> Add Role</a>
                                          </div>
 
                                     </div>

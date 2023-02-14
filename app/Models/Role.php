@@ -13,7 +13,7 @@ class Role extends Model
         'deleted_at','created_at','updated_at'
     ];
 
-    protected $fillable = ['name','description','permissions','created_by','changed_by'];
+    protected $fillable = ['name','description','permissions','created_by','changed_by','updated_at','created_at'];
 
     public function permissions()
     {

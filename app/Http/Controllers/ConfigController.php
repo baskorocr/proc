@@ -34,6 +34,48 @@ class ConfigController extends Controller
         $ret['parent'] = Permission::whereNull('parent_id')->orderBy('name','ASC')->get();
         return view('config/role/add')->with($ret);
     } 
+    
+    public function editRole($id)
+    {
+        $arrPermisssion=[];
+        $role = Role::where('_id',$id)->first();
+        $ret['data'] = $role;
+        foreach ($role->permissions as  $p) {
+           $arrPermisssion[] = $p->permission_id;
+        }
+        // dd($arrPermisssion);
+        $ret['arrPermisssion'] = $arrPermisssion;
+        $ret['parent'] = Permission::whereNull('parent_id')->orderBy('name','ASC')->get();
+        return view('config/role/edit')->with($ret);
+    } 
+
+     public function saveRole(Request $request)
+    {
+        $arrPermisssion = [];
+        foreach ($request->permissions as $key => $p) {
+           $arrPermisssion[] = ['permission_id' => $p,'allow' => true];
+        }
+
+        $d = Role::create($this->paramsRole($request,$arrPermisssion));
+
+         return redirect()->route('config.role')->with(['message_success' => 'Role Added']);
+
+       
+    } 
+
+     public function updateRole(Request $request)
+    {
+        $arrPermisssion = [];
+        foreach ($request->permissions as $key => $p) {
+           $arrPermisssion[] = ['permission_id' => $p,'allow' => true];
+        }
+
+        $d = Role::where('_id',$request->id)->update($this->paramsRole($request,$arrPermisssion,true));
+
+         return redirect()->route('config.role')->with(['message_success' => 'Role Updated']);
+
+       
+    } 
 
     public function editPermission($id)
     {
@@ -80,6 +122,16 @@ class ConfigController extends Controller
         $permission = Permission::where('_id',$id)->delete();
 
         return redirect()->route('config.permission')->with(['message_success' => 'Permission Deleted']);
+
+    }  
+
+
+    public function deleteRole($id)
+    {
+        
+        $permission = Role::where('_id',$id)->delete();
+
+        return redirect()->route('config.role')->with(['message_success' => 'Role Deleted']);
 
     } 
 
@@ -143,6 +195,25 @@ class ConfigController extends Controller
         {
             $params['changed_by'] = auth()->user()->nm_user;
         } else{
+            $params['created_by'] = auth()->user()->nm_user;
+            $params['changed_by'] = auth()->user()->nm_user;
+        }
+
+
+        return $params;
+    } 
+
+    private function paramsRole($request,$permissions,$update=false)
+    {
+        $params['name'] = $request->name;
+        $params['description'] = $request->description;
+        $params['permissions'] = $permissions;
+        if($update)
+        {
+            $params['changed_by'] = auth()->user()->nm_user;
+            // $params['updated_at'] = now();
+        } else{
+            // $params['created_at'] = now();
             $params['created_by'] = auth()->user()->nm_user;
             $params['changed_by'] = auth()->user()->nm_user;
         }
