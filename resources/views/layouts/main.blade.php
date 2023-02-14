@@ -26,9 +26,10 @@
   <link href="{{ URL::asset('assets/template/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/simple-datatables/style.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
-
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.1/sweetalert2.css" integrity="sha512-JzSVRb7c802/njMbV97pjo1wuJAE/6v9CvthGTDxiaZij/TFpPQmQPTcdXyUVucsvLtJBT6YwRb5LhVxX3pQHQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <!-- Template Main CSS File -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="{{ URL::asset('assets/template/css/style.css') }}" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
@@ -128,13 +129,15 @@
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/simple-datatables.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/php-email-form/validate.js') }}"></script>
-  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.1/sweetalert2.min.js" integrity="sha512-vCI1Ba/Ob39YYPiWruLs4uHSA3QzxgHBcJNfFMRMJr832nT/2FBrwmMGQMwlD6Z/rAIIwZFX8vJJWDj7odXMaw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- Additional -->
   <script src="{{ URL::asset('assets/template/js/jquery-3.5.1.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/jquery.dataTables.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <!-- Template Main JS File -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="{{ URL::asset('assets/template/js/main.js') }}"></script>
 
   <script>
@@ -182,7 +185,61 @@
     $(this).addClass('active');
 
   });
+
   </script>
+
+ 
+  </script>
+  @if(!empty( session('message_success')))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'success',
+            title: " {{session('message_success')}}"
+          })
+    });
+    </script>
+@endif
+ @if(!empty( session('message_fail')))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'error',
+            title: " {{session('message_fail')}}"
+          })
+    });
+    </script>
+@endif
+@if(!empty( session('message_warning')))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'warning',
+            title: " {{session('message_warning')}}"
+          })
+    });
+    </script>
+@endif
+
+  @yield('javascript')
 </body>
 
 </html>
