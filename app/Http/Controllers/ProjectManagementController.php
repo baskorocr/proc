@@ -79,7 +79,9 @@ class ProjectManagementController extends Controller
 
     public function dashboardMonProject(Request $request)
     {
-       $prj = ProjectVendorAssign::groupBy('id_project','id_vendor')->get();
+       $prj = Project::get();
+       // $prj = ProjectVendorAssign::groupBy('id_project','id_vendor')->get();
+       // dd($prj);
        $ret['project'] = $prj;
         return view('project_management/project_monitoring/index')->with($ret);
     }  

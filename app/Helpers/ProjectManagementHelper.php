@@ -25,6 +25,12 @@ class ProjectManagementHelper {
 
 		return $data;
 	}
+	function getProjectAssign($id_project){
+		$data = ProjectVendorAssign::where('id_project',$id_project)->first();
+		// $data = ProjectVendorAssign::where(['id_project' => "440000000003",'id_product' => "410000000005", 'id_part' => "420000000001",'id_doc_part' => "430000000001"])->get();
+
+		return $data;
+	}
 	function get_proj_vendor_assign_data_status_all($id_project, $id_vendor){
 
 		
