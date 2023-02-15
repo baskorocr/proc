@@ -249,6 +249,14 @@ class ProjectManagementHelper {
 		$result = ProjectVendorAssign::where('id_project', $id_project)->where('id_product', $id_product)->where('id_part',$id_part)->where('id_vendor', $id_vendor)->where('id_doc_part',$id_doc_part)->where('check_params', $check_params)->get();
 
     	return $result;
+    } 
+
+    function get_proj_vendor_assign_data_vendor($id_project, $id_product, $id_part,  $id_vendor){
+
+    
+		$result = ProjectVendorAssign::where('id_project', $id_project)->where('id_product', $id_product)->where('id_part',$id_part)->where('id_vendor', $id_vendor)->get();
+
+    	return $result;
     }
 
     function get_proj_doc_assign_part_doc_all_new($id_project, $id_product, $id_part){
@@ -304,10 +312,11 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->whereIn('doc_type', [$doc_type])->first();
+					// dd($getDoc);
 					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
-						if(in_array($getDoc->doc_type, [$doc_type]))
+						if(in_array(@$getDoc->doc_type, [$doc_type]))
 						{
 							// dd($p);
 							if($groupingPart != $p2->id_part AND $groupingProd != $p->id_product)
@@ -559,8 +568,8 @@ class ProjectManagementHelper {
 	function insert_proj_vendor_upload($id_project, $id_product, $id_part, $id_doc_part, $doc_required, $file_nm, $upload_n, $version_n, $uploader_id, $upload_path, $id_vendor){
 		
 
-	$ret = ProjVendorUpload::create([
-								'id_assign' => Numbering::generateAuto(new \App\Models\ProjVendorUpload(),"id_assign", 18, 18, 1, ""),
+	$ret = ProjectVendorUpload::create([
+								'id_assign' => Numbering::generateAuto(new \App\Models\ProjectVendorUpload(),"id_assign", 18, 18, 1, ""),
 							'id_project'=>$id_project,
 							 'id_product'=>$id_product,
 							 'id_part'=>$id_part,
@@ -569,7 +578,7 @@ class ProjectManagementHelper {
 							 'file_nm'=>$file_nm,
 							 'upload_n'=>$upload_n,
 							 'version_n'=>$version_n,
-							 'upload_date'=>$upload_date,
+							 'upload_date'=>date("Y-m-d H:i:s"),
 							 'uploader_id'=>$uploader_id,
 							 'upload_path'=>$upload_path,
 							 'id_vendor'=>$id_vendor]);

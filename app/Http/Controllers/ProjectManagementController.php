@@ -151,7 +151,7 @@ class ProjectManagementController extends Controller
                     $num_rows = count($query_executes);
 
                     if ($num_rows == 0) {
-                        echo"xx"; 
+                        // echo"xx"; 
                         PM::insert_proj_vendor_upload($id_project, $id_product, $id_part, $id_doc_part, "", "", "", "", "", "", $id_vendor);
                     } //if ($num_row == 0)
 

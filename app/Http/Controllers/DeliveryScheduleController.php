@@ -102,7 +102,7 @@ class DeliveryScheduleController extends Controller
 
    
 
-    public function getDeliveryMf($start=null,$end=null)
+    public function getDeliveryMf($start=null,$end=null,$manifest=null)
     {
        if(auth()->user()->role == 'vendor')
        {
@@ -115,11 +115,17 @@ class DeliveryScheduleController extends Controller
                 $eYear = date("Y",strtotime($end));
                 $eMonth = date("m",strtotime($end));
                 $eDay = date("d",strtotime($end));
-                 $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
+                 $mf = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
                              'delivery_date', array(
                                  \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
                                   \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
-                             ))->where('mf_type','MI')->get();
+                             ));
+                    
+                if(!empty($manifest))
+                {
+                    $mf->where('manifest', $manifest);
+                }
+                $data = $mf->where('mf_type','MI')->get();
             }else{
              $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
 
@@ -137,11 +143,16 @@ class DeliveryScheduleController extends Controller
                 $eMonth = date("m",strtotime($end));
                 $eDay = date("d",strtotime($end));
 
-                 $data = ManifestHeader::whereBetween(
+                 $mf = ManifestHeader::whereBetween(
                          'delivery_date', array(
                              \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
                               \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
-                         ))->where('mf_type','MI')->get();
+                         ));
+                if(!empty($manifest))
+                {
+                    $mf->where('manifest', $manifest);
+                }
+                $data = $mf->where('mf_type','MI')->get();
             }else{
              $data = ManifestHeader::where('mf_type','MI')->get();
 
@@ -200,7 +211,7 @@ class DeliveryScheduleController extends Controller
             ->make(true);
     }
 
-    public function getDeliverySPC($start=null,$end=null)
+    public function getDeliverySPC($start=null,$end=null,$manifest=null)
     {
         if(auth()->user()->role == 'vendor')
        {
@@ -213,11 +224,16 @@ class DeliveryScheduleController extends Controller
                 $eYear = date("Y",strtotime($end));
                 $eMonth = date("m",strtotime($end));
                 $eDay = date("d",strtotime($end));
-                 $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
+                 $mf = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
                              'delivery_date', array(
                                  \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
                                   \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
-                             ))->where('mf_type','SO')->get();
+                             ));
+                if(!empty($manifest))
+                {
+                    $mf->where('manifest', $manifest);
+                }    
+                 $data =$mf->where('mf_type','SO')->get();
             }else{
              $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','SO')->get();
 
@@ -235,11 +251,16 @@ class DeliveryScheduleController extends Controller
                 $eMonth = date("m",strtotime($end));
                 $eDay = date("d",strtotime($end));
 
-                 $data = ManifestHeader::whereBetween(
+                 $mf = ManifestHeader::whereBetween(
                          'delivery_date', array(
                              \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
                               \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
-                         ))->where('mf_type','SO')->get();
+                         ));
+                if(!empty($manifest))
+                {
+                    $mf->where('manifest', $manifest);
+                }    
+                 $data =$mf->where('mf_type','SO')->get();
             }else{
              $data = ManifestHeader::where('mf_type','SO')->get();
 
