@@ -42,9 +42,12 @@
 									<tbody>
 										@foreach($project as $p)
 										<?php 
-												$proj = PM::get_vendor_has_assigned_detail2($p->id_project, $p->id_vendor, "P");
+												$assign_project = PM::getProjectAssign($p->id_project);
+												// dd($assign_project);
+												$proj = PM::get_vendor_has_assigned_detail2($p->id_project, @$assign_project->id_vendor, "P");
 												$arr_stat=[];
 												 $count_rows = 0;
+												 
 												foreach($proj as $a)
 												{
 													$id_product_dt    = $a->id_product;
@@ -62,9 +65,9 @@
 							                        }
 							                        $count_rows++;
 												}
-
-												  if ($p->id_vendor != "" ){
-								                        $vendor_ass = "<span>".$p->vendor->nm_vendor."</span>";
+													
+												  if (@$assign_project->id_vendor != "" ){
+								                        $vendor_ass = "<span>".@$assign_project->vendor->nm_vendor."</span>";
 								                    } else {
 								                        $vendor_ass = "<span class='badge bg-warning'>Waiting...</span>";
 								                    }
@@ -117,11 +120,11 @@
 
 							                    //CHECK STAT BY VENDOR (PROC)
 							                    //count uploaded doc by engineering and make stat uploaded doc
-							                    $query_exec_new1 = PM::get_proj_doc_assign_data_status_all_vendor($p->id_project,$p->id_vendor);
+							                    $query_exec_new1 = PM::get_proj_doc_assign_data_status_all_vendor($p->id_project,@$assign_project->id_vendor);
 							                    //$row_new = mysqli_fetch_assoc($query_exec_new1);
 							                    $row_new =  $query_exec_new1;
 
-							                    $query_exec_new2 = PM::get_proj_doc_assign_data_status_sum_vendor($p->id_project,$p->id_vendor);
+							                    $query_exec_new2 = PM::get_proj_doc_assign_data_status_sum_vendor($p->id_project,@$assign_project->id_vendor);
 							                    //$row_new2 = mysqli_fetch_assoc($query_exec_new2);
 							                    $row_new2 = $query_exec_new2;
 
@@ -142,13 +145,13 @@
 							                    }
 
 							                     //UPLOAD (VDR)
-								                    $query_exec6    = PM::get_proj_doc_assign_data3($p->id_project,$p->id_vendor);
+								                    $query_exec6    = PM::get_proj_doc_assign_data3($p->id_project,@$assign_project->id_vendor);
 								                    /* $row6           = mysqli_fetch_assoc($query_exec6);
 								                    $count_row6     = mysqli_num_rows($query_exec6); */
 													$row6           = $query_exec6;
 								                    $count_row6     = count($row6);
 
-								                    $query_exec7    = PM::get_proj_doc_upload_data_status2($p->id_project,$p->id_vendor);
+								                    $query_exec7    = PM::get_proj_doc_upload_data_status2($p->id_project,@$assign_project->id_vendor);
 								                    /* $row7           = mysqli_fetch_assoc($query_exec7);
 								                    $count_row7     = mysqli_num_rows($query_exec7); */
 													$row7           = $query_exec7;
@@ -167,21 +170,21 @@
 
 
 								                    //FIN CHECK (PROC)
-								                    $query_exec8 = PM::get_proj_vendor_assign_data_all($p->id_project,$p->id_vendor);
+								                    $query_exec8 = PM::get_proj_vendor_assign_data_all($p->id_project,@$assign_project->id_vendor);
 								                    //$row8 = mysqli_fetch_assoc($query_exec8);
 								                    $row8 = $query_exec8;
 
-								                    $query_exec9 = PM::get_proj_vendor_assign_data_status_all($p->id_project,$p->id_vendor);
+								                    $query_exec9 = PM::get_proj_vendor_assign_data_status_all($p->id_project,@$assign_project->id_vendor);
 								                    //$row9 = mysqli_fetch_assoc($query_exec9);
 								                   
 
-								                    $query_exec10 = PM::get_proj_vendor_assign_data_status_all2($p->id_project,$p->id_vendor);
+								                    $query_exec10 = PM::get_proj_vendor_assign_data_status_all2($p->id_project,@$assign_project->id_vendor);
 								                    $count_row8 = count($query_exec8);
 								                
 								                    $sum_check_a = $query_exec9;
 								                    $sum_check_b = $query_exec10;
 
-								                    $data = $p->id_project.','.$p->id_vendor;
+								                    $data = $p->id_project.','.@$assign_project->id_vendor;
 
 								                    //check by proc
 								                    if ($count_row8 == $sum_check_a AND ($sum_check_a != "" AND $count_row8 != "") ){
@@ -230,8 +233,8 @@
 
 										?>
 											<tr>
-												<td>{{@$p->project->proj_num}}</td>
-												<td>{{@$p->project->nm_project}}</td>
+												<td>{{@$p->proj_num}}</td>
+												<td>{{@$p->nm_project}}</td>
 												<td>{!!$doc_assignment_stat!!}</td>
 												<td>{!!$stat_check_new!!}</td>
 												<td>{!!$vendor_ass!!}</td>
