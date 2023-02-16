@@ -91,7 +91,7 @@ class MonitoringDeliveryController extends Controller
             })
             ->editColumn('nm_vendor', function ($data) {
                 
-                return $data->vendors->nm_vendor;
+                return @$data->vendors->nm_vendor;
             })
             ->editColumn('material', function ($data) {
                 $md = $data->manifestDetails()->first();
@@ -179,7 +179,7 @@ class MonitoringDeliveryController extends Controller
             })
             ->editColumn('nm_vendor', function ($data) {
                 
-                return $data->manifestHeaders->vendors->nm_vendor;
+                return @$data->manifestHeaders->vendors->nm_vendor;
             })
             ->editColumn('material', function ($data) {
                 
