@@ -29,7 +29,7 @@
                                     <?php
                                     $no = 1;
                                     $dir_iterator = new RecursiveDirectoryIterator(public_path('DATA/'));
-                                    $iterator = new RecursiveIteratorIterator($dir_iterator, RecursiveIteratorIterator::SELF_FIRST);
+                                    $iterator = new RecursiveTreeIterator($dir_iterator);
                                     foreach ($iterator as $file) {
                                     $string = explode(".", $file);
                                     if(count($string) > 1) {
