@@ -79,7 +79,9 @@ class ProjectManagementController extends Controller
 
     public function dashboardMonProject(Request $request)
     {
-       $prj = ProjectVendorAssign::groupBy('id_project','id_vendor')->get();
+       $prj = Project::get();
+       // $prj = ProjectVendorAssign::groupBy('id_project','id_vendor')->get();
+       // dd($prj);
        $ret['project'] = $prj;
         return view('project_management/project_monitoring/index')->with($ret);
     }  
@@ -149,7 +151,7 @@ class ProjectManagementController extends Controller
                     $num_rows = count($query_executes);
 
                     if ($num_rows == 0) {
-                        echo"xx"; 
+                        // echo"xx"; 
                         PM::insert_proj_vendor_upload($id_project, $id_product, $id_part, $id_doc_part, "", "", "", "", "", "", $id_vendor);
                     } //if ($num_row == 0)
 
