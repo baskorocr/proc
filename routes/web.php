@@ -263,14 +263,7 @@ Route::group(['middleware' => ['auth']], function () {
          
         });
 
-        Route::prefix('purchasing-process')->group(function () {
-            Route::get('/list-po',[App\Http\Controllers\PurchasingProcessController::class, 'index'])->name('list.po');
-            Route::get('/upload-approved-po',[App\Http\Controllers\PurchasingProcessController::class, 'upload'])->name('list.po.upload');
-            Route::get('/download-po',[App\Http\Controllers\PurchasingProcessController::class, 'download'])->name('list.po.download');
-            Route::get('/list-po/get-data',[App\Http\Controllers\PurchasingProcessController::class, 'getListPo'])->name('datatables.purchasing.process.listpo');
-            Route::get('/list-download-po/get-data',[App\Http\Controllers\PurchasingProcessController::class, 'getDownloadListPo'])->name('datatables.purchasing.process.download.listpo');
-            Route::post('/download',[App\Http\Controllers\PurchasingProcessController::class, 'zipPurchasingProcess'])->name('purchasing.process.download.zip');
-        });
+     
 
 
 });

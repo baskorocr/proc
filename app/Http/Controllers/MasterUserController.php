@@ -127,10 +127,15 @@ class MasterUserController extends Controller
         $master_user = MasterUser::find($request->id);
         // dd($master_user, $request);
         $role = Role::where('_id',$request->role)->first();
+        if(empty($role))
+        {
+            return redirect()->route('regis-user.master-user')->with(['message_fail' => 'Role Tidak Ditemukan.']);
+        }
         $master_user->id_user = $request->id_user;
         $master_user->nm_user = $request->nm_user;
         $master_user->id_tipe_user = $request->id_tipe_user;
         $master_user->status_user = $request->status_user;
+        $master_user->id_access_group = $request->access_group_name;
         $master_user->username = $request->username;
         $master_user->role = $role->name;
         $master_user->role_id = $request->role;

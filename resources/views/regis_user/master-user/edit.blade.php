@@ -44,7 +44,7 @@
 										<label>Access Group</label>
 										<select name="access_group_name" class="form-control select">
 											@foreach($accessgrp as $grp)
-												<option value="{{$grp->_id}}">{{$grp->access_group_name}}</option>
+												<option @if($grp->id_access_group == $user->id_access_group) selected="selected" @endif value="{{$grp->id_access_group}}">{{$grp->access_group_name}}</option>
 											@endforeach
 										</select>
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
@@ -53,14 +53,19 @@
 										<label>Role</label>
 										<select name="role" class="form-control select">
 											@foreach($roles as $r)
-												<option value="{{$r->_id}}">{{$r->name}}</option>
+												<option @if($r->_id == $user->role_id) selected="selected" @endif value="{{$r->_id}}">{{$r->name}}</option>
 											@endforeach
 										</select>
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
 									</div>
 									<div class="form-group">
 										<label>Status User</label>
-										<input type="text" class="form-control" id="status_user" name="status_user" value="<?php echo $user->status_user; ?>">
+										<select name="status_user" class="form-control select">
+											
+												<option @if($user->status_user == "A") selected="selected" @endif value="A">Aktif</option>
+												<option @if($user->status_user == "N") selected="selected" @endif value="N">Non-Aktif</option>
+											
+										</select>
 									</div>
 									</div><!-- /.box-body -->
 									<div class="box-footer"><hr>
