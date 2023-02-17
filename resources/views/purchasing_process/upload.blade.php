@@ -13,22 +13,26 @@
 		</div><!-- End Page Title -->
 		<section class="section">
 			<div class="row">
+				<form action="{{ url('purchasing-process/upload-po') }}" method="post" enctype='multipart/form-data'>
+				@csrf
 
                 <div class="col-lg-3">
                     
                     <div class="row mb-3">
                         <label for="inputNumber" class="col-sm-24 col-form-label">File Upload</label>
                         <div class="col-sm-20">
-                            <input class="form-control" style="width:250px" type="file" id="formFile">
+                            <input class="form-control" style="width:250px" type="file" name="file" id="formFile">
                         </div>
                     </div>
 
                     <div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
-                        <button type="submit" name="submit-find" class="btn btn-primary" onclick="">
+                        <button type="submit" name="submit-find" class="btn btn-primary">
                             <i class="fa fa-upload"></i> Upload
                         </button>
                     </div>
                 </div>
+
+</form>
 
 				
 			</div>

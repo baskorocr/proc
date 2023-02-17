@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\PurchasingProcess;
 use Carbon\Carbon;
 use App\Models\Vendor;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportPo;
 
 class PurchasingProcessController extends Controller
 {
@@ -210,5 +212,20 @@ class PurchasingProcessController extends Controller
         }
 
       
+    }
+
+    public function importPo(Request $request)
+    {
+        $file = $request->file('file');
+        config(['excel.import.startRow' => 2]);
+        Excel::import(new ImportPo, $file);
+
+        // return response()->json([
+        //     'type' => 'success',
+        //     'message' => 'Import PO Successfully'
+        // ]);
+        //dd($file);
+        //dd($request->all());
+        //return view('purchasing_process/upload');
     }
 }
