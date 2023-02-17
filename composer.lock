@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "73a5c15241cee51cdfb9c199b886d4ce",
+    "content-hash": "2e2fdf5a8eb74e69ac514ad0bd8ed6b3",
     "packages": [
         {
             "name": "alfa6661/laravel-autonumber",
@@ -1801,28 +1801,28 @@
         },
         {
             "name": "laravelcollective/html",
-            "version": "v6.3.0",
+            "version": "v6.4.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LaravelCollective/html.git",
-                "reference": "78c3cb516ac9e6d3d76cad9191f81d217302dea6"
+                "reference": "ac74f580459a5120079b8def0404e5d312a09504"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LaravelCollective/html/zipball/78c3cb516ac9e6d3d76cad9191f81d217302dea6",
-                "reference": "78c3cb516ac9e6d3d76cad9191f81d217302dea6",
+                "url": "https://api.github.com/repos/LaravelCollective/html/zipball/ac74f580459a5120079b8def0404e5d312a09504",
+                "reference": "ac74f580459a5120079b8def0404e5d312a09504",
                 "shasum": ""
             },
             "require": {
-                "illuminate/http": "^6.0|^7.0|^8.0|^9.0",
-                "illuminate/routing": "^6.0|^7.0|^8.0|^9.0",
-                "illuminate/session": "^6.0|^7.0|^8.0|^9.0",
-                "illuminate/support": "^6.0|^7.0|^8.0|^9.0",
-                "illuminate/view": "^6.0|^7.0|^8.0|^9.0",
+                "illuminate/http": "^6.0|^7.0|^8.0|^9.0|^10.0",
+                "illuminate/routing": "^6.0|^7.0|^8.0|^9.0|^10.0",
+                "illuminate/session": "^6.0|^7.0|^8.0|^9.0|^10.0",
+                "illuminate/support": "^6.0|^7.0|^8.0|^9.0|^10.0",
+                "illuminate/view": "^6.0|^7.0|^8.0|^9.0|^10.0",
                 "php": ">=7.2.5"
             },
             "require-dev": {
-                "illuminate/database": "^6.0|^7.0|^8.0|^9.0",
+                "illuminate/database": "^6.0|^7.0|^8.0|^9.0|^10.0",
                 "mockery/mockery": "~1.0",
                 "phpunit/phpunit": "~8.5|^9.5.10"
             },
@@ -1869,7 +1869,7 @@
                 "issues": "https://github.com/LaravelCollective/html/issues",
                 "source": "https://github.com/LaravelCollective/html"
             },
-            "time": "2022-02-08T21:02:54+00:00"
+            "time": "2023-02-13T18:15:35+00:00"
         },
         {
             "name": "league/commonmark",
@@ -2544,35 +2544,34 @@
         },
         {
             "name": "mongodb/mongodb",
-            "version": "1.7.2",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mongodb/mongo-php-library.git",
-                "reference": "38b685191c047a57275d6ccd2ea5c50f23638485"
+                "reference": "953dbc19443aa9314c44b7217a16873347e6840d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/38b685191c047a57275d6ccd2ea5c50f23638485",
-                "reference": "38b685191c047a57275d6ccd2ea5c50f23638485",
+                "url": "https://api.github.com/repos/mongodb/mongo-php-library/zipball/953dbc19443aa9314c44b7217a16873347e6840d",
+                "reference": "953dbc19443aa9314c44b7217a16873347e6840d",
                 "shasum": ""
             },
             "require": {
                 "ext-hash": "*",
                 "ext-json": "*",
-                "ext-mongodb": "^1.8",
+                "ext-mongodb": "^1.8.1",
                 "jean85/pretty-package-versions": "^1.2",
-                "php": "^7.0"
+                "php": "^7.0 || ^8.0",
+                "symfony/polyfill-php80": "^1.19"
             },
             "require-dev": {
-                "phpunit/phpunit": "^6.4 || ^8.3",
-                "sebastian/comparator": "^2.0 || ^3.0",
                 "squizlabs/php_codesniffer": "^3.5, <3.5.5",
-                "symfony/phpunit-bridge": "^4.4@dev"
+                "symfony/phpunit-bridge": "5.x-dev"
             },
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.7.x-dev"
+                    "dev-master": "1.8.x-dev"
                 }
             },
             "autoload": {
@@ -2607,9 +2606,9 @@
             ],
             "support": {
                 "issues": "https://github.com/mongodb/mongo-php-library/issues",
-                "source": "https://github.com/mongodb/mongo-php-library/tree/1.7.2"
+                "source": "https://github.com/mongodb/mongo-php-library/tree/1.8.0"
             },
-            "time": "2020-10-08T10:06:19+00:00"
+            "time": "2020-11-25T12:26:02+00:00"
         },
         {
             "name": "monolog/monolog",
@@ -9258,5 +9257,5 @@
         "php": "^7.3|^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.1.0"
+    "plugin-api-version": "2.0.0"
 }
