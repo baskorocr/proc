@@ -263,6 +263,9 @@ Route::group(['middleware' => ['auth']], function () {
          
         });
 
+     
+
+
 });
 Route::get('/dashboard', [App\Http\Controllers\ProjectManagementController::class, 'dashboardMonProject']);
 Route::get('/blank', function (){
@@ -291,11 +294,5 @@ Route::prefix('component')->group(function () {
         return view('example.table');
    });
 
-
-   Route::prefix('purchasing-process')->group(function () {
-    Route::get('/list-po', function () {   
-        return view('purchasing_process.list-po.index');
-   });
- });
-
+    
 });

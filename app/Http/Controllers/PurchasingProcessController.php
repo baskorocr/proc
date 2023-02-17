@@ -177,6 +177,10 @@ class PurchasingProcessController extends Controller
 
     public function zipPurchasingProcess(Request $request)
     {
+        if(empty($request->download_doc))
+        {
+            return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
+        }
 
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_SO_MFPDF_".date("d-m-Y").".zip";
