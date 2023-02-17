@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\MasterUser;
+use App\Models\AccessGroup;
+use App\Models\Role;
 
 class MasterUserController extends Controller
 {
@@ -11,7 +13,9 @@ class MasterUserController extends Controller
     public function editUser($id)
     {
         $data = MasterUser::findOrFail($id);
-        return view('regis_user/master-user/edit')->with(['user' => $data]);
+        $accessgrp = AccessGroup::get();
+        $roles = Role::get();
+        return view('regis_user/master-user/edit')->with(['user' => $data,'accessgrp'=>$accessgrp,'roles'=>$roles]);
     } 
 
     public function getMasterUser()
@@ -93,12 +97,14 @@ class MasterUserController extends Controller
 
     public function store(Request $request){
         $master_user = new MasterUser;
+        $role = Role::where('_id',$request->role)->first();
         $master_user->id_user = $request->id_user;
         $master_user->nm_user = $request->nm_user;
         $master_user->id_tipe_user = $request->id_tipe_user;
         $master_user->status_user = $request->status_user;
         $master_user->username = $request->username;
-        $master_user->role = $request->role;
+        $master_user->role = $role->name;
+        $master_user->role_id = $request->role;
         $master_user->created_by = auth()->user()->full_name;
         $master_user->save();
 
@@ -120,12 +126,14 @@ class MasterUserController extends Controller
         
         $master_user = MasterUser::find($request->id);
         // dd($master_user, $request);
+        $role = Role::where('_id',$request->role)->first();
         $master_user->id_user = $request->id_user;
         $master_user->nm_user = $request->nm_user;
         $master_user->id_tipe_user = $request->id_tipe_user;
         $master_user->status_user = $request->status_user;
         $master_user->username = $request->username;
-        $master_user->role = $request->role;
+        $master_user->role = $role->name;
+        $master_user->role_id = $request->role;
         $master_user->save();
 
         return redirect()->route('regis-user.master-user')->with(['message_success' => 'Berhasil mengubah data.']);

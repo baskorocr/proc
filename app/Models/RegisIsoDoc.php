@@ -33,7 +33,7 @@ class RegisIsoDoc extends Model
         'cr_date',
     ];
 
-    public $dates = ['cert_date', 'exp_date', 'cr_date'];
+    public $dates = ['cert_date', 'cr_date'];
 
 
     public function vendor()

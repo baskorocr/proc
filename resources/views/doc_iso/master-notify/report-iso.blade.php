@@ -139,6 +139,16 @@
                   </thead>   
                   <tbody>
                     @foreach($regis as $item)
+                    <?php 
+                    // dd($item);
+                    $date = explode("/",$item->exp_date); 
+                    $d = $date[0];
+                    $m = strlen($date[1]) == 1 ? "0".$date[1]:$date[1];
+                    $y= $date[2];
+
+                    $date_full = $y."-".$m.'-'.$d;
+
+                    ?>
                       <tr>
                         <td>Action</td>
                         <td>{{ $item->vendor->id_vendor }}</td>
@@ -146,8 +156,8 @@
                         <td>{{ $item->mat_supply }}</td>
                         <td>{{ $item->simply ? 'Ya' : 'Tidak' }}</td>
                         <td>{{ $item->cert_num }}</td>
-                        <td>{{ date('d-m-Y', strtotime($item->exp_date)) }}</td>
-                        <td>{{ $item->exp_date < date('Y-m-d') ? 'Expired' : 'Aktif' }}</td>
+                        <td>{{ date('d-m-Y', strtotime($date_full)) }}</td>
+                        <td>{{ strtotime($date_full) < strtotime(date('Y-m-d')) ? 'Expired' : 'Aktif' }}</td>
                         <td>doc proces</td>
                       </tr>
                     @endforeach

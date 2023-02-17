@@ -9,6 +9,7 @@ class ReportIsoDoc extends Model
 {
     use HasFactory;
 
+    // public $dates = ['exp_date'];
     public function vendor(){
         return $this->belongsTo(Vendor::class, 'id_vendor', 'id_vendor');
     }

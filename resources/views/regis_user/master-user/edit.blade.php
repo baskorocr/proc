@@ -42,7 +42,21 @@
 									</div>
 									<div class="form-group">
 										<label>Access Group</label>
-										<input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" >
+										<select name="access_group_name" class="form-control select">
+											@foreach($accessgrp as $grp)
+												<option value="{{$grp->_id}}">{{$grp->access_group_name}}</option>
+											@endforeach
+										</select>
+										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
+									</div>
+									<div class="form-group">
+										<label>Role</label>
+										<select name="role" class="form-control select">
+											@foreach($roles as $r)
+												<option value="{{$r->_id}}">{{$r->name}}</option>
+											@endforeach
+										</select>
+										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
 									</div>
 									<div class="form-group">
 										<label>Status User</label>
@@ -59,4 +73,9 @@
 				</div>
 			</section>
 		</main>
+		@endsection
+		@section('javascript')
+			<script type="text/javascript">
+				$('.select').select2();
+			</script>
 		@endsection
