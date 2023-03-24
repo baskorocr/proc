@@ -1,0 +1,106 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Models\ManifestHeader;
+use App\Models\ManifestDetail;
+use Carbon\Carbon;
+use App\Models\Vendor;
+use Mail;
+use App\Mail\ManifestMail;
+
+class ManifestController extends Controller
+{
+    public function manifestHeader(Request $request)
+    {   
+        $manifest = ManifestHeader::where('manifest', $request->manifest)->first();
+
+        if (!empty($manifest)) {
+            return response()->json([
+                'type' => 'success',
+                'isExists' => true,
+                'message' => 'Success',
+                'data' => $manifest,
+            ], 200);
+    
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'isExists' => false,
+                'message' => 'Please check manifest number!',
+                'data' => null
+            ], 422);
+        }
+    }
+
+    public function manifestDetail(Request $request, $kanban)
+    {
+        $manifest_detail = ManifestDetail::where('kanban', $kanban)->first();
+
+        return response()->json([
+            'type' => 'success',
+            'data' =>  $manifest_detail
+        ]);
+    }
+
+    public function sendManifest(Request $request)
+    {
+        $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
+
+        $manifest = new ManifestHeader;
+        $manifest->manifest = $request->manifest;
+        $manifest->id_vendor = $request->id_vendor;
+        $manifest->delivery_time = $request->delivery_time;
+        $manifest->delivery_date = $request->delivery_date;
+        $manifest->po_num = $request->po_num;
+        $manifest->file_nm = $request->file_nm;
+        $manifest->mf_type = $request->mf_type;
+        $manifest->release_date = $request->release_date;
+        $manifest->save();
+
+        foreach ($request->details as $detail){
+            $manifest_detail = new ManifestDetail;
+            $manifest_detail->kanban = $detail['kanban'];
+            $manifest_detail->seq_kanban = $detail['seq_kanban'];
+            $manifest_detail->item = $detail['item'];
+            $manifest_detail->material = $detail['material'];
+            $manifest_detail->material_desc = $detail['material_desc'];
+            $manifest_detail->qty_pack = $detail['qty_pack'];
+            $manifest_detail->qty_in = $detail['qty_in'];
+            $manifest_detail->arrival_date = Carbon::parse($detail['arrival_date']);
+            $manifest_detail->arrival_time = Carbon::parse($detail['arrival_time']);
+            $manifest_detail->scan_date = Carbon::parse($detail['scan_date']);
+            $manifest_detail->scan_time = Carbon::parse($detail['scan_time']);
+            $manifest_detail->scan_by = $detail['scan_by'];
+            $manifest_detail->issued_date = Carbon::parse($detail['issued_date']);
+            $manifest_detail->issued_time = Carbon::parse($detail['issued_time']);
+            $manifest_detail->issued_by = $detail['issued_by'];
+            $manifest_detail->active = $detail['active'];
+            $manifest_detail->save();
+        }
+
+        Mail::to($vendor->vend_email)->send(new ManifestMail($manifest, $vendor));
+        
+        return response()->json([
+            'message' => 'Data saved successfully',
+            'data' => $manifest
+        ], 200);
+    }
+
+    public function closeManifest(Request $request)
+    {
+        $manifest = ManifestHeader::where('manifest', $request->manifest)->first();
+        $manifest->manifest = $request->manifest;
+        $manifest->stat = $request->stat;
+        $manifest->active = $request->active;
+        $manifest->save();
+
+        return response()->json([
+            'type' => 'success',
+            'message' => 'Data Manifest Closed Successfully',
+            'data' =>  $manifest,
+        ]);
+    }
+
+}

@@ -18,6 +18,16 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+Route::get('check', 'UserController@check');
+Route::get('check-pin', 'UserController@checkPin');
+Route::get('manifest', 'ManifestController@manifestHeader');
+Route::get('manifest/{kanban}', 'ManifestController@manifestDetail');
+Route::post('/send-manifest', 'ManifestController@sendManifest');
+Route::post('/manifest/close', 'ManifestController@closeManifest');
+Route::post('/vendor', 'VendorController@store');
+Route::post('/vendor/{id_vendor}', 'VendorController@update');
+Route::post('/send-po', 'PoController@sendPo');
+
 Route::group(['middleware' => ['auth:api']], function () {
 
     Route::get('/role', 'RoleController@index');
@@ -51,10 +61,10 @@ Route::group(['middleware' => ['auth:api']], function () {
     Route::delete('/user/{id}', 'UserController@destroy');
 
     Route::get('/vendor', 'VendorController@index');
-    Route::post('/vendor', 'VendorController@store');
+    //Route::post('/vendor', 'VendorController@store');
     Route::get('/vendor/list', 'VendorController@list');
     Route::get('/vendor/{id}', 'VendorController@show');
-    Route::post('/vendor/{id}', 'VendorController@update');
+    //Route::post('/vendor/{id}', 'VendorController@update');
     Route::delete('/vendor/{id}', 'VendorController@destroy');
 
     Route::get('/master-notify', 'MasterNotifyController@index');
