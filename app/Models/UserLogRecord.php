@@ -24,5 +24,8 @@ class UserLogRecord extends Model
 	
 	//optional, already set in config::database
 	//protected $connection = 'mongodb';
-
+	 public function user()
+    {
+        return $this->belongsTo(User::class,'id_user','id_user');
+    }
 }

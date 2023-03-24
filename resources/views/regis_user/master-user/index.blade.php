@@ -12,10 +12,19 @@
 		</nav>
 		</div><!-- End Page Title -->
 		<section class="section">
+
 			<div class="row">
 				<div class="col-lg-12">
 					<div class="card">
 						<div class="card-body">
+								<div class="filter mt-2 " align="right">
+								<a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-list"></i></a>
+								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
+									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
+									<li><a href="{{route('api.regis-user.create.user')}}"><i class="fas fa-plus-square"></i> Create User</a></li>
+								</ul>
+							</div>
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="master-user">
 									<thead>
@@ -42,8 +51,13 @@
 	@endsection
 
 	@section('javascript')
+	
+  <script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-colvis-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.js"></script>
     <script>
-      $('#master-user').DataTable({
+      $('#master-user').DataTable({  dom: 'Bfrtip',
+            buttons: [
+                'copy', 'excel'
+            ],
         "order": [[ 1, "DESC" ]],
         processing: true,
         serverSide: true,

@@ -7,7 +7,7 @@
                 <h4 class="modal-title">Create Menu List </h4>
             </div>
             <div class="modal-body">
-                <form role=form name="myForm" id="create-list-form"  action="" method="post" enctype="multipart/form-data">
+                <form role=form name="myForm" id="create-list-form"  action="{{route('api.regis-user.create.list')}}" method="post" enctype="multipart/form-data">
                     <?php $num =  Numbering::generateAuto(new \App\Models\Project(),"menu_name", 10, 10, 1, "44"); ?>
                     
                         <!-- @if(auth()->user()->role == 'admin')

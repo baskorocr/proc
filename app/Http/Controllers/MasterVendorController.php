@@ -42,9 +42,22 @@ class MasterVendorController extends Controller
             ->editColumn('number', function ($data) {
                 return 1;
             })
+            ->editColumn('status_vendor', function ($data) {
+                 if($data->status_vendor == "A")
+                {
+                   
+                    $status = "<small><span class=\"badge bg-success\">Active</span></small>";
+                } elseif($data->status_vendor=='N') {
+                    $status = "<small><span class=\"badge bg-warning\"> Non-Active</span></small>";
+                } else{
+                    $status = "<small><span class=\"badge bg-secondary\"> N/A</span></small>";
+                }
+
+                return $status;
+            })
             ->editColumn('last_changed', function ($data) {                    
-                return date('d/m/Y',strtotime($data->last_changed));
-            })->rawColumns(['action'])->addIndexColumn()->make(true);
+                return date('d.m.Y H:i:s',strtotime($data->last_changed));
+            })->rawColumns(['action','status_vendor'])->addIndexColumn()->make(true);
     }
 
 

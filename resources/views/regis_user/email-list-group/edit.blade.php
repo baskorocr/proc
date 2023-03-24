@@ -32,6 +32,13 @@
 										<label>Name </label>
 										<input type="text" class="form-control" id="name" name="name" value="<?php echo $listemail->name ?>" placeholder="" required>
 									</div>
+									<div class="form-group">
+										<label>Status Active</label>
+										<select name="active" class="form-control">
+											<option {{$listemail->active=="A"?"selected":null}} value="A">Active</option>
+											<option  {{$listemail->active=="N"?"selected":null}} value="N">Non-Active</option>
+										</select>
+									</div>
 									</div><!-- /.box-body -->
 									<div class="box-footer"><hr>
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Update</button>

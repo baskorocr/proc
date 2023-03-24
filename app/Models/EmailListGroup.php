@@ -20,6 +20,6 @@ class EmailListGroup extends Model
 
     public function users()
     {
-        return $this->belongsTo(User::class,'cr_by','id_user');
+        return $this->belongsTo(User::class,'last_changed_by','id_user');
     }
 }

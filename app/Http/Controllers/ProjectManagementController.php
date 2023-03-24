@@ -1188,7 +1188,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                                return date('d.m.y',strtotime($data->modify_date));
+                                return date('d.m.Y',strtotime($data->modify_date));
                             })
                 
                
@@ -1245,7 +1245,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                                return date('d.m.y',strtotime($data->modify_date));
+                                return date('d.m.Y',strtotime($data->modify_date));
                             })
                 
                
@@ -1313,7 +1313,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
 
                 ->editColumn('number', function ($data) {
@@ -1356,7 +1356,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
 
                 ->editColumn('number', function ($data) {
@@ -1394,7 +1394,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
                 ->editColumn('action', function ($data) {
                                 
@@ -1427,7 +1427,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
                 ->editColumn('doc_type', function ($data) {
                              if ($data->doc_type == "V") {
@@ -1483,7 +1483,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
                 ->editColumn('action', function ($data) {
                                 
@@ -1520,7 +1520,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
 
                 ->editColumn('number', function ($data) {
@@ -1546,7 +1546,7 @@ class ProjectManagementController extends Controller
                             })  
                 ->editColumn('modify_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             }) 
                 ->editColumn('prod_assc', function ($data) {
                             if ($data->assigned == 'Y'){
