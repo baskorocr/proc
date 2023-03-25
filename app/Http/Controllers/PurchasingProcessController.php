@@ -24,7 +24,8 @@ class PurchasingProcessController extends Controller
 
     public function getListPo(Request $request)
     {
-        $data = PurchasingProcess::where(function($query) use ($request){
+        $vendor_list =preg_split('/\r\n|\r|\n/',$request->vendor_list);
+        $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
             if (!empty($request->po_num)) {
                return $query->where('po_num', 'like', "%" . $request->po_num . "%");
             }
@@ -33,10 +34,15 @@ class PurchasingProcessController extends Controller
                 return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
             }
 
-            if (!empty($request->id_vendor)) {
-                return $query->where('id_vendor', (string) $request->id_vendor);
+            if (!empty($vendor_list)) {
+                return $query->whereIn('id_vendor', $vendor_list);
             }
-        })->get();
+        });
+         if (!empty($request->vendor_list)) {
+            // dd($vendor_list);
+                $q->whereIn('id_vendor', $vendor_list);
+            }
+        $data = $q->get();
 
         return \DataTables::of($data)
         ->editColumn('number', function($data){
