@@ -10,7 +10,7 @@ use App\Models\ProductForProject;
 use App\Models\DocForPart;
 use App\Models\PartForProduct;
 use App\Models\DocPart;
-use App\Models\DocChecklist;
+use App\Models\DocCheckList;
 use DB;
 
 class ProjectManagementHelper {
@@ -18,7 +18,7 @@ class ProjectManagementHelper {
 		$data = ProjectDocUpload::where(['id_project' => $id_project,'id_product' => $id_product, 'id_part' => $id_part,'id_doc_part' => $id_doc_part])->first();
 		return $data;
 	}
- 
+
 	function get_proj_doc_assign_data($id_project,$id_product,$id_part,$id_doc_part){
 		$data = ProjectVendorAssign::where(['id_project' => $id_project,'id_product' => $id_product, 'id_part' => $id_part,'id_doc_part' => $id_doc_part])->get();
 		// $data = ProjectVendorAssign::where(['id_project' => "440000000003",'id_product' => "410000000005", 'id_part' => "420000000001",'id_doc_part' => "430000000001"])->get();
@@ -313,7 +313,7 @@ class ProjectManagementHelper {
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->whereIn('doc_type', [$doc_type])->first();
 					// dd($getDoc);
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
 						if(in_array(@$getDoc->doc_type, [$doc_type]))
@@ -376,7 +376,7 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
 						
@@ -419,10 +419,10 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->whereIn('doc_type', ['P', 'Y', 'M'])->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
-						if(in_array($getDoc->doc_type, ['P', 'Y', 'M']))
+						if(in_array(@$getDoc->doc_type, ['P', 'Y', 'M']))
 						{
 							$arrd[] = ['id_project' => $p->id_project,'id_product' => $p->id_product,'id_part' => $p2->id_part,'id_doc_part' => $d->id_doc_part, 'nm_doc_part' => $getDoc->nm_doc_part, 'check_params' => $d2->check_params,'doc_type' => $getDoc->doc_type];	
 						}
@@ -599,7 +599,7 @@ class ProjectManagementHelper {
 					foreach($docofpart as $d)
 					{
 						$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->where('doc_type',$doc_type)->first();
-						$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+						$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 						foreach($docChecklist as $d2)
 						{
 							if(!empty($getDoc))
@@ -628,7 +628,7 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->where('doc_type',$doc_type)->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
 						if(!empty($getDoc))
@@ -850,7 +850,7 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
 						if($getDoc->doc_type == "P")

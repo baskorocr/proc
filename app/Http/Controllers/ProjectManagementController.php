@@ -56,7 +56,7 @@ class ProjectManagementController extends Controller
         $ret = ['project' => $prj];
          if(!empty($request->id_project))
         {
-            $vendor = Vendor::get();
+            $vendor = ProjectVendorUpload::where('id_project',$request->id_project)->whereNotNull('id_vendor')->get();
             $ret['vendor'] =$vendor;
             $ret['id_project'] =$request->id_project;
         }
@@ -253,6 +253,11 @@ class ProjectManagementController extends Controller
    
     public function uploadDocAct(Request $request)
     {
+
+        if(!is_array($request->doc))
+        {
+              return redirect()->back()->with(['message_fail' => 'Please Select file before upload']);
+        }
         $id_project_new     = $request->id_project;
         $dest_path          = "DATA/$id_project_new";
         $id_product_new     = $request->id_product;
