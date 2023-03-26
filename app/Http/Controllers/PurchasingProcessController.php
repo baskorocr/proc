@@ -8,6 +8,7 @@ use Carbon\Carbon;
 use App\Models\Vendor;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ImportPo;
+use Storage;
 
 class PurchasingProcessController extends Controller
 {
@@ -42,16 +43,102 @@ class PurchasingProcessController extends Controller
             // dd($vendor_list);
                 $q->whereIn('id_vendor', $vendor_list);
             }
-        $data = $q->get();
+        $data = $q->where('id_vendor','!=','')->get();
 
         return \DataTables::of($data)
         ->editColumn('number', function($data){
             return 1;
         })
+        ->editColumn('rel_stat', function($data){
+             if($data->relind == '1'){
+            $rel_stat = "<small><i class='fa fa-check-circle' style='color: green;' 
+                                data-toggle=tooltip' data-placement='left' title='Released'>
+                                </i>
+                        </small>";
+        } else {
+            $rel_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                data-toggle=tooltip' data-placement='left' title='Not Released'>
+                                </i>
+                        </small>";
+        }
+
+       
+
+      
+            return $rel_stat;
+        })
+        ->editColumn('mail_stat', function($data){
+          
+             if($data->sent != '0000-00-00 00:00:00'){
+            $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
+                                data-toggle=tooltip' data-placement='left' title='Sent'>
+                                </i>
+                        </small>";
+        } else {
+            $mail_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                data-toggle=tooltip' data-placement='left' title='Not Sent'>
+                                </i>
+                        </small>";
+        }
+        return $mail_stat;
+        })
+        ->editColumn('file_exist', function($data){
+           $filenm = $data->filenm;
+            if ($filenm != "-" && $filenm != "" ) {
+            //activate
+            $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle='tooltip' data-placement='left' title='Exist'>
+                                  </i>
+                          </small>";
+            } else {
+                $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                        data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                    </i>
+                               </small>";
+                
+            }
+             return $file_exist;
+
+        })
+        ->editColumn('download_stat', function($data){
+             if($data->downloaded != '0000-00-00 00:00:00'){
+            $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle=tooltip' data-placement='left' title='Downloaded'>
+                                </i>
+                          </small>";
+        } else {
+            $dwld_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                    data-toggle=tooltip' data-placement='left' title='Not Downloaded'>
+                                 </i>
+                        </small>";
+           
+        }
+         return $dwld_stat;
+        })
+        ->editColumn('upload_date', function($data){
+            return @$data->last_change;
+        })
+        ->editColumn('po_amount', function($data){
+           
+            $po_value = number_format($data->po_val, 2, '.', ',');
+            $po_val   = "<p class='text-right' >".$po_value."</p>";
+
+             return @$po_val;
+        })
+        ->editColumn('total_amount', function($data){
+            
+
+            $total_value = number_format($data->tot_va, 2, '.', ',');
+            $tot_val   = "<p class='text-right' >".$total_value."</p>";
+
+            return @$tot_val ;
+        })
+        ->editColumn('upload_group', function($data){
+            return @$data->batch;
+        })
         ->editColumn('nm_vendor', function($data){
             return @$data->vendors->nm_vendor;
-        })
-        ->editColumn('vend_email', function($data){
+        })->editColumn('vend_email', function($data){
             return @$data->vendors->vend_email;
         })
         ->editColumn('doc_date', function ($data) {                    
@@ -59,7 +146,7 @@ class PurchasingProcessController extends Controller
         })
         // ->whereBetween('doc_date', [Carbon::parse($data->doc_date.' 00:00:00'), Carbon::parse($data->doc_date.' 23:59:59')])
         // ->where('id_vendor', $data->id_vendor)
-        ->rawColumns(['action'])->make(true);
+        ->rawColumns(['action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
                 // ->editColumn('last_change_by', function ($data) {
                                 
                 //                return @$data->users->nm_user;
@@ -115,7 +202,8 @@ class PurchasingProcessController extends Controller
 
     public function getDownloadListPo(Request $request)
     {
-        $data = PurchasingProcess::where(function($query) use ($request){
+        $vendor_list =preg_split('/\r\n|\r|\n/',$request->vendor_list);
+         $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
             if (!empty($request->po_num)) {
                return $query->where('po_num', 'like', "%" . $request->po_num . "%");
             }
@@ -124,12 +212,148 @@ class PurchasingProcessController extends Controller
                 return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
             }
 
-            if (!empty($request->id_vendor)) {
-                return $query->where('id_vendor', (string) $request->id_vendor);
+            if (!empty($vendor_list)) {
+                return $query->whereIn('id_vendor', $vendor_list);
             }
-        })->get();
+        });
+         if (!empty($request->vendor_list)) {
+            // dd($vendor_list);
+                $q->whereIn('id_vendor', $vendor_list);
+            }
+        $data = $q->where('id_vendor','!=','')->get();
 
         return \DataTables::of($data)
+
+        ->editColumn('rel_stat', function($data){
+             if($data->relind == '1'){
+            $rel_stat = "<small><i class='fa fa-check-circle' style='color: green;' 
+                                data-toggle=tooltip' data-placement='left' title='Released'>
+                                </i>
+                        </small>";
+        } else {
+            $rel_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                data-toggle=tooltip' data-placement='left' title='Not Released'>
+                                </i>
+                        </small>";
+        }
+
+       
+
+      
+            return $rel_stat;
+        })
+        ->editColumn('mail_stat', function($data){
+          
+             if($data->sent != '0000-00-00 00:00:00'){
+            $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
+                                data-toggle=tooltip' data-placement='left' title='Sent'>
+                                </i>
+                        </small>";
+        } else {
+            $mail_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                data-toggle=tooltip' data-placement='left' title='Not Sent'>
+                                </i>
+                        </small>";
+        }
+        return $mail_stat;
+        })
+        ->editColumn('file_exist', function($data){
+           $filenm = $data->filenm;
+            if ($filenm != "-" && $filenm != "" ) {
+            //activate
+            $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle='tooltip' data-placement='left' title='Exist'>
+                                  </i>
+                          </small>";
+            } else {
+                $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                        data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                    </i>
+                               </small>";
+                
+            }
+             return $file_exist;
+
+        })
+        ->editColumn('download_stat', function($data){
+             if($data->downloaded != '0000-00-00 00:00:00'){
+            $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle=tooltip' data-placement='left' title='Downloaded'>
+                                </i>
+                          </small>";
+        } else {
+            $dwld_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                    data-toggle=tooltip' data-placement='left' title='Not Downloaded'>
+                                 </i>
+                        </small>";
+           
+        }
+         return $dwld_stat;
+        })
+        ->editColumn('active', function($data){
+           
+
+            $datetime1 = date_create($data->doc_date);
+            $datetime2 = date_create(date("Y-m-d"));
+
+            $interval = date_diff($datetime1, $datetime2);
+
+            
+
+            $diff = $interval->format('%m');
+             if($diff >= 3){
+                $stat = 'disabled';
+            } else {
+                $stat = '';
+
+                if (isset($_GET['check']))
+                {
+                    if ($_GET['check'] == "X")
+                    {
+                        $cb_check = 'checked';
+                    }
+                }
+            }
+
+            if($stat == 'disabled'){
+
+            $active = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                data-toggle=tooltip' data-placement='left' title='Not Active'>
+                              </i>
+                       </small>";
+
+        } else {
+            $active = "<small><i class='fa fa-check-circle' style='color: green;'
+                                data-toggle=tooltip' data-placement='left' title='Active'>
+                             </i>
+                        </small>";
+        }
+         return $active;
+        })
+        ->editColumn('upload_date', function($data){
+            return @$data->last_change;
+        }) 
+        ->editColumn('sent', function($data){
+            return date('Y-m-d H:i:s',strtotime($data->sent));
+        })
+        ->editColumn('po_amount', function($data){
+           
+            $po_value = number_format($data->po_val, 2, '.', ',');
+            $po_val   = "<p class='text-right' >".$po_value."</p>";
+
+             return @$po_val;
+        })
+        ->editColumn('upload_group', function($data){
+            return @$data->batch;
+        })
+        ->editColumn('total_amount', function($data){
+            
+
+            $total_value = number_format($data->tot_va, 2, '.', ',');
+            $tot_val   = "<p class='text-right' >".$total_value."</p>";
+
+            return @$tot_val ;
+        })
         ->editColumn('number', function($data){
             return 1;
         })
@@ -145,7 +369,7 @@ class PurchasingProcessController extends Controller
         ->addColumn('download_check', function ($data) {
             return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->po_num.'" onclick="selectedDwn(\'#'.$data->po_num.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
         })
-        ->rawColumns(['download_check','action'])->addIndexColumn()->make(true);
+        ->rawColumns(['download_check','active','action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
                 // ->editColumn('last_change_by', function ($data) {
                                 
                 //                return @$data->users->nm_user;
@@ -189,32 +413,33 @@ class PurchasingProcessController extends Controller
         }
 
         $zip = new \ZipArchive();
-        $fileName = "DHARMA_POLIMETAL_SO_MFPDF_".date("d-m-Y").".zip";
+        $fileName = "DHARMA_POLIMETAL_PO_LIST_".date("d-m-Y").".zip";
         try{
-             if ($zip->open(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
+            $zipnm = md5($request->ip().time().$fileName);
+             if ($zip->open(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             
             {
                 
                 foreach ($request->download_doc as $k){
-                    $filenm = explode("#", $k);
+                    $filenm = $k;
                       // dd($filenm);
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = storage_path('MF_TEST/SO/'.$filenm[0]);
+                    $content[] =\File::get(Storage::disk('po_directory')->path("/").$filenm);
+                    $file = Storage::disk('po_directory')->path("/").$filenm;
                     $relativeName = basename($file);
-                    // dd($filenm[0])
-                    $zip->addFile($file, $filenm[0]);
-
-                    $file = storage_path('MF_TEST/SO-KANBAN/'.$filenm[1]);
-                    $relativeName = basename($file);
-                    $zip->addFile($file, $filenm[1]);
+                      $zip->addFile($file, $filenm);
                 }
                 $zip->close();
-
-                  return response()->download(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
+                // dd( $content);
+                  return response()->download(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         {
+            // return $e;
             return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
+        } catch(\InvalidArgumentException $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'PO Directory filesystem driver has not been set in  application, please contact the IT team.']);
         }
 
       
@@ -224,7 +449,14 @@ class PurchasingProcessController extends Controller
     {
         $file = $request->file('file');
         config(['excel.import.startRow' => 2]);
-        Excel::import(new ImportPo, $file);
+        try{
+             Excel::import(new ImportPo, $file);
+             return redirect()->back()->with(['message_success' => 'Berhasil import excel']);
+        } catch(\Exception $e)
+        {
+             return redirect()->back()->with(['message_fail' => 'Format Excel tidak sesuai']);
+        }
+       
 
         // return response()->json([
         //     'type' => 'success',
@@ -232,6 +464,6 @@ class PurchasingProcessController extends Controller
         // ]);
         //dd($file);
         //dd($request->all());
-        //return view('purchasing_process/upload');
+       
     }
 }

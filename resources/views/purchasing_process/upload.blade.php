@@ -22,6 +22,7 @@
                         <label for="inputNumber" class="col-sm-24 col-form-label">File Upload</label>
                         <div class="col-sm-20">
                             <input class="form-control" style="width:250px" type="file" name="file" id="formFile">
+                            <p class="help-block">po-approved-list.xls</p>
                         </div>
                     </div>
 

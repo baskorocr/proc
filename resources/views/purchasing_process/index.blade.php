@@ -94,7 +94,36 @@
                 <div class="table-responsive mt-3">
                   <table  class="table table-bordered table-stripped table-sm" id="tb-list-po">
                     <thead>
-                      <th>PO Number</th>
+                <th data-visible="true">PO Number</th>
+                <th>Rev No</th>
+                <th>Plant</th>
+                <th>Vendor</th>
+                <th>Vendor Name</th>
+                <th>Vendor Mail</th>
+                <th>Doc Date</th>
+                <th>PGr</th>
+                <th title="without Tax">PO Amount</th>
+                <th title="with Tax">Total Amount</th>
+                <th>Curr</th>
+                <th>
+                    <i class="fa fa-check"></i>
+
+
+
+                </th>
+                <th>
+                    <i class="fa fa-envelope"></i>
+                </th>
+                <th >
+                    <i class="fa fa-file"></i>
+                </th>
+                <th>
+                    <i class="fa fa-download"></i>
+                </th>
+                <th>Upload Date</th>
+                <th>Upload Group</th>
+                <th data-breakpoints="all">Filename</th>
+                     {{--  <th>PO Number</th>
                       <th>Rev No</th>
                       <th>Plant</th>
                       <th>Vendor</th>
@@ -103,7 +132,7 @@
                       <th>Doc Date</th>
                       <th>Pgr</th>
                       <th>Curr</th>
-                      <th>Filename</th>
+                      <th>Filename</th> --}}
                     </thead>
                     <tbody>
                       
@@ -221,8 +250,40 @@
     name: 'pgr'
     },
     {
+    data: 'po_amount',
+    name: 'po_amount'
+    },
+    {
+    data: 'total_amount',
+    name: 'total_amount'
+    },
+    {
     data: 'curr',
     name: 'curr'
+    },
+    {
+    data: 'rel_stat',
+    name: 'rel_stat'
+    },
+    {
+    data: 'mail_stat',
+    name: 'mail_stat'
+    },
+    {
+    data: 'file_exist',
+    name: 'file_exist'
+    },
+    {
+    data: 'download_stat',
+    name: 'download_stat'
+    },
+    {
+    data: 'upload_date',
+    name: 'upload_date'
+    },
+    {
+    data: 'upload_group',
+    name: 'upload_group'
     },
     {
     data: 'file_nm',

@@ -16,7 +16,7 @@
 				<div class="col-lg-12">
 					<div class="card">
 						<div class="card-body">
-							<form action="" method="get">
+							{{-- <form action="" method="get">
 							<div class="row mt-3">
 							
 								<div class="col-md-6">
@@ -44,8 +44,8 @@
 									<button class="btn btn-outline-secondary btn-block" type="submit"> <i class="fas fa-search"></i> Search</button>
 								</div>
 							</div>
-						</form>
-						@if(!empty(Request::get('start')) && !empty(Request::get('end')))
+						</form> --}}
+						{{-- @if(!empty(Request::get('start')) && !empty(Request::get('end'))) --}}
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="download-manifest">
 									<thead>
@@ -69,7 +69,7 @@
 								</table>
 							</div>
 						</div>
-						@else
+						{{-- @else
 						<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="download-manifest-dummy">
 									<thead>
@@ -93,9 +93,9 @@
 								</table>
 							</div>
 						</div>
-						@endif
+						@endif --}}
 						<div class="card-footer">
-						@if(!empty(Request::get('start')) && !empty(Request::get('end')))
+						{{-- @if(!empty(Request::get('start')) && !empty(Request::get('end'))) --}}
 							<form action="{{route('delivery.schedule.mf.download')}}" method="POST">
 								@csrf
 							<div class="row">
@@ -112,7 +112,7 @@
 								</div>
 							</div>
 						</form>
-						@endif
+						{{-- @endif --}}
 						</div>
 					</div>
 				</div>
