@@ -10,7 +10,7 @@ use App\Models\ProductForProject;
 use App\Models\DocForPart;
 use App\Models\PartForProduct;
 use App\Models\DocPart;
-use App\Models\DocChecklist;
+use App\Models\DocCheckList;
 use DB;
 
 class ProjectManagementHelper {
@@ -18,9 +18,15 @@ class ProjectManagementHelper {
 		$data = ProjectDocUpload::where(['id_project' => $id_project,'id_product' => $id_product, 'id_part' => $id_part,'id_doc_part' => $id_doc_part])->first();
 		return $data;
 	}
- 
+
 	function get_proj_doc_assign_data($id_project,$id_product,$id_part,$id_doc_part){
 		$data = ProjectVendorAssign::where(['id_project' => $id_project,'id_product' => $id_product, 'id_part' => $id_part,'id_doc_part' => $id_doc_part])->get();
+		// $data = ProjectVendorAssign::where(['id_project' => "440000000003",'id_product' => "410000000005", 'id_part' => "420000000001",'id_doc_part' => "430000000001"])->get();
+
+		return $data;
+	}
+	function getProjectAssign($id_project){
+		$data = ProjectVendorAssign::where('id_project',$id_project)->first();
 		// $data = ProjectVendorAssign::where(['id_project' => "440000000003",'id_product' => "410000000005", 'id_part' => "420000000001",'id_doc_part' => "430000000001"])->get();
 
 		return $data;
@@ -243,6 +249,14 @@ class ProjectManagementHelper {
 		$result = ProjectVendorAssign::where('id_project', $id_project)->where('id_product', $id_product)->where('id_part',$id_part)->where('id_vendor', $id_vendor)->where('id_doc_part',$id_doc_part)->where('check_params', $check_params)->get();
 
     	return $result;
+    } 
+
+    function get_proj_vendor_assign_data_vendor($id_project, $id_product, $id_part,  $id_vendor){
+
+    
+		$result = ProjectVendorAssign::where('id_project', $id_project)->where('id_product', $id_product)->where('id_part',$id_part)->where('id_vendor', $id_vendor)->get();
+
+    	return $result;
     }
 
     function get_proj_doc_assign_part_doc_all_new($id_project, $id_product, $id_part){
@@ -298,10 +312,11 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->whereIn('doc_type', [$doc_type])->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					// dd($getDoc);
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
-						if(in_array($getDoc->doc_type, [$doc_type]))
+						if(in_array(@$getDoc->doc_type, [$doc_type]))
 						{
 							// dd($p);
 							if($groupingPart != $p2->id_part AND $groupingProd != $p->id_product)
@@ -361,7 +376,7 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
 						
@@ -404,10 +419,10 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->whereIn('doc_type', ['P', 'Y', 'M'])->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
-						if(in_array($getDoc->doc_type, ['P', 'Y', 'M']))
+						if(in_array(@$getDoc->doc_type, ['P', 'Y', 'M']))
 						{
 							$arrd[] = ['id_project' => $p->id_project,'id_product' => $p->id_product,'id_part' => $p2->id_part,'id_doc_part' => $d->id_doc_part, 'nm_doc_part' => $getDoc->nm_doc_part, 'check_params' => $d2->check_params,'doc_type' => $getDoc->doc_type];	
 						}
@@ -553,8 +568,8 @@ class ProjectManagementHelper {
 	function insert_proj_vendor_upload($id_project, $id_product, $id_part, $id_doc_part, $doc_required, $file_nm, $upload_n, $version_n, $uploader_id, $upload_path, $id_vendor){
 		
 
-	$ret = ProjVendorUpload::create([
-								'id_assign' => Numbering::generateAuto(new \App\Models\ProjVendorUpload(),"id_assign", 18, 18, 1, ""),
+	$ret = ProjectVendorUpload::create([
+								'id_assign' => Numbering::generateAuto(new \App\Models\ProjectVendorUpload(),"id_assign", 18, 18, 1, ""),
 							'id_project'=>$id_project,
 							 'id_product'=>$id_product,
 							 'id_part'=>$id_part,
@@ -563,7 +578,7 @@ class ProjectManagementHelper {
 							 'file_nm'=>$file_nm,
 							 'upload_n'=>$upload_n,
 							 'version_n'=>$version_n,
-							 'upload_date'=>$upload_date,
+							 'upload_date'=>date("Y-m-d H:i:s"),
 							 'uploader_id'=>$uploader_id,
 							 'upload_path'=>$upload_path,
 							 'id_vendor'=>$id_vendor]);
@@ -584,7 +599,7 @@ class ProjectManagementHelper {
 					foreach($docofpart as $d)
 					{
 						$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->where('doc_type',$doc_type)->first();
-						$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+						$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 						foreach($docChecklist as $d2)
 						{
 							if(!empty($getDoc))
@@ -613,7 +628,7 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->where('doc_type',$doc_type)->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
 						if(!empty($getDoc))
@@ -835,7 +850,7 @@ class ProjectManagementHelper {
 				foreach($docofpart as $d)
 				{
 					$getDoc = DocPart::where('id_doc_part', $d->id_doc_part)->first();
-					$docChecklist = DocChecklist::where('id_doc_part', $d->id_doc_part)->get();//13
+					$docChecklist = DocCheckList::where('id_doc_part', $d->id_doc_part)->get();//13
 					foreach($docChecklist as $d2)
 					{
 						if($getDoc->doc_type == "P")

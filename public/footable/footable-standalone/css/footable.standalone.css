@@ -187,7 +187,7 @@
 	float: left;
 }
 .footable .btn-group-xs > .btn,
-.footable .btn-xs {
+.footable .btn-sm {
 	padding: 1px 5px;
 	font-size: 12px;
 	line-height: 1.5;

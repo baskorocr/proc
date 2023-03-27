@@ -67,7 +67,18 @@ return [
                 'driver' => 'local',
                 'root'   => 'D:/MF_TEST/SO-KANBAN/', ///Lokasi File MF
             ],
+    /*
+    |--------------------------------------------------------------------------
+    | PO File Location Folder for ZIP Download
+    |--------------------------------------------------------------------------
+    |
+    */
+        'po_directory' => [
+                'driver' => 'local',
+                'root'   => 'D:/MF_TEST/PO/', ///Lokasi File PO
+            ], 
 
+    /////////////////////////////////////////////////////////////////////////
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
