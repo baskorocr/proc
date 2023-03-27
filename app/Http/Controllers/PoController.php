@@ -1,52 +1,57 @@
 <?php
 
 namespace App\Http\Controllers;
-use Validator;
 
 use Illuminate\Http\Request;
+use App\Models\Po;
+use App\Models\Vendor;
+use Mail;
+use App\Mail\PoMail;
 
 class PoController extends Controller
 {
-    public function upload_file(Request $request)
+    public function sendPo(Request $request)
     {
-        $validator = Validator::make(
-            [
-                'file'      => $request->import_file,
-                'extension' => strtolower($request->import_file->getClientOriginalExtension()),
-            ],
-            [
-                'file'          => 'required',
-                'extension'      => 'required|in:xlsx,xls',
-            ]
-          
-          );
+        $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
+        
+        $po = new Po;
+        $po->po_num = $request->po_num;
+        $po->comp_code = $request->comp_code;
+        $po->doc_type = $request->doc_type;
+        $po->doc_catg = $request->doc_catg;
+        $po->plant = $request->plant;
+        $po->id_vendor = $request->id_vendor;
+        $po->doc_date = $request->doc_date;
+        $po->relind = $request->relind;
+        $po->pgr = $request->pgr;
+        $po->porg = $request->porg;
+        $po->creator = $request->creator;
+        $po->file_name = $request->file_name;
+        $po->sent = $request->sent;
+        $po->downloaded = $request->downloaded;
+        $po->accepted = $request->accepted;
+        $po->id_user = $request->id_user;
+        $po->last_change = $request->last_change;
+        $po->revno = $request->revno;
+        $po->revdt = $request->revdt;
+        $po->revtm = $request->revtm;
+        $po->rel_state = $request->rel_state;
+        $po->po_val = $request->po_val;
+        $po->tot_val = $request->tot_val;
+        $po->curr = $request->curr;
+        $po->pay_term = $request->pay_term;
+        $po->aprvdt = $request->aprvdt;
+        $po->aprvtm = $request->aprvtm;
+        $po->approver = $request->approver;
+        $po->batch = $request->batch;
+        $po->stat = $request->stat;
+        $po->save();
 
-            if ($validator->fails()) {
-                return response()->json([
-                    'type' => 'error',
-                    'message' => $validator->errors()->first(),
-                ], 422);
-
-            } else {
-                //if(Input::hasFile('import_file')){
-                    //$uploadedFileMimeType = Input::file('import_file')->getMimeType();
-                
-                    $mimes = array('application/excel','application/vnd.ms-excel','application/vnd.msexcel');
-                
-                    if(in_array($_FILES['import_file']['type'], $mimes)){
-                        return response()->json([
-                            'type' => 'success',
-                            'message' => "File Suskes Upload",
-                        ], 200);
-                    } else{
-                        return response()->json([
-                            'type' => 'error',
-                            'message' => "Please select Only Excel File",
-                        ], 422);
-                        //return redirect()->back()->withInput()->withFlashDanger("Please select Only Excel File");
-                
-                    }
-                //}
-            }
+        Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
+        
+        return response()->json([
+            'message' => 'Data PO saved successfully',
+            'data' => $po
+        ], 200);
     }
 }
