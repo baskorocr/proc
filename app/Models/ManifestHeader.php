@@ -15,7 +15,7 @@ class ManifestHeader extends Model
 
     protected $fillable = ['manifest','mf_type','release_date','id_vendor','delivery_date','delivery_time','po_num','sent','downloaded','file_nm','stat','active'];
     // type : spc,Mf
-    public $dates = ['deleted_at','release_date','delivery_date','delivery_time'];
+    public $dates = ['deleted_at','release_date','delivery_date','delivery_time','sent','downloaded'];
 
 
     public function manifestDetails()
