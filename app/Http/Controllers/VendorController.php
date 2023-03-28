@@ -93,7 +93,7 @@ class VendorController extends Controller
         $vendor->sales_person = $request->sales_person;
         $vendor->phone_2 = $request->phone_2;
         $vendor->status_vendor = $request->status_vendor;
-        $vendor->created_by = auth()->user()->full_name;
+        //$vendor->created_by = auth()->user()->full_name;
         $vendor->save();
 
         return response()->json([
@@ -112,7 +112,7 @@ class VendorController extends Controller
     //     ]);
     // }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id_vendor)
     {
         // $request->validate([
         //     // 'username' => 'required|string|unique:users,username,'.$id.',_id',
@@ -120,7 +120,7 @@ class VendorController extends Controller
         //     // 'full_name' => 'required|string',
         // ]);
 
-        $vendor = Vendor::findOrFail($id);
+        $vendor = Vendor::where('id_vendor', $id_vendor)->first();
         //$vendor->vendor_code = $request->vendor_code;
         $vendor->id_vendor = $request->id_vendor;
         $vendor->purch_org = $request->purch_org;
@@ -140,8 +140,8 @@ class VendorController extends Controller
         $vendor->sales_person = $request->sales_person;
         $vendor->phone_2 = $request->phone_2;
         $vendor->status_vendor = $request->status_vendor;
-        // $vendor->created_by = auth()->user()->full_name;
-        $vendor->changed_by = auth()->user()->full_name;
+        //$vendor->created_by = auth()->user()->full_name;
+        //$vendor->changed_by = auth()->user()->full_name;
         $vendor->save();
 
         return response()->json([

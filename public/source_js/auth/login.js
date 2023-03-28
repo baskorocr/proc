@@ -24,6 +24,9 @@ $(document).ready(function () {
 					// console.log(xhr.statusText);
 					$('.div_notif').show();
 					$('#label_notif').html('<i class="fa fa-warning"> Please check username or password!</i>');
+					$("#username").val(null);
+					$("#password").val(null);
+					$("#password").attr("placeholder", "Type your answer here");
 				}
 			});
 	});  

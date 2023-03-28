@@ -42,9 +42,50 @@ class UserLogRecordController extends Controller
             ->editColumn('number', function ($data) {
                 return 1;
             })
+            ->editColumn('attempt', function ($data) {
+                 if($data->attempt == "S")
+                {
+                   
+                    $status = "<small><span class=\"badge bg-success\">Success</span></small>";
+                } elseif($data->attempt=='F') {
+                    $status = "<small><span class=\"badge bg-danger\">Failed</span></small>";
+                } else{
+                    $status = "<small><span class=\"badge bg-secondary\"> Unknown</span></small>";
+                }
+
+                return $status;
+            }) ->editColumn('status', function ($data) {
+                 if(@$data->user->status_user == "A")
+                {
+                   
+                    $status = "<small><span class=\"badge bg-success\">Success</span></small>";
+                } elseif(@$data->user->status_user=='N') {
+                    $status = "<small><span class=\"badge bg-danger\">Failed</span></small>";
+                } else{
+                    $status = "<small><span class=\"badge bg-secondary\">Undetified</span></small>";
+                }
+
+                return $status;
+            })
+            ->editColumn('activity', function ($data) {
+                 if(@$data->activity == "in")
+                {
+                   
+                    $status = "<small><span class=\"badge bg-info\"><i class=\"fas fa-arrow-circle-right\"></i> IN</span></small>";
+                } elseif(@$data->activity=='out') {
+                    $status = "<small><span class=\"badge bg-warning\"><i class=\"fas fa-arrow-circle-left\"></i> OUT</span></small>";
+                } else{
+                    $status = "<small><span class=\"badge bg-secondary\">Undetified</span></small>";
+                }
+
+                return $status;
+            })
+            ->editColumn('user_type', function ($data) {
+                return  empty($data->user->tipeUser) ? "<i>Unknown</i>":@$data->user->tipeUser->nm_tipe_user;
+            })
             ->editColumn('datetime_log', function ($data) {                    
                 return date('d/M/Y : H:m',strtotime($data->datetime_log));
-            })->rawColumns(['action'])->addIndexColumn()->make(true);
+            })->rawColumns(['action','activity','attempt','status','user_type'])->addIndexColumn()->make(true);
     }
 
 

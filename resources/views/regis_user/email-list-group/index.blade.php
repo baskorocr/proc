@@ -25,6 +25,7 @@
 										<th>Name</th>
 										<th>Last Changed by</th>
 										<th>Last Changed Date</th>
+										<th>Status</th>
 										<th>Action</th>
 									</thead>
 									<tbody>
@@ -68,6 +69,9 @@
           },
           {
             data: 'last_changed', name: 'last_changed'
+          },
+          {
+            data: 'status', name: 'status'
           },
           {
 			data: 'action', name: 'action'

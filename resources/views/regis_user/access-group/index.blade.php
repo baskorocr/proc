@@ -23,6 +23,7 @@
 										<th>Access Group Name</th>
 										<th>Last Changed by</th>
 										<th>Last Changed Date</th>
+										<th>Status</th>
 										<th>Assigned</th>
 										<th>Action</th>
 									</thead>
@@ -63,6 +64,8 @@
             data: 'last_changed', name: 'last_changed'
           },
 		  {
+			data: 'status', name: 'status'
+		  },{
 			data: 'assigned', name: 'assigned'
 		  },
           {

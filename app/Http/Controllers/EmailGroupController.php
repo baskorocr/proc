@@ -41,10 +41,28 @@ class EmailGroupController extends Controller
             })
             ->editColumn('number', function ($data) {
                 return 1;
+            }) ->editColumn('last_changed_by', function ($data) {
+              return @$data->users->nm_user;
+                
+            })
+              ->addColumn('status', function ($data) {
+             
+                if($data->active == "A")
+                {
+                   
+                    $status = "<small><span class=\"badge bg-success\">Active</span></small>";
+                } elseif($data->active=='N') {
+                    $status = "<small><span class=\"badge bg-warning\"> Non-Active</span></small>";
+                } else{
+                    $status = "<small><span class=\"badge bg-secondary\"> N/A</span></small>";
+                }
+
+                return $status;
+                
             })
             ->editColumn('last_changed', function ($data) {                    
-                return date('d/m/Y',strtotime($data->last_changed));
-            })->rawColumns(['action'])->addIndexColumn()->make(true);
+                return date('d.m.Y H:i:s',strtotime($data->last_changed));
+            })->rawColumns(['action','status','assigned'])->addIndexColumn()->make(true);
     }
 
 
@@ -120,6 +138,7 @@ class EmailGroupController extends Controller
         $email_group->dept_code = $request->dept_code;
         $email_group->abrev = $request->abrev;
         $email_group->dept_desc = $request->dept_desc;
+        $email_group->active = $request->active;
         $email_group->save();
 
         return redirect()->route('regis-user.email-group')->with(['message_success' => 'Berhasil mengubah data.']);

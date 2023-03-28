@@ -32,6 +32,13 @@
 										<label>Departement Description </label>
 										<input type="text" class="form-control" id="dept_desc" name="dept_desc" value="<?php echo $email->dept_desc ?>" placeholder="Departement Description" required>
 									</div>
+									<div class="form-group">
+										<label>Status Active</label>
+										<select name="active" class="form-control">
+											<option {{$email->active=="A"?"selected":null}} value="A">Active</option>
+											<option  {{$email->active=="N"?"selected":null}} value="N">Non-Active</option>
+										</select>
+									</div>
 									</div><!-- /.box-body -->
 									<div class="box-footer"><hr>
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Update</button>

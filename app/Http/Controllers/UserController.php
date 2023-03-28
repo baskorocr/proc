@@ -167,4 +167,50 @@ class UserController extends Controller
             'message' => 'Data deleted successfully'
         ], 200);
     }
+
+    public function check(Request $request)
+    {   
+        $user = User::where('username', $request->username)->first();
+
+        if (!empty($user)) {
+            return response()->json([
+                'type' => 'success',
+                'data' => $user
+            ]);
+    
+        } else {
+            return response()->json([
+            'message' => 'Username Not Found'
+            ], 422);
+        }
+    }
+
+    public function checkPin(Request $request)
+    {   
+        $user = User::where('username', $request->username)->first();
+
+        if (!empty($user)) {
+
+            if (!Hash::check($request->pin, $user->pin)){
+
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Please check pin!'
+                ], 422);
+    
+            } else {
+                return response()->json([
+                    'type' => 'success',
+                    'message' => 'Username & Pin matched!',
+                    'data' => $user,
+                ], 200);
+            }
+    
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Please check username!'
+            ], 422);
+        }
+    }
 }

@@ -95,10 +95,12 @@ Route::prefix('regis-user')->group(function(){
 
      //Master User
     Route::get('/master-user', [App\Http\Controllers\MasterUserController::class, 'getMasterUser'])->name('regis-user.master-user');
-    Route::post('/add-user', [App\Http\Controllers\MasterUserController::class, 'userAdd'])->name('api.regis-user.create.user');
+    Route::get('/master-user/add-user', [App\Http\Controllers\MasterUserController::class, 'create'])->name('api.regis-user.create.user');
+    Route::post('/master-user/store', [App\Http\Controllers\MasterUserController::class, 'store'])->name('api.regis-user.create.user.act');
    
     Route::post('/master-user/update', [App\Http\Controllers\MasterUserController::class, 'updateUser'])->name('regis-user.master-user.update.user');
     Route::get('/master-user/edit/{id}', [App\Http\Controllers\MasterUserController::class, 'editUser'])->name('regis-user.master-user.edit.user');
+    Route::get('/master-user/reset/{id}', [App\Http\Controllers\MasterUserController::class, 'reset'])->name('regis-user.master-user.reset');
     Route::get('/master-user/delete/{id}', [App\Http\Controllers\MasterUserController::class, 'deleteUser'])->name('regis-user.master-user.delete.user');
     //Datatables
     Route::get('/datatables/get-master-user', [App\Http\Controllers\MasterUserController::class, 'getDataMasterUser'])->name('datatables.regis-user.master.user');
@@ -277,7 +279,7 @@ Route::prefix('purchasing-process')->group(function(){
     Route::get('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'upload'])->name('purchasing.process.uploadpo');
     Route::get('/list-po', [App\Http\Controllers\PurchasingProcessController::class, 'index'])->name('purchasing.process.listpo');
     //Datatables
-    Route::get('/datatables/get-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPo'])->name('datatables.purchasing.process.listpo');
+    Route::post('/datatables/get-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPo'])->name('datatables.purchasing.process.listpo');
 
     Route::get('/download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'download'])->name('purchasing.process.download.listpo');
     //Datatables
