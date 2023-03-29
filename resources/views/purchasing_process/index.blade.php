@@ -94,35 +94,35 @@
                 <div class="table-responsive mt-3">
                   <table  class="table table-bordered table-stripped table-sm" id="tb-list-po">
                     <thead>
-                <th data-visible="true">PO Number</th>
-                <th>Rev No</th>
-                <th>Plant</th>
-                <th>Vendor</th>
-                <th>Vendor Name</th>
-                <th>Vendor Mail</th>
-                <th>Doc Date</th>
-                <th>PGr</th>
-                <th title="without Tax">PO Amount</th>
-                <th title="with Tax">Total Amount</th>
-                <th>Curr</th>
-                <th>
+                <th style="min-width: 106px" data-visible="true">PO Number</th>
+                <th style="min-width: 65px">Rev No</th>
+                <th style="min-width: 60px">Plant</th>
+                <th style="min-width:  60px">Vendor</th>
+                <th style="min-width: 156px">Vendor Name</th>
+                <th style="min-width: 106px">Vendor Mail</th>
+                <th style="min-width: 106px">Doc Date</th>
+                <th style="min-width:  30px">PGr</th>
+                <th style="min-width: 106px" title="without Tax">PO Amount</th>
+                <th style="min-width: 106px" title="with Tax">Total Amount</th>
+                <th style="min-width: 30px">Curr</th>
+                <th style="min-width: 26px">
                     <i class="fa fa-check"></i>
 
 
 
                 </th>
-                <th>
+                <th style="min-width: 26px">
                     <i class="fa fa-envelope"></i>
                 </th>
-                <th >
+                <th style="min-width: 26px" >
                     <i class="fa fa-file"></i>
                 </th>
-                <th>
+                <th style="min-width: 26px">
                     <i class="fa fa-download"></i>
                 </th>
-                <th>Upload Date</th>
-                <th>Upload Group</th>
-                <th data-breakpoints="all">Filename</th>
+                <th style="min-width: 106px">Upload Date</th>
+                <th style="min-width: 106px">Upload Group</th>
+                <th style="min-width: 106px" data-breakpoints="all">Filename</th>
                      {{--  <th>PO Number</th>
                       <th>Rev No</th>
                       <th>Plant</th>
@@ -192,7 +192,7 @@
     // });
     // }).draw();
     // })
-    var table = $('#tb-list-po').DataTable({
+    var table = $('#tb-list-po').DataTable({autoWidth:false,
     "order": [[ 1, "DESC" ]],
     processing: true,
     serverSide: true,

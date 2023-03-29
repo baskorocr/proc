@@ -35,7 +35,7 @@ $completed_arr  = array();
 										@endforeach
 									</select>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer">
 										<button type="submit"  class="btn btn-primary"><i class="fas fa-eye"></i> View</button>
 									</div>
 								</form>
