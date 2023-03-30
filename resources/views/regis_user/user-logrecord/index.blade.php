@@ -54,6 +54,7 @@
 	@endsection
 	@section('javascript')
     <script>
+    	$.fn.dataTable.ext.errMode = 'none';
       $('#user-logrecord').DataTable({
         "order": [[ 1, "DESC" ]],
         processing: true,

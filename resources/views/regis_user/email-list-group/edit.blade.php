@@ -26,7 +26,12 @@
 									</div>
 									<div class="form-group">
 										<label>Departement</label>
-										<input type="text" class="form-control" id="dept_code" name="dept_code" value="<?php echo $listemail->dept_code ?>" placeholder="Departement" required>
+										<select name="dept_code"  id="dept_code" class="form-control option-select2">
+											@foreach($dept as $d)
+												<option value="{{$d->dept_code}}">[{{$d->dept_code}}] {{$d->dept_desc}}</option>
+											@endforeach
+										</select>
+										{{-- <input type="text" class="form-control" id="dept_code" name="dept_code" value="<?php echo $listemail->dept_code ?>" placeholder="Departement" required> --}}
 									</div>
 									<div class="form-group">
 										<label>Name </label>
@@ -50,4 +55,10 @@
 				</div>
 			</section>
 		</main>
+		@endsection
+		@section('javascript')
+		<script type="text/javascript">
+			$('.option-select2').select2({placeholder: "Nothing Selected",});
+			$("#dept_code").val("{{ $listemail->dept_code}}").trigger('change');
+		</script>
 		@endsection

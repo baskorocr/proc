@@ -49,18 +49,18 @@
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="download-manifest">
 									<thead>
-										<th><i class="fa fa-list"></i></th>
-										<th>Manifest</th>
-										<th>Delivery Date</th>
-										<th>PO Number</th>
-										<th>Vendor</th>
-										<th>Vendor Name</th>
-										<th>Email</th>
-										<th><i class="bi bi-envelope"></i></th>
-										<th><i class="bi bi-file-earmark"></i></th>
-										<th><i class="bi bi-download"></i></th>
-										<th><i class="bi bi-clock"></i></th>
-										<th>File Name</th>
+										<th style="min-width: 16px"><i class="fa fa-list"></i></th>
+										<th style="min-width: 106px">Manifest</th>
+										<th style="min-width: 106px">Delivery Date</th>
+										<th style="min-width: 106px">PO Number</th>
+										<th style="min-width: 106px">Vendor</th>
+										<th style="min-width: 106px">Vendor Name</th>
+										<th style="min-width: 106px">Email</th>
+										<th style="min-width: 16px"><i class="fa fa-envelope"></i></th>
+										<th style="min-width: 16px"><i class="fa fa-file"></i></th>
+										<th style="min-width: 16px"><i class="fa fa-download"></i></th>
+										<th style="min-width: 16px"><i class="fa fa-clock"></i></th>
+										<th style="min-width: 106px">File Name</th>
 										
 									</thead>
 									<tbody>
@@ -180,7 +180,7 @@ $("#end").change(function(e){
 
 			console.log(all.join());
 		}
-			 ).DataTable({
+			 ).DataTable({ autoWidth:false,
 	"order": [[ 1, "DESC" ]],
 	processing: true,
 	serverSide: true,

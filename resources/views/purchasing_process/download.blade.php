@@ -111,37 +111,37 @@
                     <th>
                       <i class="fa fa-list"></i>
                     </th>
-										<th data-visible="true">PO Number</th>
-                      <th>Rev No</th>
-                      <th>Plant</th>
-                      <th>Vendor</th>
-                      <th>Vendor Name</th>
-                      <th>Vendor Mail</th>
-                      <th>Doc Date</th>
-                      <th>PGr</th>
-                      <th title="without Tax">PO Amount</th>
-                      <th title="with Tax">Total Amount</th>
-                      <th>Curr</th>
-                      <th>Sent Date</th>
-                      <th>
+										<th style="min-width: 106px" data-visible="true">PO Number</th>
+                      <th style="min-width: 65px">Rev No</th>
+                      <th style="min-width: 65px">Plant</th>
+                      <th style="min-width: 80px">Vendor</th>
+                      <th style="min-width: 156px">Vendor Name</th>
+                      <th style="min-width: 106px">Vendor Mail</th>
+                      <th style="min-width: 106px">Doc Date</th>
+                      <th style="min-width: 30px">PGr</th>
+                      <th style="min-width: 106px" title="without Tax">PO Amount</th>
+                      <th style="min-width: 106px" title="with Tax">Total Amount</th>
+                      <th style="min-width: 50px">Curr</th>
+                      <th style="min-width: 106px">Sent Date</th>
+                      <th style="min-width: 26px">
                           <i class="fa fa-envelope"></i>
                       </th>
-                      <th >
+                      <th style="min-width: 26px" >
                           <i class="fa fa-file"></i>
                       </th>
-                      <th>
+                      <th style="min-width: 26px">
                           <i class="fa fa-download"></i>
                       </th>
 
-                      <th>
+                      <th style="min-width: 26px">
                           <i class="fa fa-clock"  title="Active Status (3 Months)"></i>
 
 
 
                       </th>
-                      <th>Upload Date</th>
-                      <th>Upload Group</th>
-                      <th data-breakpoints="all">File Ver</th>
+                      <th style="min-width: 106px">Upload Date</th>
+                      <th style="min-width: 106px">Upload Group</th>
+                      <th style="min-width: 106px" data-breakpoints="all">File Ver</th>
 									</thead>
 									<tbody>
 										
@@ -236,7 +236,7 @@
         console.log(data);
 		  }
 
-        var table = $('#tb-download-list-po').DataTable({
+        var table = $('#tb-download-list-po').DataTable({ autoWidth:false,
         "order": [[ 1, "DESC" ]],
         processing: true,
         serverSide: true,

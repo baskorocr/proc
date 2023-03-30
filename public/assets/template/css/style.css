@@ -377,7 +377,7 @@ h6 {
 
 @media (min-width: 1200px) {
   .logo {
-    width: 280px;
+    width: 163px;
   }
 }
 
@@ -387,8 +387,8 @@ h6 {
 }
 
 .logo span {
-  font-size: 26px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 600;
   color: #012970;
   font-family: "Nunito", sans-serif;
 }
@@ -619,7 +619,7 @@ h6 {
   top: 60px;
   left: 0;
   bottom: 0;
-  width: 300px;
+  width: 220px;
   z-index: 996;
   transition: all 0.3s;
   padding: 20px;
@@ -650,7 +650,7 @@ h6 {
 
   #main,
   #footer {
-    margin-left: 300px;
+    margin-left: 220px;
   }
 }
 
@@ -699,12 +699,12 @@ h6 {
 .sidebar-nav .nav-link {
   display: flex;
   align-items: center;
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px;
+/*  font-weight: 600;*/
   color: #FFF;
   transition: 0.3;
   background: #333;
-  padding: 10px 15px;
+  padding: 5px 1px;
   border-radius: 4px;
 }
 
@@ -743,7 +743,8 @@ h6 {
 
 .sidebar-nav .nav-content {
   padding: 5px 0 0 0;
-  margin: 0;
+/*  margin: 0;*/
+margin-left: -7px;
   list-style: none;
 }
 

@@ -10,8 +10,9 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="{{ URL::asset('assets/template/img/favicon.ico') }}" rel="icon">
-  <link href="{{ URL::asset('assets/template/img/favicon3.png') }}" rel="apple-touch-icon">
+   <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon3.png') }}" />
+    <link rel="SHORTCUT ICON" href="{{ asset('img/favicon3.png') }}" />
+    <link rel="icon" href="{{ asset('img/favicon.ico') }}" type="image/ico" />
 
   <!-- Google Fonts -->
   <link href="{{ URL::asset('assets/template/css/fontgoogle.css') }}" rel="stylesheet">

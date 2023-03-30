@@ -24,7 +24,7 @@
                     </div>
 					<label >USERNAME</label>
 					 <div class="form-group has-feedback">
-						<input type="text" id="username" placeholder="username" class="form-control"  name="username" required/>
+						<input type="text" id="username" placeholder="Username" class="form-control"  name="username" required/>
                     </div>
 					  
                     <label >PASSWORD</label>

@@ -107,8 +107,9 @@ Route::prefix('regis-user')->group(function(){
 
     //Master Vendor
     Route::get('/master-vendor', [App\Http\Controllers\MasterVendorController::class, 'getMasterVendor'])->name('regis-user.master-vendor');
-    Route::post('/add-vendor', [App\Http\Controllers\MasterVendorController::class, 'vendorAdd'])->name('api.regis-user.create.vendor');
-   
+    Route::post('/add-vendor', [App\Http\Controllers\MasterVendorController::class, 'store'])->name('api.regis-user.create.vendor');
+    Route::get('/upload-vendor', [App\Http\Controllers\MasterVendorController::class, 'upload'])->name('regis-user.upload.vendor');
+   Route::post('/upload-vendor', [App\Http\Controllers\MasterVendorController::class, 'upload_vendor'])->name('regis-user.upload.vendor-act');
     Route::post('/master-vendor/update', [App\Http\Controllers\MasterVendorController::class, 'updateVendor'])->name('regis-user.master-vendor.update.vendor');
     Route::get('/master-vendor/edit/{id}', [App\Http\Controllers\MasterVendorController::class, 'editVendor'])->name('regis-user.master-vendor.edit.vendor');
     Route::get('/master-vendor/delete/{id}', [App\Http\Controllers\MasterVendorController::class, 'deleteVendor'])->name('regis-user.master-vendor.delete.vendor');

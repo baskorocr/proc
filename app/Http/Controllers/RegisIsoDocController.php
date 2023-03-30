@@ -44,7 +44,7 @@ class RegisIsoDocController extends Controller
 
         if ($request->has("file")){
             $file = $request->file("file");
-            $path = 'files/regis_iso/';
+            $path = public_path('files/regis_iso/');
             $nameFile = md5($file->getClientOriginalName(). rand(rand(231, 992), 123882)). "." . $file->getClientOriginalExtension();
 
             $regis_iso_doc->doc_path = $path.$nameFile;

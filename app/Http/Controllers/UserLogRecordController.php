@@ -81,7 +81,7 @@ class UserLogRecordController extends Controller
                 return $status;
             })
             ->editColumn('user_type', function ($data) {
-                return  empty($data->user->tipeUser) ? "<i>Unknown</i>":@$data->user->tipeUser->nm_tipe_user;
+                return  empty(@$data->user->tipeUser) ? "<i>Unknown</i>":@$data->user->tipeUser->nm_tipe_user;
             })
             ->editColumn('datetime_log', function ($data) {                    
                 return date('d/M/Y : H:m',strtotime($data->datetime_log));
