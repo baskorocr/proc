@@ -126,7 +126,7 @@ class AuthController extends Controller
         }else {
             return response()->json([
                 'type' => 'error',
-                'response' => $validator->errors()->first(),
+                //'response' => $validator->errors()->first(),
                 'message' => "Please check username or password!",
             ], 200);
 

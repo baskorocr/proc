@@ -34,8 +34,9 @@ class DeliveryScheduleController extends Controller
         // Storage::disk('mf_directory')->put('file.txt', 'Contents');
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_MI_MFPDF_".date("d-m-Y").".zip";
+        $zipnm = md5($request->ip().time().$fileName);
         // try{
-             if ($zip->open(storage_path('temp_zip/MI-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
+             if ($zip->open(storage_path('temp_zip/MI-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             
             {
 
@@ -44,18 +45,31 @@ class DeliveryScheduleController extends Controller
                       // dd($filenm);
                     // dd(scandir("D:/MI_TEST/MI/"));
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = Storage::disk('mf_directory')->path("/").$filenm[0];
+                    $file = Storage::disk('mf_directory')->path("").$filenm[0];
+                    $file_qas = Storage::disk('mf_qas_directory')->path("").$filenm[0];
                     $relativeName = basename($file);
-                    // dd($filenm[0])
-                    $zip->addFile($file, $filenm[0]);
+                    // dd(file_get_contents( $file));
+                    if(file_exists($file))
+                    {
+                        $zip->addFile($file, $filenm[0]);
+                    } else{
+                         $zip->addFile($file_qas, $filenm[0]);
+                    }
 
-                    $file = Storage::disk('mf_kanban_directory')->path("/").$filenm[1];
+                    $file = Storage::disk('mf_kanban_directory')->path("").$filenm[1];
+                    $file_qas = Storage::disk('mf_qas_kanban_directory')->path("").$filenm[1];
                     $relativeName = basename($file);
-                    $zip->addFile($file, $filenm[1]);
+
+                    if(file_exists($file))
+                    {
+                        $zip->addFile($file, $filenm[1]);
+                    } else{
+                         $zip->addFile($file_qas, $filenm[1]);
+                    }
                 }
                 $zip->close();
 
-                  return response()->download(storage_path('temp_zip/MI-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
+                  return response()->download(storage_path('temp_zip/MI-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         // } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         // {
@@ -70,8 +84,9 @@ class DeliveryScheduleController extends Controller
 
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_SO_MFPDF_".date("d-m-Y").".zip";
+        $zipnm = md5($request->ip().time().$fileName);
         try{
-             if ($zip->open(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
+             if ($zip->open(storage_path('temp_zip/SO-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             
             {
                 
@@ -79,18 +94,31 @@ class DeliveryScheduleController extends Controller
                     $filenm = explode("#", $k);
                       // dd($filenm);
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = Storage::disk('so_directory')->path("/").$filenm[0];
+                    $file = Storage::disk('so_directory')->path("").$filenm[0];
+                    $file_qas = Storage::disk('so_qas_directory')->path("").$filenm[0];
                     $relativeName = basename($file);
                     // dd($filenm[0])
-                    $zip->addFile($file, $filenm[0]);
+                    if(file_exists($file))
+                    {
+                        $zip->addFile($file, $filenm[0]);
+                    } else{
+                         $zip->addFile($file_qas, $filenm[0]);
+                    }
 
-                    $file = Storage::disk('so_kanban_directory')->path("/").$filenm[1];
+                    $file = Storage::disk('so_kanban_directory')->path("").$filenm[1];
+                    $file_qas = Storage::disk('so_qas_kanban_directory')->path("").$filenm[1];
                     $relativeName = basename($file);
+                    if(file_exists($file))
+                    {
+                        $zip->addFile($file, $filenm[1]);
+                    } else{
+                         $zip->addFile($file_qas, $filenm[1]);
+                    }
                     $zip->addFile($file, $filenm[1]);
                 }
                 $zip->close();
 
-                  return response()->download(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
+                  return response()->download(storage_path('temp_zip/SO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         {
