@@ -424,10 +424,16 @@ class PurchasingProcessController extends Controller
                     $filenm = $k;
                       // dd($filenm);
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $content[] =\File::get(Storage::disk('po_directory')->path("/").$filenm);
-                    $file = Storage::disk('po_directory')->path("/").$filenm;
+                    // $content[] =\File::get(Storage::disk('po_directory')->path("/").$filenm);
+                    $file = Storage::disk('po_directory')->path("").$filenm;
+                    $file_qas = Storage::disk('po_qas_directory')->path("").$filenm;
                     $relativeName = basename($file);
+                    if(file_exists($file))
+                    {
                       $zip->addFile($file, $filenm);
+                    } else{
+                      $zip->addFile($file_qas, $filenm);
+                    }
                 }
                 $zip->close();
                 // dd( $content);
