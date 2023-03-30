@@ -13,4 +13,11 @@ class ReportIsoDocController extends Controller
         
         return view('doc_iso.master-notify.report-iso', $data);
     }
+
+    public function view(Request $request)
+    {
+        $data['regis'] = RegisIsoDoc::with('vendor')->get();
+        
+        return view('doc_iso.master-notify.report-iso', $data);
+    }
 }

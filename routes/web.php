@@ -30,6 +30,8 @@ Route::prefix('doc-iso')->group(function(){
     //ISO DOC Register
     Route::get('/register-iso', [App\Http\Controllers\RegisIsoDocController::class, 'index'])->name('doc-iso.register-iso');
     Route::post('/register-iso', [App\Http\Controllers\RegisIsoDocController::class, 'store'])->name('doc-iso.register-iso.store');
+
+    Route::get('/view-doc-iso/{id}', [App\Http\Controllers\RegisIsoDocController::class, 'show'])->name('doc-iso.view');
    
     Route::get('/master-notify/report-iso', function () {
         return view('doc_iso.master-notify.report-iso');
@@ -39,6 +41,7 @@ Route::prefix('doc-iso')->group(function(){
      Route::get('/report-iso', [App\Http\Controllers\ReportIsoDocController::class, 'index'])->name('doc-iso.report-iso');
      
 });
+
 
 Route::prefix('regis-user')->group(function(){
 

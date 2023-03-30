@@ -23,12 +23,10 @@ class RegisIsoDocController extends Controller
 
     public function show(Request $request, $id)
     {
-        $regis_iso_doc = RegisIsoDoc::findOrFail($id);
+        $data['iso'] = RegisIsoDoc::findOrFail($id);
+         $data['notify'] = MasterNotify::get();
 
-        return response()->json([
-            'type' => 'success',
-            'data' =>  $regis_iso_doc
-        ]);
+        return view('doc_iso.master-notify.view-iso', $data);
     }
 
     public function store(Request $request)
