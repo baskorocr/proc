@@ -18,10 +18,10 @@
             <table>
                 <tr>
                     <th id="table" >
-                    <div style="background-color:#5cb85c; width:220px; height:150px" class="card info-card revenue-card">
+                    <div style="background-color:#5cb85c; width:20vw; height:150px" class="card info-card revenue-card">
                       <div class="card-body">
                         <h5 style="color:white" class="card-title">Valid Document</h5>
-                          <div class="ps-3">
+                          <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                             <h6 style="color:white">{{ $regis->where('stat', 'v')->count() }}</h6>
                           </div>
                         </div>
@@ -35,11 +35,11 @@
             <table>
             <tr> 
               <th id="table" >
-                  <div style="background-color:Orange; width:220px; height:150px"  class="card info-card sales-card">
+                  <div style="background-color:Orange; width:20vw; height:150px"  class="card info-card sales-card">
                     <div class="card-body">
                       <h5 style ="color:white"class="card-title">Renewed Document</h5>
                       <div class="d-flex align-items-center">
-                        <div class="ps-3">
+                        <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                         <h6 style="color:white">{{ $regis->where('stat', 'n')->count() }}</h6>
                         </div>
                       </div>
@@ -53,10 +53,10 @@
             <table>
             <tr> 
               <th id="table" >
-                    <div style="background-color:Salmon; width:220px; height:150px"class="card info-card revenue-card">
+                    <div style="background-color:Salmon; width:20vw; height:150px"class="card info-card revenue-card">
                       <div class="card-body">
                         <h5 style="color:white"class="card-title">Expired Document</h5>
-                          <div class="ps-3">
+                          <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                           <h6 style="color:white">{{ $regis->where('stat', 'e')->count() }}</h6>
                           </div>
                         </div>
@@ -70,11 +70,11 @@
             <table>
             <tr> 
                <th id="table" >
-                  <div style="background-color:MediumBlue; width:220px; height:150px "class="card info-card sales-card">
+                  <div style="background-color:MediumBlue; width:20vw; height:150px "class="card info-card sales-card">
                       <div class="card-body">
                         <h5 style="color:white" class="card-title">Total Document</h5>
                         <div class="d-flex align-items-center">
-                          <div class="ps-3">
+                          <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                           <h6 style="color:white">{{ $regis->count() }}</h6>
                           </div>
                         </div>
@@ -85,46 +85,112 @@
             </table>
             </div>
           </div>
-
-        <table  class="table table-striped datatables" style="width:100%">
+        <div class="table-responsive">
+       <table  class="table table-striped table-bordered datatables"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
                   <thead>
                     <tr>
-                      <th style="font-size:12px" >Vendor Code</th>
-                      <th style="font-size:12px">Vendor Name</th>
-                      <th style="font-size:12px">Material Supply</th>
-                      <th style="font-size:12px">Simplikasi</th>
-                      <th style="font-size:12px">ISO Cert Num</th>
-                      <th style="font-size:12px">Expire Date</th>
-                      <th style="font-size:12px">Expire Status</th>
-                      <th style="font-size:12px">Doc Process</th>
+                    {{-- <th style="min-width: 100px;">Action</th> --}}
+                        <th style="min-width: 100px;">Vendor Code</th>
+                        <th style="min-width: 100px;">Vendor Name</th>
+                        <th style="min-width: 100px;">Material Supply</th>
+                        <th style="min-width: 30px;">Simplikasi</th>
+                        <th style="min-width: 100px;">ISO Cert Num</th>
+                        <th style="min-width: 100px;" >ISO Cert Date</th>
+                        <th style="min-width: 100px;" >Certified</th>
+                        <th style="min-width: 100px;" >ISO Type</th>
+                        <th style="min-width: 100px;" >Expire Date</th>
+                        <th style="min-width: 100px;" >Expired Status</th>
+                        <th style="min-width: 100px;" >Doc Process</th>
+                        <th style="min-width: 30px;" >File</th>
+                        <th style="min-width: 100px;" >Last change</th>
+                        <th style="min-width: 100px;" >Entry Date</th>
+                        <th style="min-width: 100px;" >Remark</th>
+                        <th style="min-width: 100px;" >Doc Number</th>
+                        <th style="min-width: 100px;" >Ref Number</th>
                     </tr>
-                  </thead>
+                  </thead>   
                   <tbody>
                     @foreach($regis as $item)
-                     <?php 
-                    // dd($item);
-                    $date = explode("/",$item->exp_date); 
-                    $d = @$date[0];
-                    $m = strlen(@$date[1]) == 1 ? "0".@$date[1]:@$date[1];
-                    $y= @$date[2];
-
-                    $date_full = $y."-".$m.'-'.$d;
+                    <?php 
+                 
+                    $date_full = $item->exp_date;
 
                     ?>
                       <tr>
-                        <td>{{ @$item->id_vendor }}</td>
+                      {{--   <td>
+                         <div class="dropdown">
+                            <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                              Choose
+                            </a>
+
+  
+
+
+ 
+                            <ul class="dropdown-menu">
+                              <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
+                              <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
+                              <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
+                              <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
+                              <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
+                            </ul>
+                          </div>
+                          </td> --}}
+                           <?php if ($item->simply == "X") {
+                              $simplify = '<center><i class="fa fa-check"></i></center>';
+                            }else{
+                              $simplify = '';
+                            }
+                            $count = count(IsoHelper::get_transaction_type_id($item->trn_type));
+                            $trans = IsoHelper::get_transaction_type_id_first($item->trn_type);
+                             if ($count == 1) {
+                                $color = 'badge bg-'.$trans->color;
+                                $doc_proccess = '<span class="'.$color.'">'.@$trans->trn_name.'</span>';
+                            } else {
+                                $doc_proccess = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
+                            }
+
+                            ?>
+                        <td>{{ @$item->vendor->id_vendor }} </td>
                         <td>{{ @$item->vendor->nm_vendor }}</td>
                         <td>{{ $item->mat_supply }}</td>
-                        <td>{{ $item->simply ? 'Ya' : 'Tidak' }}</td>
+                        <td>{!! $simplify !!}</td>
                         <td>{{ $item->cert_num }}</td>
-                        <td>{{ date('d-m-Y', strtotime($date_full)) }}</td>
-                        <td>{{ strtotime($date_full) < strtotime(date('Y-m-d')) ? 'Expired' : 'Aktif' }}</td>
-                        <td>doc proces</td>
+                        <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
+                        <td>{{ $item->cert_name}}</td>
+                        <td>{{$item->iso_type_name}}</td>
+                        <td>{{date('d-m-Y', strtotime($date_full))}}</td>
+                        <td>{!! strtotime($date_full) < strtotime(date('Y-m-d')) ? '<span class="badge bg-danger">Expired</span>' : '<span class="badge bg-success">Valid</span>' !!}</td>
+                        <td>{!!$doc_proccess!!} </td>
+                        <td><a href="{{asset('files/regis_iso/'.$item->doc_path)}}" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
+                                <i class="fa fa-file"></i>
+                            </a></td>
+                        
+                        <td>{{date('Y-m-d H:i:s',strtotime($item->ch_date))}}</td>
+                        <td>{{date('Y-m-d H:i:s',strtotime($item->cr_date))}}</td>
+                        <td>{{$item->remark}}</td>
+                        <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
+                         <?php
+                            if ( $item->ref_doc == '0000000000') {
+                                echo "<td></td>";
+                            }  else {
+                            ?>
+                                <td>
+                                    <a href="{{route('doc-iso.view',['id' => $item->_id])}}" 
+                                        target="_blank">
+                                        <?php echo $item->ref_doc."-".$item->ref_doc_year ?>
+                                    </a> 
+                                </td>
+                        <?php    
+                            }
+
+                        ?>   
                       </tr>
                     @endforeach
                   </tbody>    
                 </table>
 
+             </div>
              </div>
     </section>
 

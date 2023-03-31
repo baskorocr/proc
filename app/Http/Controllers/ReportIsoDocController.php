@@ -9,7 +9,12 @@ class ReportIsoDocController extends Controller
 {
     public function index(Request $request)
     {
-        $data['regis'] = RegisIsoDoc::with('vendor')->get();
+        if(auth()->user()->role == 'vendor'){
+            $data['regis'] = RegisIsoDoc::with('vendor')->where('del_indicator','!=','X')->where('id_vendor',auth()->user()->foreign_id)->get();
+        } else{
+            $data['regis'] = RegisIsoDoc::with('vendor')->where('del_indicator','!=','X')->get();
+        }
+        
         
         return view('doc_iso.master-notify.report-iso', $data);
     }
@@ -19,5 +24,7 @@ class ReportIsoDocController extends Controller
         $data['regis'] = RegisIsoDoc::with('vendor')->get();
         
         return view('doc_iso.master-notify.report-iso', $data);
-    }
+    } 
+
+    
 }

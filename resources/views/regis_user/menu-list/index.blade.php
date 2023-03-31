@@ -27,17 +27,17 @@
 							</div>
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="menu-list">
+								<table  class="table table-bordered table-stripped " id="menu-list">
 									<thead>
-										<th><i class="fa fa-list"></i></th>
-										<th>Menu Name</th>
-										<th>Menu Object</th>
-										<th>Object Path</th>
-										<th>Last Changed by</th>
-										<th>Last Changed Date</th>
-										<th>Status</th>
-										<th>Assigned</th>
-										<th>Action</th>
+										<th style="width: 10px;"><i class="fa fa-list"></i></th>
+										<th style="width: 120px;">Menu Name</th>
+										<th style="width: 120px;">Menu Object</th>
+										<th style="width: 120px;">Object Path</th>
+										<th style="width: 220px;">Last Changed by</th>
+										<th style="width: 220px;">Last Changed Date</th>
+										<th style="width: 120px;">Status</th>
+										<th style="width: 120px;">Assigned</th>
+										<th style="width: 220px;">Action</th>
 									</thead>
 									<tbody>
 										

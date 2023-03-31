@@ -31,7 +31,14 @@ Route::prefix('doc-iso')->group(function(){
     Route::get('/register-iso', [App\Http\Controllers\RegisIsoDocController::class, 'index'])->name('doc-iso.register-iso');
     Route::post('/register-iso', [App\Http\Controllers\RegisIsoDocController::class, 'store'])->name('doc-iso.register-iso.store');
 
+    Route::get('/renew-doc-iso/{id}', [App\Http\Controllers\RegisIsoDocController::class, 'renew'])->name('doc-iso.renew');
+    Route::get('/change-doc-iso/{id}', [App\Http\Controllers\RegisIsoDocController::class, 'change'])->name('doc-iso.change');
+    Route::post('/change-doc-iso/change', [App\Http\Controllers\RegisIsoDocController::class, 'change_act'])->name('doc-iso.change_iso');
+    Route::post('/renew-doc-iso/renew', [App\Http\Controllers\RegisIsoDocController::class, 'renewal'])->name('doc-iso.renewal');
     Route::get('/view-doc-iso/{id}', [App\Http\Controllers\RegisIsoDocController::class, 'show'])->name('doc-iso.view');
+    Route::get('/appproval-iso/{id}', [App\Http\Controllers\RegisIsoDocController::class, 'approve'])->name('approve-iso');
+    Route::get('/delete-iso', [App\Http\Controllers\RegisIsoDocController::class, 'delete_act'])->name('delete-iso');
+    Route::post('/appproval-iso/approve', [App\Http\Controllers\RegisIsoDocController::class, 'approval_iso'])->name('doc-iso.approval_iso');
    
     Route::get('/master-notify/report-iso', function () {
         return view('doc_iso.master-notify.report-iso');
