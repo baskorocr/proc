@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"Form Input Page")
+@section('title',"Change ISO Document")
 @section('content')
  <?php
     $count = count(IsoHelper::get_transaction_type_id($iso->trn_type));
@@ -25,7 +25,7 @@
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-          <li class="breadcrumb-item active">Change ISO</li>
+          <li class="breadcrumb-item active">Change ISO Document</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->

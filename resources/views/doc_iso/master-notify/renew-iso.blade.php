@@ -1,13 +1,13 @@
 @extends('layouts.main')
-@section('title',"Form Input Page")
+@section('title',"Renew ISO Document")
 @section('content')
 <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Register ISO Document</h1>
+      <h1>Renew ISO Document</h1>
       <nav>
         <ol class="breadcrumb">
           <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
-          <li class="breadcrumb-item active">Register ISO</li>
+          <li class="breadcrumb-item active">Renew ISO</li>
         </ol>
       </nav>
     </div><!-- End Page Title -->
