@@ -41,7 +41,7 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
   
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="/dashboard" class="logo d-flex align-items-center">
         <img src="{{ URL::asset('assets/template/img/logo1.png') }}" alt="">
         <span class="d-none d-lg-block">eProcurement</span>
       </a>
@@ -112,9 +112,9 @@
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
-    <div class="copyright">
+   {{--  <div class="copyright">
       &copy; Development By <strong><span>Kelola Bisnis Indonesia</span></strong>.
-    </div>
+    </div> --}}
   </footer><!-- End Footer -->
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
