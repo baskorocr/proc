@@ -30,11 +30,16 @@ class User extends Authenticable
 
     public function roles()
     {
-        return $this->belongsTo('App\Models\Role');
+        return $this->belongsTo(Role::class, 'role_id', '_id');
     }
 
     public function vendor()
     {
         return $this->belongsTo(Vendor::class,'foreign_id','id_vendor');
+    }
+
+    public function tipeUser()
+    {
+        return $this->belongsTo(TypeUser::class,'id_tipe_user','id_tipe_user');
     }
 }

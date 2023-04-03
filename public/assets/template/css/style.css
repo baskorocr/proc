@@ -4,7 +4,8 @@
 * Author: BootstrapMade.com
 * License: https://bootstrapmade.com/license/
 */
-
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,300italic,400italic,600italic);
+@import url(http://fonts.googleapis.com/css?family=Kaushan+Script);
 /*--------------------------------------------------------------
 # General
 --------------------------------------------------------------*/
@@ -13,7 +14,7 @@
 }
 
 body {
-  font-family: "Open Sans", sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   background: #f6f9ff;
   color: #444444;
 }
@@ -626,7 +627,7 @@ h6 {
   scrollbar-width: thin;
   scrollbar-color: #aab7cf transparent;
   box-shadow: 0px 0px 20px rgba(1, 41, 112, 0.1);
-  background-color: #fff;
+  background-color: #333;
 }
 
 @media (max-width: 1199px) {
@@ -700,9 +701,9 @@ h6 {
   align-items: center;
   font-size: 15px;
   font-weight: 600;
-  color: #4154f1;
+  color: #FFF;
   transition: 0.3;
-  background: #f6f9ff;
+  background: #333;
   padding: 10px 15px;
   border-radius: 4px;
 }
@@ -710,25 +711,25 @@ h6 {
 .sidebar-nav .nav-link i {
   font-size: 16px;
   margin-right: 10px;
-  color: #4154f1;
+  color: #FFF;
 }
 
 .sidebar-nav .nav-link.collapsed {
-  color: #012970;
-  background: #fff;
+  color: #FFF;
+  background: #333;
 }
 
 .sidebar-nav .nav-link.collapsed i {
-  color: #899bbd;
+  color: #FFF;
 }
 
 .sidebar-nav .nav-link:hover {
-  color: #4154f1;
-  background: #f6f9ff;
+  color: #FFF;
+  background: #222;
 }
 
 .sidebar-nav .nav-link:hover i {
-  color: #4154f1;
+  color: #FFF;
 }
 
 .sidebar-nav .nav-link .bi-chevron-down {
@@ -751,7 +752,7 @@ h6 {
   align-items: center;
   font-size: 14px;
   font-weight: 600;
-  color: #012970;
+  color: #FFF;
   transition: 0.3;
   padding: 10px 0 10px 40px;
   transition: 0.3s;
@@ -766,11 +767,11 @@ h6 {
 
 .sidebar-nav .nav-content a:hover,
 .sidebar-nav .nav-content a.active {
-  color: #4154f1;
+  color: #959697;
 }
 
 .sidebar-nav .nav-content a.active i {
-  background-color: #4154f1;
+  background-color: #222;
 }
 
 /*--------------------------------------------------------------

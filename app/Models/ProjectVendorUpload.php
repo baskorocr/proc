@@ -28,12 +28,12 @@ class ProjectVendorUpload extends Model
 
     public function part()
     {
-        return $this->belongsTo(Part::class,'id_product','id_product');
+        return $this->belongsTo(Part::class,'id_part','id_part');
     }
 
     public function parts()
     {
-        return $this->hasMany(Part::class,'id_product','id_product');
+        return $this->hasMany(Part::class,'id_part','id_part');
     }
 
     public function project()

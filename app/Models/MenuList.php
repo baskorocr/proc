@@ -15,9 +15,18 @@ class MenuList extends Model
 	
 	protected $collection = 'menu_list';
 	
-	protected $primaryKey = 'id_menu';
+	// protected $primaryKey = 'id_menu';
+
+	protected $fillable = ['menu_name','menu_object','object_path','last_changed_by','last_changed'];
+
+	public $dates = ['last_changed'];
+
 	
 	//optional, already set in config::database
-	protected $connection = 'mongodb';
+	//protected $connection = 'mongodb';
 	
+	public function users()
+    {
+        return $this->belongsTo(User::class,'last_changed_by','id_user');
+    }
 }

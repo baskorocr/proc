@@ -18,7 +18,7 @@
 					<div class="card ">
 						<div class="card-body">
 							<div class="table-responsive mt-3">
-								 <table id="example2" class="table table-bordered table-striped">                      
+								 <table id="vendor_monitoring" class="table table-bordered table-striped">                      
         
 									        <thead>
 									            <tr>
@@ -250,7 +250,7 @@
 		});
 	
 		$(document).ready(function(){
-		window.table = $('#tb-proj').DataTable({
+		window.table = $('#vendor_monitoring').DataTable({
 					});
 		});
 		

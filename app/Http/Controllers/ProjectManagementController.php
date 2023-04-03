@@ -38,7 +38,9 @@ class ProjectManagementController extends Controller
 
     public function viewDocVendor(Request $request)
     {
-        $prj = ProjectVendorAssign::where('id_vendor',auth()->user()->vendor->id_vendor)->get();
+        // if(!empty(auth()->user()->vendor))
+        $id_vendor = empty(auth()->user()->vendor)? "":auth()->user()->vendor->id_vendor;
+        $prj = ProjectVendorAssign::where('id_vendor',$id_vendor)->get();
         $ret = ['project' => $prj];
          if(!empty($request->id_project))
         {
@@ -54,7 +56,7 @@ class ProjectManagementController extends Controller
         $ret = ['project' => $prj];
          if(!empty($request->id_project))
         {
-            $vendor = Vendor::get();
+            $vendor = ProjectVendorUpload::where('id_project',$request->id_project)->whereNotNull('id_vendor')->get();
             $ret['vendor'] =$vendor;
             $ret['id_project'] =$request->id_project;
         }
@@ -77,7 +79,9 @@ class ProjectManagementController extends Controller
 
     public function dashboardMonProject(Request $request)
     {
-       $prj = ProjectVendorAssign::groupBy('id_project','id_vendor')->get();
+       $prj = Project::get();
+       // $prj = ProjectVendorAssign::groupBy('id_project','id_vendor')->get();
+       // dd($prj);
        $ret['project'] = $prj;
         return view('project_management/project_monitoring/index')->with($ret);
     }  
@@ -147,7 +151,7 @@ class ProjectManagementController extends Controller
                     $num_rows = count($query_executes);
 
                     if ($num_rows == 0) {
-                        echo"xx"; 
+                        // echo"xx"; 
                         PM::insert_proj_vendor_upload($id_project, $id_product, $id_part, $id_doc_part, "", "", "", "", "", "", $id_vendor);
                     } //if ($num_row == 0)
 
@@ -215,7 +219,8 @@ class ProjectManagementController extends Controller
 
     public function uplReqDoc(Request $request)
     {
-        $prj = ProjectVendorAssign::where('id_vendor',auth()->user()->vendor->id_vendor)->get();
+        $id_vendor = empty(auth()->user()->vendor)? "":auth()->user()->vendor->id_vendor;
+        $prj = ProjectVendorAssign::where('id_vendor',$id_vendor)->get();
         
         $ret = ['project' => $prj];
        if(!empty($request->id_project)){
@@ -248,6 +253,11 @@ class ProjectManagementController extends Controller
    
     public function uploadDocAct(Request $request)
     {
+
+        if(!is_array($request->doc))
+        {
+              return redirect()->back()->with(['message_fail' => 'Please Select file before upload']);
+        }
         $id_project_new     = $request->id_project;
         $dest_path          = "DATA/$id_project_new";
         $id_product_new     = $request->id_product;
@@ -1183,7 +1193,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                                return date('d.m.y',strtotime($data->modify_date));
+                                return date('d.m.Y',strtotime($data->modify_date));
                             })
                 
                
@@ -1240,7 +1250,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                                return date('d.m.y',strtotime($data->modify_date));
+                                return date('d.m.Y',strtotime($data->modify_date));
                             })
                 
                
@@ -1308,7 +1318,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
 
                 ->editColumn('number', function ($data) {
@@ -1351,7 +1361,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
 
                 ->editColumn('number', function ($data) {
@@ -1389,7 +1399,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
                 ->editColumn('action', function ($data) {
                                 
@@ -1422,7 +1432,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
                 ->editColumn('doc_type', function ($data) {
                              if ($data->doc_type == "V") {
@@ -1478,7 +1488,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
                 ->editColumn('action', function ($data) {
                                 
@@ -1515,7 +1525,7 @@ class ProjectManagementController extends Controller
                             })
                 ->editColumn('last_change_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             })
 
                 ->editColumn('number', function ($data) {
@@ -1541,7 +1551,7 @@ class ProjectManagementController extends Controller
                             })  
                 ->editColumn('modify_date', function ($data) {
                                 
-                               return date('d.m.y',strtotime($data->modify_date));
+                               return date('d.m.Y',strtotime($data->modify_date));
                             }) 
                 ->editColumn('prod_assc', function ($data) {
                             if ($data->assigned == 'Y'){

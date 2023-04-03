@@ -26,14 +26,12 @@
   <link href="{{ URL::asset('assets/template/vendor/remixicon/remixicon.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/simple-datatables/style.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.css') }}" rel="stylesheet">
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.1/sweetalert2.css" integrity="sha512-JzSVRb7c802/njMbV97pjo1wuJAE/6v9CvthGTDxiaZij/TFpPQmQPTcdXyUVucsvLtJBT6YwRb5LhVxX3pQHQ==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-
-<style>
-
-</style>
   <!-- Template Main CSS File -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="{{ URL::asset('assets/template/css/style.css') }}" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body>
@@ -49,12 +47,12 @@
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-    <div class="search-bar">
+{{--     <div class="search-bar">
       <form class="search-form d-flex align-items-center" method="POST" action="#">
         <input type="text" name="query" placeholder="Search" title="Enter search keyword">
         <button type="submit" title="Search"><i class="bi bi-search"></i></button>
       </form>
-    </div><!-- End Search Bar -->
+    </div><!-- End Search Bar --> --}}
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -68,13 +66,13 @@
         
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
             <img src="{{ URL::asset('assets/template/img/profile-img.jpg') }}" alt="Profile" class="rounded-circle">
-            <span class="d-none d-md-block dropdown-toggle ps-2">{{auth()->user()->nm_user}}</span>
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{Session::get('nm_user')}}</span>
           </a><!-- End Profile Iamge Icon -->
 
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
-              <h6>{{auth()->user()->username}}</h6>
-              <span>{{auth()->user()->role}}</span>
+              <h6>{{Session::get('nm_user')}}</h6>
+              <span>{{Session::get('role')}}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
@@ -91,15 +89,10 @@
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="{{route('logout')}}" onclick="event.preventDefault();
-                     document.getElementById('logout-form').submit();">
-            
+              <a class="dropdown-item d-flex align-items-center" href="{{ url('/logout') }}">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Sign Out</span>
               </a>
-                <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
-                            @csrf
-                          </form>
             </li>
 
           </ul><!-- End Profile Dropdown Items -->
@@ -110,7 +103,8 @@
 
   </header><!-- End Header -->
 
-  @include('menu.side-menu')
+  <!-- ======= Sidebar ======= -->
+  	@include('menu.side-menu')
 
   @yield('content')
   
@@ -125,6 +119,8 @@
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
   <!-- Vendor JS Files -->
+
+
   <script src="{{ URL::asset('assets/template/vendor/apexcharts/apexcharts.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/chart.js/chart.umd.js') }}"></script>
@@ -133,20 +129,18 @@
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/simple-datatables.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/tinymce/tinymce.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/php-email-form/validate.js') }}"></script>
-  <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.1/sweetalert2.min.js" integrity="sha512-vCI1Ba/Ob39YYPiWruLs4uHSA3QzxgHBcJNfFMRMJr832nT/2FBrwmMGQMwlD6Z/rAIIwZFX8vJJWDj7odXMaw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- Additional -->
   <script src="{{ URL::asset('assets/template/js/jquery-3.5.1.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/jquery.dataTables.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
   <!-- Template Main JS File -->
-   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
-  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="{{ URL::asset('assets/template/js/main.js') }}"></script>
-@yield('javascript')
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
   <script>
   $(document).ready(function () {
     $('.datatables').DataTable();
@@ -194,9 +188,10 @@
   });
 
   </script>
-</body>
 
-@if(Session::has('message_success'))
+ 
+  </script>
+  @if(!empty( session('message_success')))
 <script type="text/javascript">
       $(function() {
         const Toast = Swal.mixin({
@@ -207,12 +202,12 @@
     });
      Toast.fire({
             icon: 'success',
-            title: " {{Session::get('message_success')}}"
+            title: " {{session('message_success')}}"
           })
     });
     </script>
 @endif
-@if(Session::has('message_fail'))
+ @if(!empty( session('message_fail')))
 <script type="text/javascript">
       $(function() {
         const Toast = Swal.mixin({
@@ -223,9 +218,29 @@
     });
      Toast.fire({
             icon: 'error',
-            title: " {{Session::get('message_fail')}}"
+            title: " {{session('message_fail')}}"
           })
     });
     </script>
 @endif
+@if(!empty( session('message_warning')))
+<script type="text/javascript">
+      $(function() {
+        const Toast = Swal.mixin({
+      toast: true,
+      position: 'center',
+      showConfirmButton: false,
+      timer: 3000
+    });
+     Toast.fire({
+            icon: 'warning',
+            title: " {{session('message_warning')}}"
+          })
+    });
+    </script>
+@endif
+
+  @yield('javascript')
+</body>
+
 </html>
