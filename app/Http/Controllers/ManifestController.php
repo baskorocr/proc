@@ -14,16 +14,15 @@ class ManifestController extends Controller
 {
     public function manifestHeader(Request $request)
     {   
-        $manifest = ManifestHeader::where('manifest', $request->manifest)->first();
+        $manifest = ManifestHeader::with('manifestDetails')->where('manifest', $request->manifest)->first();
         $isExists = !empty($manifest) ? true : false ;
-        $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
-
+        
         if (!empty($manifest)) {
+            $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
             return response()->json([
                 'type' => 'success',
                 'isExists' => $isExists,
                 'message' => 'Success',
-                //'data' => $manifest,
                 'data' => [
                     "_id" => $manifest->_id,
                     "manifest" => $manifest->manifest,
@@ -54,7 +53,8 @@ class ManifestController extends Controller
                     "sales_person" => $vendor->sales_person,
                     "phone_2" => $vendor->phone_2,
                     "vend_email" => $vendor->vend_email,
-                    "status_vendor" => $vendor->status_vendor
+                    "status_vendor" => $vendor->status_vendor,
+                    "details" => $manifest->manifestDetails
                 ]
             ], 200);
     
@@ -68,13 +68,13 @@ class ManifestController extends Controller
         }
     }
 
-    public function manifestDetail(Request $request, $kanban)
+    public function manifestDetail(Request $request, $manifest)
     {
-        $manifest_detail = ManifestDetail::where('kanban', $kanban)->first();
+        $manifest_detail = ManifestDetail::where('manifest', $manifest)->get();
 
         return response()->json([
             'type' => 'success',
-            'data' =>  $manifest_detail
+            'data' => $manifest_detail
         ]);
     }
 
@@ -135,6 +135,32 @@ class ManifestController extends Controller
             'message' => 'Data Manifest Closed Successfully',
             'data' =>  $manifest,
         ]);
+    }
+
+    public function checkKanban(Request $request)
+    {   
+        $manifest = ManifestDetail::where('manifest', $request->manifest)->where('kanban', $request->kanban)->first();
+        
+        $isExists = !empty($manifest) ? true : false ;
+
+        if (!empty($manifest)) {
+            return response()->json([
+                'type' => 'success',
+                'isExists' => $isExists,
+                'data' => $manifest
+            ]);
+    
+        } else {
+            return response()->json([
+            'message' => 'Kanban Not Found',
+            'isExists' => $isExists,
+            'errors' => [
+                'kanban' => [
+                    'Kanban not found!'
+                ]
+            ]
+            ], 422);
+        }
     }
 
 }
