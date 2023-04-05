@@ -211,4 +211,49 @@ class ManifestController extends Controller
         }
     }
 
+    public function outstanding(Request $request)
+    {
+        $skip = $request->perpage * ($request->page - 1);
+        $manifest = ManifestHeader::has('manifestDetails')->where(function($where) use ($request){
+                        if(!empty($request->keyword)){
+                            $where->where('manifest', 'like', '%'.$request->keyword.'%');
+                        }
+                    })
+                    ->when(!empty($request->sort), function($query) use ($request){
+                        $query->orderBy($request->sort, $request->order == 'ascend' ? 'asc' : 'desc');
+                    })
+                    ->take((int)$request->perpage)
+                    ->skip((int)$skip)
+                    ->get()
+                    ->map(function($data){
+
+                        $sum_qty_scan = $data->manifestDetails->sum('qty_pack');
+                        $sum_qty_gr = $data->manifestDetails->sum('qty_in');
+                        $total = $sum_qty_scan - $sum_qty_gr;
+                        $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
+
+                        return [
+                            'manifest' => $data->manifest,
+                            'qty_sgt' => "[$sum_qty_scan][$sum_qty_gr][$total]",
+                            'delivery_date' => $data->delivery_date,
+                            'po_number' => $data->po_num,
+                            'vendor_id' => $data->id_vendor,
+                            'vendor_name' => $vendor->nm_vendor
+                        ];
+                    });
+
+        $total = ManifestHeader::where(function($where) use ($request){
+            if(!empty($request->keyword)){
+                $where->where('manifest', 'like', '%'.$request->keyword.'%');
+            }
+        })
+        ->count();
+
+        return response()->json([
+            'type' => 'success',
+            'data' => $manifest,
+            'total' => $total
+        ], 200);
+    }
+
 }

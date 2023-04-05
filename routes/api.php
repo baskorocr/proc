@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('check', 'UserController@check');
 Route::get('check-pin', 'UserController@checkPin');
+Route::get('/outstanding', 'ManifestController@outstanding');
 Route::get('manifest', 'ManifestController@manifestHeader');
 Route::get('manifest/{manifest}', 'ManifestController@manifestDetail');
 Route::get('check-kanban', 'ManifestController@checkKanban');
