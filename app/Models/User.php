@@ -18,7 +18,7 @@ class User extends Authenticable
         'api_token'
     ];
 
-    protected $fillable = ['role'];
+    // protected $fillable = ['role',''];
 
     //protected $appends = ['photo_url'];
     

@@ -22,14 +22,16 @@
 								<i class="bi bi-list"></i></a>
 								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
 									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
-									<li><a href="{{route('api.regis-user.create.user')}}"><i class="fas fa-plus-square"></i> Create User</a></li>
+									<li><a class="dropdown-item"  href="{{route('api.regis-user.create.user')}}"><i class="fas fa-plus-square"></i> Create User</a></li>
+									<li><a class="dropdown-item"  href="{{route('api.regis-user.create.usrvendor')}}"><i class="fas fa-plus-square"></i> Create Vendor User</a></li>
+									<li><a class="dropdown-item"  href="{{route('api.regis-user.upload.user')}}"><i class="fas fa-upload"></i> Upload Email Vendor</a></li>
 								</ul>
 							</div>
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="master-user">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
-										<th>ID User</th>
+										{{-- <th>ID User</th> --}}
 										<th>Nama User</th>
 										<th>Tipe User</th>
 										<th>Login Username</th>
@@ -70,9 +72,9 @@
           {
 			data: 'DT_RowIndex', name: 'DT_RowIndex'
           },
-          {
-            data: 'id_user', name: 'id_user'
-          },
+          // {
+          //   data: 'id_user', name: 'id_user'
+          // },
           {
             data: 'nm_user', name: 'nm_user'
           },

@@ -48,7 +48,7 @@
               </div>
               <div class="form-group">
                 <label><b>Vendor</b></label>
-                <h6><?php echo $iso->id_vendor." - ".$iso->vendor->nm_vendor; ?></h6>
+                <input type="text" class="form-control" disabled value="<?php echo $iso->id_vendor." - ".$iso->vendor->nm_vendor; ?>">
               </div>
               <?php
               if(session('role') != 'vendor')
@@ -56,7 +56,8 @@
               ?>
               <div class="form-group">
                 <label><b>Material Supply</b></label>
-                <h6><?php echo $iso->mat_supply; ?></h6>
+                  <input type="text" class="form-control" disabled value="<?php echo $iso->mat_supply; ?>">
+              
               </div>
               <div class="checkbox">
                <label>
@@ -68,34 +69,37 @@
               ?>
               <div class="form-group">
                 <label><b>Certified</b></label>
-                <h6>
-                 <?php echo $iso->cert_name; ?>
-               </h6>
+                <input type="text" class="form-control" disabled value="<?php echo $iso->cert_name; ?>">
+               
               </div>
               <div class="form-group">
                 <label><b>ISO Type</b></label>
+                 <input type="text" class="form-control" disabled value=" <?php echo $iso->iso_type_name; ?>">
                  <h6>
-                 <?php echo $iso->iso_type_name; ?>
+                
                </h6>
                
               </div>
               <div class="form-group">
                 <label for="exampleInputEmail1"><b>ISO Certified Number</b></label>
+                 <input type="text" class="form-control" disabled value=" <?php echo $iso->cert_num; ?>">
                   <h6>
-                 <?php echo $iso->cert_num; ?>
+                
                </h6>
               </div>
               <div class="form-group">
                 <label><b>ISO Certified Date</b></label>
+                 <input type="text" class="form-control" disabled value="<?php echo date('d/m/Y',strtotime($iso->cert_date)); ?>">
                    <h6>
-                   <?php echo date('d/m/Y',strtotime($iso->cert_date)); ?>
+                   
                  </h6>
                   </div><!-- /.form group -->
                   
                   <div class="form-group">
                     <label><b>ISO Expired Date</b></label>
+                     <input type="text" class="form-control" disabled value="<?php echo date('d/m/Y',strtotime($iso->exp_date)); ?>">
                       <h6>
-                     <?php echo date('d/m/Y',strtotime($iso->exp_date)); ?>
+                     
                    </h6>
                 </div>
                 <div class="form-group">
@@ -111,9 +115,18 @@
                   <tbody>
                     @foreach($notify as $item)
                     <tr>
+                      <?php 
+                       if ($item->uom == "M"){
+                                        $measure = "Months";
+                                    } elseif($item->uom == "D"){
+                                        $measure = "Days";
+                                    } elseif($item->uom  == "Y"){
+                                        $measure = "Year";
+                                    }
+                            ?>
                       <td style="font-size:12px">{{ $item->notif_id }}</td>
                       <td style="font-size:12px">{{ $item->notif_seq }}</td>
-                      <td style="font-size:12px">{{ $item->notif_before }}</td>
+                      <td style="font-size:12px">{{ $item->notif_before }} {{$measure}}</td>
                     </tr> 
                     @endforeach
                   </tbody>

@@ -18,12 +18,13 @@
             <table>
                 <tr>
                     <th id="table" >
-                    <div style="background-color:#5cb85c; width:20vw; height:150px" class="card info-card revenue-card">
+                    <div style="background-color:#5cb85c;  height:150px" class="card info-card revenue-card">
                       <div class="card-body">
                         <h5 style="color:white" class="card-title">Valid Document</h5>
                           <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                             <h6 style="color:white">{{ $regis->where('stat', 'v')->count() }}</h6>
                           </div>
+                           <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                         </div>
                       </div>
                     </div>
@@ -35,14 +36,18 @@
             <table>
             <tr> 
               <th id="table" >
-                  <div style="background-color:Orange; width:20vw; height:150px"  class="card info-card sales-card">
+                  <div style="background-color:Orange;  height:150px"  class="card info-card sales-card">
                     <div class="card-body">
                       <h5 style ="color:white"class="card-title">Renewed Document</h5>
                       <div class="d-flex align-items-center">
                         <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                         <h6 style="color:white">{{ $regis->where('stat', 'n')->count() }}</h6>
+
                         </div>
+
                       </div>
+                 
+                       <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                     </div>
                   </div>
               </th>
@@ -53,12 +58,13 @@
             <table>
             <tr> 
               <th id="table" >
-                    <div style="background-color:Salmon; width:20vw; height:150px"class="card info-card revenue-card">
+                    <div style="background-color:Salmon;  height:150px"class="card info-card revenue-card">
                       <div class="card-body">
                         <h5 style="color:white"class="card-title">Expired Document</h5>
                           <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                           <h6 style="color:white">{{ $regis->where('stat', 'e')->count() }}</h6>
                           </div>
+                           <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                         </div>
                       </div>
                     </div>
@@ -70,14 +76,16 @@
             <table>
             <tr> 
                <th id="table" >
-                  <div style="background-color:MediumBlue; width:20vw; height:150px "class="card info-card sales-card">
+                  <div style="background-color:MediumBlue;  height:150px "class="card info-card sales-card">
                       <div class="card-body">
                         <h5 style="color:white" class="card-title">Total Document</h5>
                         <div class="d-flex align-items-center">
                           <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                           <h6 style="color:white">{{ $regis->count() }}</h6>
                           </div>
+                          
                         </div>
+                         <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                       </div>
                     </div>
                 </th>
@@ -95,18 +103,18 @@
                         <th style="min-width: 100px;">Material Supply</th>
                         <th style="min-width: 30px;">Simplikasi</th>
                         <th style="min-width: 100px;">ISO Cert Num</th>
-                        <th style="min-width: 100px;" >ISO Cert Date</th>
+                       {{--  <th style="min-width: 100px;" >ISO Cert Date</th>
                         <th style="min-width: 100px;" >Certified</th>
-                        <th style="min-width: 100px;" >ISO Type</th>
+                        <th style="min-width: 100px;" >ISO Type</th> --}}
                         <th style="min-width: 100px;" >Expire Date</th>
                         <th style="min-width: 100px;" >Expired Status</th>
                         <th style="min-width: 100px;" >Doc Process</th>
-                        <th style="min-width: 30px;" >File</th>
+                       {{--  <th style="min-width: 30px;" >File</th>
                         <th style="min-width: 100px;" >Last change</th>
                         <th style="min-width: 100px;" >Entry Date</th>
                         <th style="min-width: 100px;" >Remark</th>
                         <th style="min-width: 100px;" >Doc Number</th>
-                        <th style="min-width: 100px;" >Ref Number</th>
+                        <th style="min-width: 100px;" >Ref Number</th> --}}
                     </tr>
                   </thead>   
                   <tbody>
@@ -156,16 +164,16 @@
                         <td>{{ $item->mat_supply }}</td>
                         <td>{!! $simplify !!}</td>
                         <td>{{ $item->cert_num }}</td>
-                        <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
+                     {{--    <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
                         <td>{{ $item->cert_name}}</td>
-                        <td>{{$item->iso_type_name}}</td>
+                        <td>{{$item->iso_type_name}}</td> --}}
                         <td>{{date('d-m-Y', strtotime($date_full))}}</td>
                         <td>{!! strtotime($date_full) < strtotime(date('Y-m-d')) ? '<span class="badge bg-danger">Expired</span>' : '<span class="badge bg-success">Valid</span>' !!}</td>
                         <td>{!!$doc_proccess!!} </td>
-                        <td><a href="{{asset('files/regis_iso/'.$item->doc_path)}}" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
+                       {{--  <td><a href="{{asset('files/regis_iso/'.$item->doc_path)}}" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
                                 <i class="fa fa-file"></i>
-                            </a></td>
-                        
+                            </a></td> --}}
+                        {{-- 
                         <td>{{date('Y-m-d H:i:s',strtotime($item->ch_date))}}</td>
                         <td>{{date('Y-m-d H:i:s',strtotime($item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
@@ -184,7 +192,7 @@
                         <?php    
                             }
 
-                        ?>   
+                        ?>    --}}
                       </tr>
                     @endforeach
                   </tbody>    

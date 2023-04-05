@@ -97,9 +97,18 @@
                   <tbody>
                     @foreach($notify as $item)
                     <tr>
+                       <?php 
+                       if ($item->uom == "M"){
+                                        $measure = "Months";
+                                    } elseif($item->uom == "D"){
+                                        $measure = "Days";
+                                    } elseif($item->uom  == "Y"){
+                                        $measure = "Year";
+                                    }
+                            ?>
                       <td style="font-size:12px">{{ $item->notif_id }}</td>
                       <td style="font-size:12px">{{ $item->notif_seq }}</td>
-                      <td style="font-size:12px">{{ $item->notif_before }}</td>
+                      <td style="font-size:12px">{{ $item->notif_before }} {{$measure}}</td>
                     </tr> 
                     @endforeach
                   </tbody>

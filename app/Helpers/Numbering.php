@@ -6,26 +6,32 @@ class Numbering {
 
 	public static function generateAuto($model,$kolom, $lebar, $ambil, $start, $id_data)
 	{
-		$hasil = $model->select($kolom)->orderBy($kolom,"DESC")->first();
-		$jumlahRecord = $model->select($kolom)->orderBy($kolom)->count();
+		
+        $hasil = $model->select($kolom)->orderBy($kolom,"DESC")->first();
+        $jumlahRecord = $model->select($kolom)->orderBy($kolom)->count();
+        
+        if($jumlahRecord == 0)
+        {
+            $nomor = $start;
+        }
+        else{
+            $row=$hasil;
+            $nomor=intval(substr($row->{$kolom},$ambil))+1;
+        }
 
-		if($jumlahRecord == 0)
-		{
-			$nomor = $start;
-		}
-		else{
-			$row=$hasil;
-        	$nomor=intval(substr($row->{$kolom},$ambil))+1;
-		}
-
-		if($lebar>0)
-		{
-			$angka = $id_data.str_pad($nomor,$lebar,"0",STR_PAD_LEFT);
-		} else{
-			$angka = substr($nomor);
-		}
-
-		return $angka;
+        if($lebar>0)
+        {
+            $angka = $id_data.str_pad($nomor,$lebar,"0",STR_PAD_LEFT);
+        } else{
+            $angka = substr($nomor);
+        }
+        $cek = $model->where($kolom,$angka)->count();
+        if($cek > 0)
+        {
+            return self::generateAuto($model,$kolom, $lebar, $ambil, $start, $id_data);
+        } else{
+            return $angka;
+        }
 	}
 
 	public static function autoIncrement($model,$kolom)
