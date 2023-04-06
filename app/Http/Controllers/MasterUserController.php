@@ -6,6 +6,10 @@ use Illuminate\Http\Request;
 use App\Models\MasterUser;
 use App\Models\AccessGroup;
 use App\Models\Role;
+use App\Models\Vendor;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\TypeUser;
+use App\Imports\ImportVendorEmail;
 
 class MasterUserController extends Controller
 {
@@ -14,8 +18,9 @@ class MasterUserController extends Controller
     {
         $data = MasterUser::findOrFail($id);
         $accessgrp = AccessGroup::get();
+        $vendor= Vendor::where('status_vendor','A')->get();
         $roles = Role::get();
-        return view('regis_user/master-user/edit')->with(['user' => $data,'accessgrp'=>$accessgrp,'roles'=>$roles]);
+        return view('regis_user/master-user/edit')->with(['user' => $data,'accessgrp'=>$accessgrp,'roles'=>$roles,'vendor' =>  $vendor]);
     }   
 
     public function create()
@@ -23,7 +28,17 @@ class MasterUserController extends Controller
     
         $accessgrp = AccessGroup::get();
         $roles = Role::get();
-        return view('regis_user/master-user/create')->with(['accessgrp'=>$accessgrp,'roles'=>$roles]);
+        $type = TypeUser::get();
+        return view('regis_user/master-user/create')->with(['accessgrp'=>$accessgrp,'roles'=>$roles,'type' => $type]);
+    }  
+
+     public function createVendor()
+    {
+    
+        $accessgrp = AccessGroup::get();
+        $roles = Role::get();
+        $vendor= Vendor::where('status_vendor','A')->get();
+        return view('regis_user/master-user/createVendor')->with(['accessgrp'=>$accessgrp,'roles'=>$roles,'vendor' =>  $vendor]);
     } 
 
 
@@ -119,8 +134,9 @@ class MasterUserController extends Controller
 
     public function getMasterUser()
     {
-        $data = MasterUser::all();
-        return view('regis_user/master-user/index')->with(['user' => $data]);
+        $data['user'] = MasterUser::all();
+        $data['vendor'] = Vendor::where('status_vendor','A')->get();
+        return view('regis_user/master-user/index')->with($data);
     }
 
     public function getDataMasterUser()
@@ -138,6 +154,10 @@ class MasterUserController extends Controller
             })
             ->editColumn('cr_by', function ($data) {
                 return @$data->users->nm_user;
+            }) 
+
+            ->editColumn('id_tipe_user', function ($data) {
+                return @$data->tipeUser->nm_tipe_user;
             })
             ->editColumn('username', function ($data) {
                 return $data->username."<br><small><i>".(empty($data->vendor->name) ? "-":$data->vendor->name)."</i></small>";
@@ -213,17 +233,58 @@ class MasterUserController extends Controller
     public function store(Request $request){
         $master_user = new MasterUser;
         $role = Role::where('_id',$request->role)->first();
-        $master_user->id_user = $request->id_user;
+        $master_user->id_user = \Numbering::generateAuto(new \App\Models\MasterUser(),"id_user", 5, 1, 1, "");
         $master_user->nm_user = $request->nm_user;
         $master_user->id_tipe_user = $request->id_tipe_user;
         $master_user->status_user = $request->status_user;
         $master_user->username = $request->username;
+        $master_user->password = bcrypt($request->password);
         $master_user->role = $role->name;
         $master_user->role_id = $request->role;
-        $master_user->created_by = auth()->user()->full_name;
+        $master_user->created_by = auth()->user()->id_user;
         $master_user->save();
 
         return redirect()->route('regis-user.master-user')->with(['message_success' => 'Berhasil mendaftarkan user.']);
+    } 
+
+    public function storeVendor(Request $request){
+        if(md5($request->password) != md5($request->password_confirmation))
+        {
+            return redirect()->back()->with(['message_fail' => 'Password Confirmation not match.']);
+        }
+        $master_user = new MasterUser;
+        // $role = Role::where('_id',$request->role)->first();
+        $master_user->id_user = \Numbering::generateAuto(new \App\Models\MasterUser(),"id_user", 5, 1, 1, "");
+        $master_user->nm_user = $request->nm_user;
+        $master_user->id_tipe_user = "04";
+        $master_user->status_user = $request->status_user;
+        $master_user->username = $request->username;
+        $master_user->password = bcrypt($request->password);
+        $master_user->foreign_id = $request->id_vendor;
+        $master_user->role = "vendor";
+        $master_user->role_id = $request->role;
+        $master_user->created_by = auth()->user()->id_user;
+        $master_user->save();
+
+        return redirect()->route('regis-user.master-user')->with(['message_success' => 'Berhasil mendaftarkan user vendor.']);
+    }
+
+    public function updateVendor(Request $request){
+      
+        $master_user = MasterUser::find($request->id);
+        // $role = Role::where('_id',$request->role)->first();
+        $master_user->id_user = \Numbering::generateAuto(new \App\Models\MasterUser(),"id_user", 5, 1, 1, "");
+        $master_user->nm_user = $request->nm_user;
+        $master_user->id_tipe_user = "04";
+        $master_user->status_user = $request->status_user;
+        $master_user->username = $request->username;
+        $master_user->foreign_id = $request->id_vendor;
+        $master_user->role = "vendor";
+        $master_user->role_id = $request->role;
+        $master_user->created_by = auth()->user()->id_user;
+        $master_user->save();
+
+        return redirect()->route('regis-user.master-user')->with(['message_success' => 'Berhasil mengubah data user vendor.']);
     }
 
     public function show($id){
@@ -232,7 +293,29 @@ class MasterUserController extends Controller
             'type' => 'success',
             'data' => $master_user
         ], 200);
+    }  
+
+    public function upload(Request $request){
+      
+
+             return view('regis_user/master-user/upload');
     }
+
+     public function uploadEmail(Request $request)
+     {
+       $file = $request->file('file');
+        config(['excel.import.startRow' => 2]);
+        try{
+             Excel::import(new ImportVendorEmail, $file);
+             return redirect()->back()->with(['message_success' => 'Berhasil import excel']);
+        } catch(\Exception $e)
+        {   
+            dd($e);
+             return redirect()->back()->with(['message_fail' => 'Format Excel tidak sesuai']);
+        }
+    }
+
+ 
 
     public function updateUser(Request $request){
         
@@ -243,7 +326,7 @@ class MasterUserController extends Controller
         {
             return redirect()->route('regis-user.master-user')->with(['message_fail' => 'Role Tidak Ditemukan.']);
         }
-        $master_user->id_user = $request->id_user;
+        // $master_user->id_user = Numbering::generateAuto(new \App\Models\MasterVendor(),"id_vendor", 5, 5, 1, "");
         $master_user->nm_user = $request->nm_user;
         $master_user->id_tipe_user = $request->id_tipe_user;
         $master_user->status_user = $request->status_user;

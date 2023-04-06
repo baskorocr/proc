@@ -1,6 +1,8 @@
 @extends('layouts.main')
 @section('title',"List PO")
 @section('content')
+
+    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <main id="main" class="main">
   <div class="pagetitle">
     <h1>List PO</h1>
@@ -38,10 +40,10 @@
                   <div class="row">
                     <div class="col-md-6">
                       from
-                      <input type="date" name="date_from" id="date_from" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
+                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
                     </div>
                     <div class="col-md-6"> to
-                      <input type="date" name="date_to" id="date_to" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
+                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
                     </div>
                     
                     <div class="col-12">
@@ -147,6 +149,8 @@
     </main>
     @endsection
     @section('javascript')
+     {{-- <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> --}}
+    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
     <script>
      function addVendor()
      {
@@ -155,7 +159,14 @@
       textarea.value += document.getElementById('select_vendor').value+'\n'
      }
 
-
+ $('#date_from').datepicker({
+            uiLibrary: 'bootstrap5',
+             format: 'yyyy-mm-dd'
+        });
+ $('#date_to').datepicker({
+            uiLibrary: 'bootstrap5',
+            format: 'yyyy-mm-dd'
+        });
   
     //  $(document).ready(function(){
     //  window.table = $('#tb-list-po').DataTable({

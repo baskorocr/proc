@@ -197,7 +197,15 @@ class DeliveryScheduleController extends Controller
                return empty($data->vendors) ? "-":$data->vendors->nm_vendor;
             })
             ->addColumn('vendor_email', function ($data) {
-               return empty($data->vendors->user) ? "-":$data->vendors->user->username;
+       
+            if(empty($data->vendor->user->status_user))
+            {
+                $s = " <i class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s="";
+            }
+            
+               return empty($data->vendors->user) ? "-":$data->vendors->user->username." ".$s;
             })
 
             ->addColumn('download_check', function ($data) {
@@ -235,7 +243,7 @@ class DeliveryScheduleController extends Controller
                  return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             })
-            ->rawColumns(['download_check','mail_stat','downloaded','file_stat','active'])
+            ->rawColumns(['download_check','mail_stat','vendor_email','downloaded','file_stat','active'])
             ->make(true);
     }
 
@@ -304,7 +312,15 @@ class DeliveryScheduleController extends Controller
                return empty($data->vendors) ? "-":$data->vendors->nm_vendor;
             })
             ->addColumn('vendor_email', function ($data) {
-               return empty($data->vendors->user) ? "-":$data->vendors->user->username;
+       
+            if(empty($data->vendor->user->status_user))
+            {
+                $s = " <i class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s="";
+            }
+            
+               return empty($data->vendors->user) ? "-":$data->vendors->user->username." ".$s;
             })
 
             ->addColumn('download_check', function ($data) {
@@ -342,7 +358,7 @@ class DeliveryScheduleController extends Controller
                  return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             })
-            ->rawColumns(['download_check','mail_stat','downloaded','file_stat','active'])
+            ->rawColumns(['download_check','vendor_email','mail_stat','downloaded','file_stat','active'])
             ->make(true);
     }
 }

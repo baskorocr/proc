@@ -26,6 +26,7 @@
                       <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                         <h6 style="color:white">{{ $regis->where('trn_type', 'S')->count() }}</h6>
                       </div>
+                        <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                     </div>
                   </div>
                   </th>
@@ -43,6 +44,7 @@
                     <i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                     <h6 style="color:white">{{ $regis->where('trn_type', 'C')->count() }}</h6>
                   </div>
+                    <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                 </div>
               </div>
               </th>
@@ -60,6 +62,7 @@
                     <i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                     <h6 style ="color:white">{{ $regis->where('trn_type', 'U')->count() }}</h6>
                   </div>
+                    <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                 </div>
               </div>
               </th>
@@ -80,6 +83,7 @@
                           <h6 style="color:white">{{ $regis->where('trn_type', 'R')->count() }}</h6>
                         </div>
                       </div>
+                        <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                     </div>
                   </div>
                 </div>
@@ -98,6 +102,7 @@
                         <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                           <h6 style="color:white">{{ $regis->where('trn_type', 'I')->count() }}</h6>
                         </div>
+                          <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                       </div>
                     </div>
                   </div>
@@ -113,10 +118,11 @@
                 <div class="col-3">
                   <div style="background-color:MidnightBlue; width:153px;"class="card info-card revenue-card">
                     <div class="card-body">
-                      <h5 style="color:white"class="card-title">Total Document</h5>
+                      <h5 style="color:white"class="card-title">Total Document</h5><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
                         <div class="ps-3">
                           <h6 style ="color:white">{{ $regis->count() }}</h6>
                         </div>
+                          <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                       </div>
                     </div>
                   </div>
@@ -127,27 +133,27 @@
         </div>
     </section>
 <div class="table-responsive">
-        <table  class="table table-striped table-bordered datatables" style="width:100%">
+        <table id="iso"  class="table table-striped table-bordered display nowrap " style="width:100%">
                   <thead>
                     <tr>
-                    <th style="min-width: 100px;">Action</th>
-                        <th style="min-width: 100px;">Vendor Code</th>
-                        <th style="min-width: 100px;">Vendor Name</th>
-                        <th style="min-width: 100px;">Material Supply</th>
-                        <th style="min-width: 30px;">Simplikasi</th>
-                        <th style="min-width: 100px;">ISO Cert Num</th>
-                        <th style="min-width: 100px;" >ISO Cert Date</th>
-                        <th style="min-width: 100px;" >Certified</th>
-                        <th style="min-width: 100px;" >ISO Type</th>
-                        <th style="min-width: 100px;" >Expire Date</th>
-                        <th style="min-width: 100px;" >Expired Status</th>
-                        <th style="min-width: 100px;" >Doc Process</th>
-                        <th style="min-width: 30px;" >File</th>
-                        <th style="min-width: 100px;" >Last change</th>
-                        <th style="min-width: 100px;" >Entry Date</th>
-                        <th style="min-width: 100px;" >Remark</th>
-                        <th style="min-width: 100px;" >Doc Number</th>
-                        <th style="min-width: 100px;" >Ref Number</th>
+                    <th>Action</th>
+                        <th >Vendor Code</th>
+                        <th >Vendor Name</th>
+                        <th >Material Supply</th>
+                        <th>Simplikasi</th>
+                        <th >ISO Cert Num</th>
+                        <th  >ISO Cert Date</th>
+                        <th  >Certified</th>
+                        <th  >ISO Type</th>
+                        <th  >Expire Date</th>
+                        <th  >Expired Status</th>
+                        <th  >Doc Process</th>
+                        <th >File</th>
+                        <th  >Last change</th>
+                        <th  >Entry Date</th>
+                        <th  >Remark</th>
+                        <th  >Doc Number</th>
+                        <th  >Ref Number</th>
                     </tr>
                   </thead>   
                   <tbody>
@@ -239,4 +245,15 @@
 
   </main><!-- End #main -->
 @endsection
-
+@section('javascript')
+<script type="text/javascript">
+  $('#iso').DataTable({
+      responsive: true,
+      autoWidth:true,
+        columnDefs: [
+            { responsivePriority: 1, targets: 0 },
+            { responsivePriority: 10001, targets: 4 },
+            { responsivePriority: 2, targets: -2 }
+        ]})
+</script>
+@endsection

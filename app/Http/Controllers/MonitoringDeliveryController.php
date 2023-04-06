@@ -13,12 +13,12 @@ class MonitoringDeliveryController extends Controller
         return view('monitoring_delivery/index');
     }
     
-    public function detail_material($manifest)
+    public function detail_material($manifest = null)
     {
         return view('monitoring_delivery/detail_material')->with(['manifest' => $manifest]);
     }
 
-    public function detail_kanban($manifest)
+    public function detail_kanban($manifest = null)
     {
         return view('monitoring_delivery/detail_kanban')->with(['manifest' => $manifest]);
     }

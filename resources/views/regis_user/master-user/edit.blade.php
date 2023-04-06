@@ -3,11 +3,11 @@
 @section('content')
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Master User</h1>
+		<h1>Update User</h1>
 		<nav>
 			<ol class="breadcrumb">
 				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active">Edit Master User</li>
+				<li class="breadcrumb-item active">Update  User</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -16,7 +16,7 @@
 				<div class="col-lg-12">
 					<div class="card">
 						<div class="card-body">
-							<form role=form name="myForm" id="myForm"  action="{{route('regis-user.master-user.update.user')}}" method="post" enctype="multipart/form-data">
+							<form role=form name="myForm" id="myForm"  action="{{$user->role == "vendor" ? route("regis-user.master-user.update.uservendor"):route('regis-user.master-user.update.user')}}" method="post" enctype="multipart/form-data">
 								@csrf
 								<input type="hidden" name="id" value ="<?php echo $user->id; ?>">
 								<div class="box-body">
@@ -24,20 +24,30 @@
 									
 									<div class="form-group">
 										<label>ID User</label>
-										<input type="text" class="form-control" id="id_user" name="id_user" value="<?php echo $user->id_user; ?>" required>
+										<input type="text" class="form-control" disabled id="id_user" name="id_user" value="<?php echo $user->id_user; ?>" required>
 									</div>
-								
+									@if($user->role == "vendor")	
+									<div class="form-group">
+										<label>Select Vendor 	</label>
+										<select name="id_vendor" id="id_vendor" class="form-control">
+											@foreach($vendor as $v)
+												<option  value="{{$v->id_vendor}}" >{{$v->nm_vendor}}</option>
+											@endforeach
+										</select>
+									</div>
+									@endif
 									<div class="form-group">
 										<label>Name User </label>
 										<input type="text" class="form-control" id="nm_user" name="nm_user" value="<?php echo $user->nm_user ?>" placeholder="Name User" required>
 									</div>
-									
+									@if($user->role != "vendor")
 									<div class="form-group">
 										<label>Tipe User</label>
 										<input type="text" class="form-control" id="id_tipe_user" name="id_tipe_user" value="<?php echo $user->id_tipe_user; ?>" required>
 									</div>
+									@endif
 									<div class="form-group">
-										<label>Username For Login</label>
+										<label>Username For Login </label>
 										<input type="text" class="form-control" id="username" name="username" value="<?php echo $user->username; ?>" required>
 									</div>
 									<div class="form-group">
@@ -49,6 +59,7 @@
 										</select>
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
 									</div>
+									@if($user->role != "vendor")
 									<div class="form-group">
 										<label>Role</label>
 										<select name="role" class="form-control select">
@@ -58,6 +69,7 @@
 										</select>
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
 									</div>
+									@endif
 									<div class="form-group">
 										<label>Status User</label>
 										<select name="status_user" class="form-control select">
@@ -82,5 +94,11 @@
 		@section('javascript')
 			<script type="text/javascript">
 				$('.select').select2();
+				@if($user->role == "vendor")	
+				$(document).ready(function(){
+				$('#id_vendor').val('{{$user->foreign_id}}');
+
+				})
+				@endif
 			</script>
 		@endsection

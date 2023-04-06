@@ -17,14 +17,7 @@
 					<div class="card">
 						<div class="card-body">
 
-						<div class="filter mt-2 " align="right">
-								<a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-list"></i></a>
-								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
-									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
-									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-user-logrecord" href="#"><i class="fas fa-plus-square"></i>Create Number Range</a></li>
-								</ul>
-							</div>
+						
 
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-stripped table-sm" id="user-logrecord">

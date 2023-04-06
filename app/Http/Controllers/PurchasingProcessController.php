@@ -139,14 +139,26 @@ class PurchasingProcessController extends Controller
         ->editColumn('nm_vendor', function($data){
             return @$data->vendors->nm_vendor;
         })->editColumn('vend_email', function($data){
-            return @$data->vendors->vend_email;
+            if(!empty($data->vendors)){
+                $v = @$data->vendors->vend_email;
+            } else{
+                $v="";
+            }
+
+            if(empty($data->vendor->user->status_user))
+            {
+                $s = " <i class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s="";
+            }
+            return $v.($v!=""?$s:"");
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
         })
         // ->whereBetween('doc_date', [Carbon::parse($data->doc_date.' 00:00:00'), Carbon::parse($data->doc_date.' 23:59:59')])
         // ->where('id_vendor', $data->id_vendor)
-        ->rawColumns(['action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
+        ->rawColumns(['action','vend_email','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
                 // ->editColumn('last_change_by', function ($data) {
                                 
                 //                return @$data->users->nm_user;

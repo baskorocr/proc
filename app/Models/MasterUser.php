@@ -17,7 +17,7 @@ class MasterUser extends Model
 	
 	// protected $primaryKey = 'id_menu';
 
-	protected $fillable = ['id_user','nm_user','password','id_tipe_user','status_user','role'];
+	protected $fillable = ['id_user','nm_user','password','id_tipe_user','status_user','role','foreign_id'];
 
 	public $dates = ['last_changed'];
 
@@ -28,6 +28,11 @@ class MasterUser extends Model
 	  public function vendor()
     {
         return $this->belongsTo(Vendor::class,'foreign_id','id_vendor');
+    }
+
+    public function tipeUser()
+    {
+        return $this->belongsTo(TypeUser::class,'id_tipe_user','id_tipe_user');
     }
 
 }
