@@ -18,6 +18,17 @@ class ReportIsoDocController extends Controller
         
         return view('doc_iso.master-notify.report-iso', $data);
     }
+    public function stat_iso($stat)
+    {
+        if(auth()->user()->role == 'vendor'){
+            $data['regis'] = RegisIsoDoc::with('vendor')->where('trn_type',$stat)->where('del_indicator','!=','X')->where('id_vendor',auth()->user()->foreign_id)->get();
+        } else{
+            $data['regis'] = RegisIsoDoc::with('vendor')->where('trn_type',$stat)->where('del_indicator','!=','X')->get();
+        }
+        
+        
+        return view('doc_iso.master-notify.report-iso-stat', $data);
+    }
 
     public function view(Request $request)
     {

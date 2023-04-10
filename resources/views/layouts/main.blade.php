@@ -33,6 +33,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="{{ URL::asset('assets/template/css/style.css') }}" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+  .breadcrumb > li:first-of-type {
+   content: none;
+  }
+ /* .breadcrumb > li:before {
+   content: none;
+}*/
+</style>
 </head>
 
 <body>
@@ -133,6 +141,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.1/sweetalert2.min.js" integrity="sha512-vCI1Ba/Ob39YYPiWruLs4uHSA3QzxgHBcJNfFMRMJr832nT/2FBrwmMGQMwlD6Z/rAIIwZFX8vJJWDj7odXMaw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- Additional -->
   <script src="{{ URL::asset('assets/template/js/jquery-3.5.1.js') }}"></script>
+  <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/jquery.dataTables.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

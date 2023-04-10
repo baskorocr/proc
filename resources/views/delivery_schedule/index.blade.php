@@ -6,7 +6,7 @@
 		<h1>Download Manifest Order</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Download Schedule Manifest</a></li>
 			</ol>
 		</nav>
@@ -47,15 +47,15 @@
 						</form> --}}
 						{{-- @if(!empty(Request::get('start')) && !empty(Request::get('end'))) --}}
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="download-manifest">
+								<table  class="table table-bordered table-striped table-sm" id="download-manifest">
 									<thead>
 										<th style="min-width: 16px"><i class="fa fa-list"></i></th>
 										<th style="min-width: 106px">Manifest</th>
 										<th style="min-width: 106px">Delivery Date</th>
 										<th style="min-width: 106px">PO Number</th>
 										<th style="min-width: 106px">Vendor</th>
-										<th style="min-width: 106px">Vendor Name</th>
-										<th style="min-width: 106px">Email</th>
+										<th style="min-width: 215px">Vendor Name</th>
+										<th style="min-width: 215px">Email</th>
 										<th style="min-width: 16px"><i class="fa fa-envelope"></i></th>
 										<th style="min-width: 16px"><i class="fa fa-file"></i></th>
 										<th style="min-width: 16px"><i class="fa fa-download"></i></th>
@@ -71,7 +71,7 @@
 						</div>
 						{{-- @else
 						<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="download-manifest-dummy">
+								<table  class="table table-bordered table-striped table-sm" id="download-manifest-dummy">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Manifest</th>

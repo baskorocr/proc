@@ -12,7 +12,7 @@
 		<h1>Master Vendor</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Master Vendor</a></li>
 			</ol>
 		</nav>
@@ -33,7 +33,7 @@
 								
 							</div>
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-vendor">
+								<table  class="table table-bordered table-striped table-sm" id="master-vendor">
 									<thead>
 										<th style="min-width: 26px"><i class="fa fa-list"></i></th>
 										<th style="min-width: 100px">ID Vendor</th>

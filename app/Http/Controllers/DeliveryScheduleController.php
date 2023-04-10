@@ -30,6 +30,10 @@ class DeliveryScheduleController extends Controller
     }
     public function zipMF(Request $request)
     {
+        if(empty($request->download_doc))
+        {
+            return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
+        }
         // dd(\Storage::disk('mf_directory')->path("/"));
         // Storage::disk('mf_directory')->put('file.txt', 'Contents');
         $zip = new \ZipArchive();
@@ -81,7 +85,10 @@ class DeliveryScheduleController extends Controller
 
     public function zipMFSP(Request $request)
     {
-
+        if(empty($request->download_doc))
+        {
+            return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
+        }
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_SO_MFPDF_".date("d-m-Y").".zip";
         $zipnm = md5($request->ip().time().$fileName);

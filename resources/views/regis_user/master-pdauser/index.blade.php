@@ -6,7 +6,7 @@
 		<h1>PDA User Master</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">PDA User Master</a></li>
 			</ol>
 		</nav>
@@ -27,7 +27,7 @@
 							</div>
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-pdauser">
+								<table  class="table table-bordered table-striped table-sm" id="master-pdauser">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Doc User</th>

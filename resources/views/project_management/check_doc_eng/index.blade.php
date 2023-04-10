@@ -12,7 +12,7 @@ $completed_arr  = array();
 		<h1>Check Uploaded Document Project</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Check Uploaded Document Project</li>
 			</ol>
 		</nav>

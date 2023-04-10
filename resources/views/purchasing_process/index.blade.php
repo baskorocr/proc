@@ -8,7 +8,7 @@
     <h1>List PO</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li>
+        {{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li> --}}
         <li class="breadcrumb-item active">List PO</li>
       </ol>
     </nav>
@@ -94,14 +94,14 @@
             <div class="card">
               <div class="card-body">
                 <div class="table-responsive mt-3">
-                  <table  class="table table-bordered table-stripped table-sm" id="tb-list-po">
+                  <table  class="table table-bordered nowrap table-striped table-sm" id="tb-list-po">
                     <thead>
                 <th style="min-width: 106px" data-visible="true">PO Number</th>
                 <th style="min-width: 65px">Rev No</th>
                 <th style="min-width: 60px">Plant</th>
                 <th style="min-width:  60px">Vendor</th>
-                <th style="min-width: 156px">Vendor Name</th>
-                <th style="min-width: 106px">Vendor Mail</th>
+                <th style="min-width: 250px">Vendor Name</th>
+                <th style="min-width: 220">Vendor Mail</th>
                 <th style="min-width: 106px">Doc Date</th>
                 <th style="min-width:  30px">PGr</th>
                 <th style="min-width: 106px" title="without Tax">PO Amount</th>

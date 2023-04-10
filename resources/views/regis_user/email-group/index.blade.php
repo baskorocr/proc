@@ -6,7 +6,7 @@
 		<h1>Email Group</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Email Group</a></li>
 			</ol>
 		</nav>
@@ -17,7 +17,7 @@
 					<div class="card">
 						<div class="card-body">
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="email-group">
+								<table  class="table table-bordered table-striped table-sm" id="email-group">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Dept Code</th>

@@ -6,7 +6,7 @@
 		<h1>Create Vendor User</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				
 				<li class="breadcrumb-item active">Create  Vendor User </li>
 			</ol>
 		</nav>
