@@ -38,6 +38,7 @@ Route::prefix('doc-iso')->group(function(){
     Route::get('/view-doc-iso/{id}', [App\Http\Controllers\RegisIsoDocController::class, 'show'])->name('doc-iso.view');
     Route::get('/appproval-iso/{id}', [App\Http\Controllers\RegisIsoDocController::class, 'approve'])->name('approve-iso');
     Route::get('/delete-iso', [App\Http\Controllers\RegisIsoDocController::class, 'delete_act'])->name('delete-iso');
+    Route::get('/detail-iso-report/{stat}', [App\Http\Controllers\ReportIsoDocController::class, 'stat_iso'])->name('detail-iso-report');
     Route::post('/appproval-iso/approve', [App\Http\Controllers\RegisIsoDocController::class, 'approval_iso'])->name('doc-iso.approval_iso');
    
     Route::get('/master-notify/report-iso', function () {
@@ -106,10 +107,15 @@ Route::prefix('regis-user')->group(function(){
      //Master User
     Route::get('/master-user', [App\Http\Controllers\MasterUserController::class, 'getMasterUser'])->name('regis-user.master-user');
     Route::get('/master-user/add-user', [App\Http\Controllers\MasterUserController::class, 'create'])->name('api.regis-user.create.user');
+    Route::get('/master-user/add-user-vendor', [App\Http\Controllers\MasterUserController::class, 'createVendor'])->name('api.regis-user.create.usrvendor');
     Route::post('/master-user/store', [App\Http\Controllers\MasterUserController::class, 'store'])->name('api.regis-user.create.user.act');
+    Route::post('/master-user/store-vendor', [App\Http\Controllers\MasterUserController::class, 'storeVendor'])->name('api.regis-user.create.user.vendor.act');
    
+    Route::post('/master-user/update-vendor', [App\Http\Controllers\MasterUserController::class, 'updateVendor'])->name('regis-user.master-user.update.uservendor');
     Route::post('/master-user/update', [App\Http\Controllers\MasterUserController::class, 'updateUser'])->name('regis-user.master-user.update.user');
     Route::get('/master-user/edit/{id}', [App\Http\Controllers\MasterUserController::class, 'editUser'])->name('regis-user.master-user.edit.user');
+    Route::get('/master-user/upload-email-vendor', [App\Http\Controllers\MasterUserController::class, 'upload'])->name('api.regis-user.upload.user');
+    Route::post('/master-user/upload-email-vendor-start', [App\Http\Controllers\MasterUserController::class, 'uploadEmail'])->name('api.regis-user.upload.emailuser');
     Route::get('/master-user/reset/{id}', [App\Http\Controllers\MasterUserController::class, 'reset'])->name('regis-user.master-user.reset');
     Route::get('/master-user/delete/{id}', [App\Http\Controllers\MasterUserController::class, 'deleteUser'])->name('regis-user.master-user.delete.user');
     //Datatables
@@ -195,8 +201,8 @@ Route::group(['middleware' => ['auth']], function () {
     // Monitoring Delivery Routes
     Route::prefix('monitoring-delivery')->group(function(){
         Route::get('/', [App\Http\Controllers\MonitoringDeliveryController::class, 'index'])->name('monitoring.delivery');
-        Route::get('/detail/materials/{manifest}',[App\Http\Controllers\MonitoringDeliveryController::class, 'detail_material'])->name('monitoring.delivery.detail.material');
-        Route::get('/detail/kanbans/{manifest}',[App\Http\Controllers\MonitoringDeliveryController::class, 'detail_kanban'])->name('monitoring.delivery.detail.kanban');
+        Route::get('/detail/materials/{manifest?}',[App\Http\Controllers\MonitoringDeliveryController::class, 'detail_material'])->name('monitoring.delivery.detail.material');
+        Route::get('/detail/kanbans/{manifest?}',[App\Http\Controllers\MonitoringDeliveryController::class, 'detail_kanban'])->name('monitoring.delivery.detail.kanban');
         //Datatables
         Route::get('/get-data',[App\Http\Controllers\MonitoringDeliveryController::class, 'getDelivery'])->name('api.monitoring.delivery.datatables');
         Route::get('/detail/material',[App\Http\Controllers\MonitoringDeliveryController::class, 'getMaterialDetail'])->name('api.monitoring.delivery.detail.datatables');
