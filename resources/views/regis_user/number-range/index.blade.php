@@ -50,7 +50,7 @@
 			</div>
 		</section>
 	</main>
-	
+	@include('regis_user.number-range.modals')
 	@endsection
 	@section('javascript')
     <script>
@@ -82,9 +82,9 @@
           {
             data: 'current_num', name: 'current_num'
           },
-		  {
-			data: 'last_changed_by', name: 'last_changed_by'
-		  },
+				  {
+						data: 'last_changed_by', name: 'last_changed_by'
+				  },
 		  {
 			data: 'last_changed', name: 'last_changed'
 		  },

@@ -24,9 +24,9 @@
                       <div class="card-body">
                         <h5 style="color:white" class="card-title">Valid Document</h5>
                           <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                            <h6 style="color:white">{{ $regis->where('stat', 'v')->count() }}</h6>
+                            <h6 style="color:white">{{ $regis->where('stat', 'V')->count() }}</h6>
                           </div>
-                           <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
+                           <a href="{{route('detail-iso-dashboard',['stat' => 'V'])}}" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                         </div>
                       </div>
                     </div>
@@ -43,13 +43,13 @@
                       <h5 style ="color:white"class="card-title">Renewed Document</h5>
                       <div class="d-flex align-items-center">
                         <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                        <h6 style="color:white">{{ $regis->where('stat', 'n')->count() }}</h6>
+                        <h6 style="color:white">{{ $regis->where('stat', 'N')->count() }}</h6>
 
                         </div>
 
                       </div>
                  
-                       <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
+                       <a href="{{route('detail-iso-dashboard',['stat' => 'N'])}}" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                     </div>
                   </div>
               </th>
@@ -64,9 +64,9 @@
                       <div class="card-body">
                         <h5 style="color:white"class="card-title">Expired Document</h5>
                           <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                          <h6 style="color:white">{{ $regis->where('stat', 'e')->count() }}</h6>
+                          <h6 style="color:white">{{ $regis->where('stat', 'E')->count() }}</h6>
                           </div>
-                           <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
+                           <a href="{{route('detail-iso-dashboard',['stat' => 'E'])}}" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                         </div>
                       </div>
                     </div>
@@ -87,7 +87,7 @@
                           </div>
                           
                         </div>
-                         <a href="" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
+                         <a href="#" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
                       </div>
                     </div>
                 </th>
