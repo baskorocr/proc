@@ -22,7 +22,8 @@ class UserLogRecordController extends Controller
 
     public function getDataUserLogRecord()
     {
-        $data = UserLogRecord::get();
+        set_time_limit(800);
+        $data = UserLogRecord::orderBy('datetime_log','DESC')->limit(11235)->get();
 
         return \DataTables::of($data)
             ->editColumn('uom', function ($data) {
