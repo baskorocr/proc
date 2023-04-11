@@ -6,7 +6,7 @@
 		<h1>Assign Document Check List Parameter</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Assign Document Check List Parameter</li>
 			</ol>
 		</nav>

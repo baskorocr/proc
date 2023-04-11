@@ -6,7 +6,7 @@
 		<h1>Part for Product</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item">Product Master</li>
 				<li class="breadcrumb-item active">Part for Product</li>
 			</ol>
@@ -40,7 +40,7 @@
 
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-prod-assign">
+								<table  class="table table-bordered table-striped table-sm" id="tb-prod-assign">
 									<thead>
 										<th>#</th>
 										<th>ID Product</th>

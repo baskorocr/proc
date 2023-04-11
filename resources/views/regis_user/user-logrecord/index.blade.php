@@ -6,7 +6,7 @@
 		<h1>User Log Record</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">User Log Record</a></li>
 			</ol>
 		</nav>
@@ -20,7 +20,7 @@
 						
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="user-logrecord">
+								<table  class="table table-bordered table-striped table-sm" id="user-logrecord">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Username</th>

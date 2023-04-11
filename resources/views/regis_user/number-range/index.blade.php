@@ -6,7 +6,7 @@
 		<h1>Number Range</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Number Range</a></li>
 			</ol>
 		</nav>
@@ -27,7 +27,7 @@
 							</div>
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="number-range">
+								<table  class="table table-bordered table-striped table-sm" id="number-range">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Doc Type</th>

@@ -6,7 +6,7 @@
 		<h1>Part Master</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item">Part Master</li>
 			</ol>
 		</nav>
@@ -31,7 +31,7 @@
 
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-part-master">
+								<table  class="table table-bordered table-striped table-sm" id="tb-part-master">
 									<thead>
 										<th>#</th>
 										<th>Part Number</th>

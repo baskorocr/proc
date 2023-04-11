@@ -24,7 +24,7 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
     <h1>Approval ISO Document</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+        {{-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> --}}
         <li class="breadcrumb-item active">Change ISO</li>
       </ol>
     </nav>

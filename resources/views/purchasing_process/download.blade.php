@@ -7,7 +7,7 @@
 		<h1>Download List PO</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li> --}}
 				<li class="breadcrumb-item active">Download List PO</li>
 			</ol>
 		</nav>
@@ -107,7 +107,7 @@
 							</div> -->
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-download-list-po">
+								<table  class="table table-bordered table-striped nowrap table-sm" id="tb-download-list-po">
 									<thead>
                     <th>
                       <i class="fa fa-list"></i>

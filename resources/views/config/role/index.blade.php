@@ -28,7 +28,7 @@
                                 </div>
                             </div>
                             <div class="table-responsive mt-3">
-                                <table  class="table table-bordered table-stripped " id="detail-permission">
+                                <table  class="table table-bordered table-striped " id="detail-permission">
                                     <thead>
                                         <th>Role</th>
                                         <th>Description</th>

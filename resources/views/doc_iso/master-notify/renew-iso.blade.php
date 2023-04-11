@@ -6,7 +6,7 @@
       <h1>Renew ISO Document</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+          {{-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> --}}
           <li class="breadcrumb-item active">Renew ISO</li>
         </ol>
       </nav>
@@ -96,10 +96,19 @@
                   </thead>
                   <tbody>
                     @foreach($notify as $item)
-                    <tr>
+                     <tr>
+                       <?php 
+                       if ($item->uom == "M"){
+                                        $measure = "Months";
+                                    } elseif($item->uom == "D"){
+                                        $measure = "Days";
+                                    } elseif($item->uom  == "Y"){
+                                        $measure = "Year";
+                                    }
+                            ?>
                       <td style="font-size:12px">{{ $item->notif_id }}</td>
                       <td style="font-size:12px">{{ $item->notif_seq }}</td>
-                      <td style="font-size:12px">{{ $item->notif_before }}</td>
+                      <td style="font-size:12px">{{ $item->notif_before }} {{$measure}}</td>
                     </tr> 
                     @endforeach
                   </tbody>

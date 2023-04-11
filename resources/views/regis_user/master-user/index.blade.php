@@ -6,7 +6,7 @@
 		<h1>Master User</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Master User</a></li>
 			</ol>
 		</nav>
@@ -28,7 +28,7 @@
 								</ul>
 							</div>
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-user">
+								<table  class="table table-bordered table-striped table-sm" id="master-user">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										{{-- <th>ID User</th> --}}

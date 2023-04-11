@@ -1,10 +1,10 @@
 @extends('layouts.main')
-@section('title',"Form Input Page")
+@section('title',"Report ISO")
 @section('content')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
 <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Document ISO Report</h1>
+      <h1>Document ISO Report </h1>
       <nav>
         <ol class="breadcrumb">
           {{-- <li class="breadcrumb-item"><a href="index.html">DOC ISO</a></li> --}}
@@ -13,126 +13,6 @@
       </nav>
     </div>
 
-    <section class="section dashboard">
-      <div class="row">
-        <div class="flex-parent jc-center">
-          <div style="float:left"; >
-
-             <table>
-                <tr>
-                  <th id="table" >
-                  <div style="background-color:MediumBlue; width:153px"  class="card info-card sales-card">
-                    <div class="card-body">
-                      <h5 style="color:white" class="card-title">Submitted Document </h5>
-                      <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                        <h6 style="color:white">{{ $regis->where('trn_type', 'S')->count() }}</h6>
-                      </div>
-                        <a href="{{route('detail-iso-report',['stat' => 'S'])}}" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                  </div>
-                  </th>
-                </tr>
-            </table>
-          </div>
-        <div style="float:left; margin-left:10px;" >
-          <table>
-            <tr> 
-              <th id="table" >
-              <div style="background-color:Salmon; width:153px"   class="card info-card sales-card">
-                <div class="card-body">
-                  <h5 style ="color:white"class="card-title">Rejected Document</h5>
-                  <div class="ps-3">
-                    <i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                    <h6 style="color:white">{{ $regis->where('trn_type', 'C')->count() }}</h6>
-                  </div>
-                    <a href="{{route('detail-iso-report',['stat' => 'C'])}}" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
-                </div>
-              </div>
-              </th>
-            </tr>
-          </table>
-        </div>
-        <div style="float:left; margin-left:10px" >
-          <table>
-            <tr> 
-              <th id="table" >
-              <div style="background-color:Orange; width:153px" class="card info-card revenue-card">
-                <div class="card-body">
-                  <h5 style="color:white"class="card-title">Updated Document</h5>
-                  <div class="ps-3">
-                    <i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                    <h6 style ="color:white">{{ $regis->where('trn_type', 'U')->count() }}</h6>
-                  </div>
-                    <a href="{{route('detail-iso-report',['stat' => 'U'])}}" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
-                </div>
-              </div>
-              </th>
-            </tr>
-          </table>
-        </div>
-        <div style="float:left; margin-left:10px" >
-          <table>
-            <tr> 
-               <th id="table" >
-                <div class="col">
-                  <div style="background-color:#5cb85c;  width:153px" class="card info-card sales-card">
-                    <div class="card-body">
-                      <h5 style="color:white" class="card-title">Approved Document</h5>
-                      <div class="d-flex align-items-center">
-                        <div class="ps-3">
-                          <i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                          <h6 style="color:white">{{ $regis->where('trn_type', 'R')->count() }}</h6>
-                        </div>
-                      </div>
-                        <a href="{{route('detail-iso-report',['stat' => 'R'])}}" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
-                    </div>
-                  </div>
-                </div>
-               </th>
-            </tr>
-          </table>
-        </div>
-        <div style="float:left; margin-left:10px" >
-          <table>
-            <tr> 
-               <th id="table" >
-                <div class="col">
-                  <div style="background-color:Orange; width:153px" class="card info-card revenue-card">
-                    <div class="card-body">
-                      <h5 style="color:white"class="card-title">Notified Document</h5>
-                        <div class="ps-3"><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                          <h6 style="color:white">{{ $regis->where('trn_type', 'I')->count() }}</h6>
-                        </div>
-                          <a href="{{route('detail-iso-report',['stat' => 'I'])}}" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-               </th>
-            </tr>
-          </table>
-        </div>
-        <div style="float:left; margin-left:10px" >
-          <table>
-            <tr> 
-               <th id="table" >
-                <div class="col-3">
-                  <div style="background-color:MidnightBlue; width:153px;"class="card info-card revenue-card">
-                    <div class="card-body">
-                      <h5 style="color:white"class="card-title">Total Document</h5><i style="position: absolute;top: auto;bottom: 5px;right: 5px;z-index: 0;font-size: 90px;color: rgba(0, 0, 0, 0.15);" class="far fa-file"></i>
-                        <div class="ps-3">
-                          <h6 style ="color:white">{{ $regis->count() }}</h6>
-                        </div>
-                          <a href="#" style="color:white; ">More Info <i class="fas fa-arrow-right"></i></a>
-                      </div>
-                    </div>
-                  </div>
-                </div>  
-               </th>
-            </tr>
-          </table>
-        </div>
-    </section>
 <div class="table-responsive">
         <table id="iso"  class="table table-striped table-bordered display nowrap " data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
                   <thead>
