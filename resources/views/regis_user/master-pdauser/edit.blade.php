@@ -21,7 +21,7 @@
 								<input type="hidden" name="_id" value ="<?php echo $pdauser->_id; ?>">
 								<div class="box-body">
 									<div class="form-group">
-										<label>ID User</label>
+										<label>ID / NPK</label>
 										<input type="text" class="form-control" id="id" placeholder="111157283" name="id" value="<?php echo $pdauser->id; ?>" required>
 									</div>
 									<div class="form-group">

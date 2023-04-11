@@ -23,4 +23,9 @@ class PurchasingProcess extends Model
     {
         return $this->belongsTo(Vendor::class,'id_vendor','id_vendor');
     }
+
+      public function user()
+    {
+        return $this->belongsTo(User::class,'id_vendor','foreign_id');
+    }
 }

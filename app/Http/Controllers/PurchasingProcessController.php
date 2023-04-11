@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\PurchasingProcess;
 use Carbon\Carbon;
 use App\Models\Vendor;
+use App\Models\User;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ImportPo;
 use Storage;
@@ -144,12 +145,12 @@ class PurchasingProcessController extends Controller
             } else{
                 $v="";
             }
-
-            if(empty($data->vendor->user->status_user))
+            $get = User::where('foreign_id', $data->id_vendor)->first();
+            if(@$get->status_user == "A")
             {
-                $s = " <i class='fas fa-check-circle text-success'></i> ";
+                $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
             } else{
-                $s="";
+                $s=" <i title='Pengguna Non-aktif' class='fas fa-exclamation-circle text-warning'></i> ";
             }
             return $v.($v!=""?$s:"");
         })
@@ -373,7 +374,19 @@ class PurchasingProcessController extends Controller
             return @$data->vendors->nm_vendor;
         })
         ->editColumn('vend_email', function($data){
-            return @$data->vendors->vend_email;
+            if(!empty($data->vendors)){
+                $v = @$data->vendors->vend_email;
+            } else{
+                $v="";
+            }
+            $get = User::where('foreign_id', $data->id_vendor)->first();
+            if(@$get->status_user == "A")
+            {
+                $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s=" <i title='Pengguna Non-aktif' class='fas fa-exclamation-circle text-warning'></i> ";
+            }
+            return $v.($v!=""?$s:"");
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
@@ -381,7 +394,7 @@ class PurchasingProcessController extends Controller
         ->addColumn('download_check', function ($data) {
             return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->po_num.'" onclick="selectedDwn(\'#'.$data->po_num.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
         })
-        ->rawColumns(['download_check','active','action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
+        ->rawColumns(['download_check','vend_email','active','action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
                 // ->editColumn('last_change_by', function ($data) {
                                 
                 //                return @$data->users->nm_user;

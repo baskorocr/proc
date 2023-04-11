@@ -205,11 +205,11 @@ class DeliveryScheduleController extends Controller
             })
             ->addColumn('vendor_email', function ($data) {
        
-            if(empty($data->vendor->user->status_user))
+            if(@$data->vendors->user->status_user == "A")
             {
-                $s = " <i class='fas fa-check-circle text-success'></i> ";
+                $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
             } else{
-                $s="";
+                $s="<i title='Pengguna Non-aktif' class='fas fa-exclamation-circle text-warning'></i>";
             }
             
                return empty($data->vendors->user) ? "-":$data->vendors->user->username." ".$s;
@@ -320,11 +320,11 @@ class DeliveryScheduleController extends Controller
             })
             ->addColumn('vendor_email', function ($data) {
        
-            if(empty($data->vendor->user->status_user))
+            if(@$data->vendors->user->status_user == "A")
             {
-                $s = " <i class='fas fa-check-circle text-success'></i> ";
+                $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
             } else{
-                $s="";
+                $s="<i title='Pengguna Non-aktif' class='fas fa-exclamation-circle text-warning'></i> ";
             }
             
                return empty($data->vendors->user) ? "-":$data->vendors->user->username." ".$s;

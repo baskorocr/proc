@@ -30,7 +30,7 @@
 								<table  class="table table-bordered table-striped table-sm" id="master-pdauser">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
-										<th>Doc User</th>
+										<th>ID User</th>
 										<th>User Login</th>
 										<th>Full Name</th>
 										<th>Status</th>
