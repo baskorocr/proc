@@ -6,7 +6,7 @@
 		<h1>Number Range</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Edit Number Range</li>
 			</ol>
 		</nav>
@@ -22,20 +22,22 @@
 								<div class="box-body">
 									<div class="form-group">
 										<label>Document Type</label>
-										<input type="text" class="form-control" id="doc_type" name="doc_type" value="<?php echo $number->doc_type; ?>" required>
+										 <select class="form-control selectpicker" name="doc_type" data-live-search="true" focused required>
+					                        <option value="iso" {{$number->doc_type == 'iso' ? "selected":null}}>iso</option>
+					                    </select>
 									</div>
 									<div class="form-group">
 										<label>Document Year </label>
-										<input type="text" class="form-control" id="doc_year" name="doc_year" value="<?php echo $number->doc_year ?>" placeholder=" Document Year" required>
+										<input type="text" class="form-control" id="doc_year" name="doc_year" value="<?php echo $number->doc_year ?>" placeholder="ex. {{date('Y')}}" required>
 									</div>
 									
 									<div class="form-group">
 										<label>Low Number</label>
-										<input type="text" class="form-control" id="num_low" name="num_low" value="<?php echo $number->num_low; ?>" required>
+										<input type="text" class="form-control" placeholder="ex. 00000" id="num_low" name="num_low" value="<?php echo $number->num_low; ?>" required>
 									</div>
 									<div class="form-group">
 										<label>High Number</label>
-										<input type="text" class="form-control" id="num_high" name="num_high" value="<?php echo $number->num_high; ?>">
+										<input type="text" class="form-control" id="num_high" placeholder="ex. 99999" name="num_high" value="<?php echo $number->num_high; ?>">
 									</div>
 									</div><!-- /.box-body -->
 									<div class="box-footer"><hr>

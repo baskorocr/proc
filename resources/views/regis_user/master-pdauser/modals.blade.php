@@ -1,45 +1,41 @@
-<div class="modal fade" id="create-menu-list" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">>
+<div class="modal fade" id="create-master-pdauser" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
     
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Create Menu List </h4>
+                <h4 class="modal-title">Create PDA User </h4>
             </div>
             <div class="modal-body">
-                <form role=form name="myForm" id="create-list-form"  action="" method="post" enctype="multipart/form-data">
-                    <?php $num =  Numbering::generateAuto(new \App\Models\Project(),"menu_name", 10, 10, 1, "44"); ?>
-                    
-                        <!-- @if(auth()->user()->role == 'admin')
-
-                            <div class="form-group">
-                                        <label>Menu Name</label>
-                                        <input type="text" class="form-control" value='{{$num}}' disabled="true">
-                                  </div>
-                        @endif
-                 
-
-                    <input type="hidden" id="menu_name" name="menu_name" value ="{{$num}}"> -->
-
-                    <div class="form-group">
-                        <label>Menu Name</label>
-                        <input type="text" class="form-control" id="menu_name" name="menu_name" placeholder="Menu Name" required>
-                    </div>
-                    @csrf
-                    <div class="form-group">
-                        <label>Menu Object</label>
-                        <input type="text" class="form-control" id="menu_object" name="menu_object" placeholder="Menu Object" required>
-                    </div>
-                    <div class="form-group">
-                        <label> Object Path</label>
-                        <input type="text" class="form-control" id="object__path" name="object__path" placeholder="Object Path" required>
-                    </div>
-
-                    <div class="modal-footer">
-                        <button type="submit" name="submit-add" class="btn btn-primary"><i class="fas fa-check-square"></i> Create</button>
-                    </div>
-        
-                </form>
+               <form role=form name="myForm" id="myForm"  action="{{route('api.regis-user.create.pdauser')}}" method="post" enctype="multipart/form-data">
+                                @csrf
+                                <div class="box-body">
+                                    <div class="form-group">
+                                        <label>ID / NPK</label>
+                                        <input type="text" class="form-control" placeholder="111157283" id="id" name="id" value="" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Full Name </label>
+                                        <input type="text" class="form-control" id="full_name" name="full_name" placeholder="ex. Hidrian Oma Suharman" value="" placeholder=" > Year" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label>Username Login</label>
+                                        <input type="text" class="form-control" placeholder="User PDA Login" id="username" name="username" value="" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>PIN</label>
+                                        <input type="password"  class="form-control" placeholder="ex. {{rand(111111,999999)}}" id="pin" name="pin" value="">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Confirm PIN</label>
+                                        <input type="password" class="form-control" placeholder="Confirm PIN" id="pin_confirm" name="pin_confirm" value="">
+                                    </div>
+                                    </div><!-- /.box-body -->
+                                    <div class="box-footer"><hr>
+                                        <button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Create</button>
+                                    </div>
+                                </form>
         </div>
       
     </div>

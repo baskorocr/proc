@@ -39,6 +39,7 @@ Route::prefix('doc-iso')->group(function(){
     Route::get('/appproval-iso/{id}', [App\Http\Controllers\RegisIsoDocController::class, 'approve'])->name('approve-iso');
     Route::get('/delete-iso', [App\Http\Controllers\RegisIsoDocController::class, 'delete_act'])->name('delete-iso');
     Route::get('/detail-iso-report/{stat}', [App\Http\Controllers\ReportIsoDocController::class, 'stat_iso'])->name('detail-iso-report');
+    Route::get('/detail-iso-dashboard/{stat}', [App\Http\Controllers\DashboardIsoDocController::class, 'stat_iso'])->name('detail-iso-dashboard');
     Route::post('/appproval-iso/approve', [App\Http\Controllers\RegisIsoDocController::class, 'approval_iso'])->name('doc-iso.approval_iso');
    
     Route::get('/master-notify/report-iso', function () {
@@ -133,19 +134,19 @@ Route::prefix('regis-user')->group(function(){
     Route::get('/datatables/get-master-vendor', [App\Http\Controllers\MasterVendorController::class, 'getDataMasterVendor'])->name('datatables.regis-user.master.vendor');
 
    //Number Range
-   Route::get('/number-range', [App\Http\Controllers\NumberRangeController::class, 'getNumberRange'])->name('regis-user.number-range');
+   Route::get('/number-range', [App\Http\Controllers\NumberRangeController::class, 'index'])->name('regis-user.number-range');
    Route::post('/add-number', [App\Http\Controllers\NumberRangeController::class, 'numberAdd'])->name('api.regis-user.create.number');
   
    Route::post('/number-range/update', [App\Http\Controllers\NumberRangeController::class, 'updateNumber'])->name('regis-user.number-range.update.number');
    Route::get('/number-range/edit/{id}', [App\Http\Controllers\NumberRangeController::class, 'editNumber'])->name('regis-user.number-range.edit.number');
-   Route::get('/number-range/delete/{id}', [App\Http\Controllers\NumberRangeController::class, 'deleteNumber'])->name('regis-user.number-range.delete.number');
+   Route::get('/number-range/delete/{id}', [App\Http\Controllers\NumberRangeController::class, 'destroy'])->name('regis-user.number-range.delete.number');
    //Datatables
-   Route::get('/datatables/get-number-range', [App\Http\Controllers\NumberRangeController::class, 'getDataNumberRange'])->name('datatables.regis-user.number.range');
+   Route::get('/datatables/get-number-range', [App\Http\Controllers\NumberRangeController::class, 'getNumberRange'])->name('datatables.regis-user.number.range');
 
    
   //Master PDA User
   Route::get('/master-pdauser', [App\Http\Controllers\MasterPDAUserController::class, 'getMasterPDAUser'])->name('regis-user.master-pdauser');
-  Route::post('/add-pdauser', [App\Http\Controllers\MasterPDAUserController::class, 'pdauserAdd'])->name('api.regis-user.create.pdauser');
+  Route::post('/add-pdauser', [App\Http\Controllers\MasterPDAUserController::class, 'store'])->name('api.regis-user.create.pdauser');
  
   Route::post('/master-pdauser/update', [App\Http\Controllers\MasterPDAUserController::class, 'updatePdauser'])->name('regis-user.master-pdauser.update.pdauser');
   Route::get('/master-pdauser/edit/{id}', [App\Http\Controllers\MasterPDAUserController::class, 'editPdauser'])->name('regis-user.master-pdauser.edit.pdauser');
