@@ -7,7 +7,7 @@
 		<nav>
 			<ol class="breadcrumb">
 				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Master User</a></li>
+				<li class="breadcrumb-item active">Master User</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -30,8 +30,8 @@
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-striped table-sm" id="master-user">
 									<thead>
-										<th><i class="fa fa-list"></i></th>
-										{{-- <th>ID User</th> --}}
+										<th># <i style="margin-left:10px" class="ml-3 fa fa-list"></i></th>
+										<th>ID User</th>
 										<th>Nama User</th>
 										<th>Tipe User</th>
 										<th>Login Username</th>
@@ -72,9 +72,9 @@
           {
 			data: 'DT_RowIndex', name: 'DT_RowIndex'
           },
-          // {
-          //   data: 'id_user', name: 'id_user'
-          // },
+          {
+            data: 'id_user', name: 'id_user'
+          },
           {
             data: 'nm_user', name: 'nm_user'
           },

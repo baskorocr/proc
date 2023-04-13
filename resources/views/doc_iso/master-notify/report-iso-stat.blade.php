@@ -19,23 +19,23 @@
                     <tr>
                     <th>#</th>
                     <th>Action</th>
-                        <th >Vendor Code</th>
-                        <th >Vendor Name</th>
-                        <th >Material Supply</th>
-                        <th>Simplikasi</th>
-                        <th >ISO Cert Num</th>
-                        <th  >ISO Cert Date</th>
-                        <th  >Certified</th>
-                        <th  >ISO Type</th>
-                        <th  >Expire Date</th>
-                        <th  >Expired Status</th>
-                        <th  >Doc Process</th>
-                        <th >File</th>
-                        <th  >Last change</th>
-                        <th  >Entry Date</th>
-                        <th  >Remark</th>
-                        <th  >Doc Number</th>
-                        <th  >Ref Number</th>
+                        <th style="min-width: 60px;">Vendor Code</th>
+                        <th style="min-width: 200px;">Vendor Name</th>
+                        <th style="min-width: 100px;">Material Supply</th>
+                        <th style="min-width: 30px;">Simplikasi</th>
+                        <th style="min-width: 100px;">ISO Cert Num</th>
+                        <th style="min-width: 100px;" >Expire Date</th>
+                        <th style="min-width: 100px;" >Expired Status</th>
+                        <th style="min-width: 100px;" >Doc Process</th>
+                        <th style="min-width: 100px;" >ISO Cert Date</th>
+                        <th style="min-width: 100px;" >Certified</th>
+                        <th style="min-width: 100px;" >ISO Type</th>
+                        <th style="min-width: 30px;" >File</th>
+                        <th style="min-width: 100px;" >Last change</th>
+                        <th style="min-width: 100px;" >Entry Date</th>
+                        <th style="min-width: 100px;" >Remark</th>
+                        <th style="min-width: 100px;" >Doc Number</th>
+                        <th style="min-width: 100px;" >Ref Number</th>
                     </tr>
                   </thead>   
                   <tbody>
@@ -60,14 +60,22 @@
  
                             <ul class="dropdown-menu">
                               <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
+                              @if ($item->trn_type == 'R' OR $item->trn_type == 'I') 
                               <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
+                              @endif
+                              @if( ($item->stat != 'N' AND $item->stat != 'E' ) AND $item->trn_type != 'R' AND $item->trn_type != 'I')
                               <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
-                              <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
-                              <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
+                              @endif
+                              @if(auth()->user()->role != "vendor")
+                              @if(( $item->stat != 'N' AND $item->stat != 'E') AND $item->trn_type != 'R' AND $item->trn_type != 'I' )
+                                <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
+                                <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
+                                @endif
+                              @endif
                             </ul>
                           </div>
                           </td>
-                           <?php if ($item->simply == "X") {
+                            <?php if ($item->simply == "X") {
                               $simplify = '<center><i class="fa fa-check"></i></center>';
                             }else{
                               $simplify = '';
@@ -87,13 +95,13 @@
                         <td>{{ $item->mat_supply }}</td>
                         <td>{!! $simplify !!}</td>
                         <td>{{ $item->cert_num }}</td>
-                        <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
-                        <td>{{ $item->cert_name}}</td>
-                        <td>{{$item->iso_type_name}}</td>
                         <td>{{date('d-m-Y', strtotime($date_full))}}</td>
                         <td>{!! strtotime($date_full) < strtotime(date('Y-m-d')) ? '<span class="badge bg-danger">Expired</span>' : '<span class="badge bg-success">Valid</span>' !!}</td>
                         <td>{!!$doc_proccess!!} </td>
-                        <td><a href="{{asset('files/regis_iso/'.$item->doc_path)}}" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
+                        <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
+                        <td>{{ $item->cert_name}}</td>
+                        <td>{{$item->iso_type_name}}</td>
+                        <td><a href="{{asset('files/regis_iso/'.$item->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
                                 <i class="fa fa-file"></i>
                             </a></td>
                         
@@ -116,6 +124,7 @@
                             }
 
                         ?>   
+                      
                       </tr>
                     @endforeach
                   </tbody>    
@@ -133,9 +142,20 @@
 <script data-require="datatables-responsive@*" data-semver="2.1.0" src="//cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
 <script type="text/javascript">
   $('#iso').DataTable({
-     
+      // autoWidth:true,
       responsive: true,
-      
+      columnDefs: [
+            { responsivePriority: 1, targets: 0 },
+            { responsivePriority: 1, targets: 1 },
+            { responsivePriority: 1, targets: 2 },
+            { responsivePriority: 1, targets: 3 },
+            { responsivePriority: 1, targets: 4 },
+            { responsivePriority: 1, targets: 5 },
+            { responsivePriority: 1, targets: 6 },
+            { responsivePriority: 1, targets: 7 },
+            { responsivePriority: 1, targets: 8 },
+            { responsivePriority: 1, targets: 9 },
+        ]
    
   })
 </script>

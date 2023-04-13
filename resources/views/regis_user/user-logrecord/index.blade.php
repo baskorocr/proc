@@ -7,7 +7,7 @@
 		<nav>
 			<ol class="breadcrumb">
 				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">User Log Record</a></li>
+				<li class="breadcrumb-item active">User Log Record</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -88,11 +88,11 @@
         ]
       });
 
-	  function deleteProject(url,id)
+	  function blockuser(url,name)
 		{
 			Swal.fire({
 				  title: '',
-				  html: 'All reference data will be deleted. Are you sure want to delete this data <b>['+id+']</b>?',
+				  html: 'Are you sure to block user ['+name+']?',
 				  // showDenyButton: true,
 				  showCancelButton: true,
 				  confirmButtonText: 'Confirm',

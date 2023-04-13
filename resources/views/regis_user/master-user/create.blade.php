@@ -52,17 +52,17 @@
 										<label>Confirm Password</label>
 										<input type="password" class="form-control" id="password_confirmation" placeholder="Confirm Password" name="password_confirmation" value="" required>
 									</div>
-									<div class="form-group">
+									{{-- <div class="form-group">
 										<label>Access Group</label>
 										<select name="access_group_name" class="form-control select">
 											@foreach($accessgrp as $grp)
 												<option  value="{{$grp->id_access_group}}">{{$grp->access_group_name}}</option>
 											@endforeach
-										</select>
+										</select> --}}
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
-									</div>
+									{{-- </div> --}}
 									<div class="form-group">
-										<label>Role</label>
+										<label>Access Group</label>
 										<select name="role" class="form-control select">
 											@foreach($roles as $r)
 												<option value="{{$r->_id}}">{{$r->name}}</option>
@@ -70,7 +70,8 @@
 										</select>
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
 									</div>
-									<div class="form-group">
+									<input type="hidden" value="A" name="status_user">
+									 <div class="form-group">
 										<label>Status User</label>
 										<select name="status_user" class="form-control select">
 											
@@ -78,7 +79,7 @@
 												<option value="N">Non-Aktif</option>
 											
 										</select>
-									</div>
+									</div> 
 									</div><!-- /.box-body -->
 									<div class="box-footer"><hr>
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Create</button>

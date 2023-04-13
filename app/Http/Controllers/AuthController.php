@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use session;
 use Validator;
+use UserLogging;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Permission;
@@ -21,7 +22,7 @@ class AuthController extends Controller
             'username' => 'required',
             'password' => 'required|min:6'
         ]);
- 
+    
         if (Auth::attempt($credentials)) {
             $token = Str::random(25);
             $user = User::where('username', $request->username)->first();
@@ -36,7 +37,7 @@ class AuthController extends Controller
                 ], 200);
 
             } else if (!Hash::check($request->password, $user->password)){
-
+                UserLogging::trace($user->id_user,$request->ip(),now(),"F","in",$user->username);
                 return response()->json([
                     'type' => 'error',
                     'message' => 'Please check username or password!'
@@ -114,7 +115,8 @@ class AuthController extends Controller
                 session(['username' =>  $user->username]);
                 session(['permissions' =>  $permission_allowed->toArray()]);
                 
-                
+                UserLogging::trace($user->id_user,$request->ip(),now(),"S","in",$user->username);
+
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Login successfully!',
@@ -124,6 +126,8 @@ class AuthController extends Controller
                 ], 200);
             }
         }else {
+            $user = User::where('username', $request->username)->first();
+            UserLogging::trace($user->id_user,$request->ip(),now(),"F","in",$user->username);
             return response()->json([
                 'type' => 'error',
                 //'response' => $validator->errors()->first(),
@@ -133,8 +137,15 @@ class AuthController extends Controller
         } 
     }
 
-    public function logout(){
-        Auth::logout();
-        return redirect('/');
+    public function logout(Request $request){
+        try{
+            UserLogging::trace(auth()->user()->id_user,$request->ip(),now(),"S","out",auth()->user()->username);
+            Auth::logout();
+            return redirect('/');
+        } catch(\Exception $e)
+        {
+            UserLogging::trace(auth()->user()->id_user,$request->ip(),now(),"F","out",auth()->user()->username);
+        }
+        
      }
 }

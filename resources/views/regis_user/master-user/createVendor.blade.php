@@ -39,8 +39,8 @@
 									
 									
 									<div class="form-group">
-										<label>Username For Login</label>
-										<input type="text" placeholder="Username For Login" class="form-control" id="username" name="username" value="" required>
+										<label>Username </label>
+										<input type="email" placeholder="ex. user@mail.com" class="form-control" id="username" name="username" value="" required>
 									</div>
 									<div class="form-group">
 										<label>Password</label>
@@ -60,15 +60,7 @@
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
 									</div>
 									
-									<div class="form-group">
-										<label>Status User</label>
-										<select name="status_user" class="form-control select">
-											
-												<option value="A">Aktif</option>
-												<option value="N">Non-Aktif</option>
-											
-										</select>
-									</div>
+									
 									</div><!-- /.box-body -->
 									<div class="box-footer"><hr>
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Create</button>

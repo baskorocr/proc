@@ -16,7 +16,7 @@
 				<div class="col-lg-12">
 					<div class="card">
 						<div class="card-body">
-							<form role=form name="myForm" id="myForm"  action="{{$user->role == "vendor" ? route("regis-user.master-user.update.uservendor"):route('regis-user.master-user.update.user')}}" method="post" enctype="multipart/form-data">
+							<form role=form name="myForm" id="myForm"  action="{{$user->is_vendor ? route("regis-user.master-user.update.uservendor"):route('regis-user.master-user.update.user')}}" method="post" enctype="multipart/form-data">
 								@csrf
 								<input type="hidden" name="id" value ="<?php echo $user->id; ?>">
 								<div class="box-body">
@@ -26,10 +26,10 @@
 										<label>ID User</label>
 										<input type="text" class="form-control" disabled id="id_user" name="id_user" value="<?php echo $user->id_user; ?>" required>
 									</div>
-									@if($user->role == "vendor")	
+									@if($user->is_vendor)	
 									<div class="form-group">
 										<label>Select Vendor 	</label>
-										<select name="id_vendor" id="id_vendor" class="form-control">
+										<select name="id_vendor" id="vid" class="form-control select">
 											@foreach($vendor as $v)
 												<option  value="{{$v->id_vendor}}" >{{$v->nm_vendor}}</option>
 											@endforeach
@@ -40,36 +40,41 @@
 										<label>Name User </label>
 										<input type="text" class="form-control" id="nm_user" name="nm_user" value="<?php echo $user->nm_user ?>" placeholder="Name User" required>
 									</div>
-									@if($user->role != "vendor")
+									@if(!$user->is_vendor)
 									<div class="form-group">
 										<label>Tipe User</label>
-										<input type="text" class="form-control" id="id_tipe_user" name="id_tipe_user" value="<?php echo $user->id_tipe_user; ?>" required>
+										<select name="id_tipe_user" class="form-control select">
+											@foreach($type as $t)
+												<option  value="{{$t->id_tipe_user}}" @if($user->id_tipe_user == $t->id_tipe_user) selected @endif>{{$t->nm_tipe_user}}</option>
+											@endforeach
+										</select>
 									</div>
 									@endif
 									<div class="form-group">
 										<label>Username For Login </label>
-										<input type="text" class="form-control" id="username" name="username" value="<?php echo $user->username; ?>" required>
+										<input @if($user->role == "vendor") type="email" @else type="text" @endif class="form-control" id="username" name="username" value="<?php echo $user->username; ?>" required>
 									</div>
-									<div class="form-group">
+									{{-- <div class="form-group">
 										<label>Access Group</label>
 										<select name="access_group_name" class="form-control select">
 											@foreach($accessgrp as $grp)
 												<option @if($grp->id_access_group == $user->id_access_group) selected="selected" @endif value="{{$grp->id_access_group}}">{{$grp->access_group_name}}</option>
 											@endforeach
-										</select>
+										</select> --}}
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
-									</div>
-									@if($user->role != "vendor")
+									{{-- </div> --}}
+
+									
 									<div class="form-group">
-										<label>Role</label>
-										<select name="role" class="form-control select">
+										<label>Access Group</label>
+										<select name="role" id="role" class="form-control select">
 											@foreach($roles as $r)
 												<option @if($r->_id == $user->role_id) selected="selected" @endif value="{{$r->_id}}">{{$r->name}}</option>
 											@endforeach
 										</select>
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
 									</div>
-									@endif
+								
 									<div class="form-group">
 										<label>Status User</label>
 										<select name="status_user" class="form-control select">
@@ -94,11 +99,13 @@
 		@section('javascript')
 			<script type="text/javascript">
 				$('.select').select2();
-				@if($user->role == "vendor")	
 				$(document).ready(function(){
-				$('#id_vendor').val('{{$user->foreign_id}}');
+				@if($user->is_vendor)	
+				$('#vid').val('{{$user->foreign_id}}');
 
-				})
 				@endif
+				$('#role').val('{{$user->role_id}}')
+				})
+
 			</script>
 		@endsection
