@@ -5,7 +5,7 @@
 
 <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Dashboard ISO Document</h1>
+      <h1>Dashboard ISO Document ({{$stat_type}})</h1>
       <nav>
         <ol class="breadcrumb">
           {{-- <li class="breadcrumb-item"><a href="index.html">DOC ISO</a></li> --}}

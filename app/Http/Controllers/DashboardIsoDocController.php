@@ -22,7 +22,24 @@ class DashboardIsoDocController extends Controller
             $data['regis'] = RegisIsoDoc::with('vendor')->where('stat',$stat)->where('del_indicator','!=','X')->get();
         }
         
-        
+         switch ($stat) {
+            case 'V':
+                $stat_t = "Valid";
+                break;
+            case 'N':
+                $stat_t = "Renewed";
+                break;
+
+            case 'E':
+                $stat_t = "Expired";
+                break; 
+          
+            
+            default:
+                 $stat_t = "Unknown";
+                break;
+        }
+        $data['stat_type']=$stat_t;
         return view('doc_iso.master-notify.dashboard-iso-stat', $data);
     }
 }

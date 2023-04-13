@@ -4,7 +4,7 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
 <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Document ISO Report </h1>
+      <h1>Document ISO Report ({{$stat_type}}) </h1>
       <nav>
         <ol class="breadcrumb">
           {{-- <li class="breadcrumb-item"><a href="index.html">DOC ISO</a></li> --}}
