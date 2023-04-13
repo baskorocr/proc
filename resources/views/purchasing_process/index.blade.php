@@ -67,7 +67,7 @@
                   <div class="col-sm-10">
                     <div class="row">
                       <div class="col-10">
-                        <select class="form-select select2" id="select_vendor" aria-label="Default select example">
+                        <select name="vendor_select" class="form-select select2" id="select_vendor" aria-label="Default select example">
                           <option selected>Choose Vendor</option>
                           @foreach($list_vendor as $vendor)
                           <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
@@ -220,6 +220,7 @@
     item.date_to = $('#date_to').val();
     item.id_vendor = $('#select_vendor').val().toString();
     item.vendor_list = $('#vendor_list').val();
+     item.vendor_select = $('#select_vendor').val();
     },
     url: "{{ route('datatables.purchasing.process.listpo')}}"
     },

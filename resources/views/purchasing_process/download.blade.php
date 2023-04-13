@@ -67,7 +67,7 @@
                   <div class="col-sm-10">
                     <div class="row">
                       <div class="col-10">
-                        <select class="form-select select2" id="select_vendor" aria-label="Default select example">
+                        <select class="form-select select2" name='vendor_select' id="select_vendor" aria-label="Default select example">
                           <option selected>Choose Vendor</option>
                           @foreach($list_vendor as $vendor)
                           <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
@@ -117,7 +117,7 @@
                       <th style="min-width: 65px">Plant</th>
                       <th style="min-width: 80px">Vendor</th>
                       <th style="min-width: 156px">Vendor Name</th>
-                      <th style="min-width: 106px">Vendor Mail</th>
+                      {{-- <th style="min-width: 106px">Vendor Mail</th> --}}
                       <th style="min-width: 106px">Doc Date</th>
                       <th style="min-width: 30px">PGr</th>
                       <th style="min-width: 106px" title="without Tax">PO Amount</th>
@@ -263,7 +263,8 @@
                 item.date_from = $('#date_from').val();
                 item.date_to = $('#date_to').val();
                 item.id_vendor = $('#select_vendor').val().toString();
-                   item.vendor_list = $('#vendor_list').val();
+                 item.vendor_list = $('#vendor_list').val();
+                 item.vendor_select = $('#select_vendor').val();
             },
             url:"{{ route('datatables.purchasing.process.download.listpo')}}",
         },  
@@ -292,10 +293,10 @@
             data: 'nm_vendor',
             name: 'nm_vendor'
             },
-            {
-            data: 'vend_email',
-            name: 'vend_email'
-            },
+            // {
+            // data: 'vend_email',
+            // name: 'vend_email'
+            // },
             {
             data: 'doc_date',
             name: 'doc_date'

@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\PurchasingProcess;
 use Carbon\Carbon;
 use App\Models\Vendor;
-use App\Models\User;
+use App\Models\MasterUser;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ImportPo;
 use Storage;
@@ -26,7 +26,7 @@ class PurchasingProcessController extends Controller
 
     public function getListPo(Request $request)
     {
-        $vendor_list =preg_split('/\r\n|\r|\n/',$request->vendor_list);
+        $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
         $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
             if (!empty($request->po_num)) {
                return $query->where('po_num', 'like', "%" . $request->po_num . "%");
@@ -40,9 +40,11 @@ class PurchasingProcessController extends Controller
                 return $query->whereIn('id_vendor', $vendor_list);
             }
         });
-         if (!empty($request->vendor_list)) {
-            // dd($vendor_list);
+         // AND $request->vendor_select != "Choose Vendor"
+          if ((count($vendor_list)>0)) {
                 $q->whereIn('id_vendor', $vendor_list);
+            } elseif((count($vendor_list)==0)){
+               $q->whereIn('id_vendor',[$request->vendor_select]);
             }
         $data = $q->where('id_vendor','!=','')->get();
 
@@ -145,12 +147,12 @@ class PurchasingProcessController extends Controller
             } else{
                 $v="";
             }
-            $get = User::where('foreign_id', $data->id_vendor)->first();
+            $get = MasterUser::where('foreign_id', $data->id_vendor)->first();
             if(@$get->status_user == "A")
             {
-                $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
+                $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
             } else{
-                $s=" <i title='Pengguna Non-aktif' class='fas fa-exclamation-circle text-warning'></i> ";
+                $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
             }
             return $v.($v!=""?$s:"");
         })
@@ -215,7 +217,7 @@ class PurchasingProcessController extends Controller
 
     public function getDownloadListPo(Request $request)
     {
-        $vendor_list =preg_split('/\r\n|\r|\n/',$request->vendor_list);
+        $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
          $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
             if (!empty($request->po_num)) {
                return $query->where('po_num', 'like', "%" . $request->po_num . "%");
@@ -225,13 +227,15 @@ class PurchasingProcessController extends Controller
                 return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
             }
 
-            if (!empty($vendor_list)) {
-                return $query->whereIn('id_vendor', $vendor_list);
-            }
+            
+            
+
         });
-         if (!empty($request->vendor_list)) {
-            // dd($vendor_list);
+
+            if ((count($vendor_list)>0)) {
                 $q->whereIn('id_vendor', $vendor_list);
+            } elseif((count($vendor_list)==0)){
+               $q->whereIn('id_vendor',[$request->vendor_select]);
             }
         $data = $q->where('id_vendor','!=','')->get();
 
@@ -379,7 +383,7 @@ class PurchasingProcessController extends Controller
             } else{
                 $v="";
             }
-            $get = User::where('foreign_id', $data->id_vendor)->first();
+            $get = MasterUser::where('foreign_id', $data->id_vendor)->first();
             if(@$get->status_user == "A")
             {
                 $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";

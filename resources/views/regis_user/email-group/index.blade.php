@@ -7,7 +7,7 @@
 		<nav>
 			<ol class="breadcrumb">
 				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Email Group</a></li>
+				<li class="breadcrumb-item active">Email Group</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->

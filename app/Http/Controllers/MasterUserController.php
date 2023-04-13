@@ -9,6 +9,7 @@ use App\Models\Role;
 use App\Models\Vendor;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\TypeUser;
+use Cache;
 use App\Imports\ImportVendorEmail;
 
 class MasterUserController extends Controller
@@ -19,8 +20,9 @@ class MasterUserController extends Controller
         $data = MasterUser::findOrFail($id);
         $accessgrp = AccessGroup::get();
         $vendor= Vendor::where('status_vendor','A')->get();
+        $type = TypeUser::get();
         $roles = Role::get();
-        return view('regis_user/master-user/edit')->with(['user' => $data,'accessgrp'=>$accessgrp,'roles'=>$roles,'vendor' =>  $vendor]);
+        return view('regis_user/master-user/edit')->with(['user' => $data,'accessgrp'=>$accessgrp,'roles'=>$roles,'vendor' =>  $vendor,'type'=>$type]);
     }   
 
     public function create()
@@ -141,6 +143,12 @@ class MasterUserController extends Controller
 
     public function getDataMasterUser()
     {
+        if(!Cache::has('vendor_setter'))
+        {
+            MasterUser::where('role','like','%vendor%')->update(['is_vendor'=>true]);
+            Cache::put('vendor_setter',true);
+        }
+       
         $data = MasterUser::get();
 
         return \DataTables::of($data)
@@ -154,13 +162,16 @@ class MasterUserController extends Controller
             })
             ->editColumn('cr_by', function ($data) {
                 return @$data->users->nm_user;
+            })  
+            ->editColumn('nm_user', function ($data) {
+                return @$data->nm_user."<br>".(!$data->is_vendor?'<small><i>Internal User</i></small>':'<small><i>External User</i></small>');
             }) 
 
             ->editColumn('id_tipe_user', function ($data) {
-                return @$data->tipeUser->nm_tipe_user;
+                return @$data->tipeUser->nm_tipe_user."<br><small><i>".(empty($data->role)?@$data->access_group->access_group_name:$data->role->name)."</i></small>";
             })
             ->editColumn('username', function ($data) {
-                return $data->username."<br><small><i>".(empty($data->vendor->name) ? "-":$data->vendor->name)."</i></small>";
+                return $data->username."<br><small><i>".(empty($data->vendor) ? "Dharma Polimetal":$data->vendor->nm_vendor)."</i></small>";
             })
             ->editColumn('action', function ($data) {
                 return  view('regis_user/master-user/buttons')->with(['data' => $data]);
@@ -183,7 +194,7 @@ class MasterUserController extends Controller
             })
             ->editColumn('last_changed', function ($data) {                    
                 return date('d.m.Y H:i:s',strtotime($data->last_changed));
-            })->rawColumns(['action','username','status_user'])->addIndexColumn()->make(true);
+            })->rawColumns(['action','id_tipe_user','username','nm_user','status_user'])->addIndexColumn()->make(true);
     }
 
 
@@ -261,6 +272,7 @@ class MasterUserController extends Controller
         $master_user->username = $request->username;
         $master_user->password = bcrypt($request->password);
         $master_user->foreign_id = $request->id_vendor;
+        $master_user->is_vendor = true;
         $master_user->role = "vendor";
         $master_user->role_id = $request->role;
         $master_user->created_by = auth()->user()->id_user;
@@ -334,6 +346,7 @@ class MasterUserController extends Controller
         $master_user->username = $request->username;
         $master_user->role = $role->name;
         $master_user->role_id = $request->role;
+
         $master_user->save();
 
         return redirect()->route('regis-user.master-user')->with(['message_success' => 'Berhasil mengubah data.']);

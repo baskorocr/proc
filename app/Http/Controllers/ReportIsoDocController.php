@@ -25,8 +25,30 @@ class ReportIsoDocController extends Controller
         } else{
             $data['regis'] = RegisIsoDoc::with('vendor')->where('trn_type',$stat)->where('del_indicator','!=','X')->get();
         }
-        
-        
+        switch ($stat) {
+            case 'S':
+                $stat_t = "Submitted";
+                break;
+            case 'C':
+                $stat_t = "Rejected";
+                break;
+
+            case 'U':
+                $stat_t = "Updated";
+                break; 
+            case 'R':
+                $stat_t = "Approved";
+                break; 
+
+            case 'I':
+                $stat_t = "Notified";
+                break;
+            
+            default:
+                 $stat_t = "Unknown";
+                break;
+        }
+        $data['stat_type']=$stat_t;
         return view('doc_iso.master-notify.report-iso-stat', $data);
     }
 

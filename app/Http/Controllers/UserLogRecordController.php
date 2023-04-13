@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\UserLogRecord;
+use App\Models\MasterUser;
+use Cache;
 
 class UserLogRecordController extends Controller
 {
@@ -34,6 +36,9 @@ class UserLogRecordController extends Controller
                     return 'Months';
                 }
             })
+            ->editColumn('id_user', function ($data) {
+                return @$data->user->nm_user."<br><small><i>".(empty($data->user->vendor) ? "Dharma Polimetal":$data->user->vendor->nm_vendor)."</i></small>";
+            }) 
             ->editColumn('cr_by', function ($data) {
                 return @$data->users->nm_user;
             })
@@ -47,11 +52,11 @@ class UserLogRecordController extends Controller
                  if($data->attempt == "S")
                 {
                    
-                    $status = "<small><span class=\"badge bg-success\">Success</span></small>";
+                    $status = "<span class=\"badge bg-success\">Success</span>";
                 } elseif($data->attempt=='F') {
-                    $status = "<small><span class=\"badge bg-danger\">Failed</span></small>";
+                    $status = "<span class=\"badge bg-danger\">Failed</span>";
                 } else{
-                    $status = "<small><span class=\"badge bg-secondary\"> Unknown</span></small>";
+                    $status = "<span class=\"badge bg-secondary\"> Unknown</span>";
                 }
 
                 return $status;
@@ -59,11 +64,11 @@ class UserLogRecordController extends Controller
                  if(@$data->user->status_user == "A")
                 {
                    
-                    $status = "<small><span class=\"badge bg-success\">Success</span></small>";
+                    $status = "<span class=\"badge bg-success\"><i class='fas fa-check-circle'></i> Active</span>";
                 } elseif(@$data->user->status_user=='N') {
-                    $status = "<small><span class=\"badge bg-danger\">Failed</span></small>";
+                    $status = "<span class=\"badge bg-danger\"><i class='fas fa-times'></i> Non-active</span>";
                 } else{
-                    $status = "<small><span class=\"badge bg-secondary\">Undetified</span></small>";
+                    $status = "<span class=\"badge bg-secondary\">Undentified</span>";
                 }
 
                 return $status;
@@ -72,11 +77,11 @@ class UserLogRecordController extends Controller
                  if(@$data->activity == "in")
                 {
                    
-                    $status = "<small><span class=\"badge bg-info\"><i class=\"fas fa-arrow-circle-right\"></i> IN</span></small>";
+                    $status = "<span class=\"badge bg-info\"><i class=\"fas fa-arrow-circle-right\"></i> IN</span>";
                 } elseif(@$data->activity=='out') {
-                    $status = "<small><span class=\"badge bg-warning\"><i class=\"fas fa-arrow-circle-left\"></i> OUT</span></small>";
+                    $status = "<span class=\"badge bg-warning\"><i class=\"fas fa-arrow-circle-left\"></i> OUT</span>";
                 } else{
-                    $status = "<small><span class=\"badge bg-secondary\">Undetified</span></small>";
+                    $status = "<span class=\"badge bg-secondary\">Undetified</span>";
                 }
 
                 return $status;
@@ -85,8 +90,8 @@ class UserLogRecordController extends Controller
                 return  empty(@$data->user->tipeUser) ? "<i>Unknown</i>":@$data->user->tipeUser->nm_tipe_user;
             })
             ->editColumn('datetime_log', function ($data) {                    
-                return date('d/M/Y : H:m',strtotime($data->datetime_log));
-            })->rawColumns(['action','activity','attempt','status','user_type'])->addIndexColumn()->make(true);
+                return date('D, d.m.Y H:i A',strtotime($data->datetime_log));
+            })->rawColumns(['action','id_user','activity','attempt','status','user_type'])->addIndexColumn()->make(true);
     }
 
 
@@ -175,8 +180,8 @@ class UserLogRecordController extends Controller
 
     public function deleteLogrecord($id){
         $user_logrecord = UserLogRecord::find($id);
-        $user_logrecord->delete();
+        MasterUser::where('id_user',$user_logrecord->id_user)->update(['status_user' => 'N']);
 
-        return redirect()->route('regis-user.user-logrecord')->with(['message_success' => 'Berhasil menghapus data.']);
+        return redirect()->route('regis-user.user-logrecord')->with(['message_success' => 'User Blocked.']);
     }
 }
