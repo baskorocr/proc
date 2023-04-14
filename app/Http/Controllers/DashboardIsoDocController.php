@@ -36,7 +36,7 @@ class DashboardIsoDocController extends Controller
           
             
             default:
-                 $stat_t = "Unknown";
+                return redirect()->route('doc-iso.dashboard-iso')->with(['message_fail' => "Stat ISO Invalid."]);
                 break;
         }
         $data['stat_type']=$stat_t;

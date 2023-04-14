@@ -7,7 +7,7 @@
         <nav>
             <ol class="breadcrumb">
                 {{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
-                <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Monitoring Delivery</a></li>
+                {{-- <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Monitoring Delivery</a></li> --}}
                 <li class="breadcrumb-item active">Detail Kanban</li>
             </ol>
         </nav>

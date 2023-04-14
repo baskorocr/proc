@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"Report ISO")
+@section('title',"Report ISO (".$stat_type.")" )
 @section('content')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
 <main id="main" class="main">
