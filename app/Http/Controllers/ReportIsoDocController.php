@@ -43,9 +43,9 @@ class ReportIsoDocController extends Controller
             case 'I':
                 $stat_t = "Notified";
                 break;
-            
-            default:
-                 $stat_t = "Unknown";
+          
+            default:  
+                 return redirect()->route('doc-iso.report-iso')->with(['message_fail' => "Stat ISO Invalid."]);
                 break;
         }
         $data['stat_type']=$stat_t;

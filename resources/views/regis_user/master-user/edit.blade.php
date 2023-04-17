@@ -38,7 +38,7 @@
 									@endif
 									<div class="form-group">
 										<label>Name User </label>
-										<input type="text" class="form-control" id="nm_user" name="nm_user" value="<?php echo $user->nm_user ?>" placeholder="Name User" required>
+										<input type="text" class="form-control" id="nm_user" name="nm_user" value="<?php echo $user->nm_user ?>" placeholder="ex.  Hidrian Oma Suharman" required>
 									</div>
 									@if(!$user->is_vendor)
 									<div class="form-group">
@@ -52,7 +52,7 @@
 									@endif
 									<div class="form-group">
 										<label>Username For Login </label>
-										<input @if($user->role == "vendor") type="email" @else type="text" @endif class="form-control" id="username" name="username" value="<?php echo $user->username; ?>" required>
+										<input @if($user->is_vendor) type="email" @else type="text" @endif class="form-control" id="username" placeholder="Username for login" name="username" value="<?php echo $user->username; ?>" required>
 									</div>
 									{{-- <div class="form-group">
 										<label>Access Group</label>

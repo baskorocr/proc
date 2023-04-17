@@ -2,7 +2,9 @@
 @section('title',"Form Input Page")
 @section('content')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
+<style type="text/css">
 
+</style>
 <main id="main" class="main">
     <div class="pagetitle">
       <h1>Dashboard ISO Document</h1>
@@ -15,6 +17,73 @@
     </div><!-- End Page Title -->
     <section class="section dashboard">
       <div class="row">
+        <div class="col-md-3">
+          <div class="small-box bg-green">
+            <div class="inner">
+              <h3>{{ $regis->where('stat', 'V')->count() }}</h3>
+              <p>Valid Document</p>
+            </div>
+            <div class="icon">
+              <i class="far fa-file"></i>
+            </div>
+            <a href="{{route('detail-iso-dashboard',['stat' => 'V'])}}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+
+
+        </div> 
+
+
+        <div class="col-md-3">
+          <div class="small-box bg-orange">
+            <div class="inner">
+              <h3>{{ $regis->where('stat', 'N')->count() }}</h3>
+              <p>Renewed Document</p>
+            </div>
+            <div class="icon">
+              <i class="far fa-file"></i>
+            </div>
+            <a href="{{route('detail-iso-dashboard',['stat' => 'N'])}}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="col-md-3">
+          <div class="small-box bg-red">
+            <div class="inner">
+              <h3>{{ $regis->where('stat', 'E')->count() }}</h3>
+              <p>Expired Document</p>
+            </div>
+            <div class="icon">
+              <i class="far fa-file"></i>
+            </div>
+            <a href="{{route('detail-iso-dashboard',['stat' => 'E'])}}" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+          </div>
+
+          <div class="col-md-3">
+          <div class="small-box bg-blue">
+            <div class="inner">
+              <h3>{{ $regis->count() }}</h3>
+              <p>Total Document</p>
+            </div>
+            <div class="icon">
+              <i class="far fa-file"></i>
+            </div>
+            <a href="#" class="small-box-footer">
+              More info <i class="fas fa-arrow-circle-right"></i>
+            </a>
+          </div>
+          </div>
+
+
+        </div>
+      </div>
+      {{-- <div class="row">
       <div class="flex-parent jc-center">
           <div style="float:left"; >
             <table>
@@ -93,8 +162,8 @@
                 </th>
             </tr>
             </table>
-            </div>
-          </div>
+            </div> --}}
+          {{-- </div> --}}
         <div class="table-responsive">
        <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
                   <thead>
