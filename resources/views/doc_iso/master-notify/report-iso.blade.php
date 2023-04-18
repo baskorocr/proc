@@ -309,7 +309,7 @@
           
           <td>{{date('Y-m-d H:i:s',strtotime($item->ch_date))}}</td>
           <td>{{date('Y-m-d H:i:s',strtotime($item->cr_date))}}</td>
-          <td>{{$item->remark}}</td>
+          <td>{{empty($item->remark) ? '-':$item->remark}}</td>
           <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
           <?php
           if ( $item->ref_doc == '0000000000') {

@@ -22,7 +22,7 @@
 								<div class="box-body">
 									<div class="form-group">
 										<label>ID / NPK</label>
-										<input type="text" class="form-control" id="id" placeholder="111157283" name="id" value="<?php echo $pdauser->id; ?>" required>
+										<input type="text" class="form-control" id="id" placeholder="111157283" name="id" value="<?php echo $pdauser->id; ?>" disabled>
 									</div>
 									<div class="form-group">
 										<label>Full Name </label>

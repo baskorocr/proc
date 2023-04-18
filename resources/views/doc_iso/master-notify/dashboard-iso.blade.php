@@ -164,18 +164,18 @@
             </table>
             </div> --}}
           {{-- </div> --}}
-        <div class="table-responsive">
+        <div class="table-responsive-sm">
        <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
                   <thead>
                     <tr>
                     {{-- <th style="min-width: 100px;">Action</th> --}}
-                        <th style="min-width: 100px;">Vendor Code</th>
-                        <th style="min-width: 300px;">Vendor Name</th>
+                        <th style="min-width: 70px;">Vendor Code</th>
+                        <th style="min-width: 200px;">Vendor Name</th>
                         <th style="min-width: 100px;">Material Supply</th>
                         <th style="min-width: 30px;">Simplikasi</th>
                         <th style="min-width: 100px;">ISO Cert Num</th>
-                        <th style="min-width: 100px;" >Expire Date</th>
-                        <th style="min-width: 100px;" >Expired Status</th>
+                        <th style="min-width: 80px;" >Expire Date</th>
+                        <th style="min-width: 70px;" >Expired Status</th>
                         <th style="min-width: 100px;" >Doc Process</th>
                         <th style="min-width: 100px;" >ISO Cert Date</th>
                         <th style="min-width: 100px;" >Certified</th>
@@ -184,8 +184,8 @@
                         <th style="min-width: 100px;" >Last change</th>
                         <th style="min-width: 100px;" >Entry Date</th>
                         <th style="min-width: 100px;" >Remark</th>
-                        <th style="min-width: 100px;" >Doc Number</th>
-                        <th style="min-width: 100px;" >Ref Number</th>
+                        {{-- <th style="min-width: 100px;" >Doc Number</th>
+                        <th style="min-width: 100px;" >Ref Number</th> --}}
                     </tr>
                   </thead>   
                   <tbody>
@@ -248,7 +248,7 @@
                         <td>{{date('Y-m-d H:i:s',strtotime($item->ch_date))}}</td>
                         <td>{{date('Y-m-d H:i:s',strtotime($item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
-                        <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
+                        {{-- <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
                          <?php
                             if ( $item->ref_doc == '0000000000') {
                                 echo "<td></td>";
@@ -263,7 +263,7 @@
                         <?php    
                             }
 
-                        ?>   
+                        ?>    --}}
                       </tr>
                     @endforeach
                   </tbody>    

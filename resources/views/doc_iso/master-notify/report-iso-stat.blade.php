@@ -13,7 +13,7 @@
       </nav>
     </div>
 
-<div class="table-responsive">
+<div class="table-responsive-sm">
         <table id="iso"  class="table table-striped table-bordered display nowrap " data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
                   <thead>
                     <tr>

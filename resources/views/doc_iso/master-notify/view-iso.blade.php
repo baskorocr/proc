@@ -87,21 +87,26 @@
                 
                </h6>
               </div>
-              <div class="form-group">
-                <label><b>ISO Certified Date</b></label>
-                 <input type="text" class="form-control" disabled value="<?php echo date('d/m/Y',strtotime($iso->cert_date)); ?>">
-                   <h6>
-                   
-                 </h6>
-                  </div><!-- /.form group -->
+
+              {{-- <div class="form-group"> --}}
+                 <label><b>ISO Certified Date</b></label>
+                <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" style="height: 37.6px;" id="basic-addon1"><i class="fas fa-calendar"></i></span>
+                      </div>
+                      <input type="text" disabled class="form-control" value="<?php echo date('d/m/Y',strtotime($iso->cert_date)); ?>" aria-describedby="basic-addon1">
+                    </div>
+                {{-- </div> --}}
+               
+                
                   
-                  <div class="form-group">
                     <label><b>ISO Expired Date</b></label>
-                     <input type="text" class="form-control" disabled value="<?php echo date('d/m/Y',strtotime($iso->exp_date)); ?>">
-                      <h6>
-                     
-                   </h6>
-                </div>
+                <div class="input-group mb-3">
+                      <div class="input-group-prepend">
+                        <span class="input-group-text" style="height: 37.6px;" id="basic-addon1"><i class="fas fa-calendar"></i></span>
+                      </div>
+                      <input type="text" disabled class="form-control" value="<?php echo date('d/m/Y',strtotime($iso->exp_date)); ?>" aria-describedby="basic-addon1">
+                    </div>
                 <div class="form-group">
                   <label><b>Notify Before</b></label>
                 <table  class="table" style="width:100%">
@@ -132,6 +137,14 @@
                   </tbody>
                 </table> 
               </div>
+               <div class="form-group">
+                    <label><b>Remark</b></label>
+                     <textarea type="text" class="form-control" disabled value=""><?php echo $item->remark ?></textarea>
+                  
+                </div>
+                 <a href="{{asset('files/regis_iso/'.$iso->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
+                              <i class="fa fa-file"></i> Click to Preview (<?php echo $iso->doc_path; ?>)</label>
+                          </a>
             </div>
             </div>
           </div>

@@ -43,7 +43,12 @@
 									</div>
 									<div class="form-group">
 										<label>Status User</label>
-										<input type="text" class="form-control" id="status_user" name="status_user" value="<?php echo $list->status_user; ?>">
+										<select name="mn_status" class="form-control select">
+											
+												<option @if($list->mn_status == "A") selected="selected" @endif value="A">Aktif</option>
+												<option @if($list->mn_status == "N") selected="selected" @endif value="N">Non-Aktif</option>
+											
+										</select>
 									</div>
 									</div><!-- /.box-body -->
 									<div class="box-footer"><hr>
