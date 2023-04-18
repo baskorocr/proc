@@ -41,11 +41,15 @@ class PurchasingProcessController extends Controller
             }
         });
          // AND $request->vendor_select != "Choose Vendor"
+
+        if((count($vendor_list)>0) || ($request->vendor_select != "Choose Vendor"))
+        {
           if ((count($vendor_list)>0)) {
                 $q->whereIn('id_vendor', $vendor_list);
             } elseif((count($vendor_list)==0)){
                $q->whereIn('id_vendor',[$request->vendor_select]);
             }
+        }
         $data = $q->where('id_vendor','!=','')->get();
 
         return \DataTables::of($data)
@@ -232,11 +236,15 @@ class PurchasingProcessController extends Controller
 
         });
 
-            if ((count($vendor_list)>0)) {
+        
+        if((count($vendor_list)>0) || ($request->vendor_select != "Choose Vendor"))
+        {
+          if ((count($vendor_list)>0)) {
                 $q->whereIn('id_vendor', $vendor_list);
             } elseif((count($vendor_list)==0)){
                $q->whereIn('id_vendor',[$request->vendor_select]);
             }
+        }
         $data = $q->where('id_vendor','!=','')->get();
 
         return \DataTables::of($data)
