@@ -9,7 +9,7 @@ class DashboardIsoDocController extends Controller
 {
     public function index(Request $request)
     {
-        $data['regis'] = RegisIsoDoc::with('vendor')->get();
+        $data['regis'] = RegisIsoDoc::with('vendor')->where('del_indicator','!=','X')->get();
         
         return view('doc_iso.master-notify.dashboard-iso', $data);
     }

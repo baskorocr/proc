@@ -166,7 +166,7 @@ class RegisIsoDocController extends Controller
         //     //'email' => 'required|string',
         //     // 'full_name' => 'required|string',
         // ]);
-
+ // dd(strpos("2023/11/11","-"));
        if (strtotime( $request->exp_date) > date('Y-m-d')) {
                 $stat = 'W';
             }else{
@@ -308,7 +308,7 @@ class RegisIsoDocController extends Controller
         }
         
 
-        return redirect()->back()->with(['message_success' => 'Berhasil menambah data.']);
+        return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil menambah data.']);
     }
 
     public function update(Request $request, $id)
@@ -318,6 +318,7 @@ class RegisIsoDocController extends Controller
         //     //'email' => 'required|string',
         //     // 'full_name' => 'required|string',
         // ]);
+
           if (strtotime( $request->exp_date) > date('Y-m-d')) {
                 $stat = 'W';
             }else{

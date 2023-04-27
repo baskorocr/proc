@@ -41,12 +41,23 @@ class RegisIsoDoc extends Model
     {
         return $this->belongsTo(Vendor::class,'id_vendor','id_vendor'); 
     }
+    // public function setExpDateAttribute($value)
+    // {
+    //     $this->attributes['exp_date'] = $value;
+    // }
+    // public function setCertDateAttribute($value)
+    // {
+    //     $this->attributes['cert_date'] = $value;
+    // }
     ////DRIVER DATES
     public function getExpDateAttribute( $value ) 
     {
 
-
-        $date = explode("/",$value); 
+        if (strpos($value, "/") !== false) {
+            $date = explode("/",$value); 
+        } else{
+            $date = explode("-",$value); 
+        }
         $d = strlen(@$date[0]) == 1 ? "0".@$date[0]:@$date[0];;
         $m = strlen(@$date[1]) == 1 ? "0".@$date[1]:@$date[1];
         $y= @$date[2];

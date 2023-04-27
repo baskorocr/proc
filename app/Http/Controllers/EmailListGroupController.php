@@ -155,6 +155,6 @@ class EmailListGroupController extends Controller
         $email_list_group = EmailListGroup::find($id);
         $email_list_group->delete();
 
-        return redirect()->route('regis-user.email-list-group')->with(['message_success' => 'Berhasil menghapus data.']);
+        return redirect()->route('regis-user.email-listemail')->with(['message_success' => 'Berhasil menghapus data.']);
     }
 }
