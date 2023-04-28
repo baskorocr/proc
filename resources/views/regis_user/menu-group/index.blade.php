@@ -7,7 +7,7 @@
 		<nav>
 			<ol class="breadcrumb">
 				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
-				<li class="breadcrumb-item active">Menu Group</li>
+				<li class="breadcrumb-item active ">Menu Group</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
