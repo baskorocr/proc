@@ -18,9 +18,12 @@
        <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
                   <thead>
                     <tr>
-                    {{-- <th style="min-width: 100px;">Action</th> --}}
-                        <th style="min-width: 100px;">Vendor Code</th>
-                        <th style="min-width: 300px;">Vendor Name</th>
+                        @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
+                    <th style="min-width: 10px;"></th>
+                    <th style="min-width: 70px;">Action</th>
+                    @endif
+                        <th style="min-width: 70px;">Vendor Code</th>
+                        <th style="min-width: 180px;">Vendor Name</th>
                         <th style="min-width: 100px;">Material Supply</th>
                         <th style="min-width: 30px;">Simplikasi</th>
                         <th style="min-width: 100px;">ISO Cert Num</th>
@@ -34,8 +37,8 @@
                         <th style="min-width: 100px;" >Last change</th>
                         <th style="min-width: 100px;" >Entry Date</th>
                         <th style="min-width: 100px;" >Remark</th>
-                        <th style="min-width: 100px;" >Doc Number</th>
-                        <th style="min-width: 100px;" >Ref Number</th>
+                       {{--  <th style="min-width: 100px;" >Doc Number</th>
+                        <th style="min-width: 100px;" >Ref Number</th> --}}
                     </tr>
                   </thead>   
                   <tbody>
@@ -46,25 +49,46 @@
 
                     ?>
                       <tr>
-                    {{--   <td>
-                         <div class="dropdown">
+                     @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
+                   
+                        <td></td>
+                        <td>
+                          <div class="dropdown">
                             <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                               Choose
                             </a>
-
-  
-
-
- 
-                            <ul class="dropdown-menu">
+                                              <ul class="dropdown-menu">
+                                <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
+                               
+                                <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
+                               
+                                
+                                <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
+                                
+                              
+                                <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
+                                <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
+                                
+                              </ul>
+                            
+                          {{--   <ul class="dropdown-menu">
                               <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
+                              @if ($item->trn_type == 'R' OR $item->trn_type == 'I')
                               <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
+                              @endif
+                              @if( ($item->stat != 'N' AND $item->stat != 'E' ) AND $item->trn_type != 'R' AND $item->trn_type != 'I')
                               <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
+                              @endif
+                              @if(auth()->user()->role != "vendor")
+                              @if(( $item->stat != 'N' AND $item->stat != 'E') AND $item->trn_type != 'R' AND $item->trn_type != 'I' )
                               <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
                               <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
-                            </ul>
+                              @endif
+                              @endif
+                            </ul> --}}
                           </div>
-                          </td>  --}}
+                        </td>
+                      @endif
                            <?php if ($item->simply == "X") {
                               $simplify = '<center><i class="fa fa-check"></i></center>';
                             }else{
@@ -98,7 +122,7 @@
                         <td>{{date('Y-m-d H:i:s',strtotime($item->ch_date))}}</td>
                         <td>{{date('Y-m-d H:i:s',strtotime($item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
-                        <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
+                       {{--  <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
                          <?php
                             if ( $item->ref_doc == '0000000000') {
                                 echo "<td></td>";
@@ -113,7 +137,7 @@
                         <?php    
                             }
 
-                        ?>   
+                        ?>   --}} 
                       </tr>
                     @endforeach
                   </tbody>    
@@ -142,6 +166,8 @@
             { responsivePriority: 1, targets: 5 },
             { responsivePriority: 1, targets: 6 },
             { responsivePriority: 1, targets: 7 },
+            { responsivePriority: 1, targets: 8 },
+            { responsivePriority: 1, targets: 9 },
         ]
       
    
