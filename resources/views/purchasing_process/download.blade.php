@@ -249,6 +249,10 @@
         console.log(data);
 		  }
 
+        
+      $('#tb-download-list-po').DataTable();
+      function search() {
+         $('#tb-download-list-po').DataTable().destroy();
         var table = $('#tb-download-list-po').DataTable({ autoWidth:false,
         "order": [[ 1, "DESC" ]],
         processing: true,
@@ -351,9 +355,6 @@
             },
         ]
       });
-
-      function search() {
-        table.draw(); 
       }
 
       $('.select2').select2();

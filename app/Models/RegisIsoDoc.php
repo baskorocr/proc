@@ -41,6 +41,11 @@ class RegisIsoDoc extends Model
     {
         return $this->belongsTo(Vendor::class,'id_vendor','id_vendor'); 
     }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class,'stat','trn_id'); 
+    }
     // public function setExpDateAttribute($value)
     // {
     //     $this->attributes['exp_date'] = $value;

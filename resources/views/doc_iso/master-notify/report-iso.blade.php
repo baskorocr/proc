@@ -234,7 +234,7 @@
           <th style="min-width: 100px;" >Expire Date</th>
           <th style="min-width: 100px;" >Expired Status</th>
           <th style="min-width: 100px;" >Doc Process</th>
-          <th style="min-width: 100px;" >ISO Cert Date</th>
+          <th style="min-width: 10000px;" >ISO Cert Date</th>
           <th style="min-width: 100px;" >Certified</th>
           <th style="min-width: 100px;" >ISO Type</th>
           <th style="min-width: 30px;" >File</th>
@@ -261,7 +261,7 @@
               </a>
               
               
-              {{-- <ul class="dropdown-menu">
+              <ul class="dropdown-menu">
                 <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                 @if ($item->trn_type == 'R' OR $item->trn_type == 'I')
                 <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
@@ -275,8 +275,8 @@
                 <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
                 @endif
                 @endif
-              </ul> --}}
-               <ul class="dropdown-menu">
+              </ul>
+               {{-- <ul class="dropdown-menu">
                 <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                
                 <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
@@ -288,7 +288,7 @@
                 <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
                 <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
                 
-              </ul>
+              </ul> --}}
             </div>
           </td>
           <?php if ($item->simply == "X") {

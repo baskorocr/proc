@@ -16,6 +16,15 @@
 				<div class="col-lg-12">
 					<div class="card">
 						<div class="card-body">
+								<div class="filter mt-2 " align="right">
+								<a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-list"></i></a>
+								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
+									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
+									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-email" href="#"><i class="fas fa-plus-square"></i>Add Email Group</a></li>
+								</ul>
+								
+							</div>
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-striped table-sm" id="email-group">
 									<thead>
@@ -37,6 +46,7 @@
 			</div>
 		</section>
 	</main>
+	@include('regis_user.email-group.modals')
 	@endsection
 
 	@section('javascript')
