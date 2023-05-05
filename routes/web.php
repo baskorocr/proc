@@ -86,7 +86,7 @@ Route::prefix('regis-user')->group(function(){
 
     //Email Group
     Route::get('/email-group', [App\Http\Controllers\EmailGroupController::class, 'getEmailGroup'])->name('regis-user.email-group');
-    Route::post('/add-group', [App\Http\Controllers\EmailGroupController::class, 'emailAdd'])->name('api.regis-user.create.email');
+    Route::post('/add-group', [App\Http\Controllers\EmailGroupController::class, 'store'])->name('api.regis-user.create.email');
    
     Route::post('/email-group/update', [App\Http\Controllers\EmailGroupController::class, 'updateEmail'])->name('regis-user.email-group.update.email');
     Route::get('/email-group/edit/{id}', [App\Http\Controllers\EmailGroupController::class, 'editEmail'])->name('regis-user.email-group.edit.email');

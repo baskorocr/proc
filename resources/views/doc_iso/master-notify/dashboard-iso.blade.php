@@ -165,19 +165,19 @@
             </div> --}}
           {{-- </div> --}}
         <div class="table-responsive-sm">
-       <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
+       <table id="iso"  class="table table-striped table-bordered"   style="width:100%">
                   <thead>
                     <tr>
                     {{-- <th style="min-width: 100px;">Action</th> --}}
-                        <th style="min-width: 70px;">Vendor Code</th>
+                        <th style="min-width: 60px;">Vendor Code</th>
                         <th style="min-width: 200px;">Vendor Name</th>
                         <th style="min-width: 100px;">Material Supply</th>
                         <th style="min-width: 30px;">Simplikasi</th>
                         <th style="min-width: 100px;">ISO Cert Num</th>
                         <th style="min-width: 80px;" >Expire Date</th>
-                        <th style="min-width: 70px;" >Expired Status</th>
+                        <th style="min-width: 120px;" >Expired Status</th>
                         <th style="min-width: 100px;" >Doc Process</th>
-                        <th style="min-width: 100px;" >ISO Cert Date</th>
+                        <th style="min-width: 10000px;" >ISO Cert Date</th>
                         <th style="min-width: 100px;" >Certified</th>
                         <th style="min-width: 100px;" >ISO Type</th>
                         <th style="min-width: 30px;" >File</th>
@@ -236,7 +236,8 @@
                         <td>{!! $simplify !!}</td>
                         <td>{{ $item->cert_num }}</td>
                         <td>{{date('d-m-Y', strtotime($date_full))}}</td>
-                        <td>{!! strtotime($date_full) < strtotime(date('Y-m-d')) ? '<span class="badge bg-danger">Expired</span>' : '<span class="badge bg-success">Valid</span>' !!}</td>
+                        {{-- <td>{!! strtotime($date_full) < strtotime(date('Y-m-d')) ? '<span class="badge bg-danger">Expired</span>' : '<span class="badge bg-success">Valid</span>' !!}</td> --}}
+                        <td><span class="badge bg-{{@$item->transaction->color}}">{{@$item->transaction->trn_name}}</span></td>
                         <td>{!!$doc_proccess!!} </td>
                         <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
                         <td>{{ $item->cert_name}}</td>
@@ -280,9 +281,11 @@
 @section('javascript')
 <script data-require="datatables-responsive@*" data-semver="2.1.0" src="//cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
 <script type="text/javascript">
-  $('#iso').DataTable({
+  var table = $('#iso').DataTable({
      
       responsive: true,
+      order: [[5, 'desc']],
+      rowReorder:{dataSrc: 0, snapX: true, enable: true},
        columnDefs: [
             { responsivePriority: 1, targets: 0 },
             { responsivePriority: 1, targets: 1 },
@@ -296,6 +299,8 @@
       
    
   })
+
+
 </script>
 @endsection
 

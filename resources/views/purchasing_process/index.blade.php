@@ -203,6 +203,9 @@
     // });
     // }).draw();
     // })
+    $('#tb-list-po').DataTable();
+    function search() {
+       $('#tb-list-po').DataTable().destroy();
     var table = $('#tb-list-po').DataTable({autoWidth:false,
     "order": [[ 1, "DESC" ]],
     processing: true,
@@ -221,6 +224,7 @@
     item.id_vendor = $('#select_vendor').val().toString();
     item.vendor_list = $('#vendor_list').val();
      item.vendor_select = $('#select_vendor').val();
+     item.search = true;
     },
     url: "{{ route('datatables.purchasing.process.listpo')}}"
     },
@@ -303,8 +307,6 @@
     },
     ]
     });
-    function search() {
-    table.draw();
     }
     $('.select2').select2();
    

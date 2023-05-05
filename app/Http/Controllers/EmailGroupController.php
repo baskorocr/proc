@@ -114,13 +114,11 @@ class EmailGroupController extends Controller
         $email_group->dept_code = $request->dept_code;
         $email_group->abrev = $request->abrev;
         $email_group->dept_desc = $request->dept_desc;
-        $email_group->created_by = auth()->user()->full_name;
+        $email_group->last_changed_by = auth()->user()->id_user;
+        $email_group->last_changed = now();
         $email_group->save();
 
-        return response()->json([
-            'message' => 'data created has been successfully',
-            'type' => 'success'
-        ], 201);
+       return redirect()->route('regis-user.email-group')->with(['message_success' => 'Berhasil menambah data.']);
     }
 
     public function show($id){
@@ -138,7 +136,9 @@ class EmailGroupController extends Controller
         $email_group->dept_code = $request->dept_code;
         $email_group->abrev = $request->abrev;
         $email_group->dept_desc = $request->dept_desc;
-        $email_group->active = $request->active;
+        // $email_group->active = $request->active;
+        $email_group->last_changed_by = auth()->user()->id_user;
+        $email_group->last_changed = now();
         $email_group->save();
 
         return redirect()->route('regis-user.email-group')->with(['message_success' => 'Berhasil mengubah data.']);

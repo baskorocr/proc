@@ -39,7 +39,7 @@ class MasterVendorController extends Controller
              return redirect()->back()->with(['message_success' => 'Berhasil import excel']);
         } catch(\Exception $e)
         {   
-            dd($e);
+            // dd($e);
              return redirect()->back()->with(['message_fail' => 'Format Excel tidak sesuai']);
         }
     }

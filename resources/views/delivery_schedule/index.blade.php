@@ -82,7 +82,7 @@
 						<div class="card">
 							<div class="card-body">
 								
-								@if(!empty(Request::get('start')) && !empty(Request::get('end')))
+								@if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')))
 								<div class="table-responsive mt-3">
 									<table  class="table table-bordered table-striped table-sm" id="download-manifest">
 										<thead>

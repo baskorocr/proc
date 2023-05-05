@@ -24,7 +24,7 @@
 									
 									<div class="form-group">
 										<label>ID Vendor</label>
-										<input type="text" class="form-control" id="id_vendor" name="id_vendor" value="<?php echo $vendor->id_vendor; ?>" required>
+										<input type="text" readonly class="form-control" id="id_vendor" name="id_vendor" value="<?php echo $vendor->id_vendor; ?>" required>
 									</div>
 							
 									<div class="form-group">
