@@ -107,6 +107,7 @@
 							</div> -->
 
 							<div class="table-responsive mt-3">
+                <button class="btn btn-secondary btn-sm mb-2" select-all><i class="fas fa-check"></i> Select All</button>
 								<table  class="table table-bordered table-striped nowrap table-sm" id="tb-download-list-po">
 									<thead>
                     <th>
@@ -177,7 +178,13 @@
 	@section('javascript')
    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 	<script>
-
+    $('[select-all]').click(function(){
+       $('input:checkbox').trigger('click')
+      //  $('input:checkbox').prop('checked', true);
+      //  $('input:checkbox').each(function(i, obj) {
+      //     console.log();
+      // });
+    })
    
 		function addVendor()
      {
@@ -232,25 +239,53 @@
 		// });
 		// }).draw();
 		// })
-
+  Array.prototype.remove = function() {
+    var what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
       var data = [];
 		  function selectedDwn(id)
 		  {
         var val = $(id).val();
-        var dtval = $(id).data('filenm');
+        var dtval = $(id).data('mgid');
+        var flnm = $(id).data('filenm');
+        console.log($(id).val());
         if(!$(id).is(':checked'))
         {
-          data.remove(val);
-          $('#fl'+val).remove();
+          data.remove(dtval);
+          $('#fl'+dtval).remove();
         } else{
-          data.push(val);
-          $('#download-list-checked').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" />');
+          data.push(dtval);
+          $('#download-list-checked').append('<input type="hidden" id="fl'+dtval+'" name="download_doc[]" value="'+flnm+'" />');
         }
         console.log(data);
 		  }
 
         
-      $('#tb-download-list-po').DataTable();
+      $('#tb-download-list-po').on('draw.dt',   function () {
+      // console.log($('#63460809220e0000eb00d4b8').is('checked'))
+      // if($('#63460809220e0000eb00d4b8').is(':checked'))
+      // {
+      //  alert('SS')
+      // } 
+
+      var all = $(".checked").map(function() {
+        // console.log("#"+$(this).data('mgid'))
+          if(data.includes($(this).data('mgid')))
+          {
+            $("#"+$(this).data('mgid')).prop('checked', true);
+          }
+      }).get();
+
+      console.log(all.join());
+    }
+       ).DataTable();
       function search() {
          $('#tb-download-list-po').DataTable().destroy();
         var table = $('#tb-download-list-po').DataTable({ autoWidth:false,

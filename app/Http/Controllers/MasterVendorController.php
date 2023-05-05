@@ -167,7 +167,7 @@ class MasterVendorController extends Controller
         
         $master_vendor = MasterVendor::find($request->id);
         // dd($master_vendor, $request);
-        $master_vendor->id_vendor = $request->id_vendor;
+        // $master_vendor->id_vendor = $request->id_vendor;
         $master_vendor->nm_vendor = $request->nm_vendor;
         $master_vendor->alias = $request->alias;
         $master_vendor->street = $request->street;

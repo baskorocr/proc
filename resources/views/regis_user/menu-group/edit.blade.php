@@ -29,7 +29,7 @@
 										<input type="text" class="form-control" id="menu_group_object" name="menu_group_object" value="<?php echo $group->menu_group_object ?>" placeholder="Menu Object" required>
 									</div>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer"> 
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Update</button>
 									</div>
 								</form>

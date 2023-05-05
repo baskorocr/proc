@@ -32,10 +32,10 @@
 								</ul>
 								
 							</div>
-							<div class="table-responsive mt-3">
+							<div class="mt-3">
 								<table  class="table table-bordered table-striped table-sm" id="master-vendor">
 									<thead>
-										<th style="min-width: 26px"><i class="fa fa-list"></i></th>
+										<th style="max-width: 26px"><i class="fa fa-list"></i></th>
 										<th style="min-width: 100px">ID Vendor</th>
 										<th style="min-width: 100px">Purch Org</th>
 										<th style="min-width: 250px">Vendor Name</th>
@@ -74,7 +74,7 @@
 	<script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-colvis-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.js"></script>
     <script>
     	$.fn.dataTable.ext.errMode = 'none';
-      $('#master-vendor').DataTable({ autoWidth:false, dom: 'Bfrtip',
+      $('#master-vendor').DataTable({ autoWidth:false, dom: 'Bfrtip', scrollX: true,
       	buttons: [
               'excel'
             ],

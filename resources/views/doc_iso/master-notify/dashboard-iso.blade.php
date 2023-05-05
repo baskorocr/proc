@@ -169,7 +169,7 @@
                   <thead>
                     <tr>
                     {{-- <th style="min-width: 100px;">Action</th> --}}
-                        <th style="min-width: 60px;">Vendor Code</th>
+                        <th style="min-width: 70px; max-width: 70px;">Vendor Code</th>
                         <th style="min-width: 200px;">Vendor Name</th>
                         <th style="min-width: 100px;">Material Supply</th>
                         <th style="min-width: 30px;">Simplikasi</th>
@@ -246,8 +246,9 @@
                                 <i class="fa fa-file"></i>
                             </a></td>
                         
-                        <td>{{date('Y-m-d H:i:s',strtotime($item->ch_date))}}</td>
-                        <td>{{date('Y-m-d H:i:s',strtotime($item->cr_date))}}</td>
+                        
+           <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
+          <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
                         {{-- <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
                          <?php
@@ -284,7 +285,7 @@
   var table = $('#iso').DataTable({
      
       responsive: true,
-      order: [[5, 'desc']],
+     
       rowReorder:{dataSrc: 0, snapX: true, enable: true},
        columnDefs: [
             { responsivePriority: 1, targets: 0 },

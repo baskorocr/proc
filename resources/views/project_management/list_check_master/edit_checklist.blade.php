@@ -42,7 +42,7 @@
 									-->
 									
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer"> 
 										<button type="submit" id="edit-prodmaster" name="edit-prodMaster" class="btn btn-primary"><i class="fas fa-edit"></i> Update</button>
 									</div>
 								</form>
