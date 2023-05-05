@@ -49,7 +49,7 @@
     <script>
     	$.fn.dataTable.ext.errMode = 'none';
       $('#user-logrecord').DataTable({
-        "order": [[ 1, "DESC" ]],
+        // order: [[ 4, "desc" ]],
         processing: true,
         serverSide: true,
         autoWidth:false,
