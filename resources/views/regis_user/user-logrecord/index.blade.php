@@ -50,6 +50,14 @@
     	$.fn.dataTable.ext.errMode = 'none';
       $('#user-logrecord').DataTable({
         // order: [[ 4, "desc" ]],
+        'columnDefs': [
+					    { 'orderData':[9], 'targets': [1] },
+					    {
+					        'targets': [9],
+					        'visible': false,
+					        'searchable': false
+					    },
+					],
         processing: true,
         serverSide: true,
         autoWidth:false,
@@ -84,7 +92,12 @@
           }, 
 		  {
 			data: 'action', name: 'action'
-          },   
+          }, 
+          {
+			data: 'datetime_sort', name: 'datetime_sort'
+          },
+
+
         ]
       });
 

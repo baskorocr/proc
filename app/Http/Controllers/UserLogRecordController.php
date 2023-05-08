@@ -25,7 +25,7 @@ class UserLogRecordController extends Controller
     public function getDataUserLogRecord()
     {
         set_time_limit(800);
-        $data = UserLogRecord::orderBy('datetime_log','DESC')->limit(5200)->get();
+        $data = UserLogRecord::orderBy('datetime_log','DESC')->skip(0)->take(6700)->get();
 
         return \DataTables::of($data)
             ->editColumn('uom', function ($data) {
@@ -52,9 +52,9 @@ class UserLogRecordController extends Controller
                  if($data->attempt == "S")
                 {
                    
-                    $status = "<span class=\"badge bg-success\">Success</span>";
+                    $status = "<span class=\"badge bg-success\"><i class=\"fas fa-check-square mr-2\"></i> &nbsp;Success</span>";
                 } elseif($data->attempt=='F') {
-                    $status = "<span class=\"badge bg-danger\">Failed</span>";
+                    $status = "<span class=\"badge bg-danger\"><i class=\"fas fa-exclamation mr-2\"></i> &nbsp;Failed</span>";
                 } else{
                     $status = "<span class=\"badge bg-secondary\"> Unknown</span>";
                 }
@@ -64,9 +64,9 @@ class UserLogRecordController extends Controller
                  if(@$data->user->status_user == "A")
                 {
                    
-                    $status = "<span class=\"badge bg-success\"><i class='fas fa-check-circle'></i> Active</span>";
+                    $status = "<span class=\"badge bg-success\"> Active</span>";
                 } elseif(@$data->user->status_user=='N') {
-                    $status = "<span class=\"badge bg-danger\"><i class='fas fa-times'></i> Non-active</span>";
+                    $status = "<span class=\"badge bg-danger\">Non-active</span>";
                 } else{
                     $status = "<span class=\"badge bg-secondary\">Undentified</span>";
                 }
@@ -91,6 +91,8 @@ class UserLogRecordController extends Controller
             })
             ->editColumn('datetime_log', function ($data) {                    
                 return date('D, d.m.Y H:i A',strtotime($data->datetime_log));
+            })  ->editColumn('datetime_sort', function ($data) {                    
+                return date('Y-m-d H:i:s',strtotime($data->datetime_log));
             })->rawColumns(['action','id_user','activity','attempt','status','user_type'])->addIndexColumn()->make(true);
     }
 

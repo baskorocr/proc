@@ -38,6 +38,7 @@ class Numbering {
 	{
 		$get = $model->select($kolom)->orderBy($kolom,"DESC")->first();
 		$int = empty($get->{$kolom}) ? 0:$get->{$kolom};
+        // dd($int);
 		$hasil = intval($int) + 1;
 
 		return $hasil;

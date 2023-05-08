@@ -9,7 +9,8 @@
 </style>
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Master Vendor</h1>
+		<h1>Master Vendor </h1>
+
 		<nav>
 			<ol class="breadcrumb">
 				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
