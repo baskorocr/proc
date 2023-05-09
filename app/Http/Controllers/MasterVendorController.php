@@ -131,11 +131,12 @@ class MasterVendorController extends Controller
 
     public function store(Request $request){
         $master_vendor = new MasterVendor;
-        $num =  Numbering::generateAuto(new \App\Models\MasterVendor(),"id_vendor", 4, 4, 1, "10");
-        $master_vendor->id_vendor = $num;
+        // $num =  Numbering::generateAuto(new \App\Models\MasterVendor(),"id_vendor", 4, 4, 1, "10");
+        $num =  \Numbering::autoIncrement(new \App\Models\MasterVendor(),"id_vendor");
+        $master_vendor->id_vendor =  strval($num);
         $master_vendor->purch_org = "1100";
         $master_vendor->nm_vendor = $request->nm_vendor;
-        $master_vendor->alias = $request->alias;
+        $master_vendor->allias = $request->allias;
         $master_vendor->street = $request->street;
         $master_vendor->district = $request->district;
         $master_vendor->postal_code = $request->postal_code;
@@ -167,7 +168,7 @@ class MasterVendorController extends Controller
         
         $master_vendor = MasterVendor::find($request->id);
         // dd($master_vendor, $request);
-        $master_vendor->id_vendor = $request->id_vendor;
+        // $master_vendor->id_vendor = $request->id_vendor;
         $master_vendor->nm_vendor = $request->nm_vendor;
         $master_vendor->alias = $request->alias;
         $master_vendor->street = $request->street;

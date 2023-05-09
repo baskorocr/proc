@@ -8,6 +8,7 @@ use Jenssegers\Mongodb\Eloquent\Model;
 
 class RegisIsoDoc extends Model
 {
+   
     //Connect To Other DB
     protected $connection = "mongodbpurch_proc";
     // END Connect
@@ -32,11 +33,12 @@ class RegisIsoDoc extends Model
         'ref_doc_year',
         'cr_by',
         'cr_date',
+        'ch_date',
     ];
 
     public $dates = [];
 
-
+   
     public function vendor()
     {
         return $this->belongsTo(Vendor::class,'id_vendor','id_vendor'); 
@@ -74,7 +76,11 @@ class RegisIsoDoc extends Model
 
     public function getCertDateAttribute($value)
     {
-        $date = explode("/",$value); 
+        if (strpos($value, "/") !== false) {
+            $date = explode("/",$value); 
+        } else{
+            $date = explode("-",$value); 
+        }
         $d = strlen(@$date[0]) == 1 ? "0".@$date[0]:@$date[0];;
         $m = strlen(@$date[1]) == 1 ? "0".@$date[1]:@$date[1];
         $y= @$date[2];

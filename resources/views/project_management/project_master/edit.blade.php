@@ -46,7 +46,7 @@
 									-->
 									
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer"> 
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Update</button>
 									</div>
 								</form>

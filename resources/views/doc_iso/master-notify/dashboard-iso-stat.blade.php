@@ -2,10 +2,12 @@
 @section('title',"Dashboard ISO Document (".$stat_type.")")
 @section('content')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
-
+<style type="text/css">
+    
+</style>
 <main id="main" class="main">
     <div class="pagetitle">
-      <h1>Dashboard ISO Document ({{$stat_type}})</h1>
+      <h1>Dashboard ISO Status ({{$stat_type}})</h1>
       <nav>
         <ol class="breadcrumb">
           {{-- <li class="breadcrumb-item"><a href="index.html">DOC ISO</a></li> --}}
@@ -15,23 +17,23 @@
     </div><!-- End Page Title -->
     <section class="section dashboard">
       <div class="table-responsive">
-       <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
+       <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:1560px">
                   <thead>
                     <tr>
                         @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
-                    <th style="min-width: 10px;"></th>
-                    <th style="min-width: 70px;">Action</th>
+                    <th style="max-width: 10px;"></th>
+                    <th style="max-width: 30px;">Action</th>
                     @endif
-                        <th style="min-width: 70px;">Vendor Code</th>
-                        <th style="min-width: 180px;">Vendor Name</th>
-                        <th style="min-width: 100px;">Material Supply</th>
-                        <th style="min-width: 30px;">Simplikasi</th>
-                        <th style="min-width: 100px;">ISO Cert Num</th>
-                        <th style="min-width: 100px;" >Expire Date</th>
-                        <th style="min-width: 100px;" >Expired Status</th>
-                        <th style="min-width: 10000px" >Doc Process</th>
-                        <th style="min-width: 100px;" >ISO Cert Date</th>
-                        <th style="min-width: 100px;" >Certified</th>
+                        <th style="max-width: 70px;">Vendor Code</th>
+                        <th style="max-width: 160px;">Vendor Name</th>
+                        <th style="max-width: 80px;">Material Supply</th>
+                        <th style="max-width: 30px;">Simplikasi</th>
+                        <th style="max-width: 80px;">ISO Cert Num</th>
+                        <th style="max-width: 80px;" >ISO Cert Date</th>
+                        <th style="max-width: 80px;" >Expire Date</th>
+                        <th style="max-width: 80px;" >Expired Status</th>
+                        <th style="max-width: 80px" >Doc Process</th>
+                        <th style="min-width: 10000px;" >Certified</th>
                         <th style="min-width: 100px;" >ISO Type</th>
                         <th style="min-width: 30px;" >File</th>
                         <th style="min-width: 100px;" >Last change</th>
@@ -109,18 +111,19 @@
                         <td>{{ $item->mat_supply }}</td>
                         <td>{!! $simplify !!}</td>
                         <td>{{ $item->cert_num }}</td>
-                        <td>{{date('d-m-Y', strtotime($date_full))}}</td>
-                        <td>{!! strtotime($date_full) < strtotime(date('Y-m-d')) ? '<span class="badge bg-danger">Expired</span>' : '<span class="badge bg-success">Valid</span>' !!}</td>
-                        <td>{!!$doc_proccess!!} </td>
                         <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
+                         <td>{{date('d-m-Y', strtotime($date_full))}}</td>
+                          <td><span class="badge bg-{{@$item->transaction->color}}">{{@$item->transaction->trn_name}}</span></td>
+                        <td>{!!$doc_proccess!!} </td>
                         <td>{{ $item->cert_name}}</td>
                         <td>{{$item->iso_type_name}}</td>
                         <td><a href="{{asset('files/regis_iso/'.$item->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
                                 <i class="fa fa-file"></i>
                             </a></td>
                         
-                        <td>{{date('Y-m-d H:i:s',strtotime($item->ch_date))}}</td>
-                        <td>{{date('Y-m-d H:i:s',strtotime($item->cr_date))}}</td>
+                        
+           <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
+          <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
                        {{--  <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
                          <?php
@@ -156,19 +159,8 @@
 <script type="text/javascript">
   $('#iso').DataTable({
      
-      responsive: true,
-       columnDefs: [
-            { responsivePriority: 1, targets: 0 },
-            { responsivePriority: 1, targets: 1 },
-            { responsivePriority: 1, targets: 2 },
-            { responsivePriority: 1, targets: 3 },
-            { responsivePriority: 1, targets: 4 },
-            { responsivePriority: 1, targets: 5 },
-            { responsivePriority: 1, targets: 6 },
-            { responsivePriority: 1, targets: 7 },
-            { responsivePriority: 1, targets: 8 },
-            { responsivePriority: 1, targets: 9 },
-        ]
+         "autoWidth": false,
+        responsive:true,
       
    
   })

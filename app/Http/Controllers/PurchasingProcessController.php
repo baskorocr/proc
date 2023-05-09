@@ -414,7 +414,7 @@ class PurchasingProcessController extends Controller
             return date('d.m.Y',strtotime($data->doc_date));
         }) 
         ->addColumn('download_check', function ($data) {
-            return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->po_num.'" onclick="selectedDwn(\'#'.$data->po_num.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+            return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
         })
         ->rawColumns(['download_check','vend_email','active','action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
                 // ->editColumn('last_change_by', function ($data) {

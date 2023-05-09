@@ -25,7 +25,7 @@
                                         <input type="text" class="form-control" placeholder="Jakarta 89"  id="street" name="street" value="" >
                                     </div>
                                     </div><!-- /.box-body -->
-                                    <div class="box-footer"><hr>
+                                    <div class="box-footer"> 
                                         <button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-plus"></i> Create</button>
                                     </div>
                                 </form>

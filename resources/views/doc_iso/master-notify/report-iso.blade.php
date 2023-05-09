@@ -224,9 +224,9 @@
     <table id="iso"  class="table table-striped table-bordered display nowrap " data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
       <thead>
         <tr>
-          <th>#</th>
-          <th>Action</th>
-          <th style="min-width: 60px;">Vendor Code</th>
+          <th  style="min-width: 10px; max-width: 10px;">#</th>
+          <th  style="min-width: 70px; max-width: 70px;">Action</th>
+          <th style="min-width: 70px; max-width: 70px;">Vendor Code</th>
           <th style="min-width: 200px;">Vendor Name</th>
           <th style="min-width: 100px;">Material Supply</th>
           <th style="min-width: 30px;">Simplikasi</th>
@@ -320,8 +320,8 @@
             <i class="fa fa-file"></i>
           </a></td>
           
-          <td>{{date('Y-m-d H:i:s',strtotime($item->ch_date))}}</td>
-          <td>{{date('Y-m-d H:i:s',strtotime($item->cr_date))}}</td>
+           <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
+          <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
           <td>{{empty($item->remark) ? '-':$item->remark}}</td>
           <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
           <?php
@@ -353,6 +353,7 @@
 <script type="text/javascript">
   $('#iso').DataTable({
       // autoWidth:true,
+     order: [[7, 'desc']],
       responsive: true,
       columnDefs: [
             { responsivePriority: 1, targets: 0 },

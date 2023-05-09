@@ -72,7 +72,7 @@
                                 </div>
                              </div>
 
-                             <hr>
+                              
                              <div class="row">
                                 <div class="col-md-6">
                                   <button class="btn btn-primary btn-block" type="submit">Simpan</button>

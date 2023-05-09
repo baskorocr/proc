@@ -40,7 +40,7 @@
 										<input type="text" class="form-control" id="num_high" placeholder="ex. 99999" name="num_high" value="<?php echo $number->num_high; ?>">
 									</div>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer"> 
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Update</button>
 									</div>
 								</form>

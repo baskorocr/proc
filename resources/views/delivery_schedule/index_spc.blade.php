@@ -82,7 +82,7 @@
 					<div class="card">
 						<div class="card-body">
 							
-						@if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')))
+						@if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select'))|| !empty(Request::get('manifest')))
 							<div class="table-responsive mt-3">
 								<table  class="table table-bordered table-striped table-sm" id="download-manifest">
 									<thead>
@@ -219,7 +219,23 @@ $("#end").change(function(e){
 			console.log(data);
 
 		}
-		$('#download-manifest').DataTable({
+		$('#download-manifest').on('draw.dt',   function () {
+      // console.log($('#63460809220e0000eb00d4b8').is('checked'))
+      // if($('#63460809220e0000eb00d4b8').is(':checked'))
+      // {
+      //  alert('SS')
+      // } 
+
+      var all = $(".checked").map(function() {
+          if(data.includes(this.value))
+          {
+            $("#"+this.value).prop('checked', true);
+          }
+      }).get();
+
+      console.log(all.join());
+    }
+       ).DataTable({
 
 	"order": [[ 1, "DESC" ]],
 	processing: true,

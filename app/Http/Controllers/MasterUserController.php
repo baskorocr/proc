@@ -136,8 +136,12 @@ class MasterUserController extends Controller
 
     public function getMasterUser()
     {
+
+        $data['type'] = TypeUser::get();
         $data['user'] = MasterUser::all();
+        $data['roles'] =  Role::get();;
         $data['vendor'] = Vendor::where('status_vendor','A')->get();
+        $data['accessgrp'] = AccessGroup::get();
         return view('regis_user/master-user/index')->with($data);
     }
 

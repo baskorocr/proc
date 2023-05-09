@@ -124,7 +124,9 @@ class EmailListGroupController extends Controller
         $email_list_group->mail = $request->mail;
         $email_list_group->dept_code = $request->dept_code;
         $email_list_group->name = $request->name;
+        $email_list_group->active = "A";
         $email_list_group->last_changed_by = auth()->user()->id_user;
+         $email_list_group->last_changed = now();
         $email_list_group->save();
 
         return redirect()->route('regis-user.email-listemail')->with(['message_success' => 'Berhasil menambah data.']);
@@ -146,6 +148,7 @@ class EmailListGroupController extends Controller
         $email_list_group->name = $request->name;
         $email_list_group->active = $request->active;
          $email_list_group->last_changed_by = auth()->user()->id_user;
+         $email_list_group->last_changed = now();
         $email_list_group->save();
 
         return redirect()->route('regis-user.email-listemail')->with(['message_success' => 'Berhasil mengubah data.']);
