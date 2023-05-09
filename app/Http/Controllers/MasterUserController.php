@@ -272,7 +272,7 @@ class MasterUserController extends Controller
         $master_user->id_user = \Numbering::generateAuto(new \App\Models\MasterUser(),"id_user", 5, 1, 1, "");
         $master_user->nm_user = $request->nm_user;
         $master_user->id_tipe_user = "04";
-        $master_user->status_user = $request->status_user;
+        $master_user->status_user = "A";
         $master_user->username = $request->username;
         $master_user->password = bcrypt($request->password);
         $master_user->foreign_id = $request->id_vendor;
