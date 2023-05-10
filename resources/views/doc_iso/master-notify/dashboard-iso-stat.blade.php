@@ -16,7 +16,7 @@
       </nav>
     </div><!-- End Page Title -->
     <section class="section dashboard">
-      <div class="table-responsive">
+     <div class="table-responsive" style="min-height:500px">
        <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:1560px">
                   <thead>
                     <tr>
@@ -59,7 +59,7 @@
                             <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                               Choose
                             </a>
-                                      {{--         <ul class="dropdown-menu">
+                            <ul class="dropdown-menu">
                                 <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                
                                 <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
@@ -71,9 +71,9 @@
                                 <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
                                 <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
                                 
-                              </ul> --}}
+                              </ul>
                             
-                           <ul class="dropdown-menu">
+                         {{--   <ul class="dropdown-menu">
                               <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                               @if ($item->trn_type == 'R' OR $item->trn_type == 'I')
                               <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
@@ -87,7 +87,7 @@
                               <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
                               @endif
                               @endif
-                            </ul> 
+                            </ul>  --}}
                           </div>
                         </td>
                       @endif

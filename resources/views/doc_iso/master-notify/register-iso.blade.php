@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('title',"Form Input Page")
 @section('content')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" integrity="sha512-xrbX64SIXOxo5cMQEDUQ3UyKsCreOEq1Im90z3B7KPoxLJ2ol/tCT0aBhuIzASfmBVdODioUdUPbt5EDEXmD9g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <main id="main" class="main">
     <div class="pagetitle">
       <h1>Register ISO Document</h1>
@@ -32,8 +33,8 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Vendor</label>
                   <div class="col-sm-10">
-                    <select name="id_vendor" required class="form-select" aria-label="Default select example">
-                      <option selected disabled>Open this select menu</option>
+                    <select name="id_vendor" id="id_vendor" required class="form-select" aria-label="Default select example">
+                      <option selected disabled>Select Vendor</option>
                       @foreach($vendor as $item)
                       <option value="{{ $item->id_vendor }}">{{ $item->nm_vendor }}</option>
                       @endforeach
@@ -96,10 +97,19 @@
                   </thead>
                   <tbody>
                     @foreach($notify as $item)
-                    <tr>
+                   <tr>
+                       <?php 
+                       if ($item->uom == "M"){
+                                        $measure = "Months";
+                                    } elseif($item->uom == "D"){
+                                        $measure = "Days";
+                                    } elseif($item->uom  == "Y"){
+                                        $measure = "Year";
+                                    }
+                            ?>
                       <td style="font-size:12px">{{ $item->notif_id }}</td>
                       <td style="font-size:12px">{{ $item->notif_seq }}</td>
-                      <td style="font-size:12px">{{ $item->notif_before }}</td>
+                      <td style="font-size:12px">{{ $item->notif_before }} {{$measure}}</td>
                     </tr> 
                     @endforeach
                   </tbody>
@@ -148,13 +158,14 @@
   </main><!-- End #main -->
 @endsection
 @section('javascript')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script>
   $('#regiso').submit(function(e){
     let timerInterval
     Swal.fire({
       title: 'Transaction Progress',
       html: 'Please wait...',
-      timer: 1600,
+      timer: 30000,
       // timerProgressBar: true,
       didOpen: () => {
         Swal.showLoading()
@@ -170,5 +181,9 @@
       $('#regiso').trigger('submit')
     })
   })
+
+    $(document).ready(function() {
+      $('#id_vendor').select2();
+    });
 </script>
 @endsection
