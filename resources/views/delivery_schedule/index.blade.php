@@ -132,7 +132,7 @@
 						</div>
 						@endif
 						<div class="card-footer">
-							@if(!empty(Request::get('start')) && !empty(Request::get('end')))
+							@if(!empty(Request::get('start')) && !empty(Request::get('end')) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')))
 							<form action="{{route('delivery.schedule.mf.download')}}" method="POST">
 								@csrf
 								<div class="row">

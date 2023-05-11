@@ -45,7 +45,7 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
               <div class="form-group">
                 <label><b>Doc Status</b></label>
                 <h4>
-                {!!$stat!!}
+                 <span class="badge bg-{{@$iso->transaction->color}}">{{@$iso->transaction->trn_name}}</span>
                 </h4>
               </div>
               <div class="form-group">
@@ -149,7 +149,7 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
             if (@$iso->trn_type != 'R')
             {
             ?>
-            <form class="row g-3" action="{{ route('doc-iso.approval_iso') }}" method="POST" enctype="multipart/form-data">
+            <form class="row g-3" id="approval" action="{{ route('doc-iso.approval_iso') }}" method="POST" enctype="multipart/form-data">
               @csrf
               <input type="hidden" name ="id" value ="<?php echo @$iso->_id; ?>" />
               <input type="hidden" name ="trn_id" value ="<?php echo @$iso->trn_id; ?>" />
@@ -181,4 +181,29 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
 </div>
 </section>
 </main><!-- End #main -->
+@endsection
+@section('javascript')
+  <script type="text/javascript">
+    $('#approval').submit(function(e){
+        let timerInterval
+        Swal.fire({
+          title: 'Transaction Progress',
+          html: 'Please wait...',
+          timer: 30000,
+          // timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading()
+            const b = Swal.getHtmlContainer().querySelector('b')
+            timerInterval = setInterval(() => {
+              b.textContent = Swal.getTimerLeft()
+            }, 100)
+          },
+          willClose: () => {
+            clearInterval(timerInterval)
+          }
+        }).then((result) => {
+          $('#regiso').trigger('submit')
+        })
+      })
+  </script>
 @endsection

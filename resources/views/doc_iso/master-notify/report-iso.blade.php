@@ -61,13 +61,13 @@
       <div class="col-md-2">
         <div class="small-box bg-green">
           <div class="inner">
-            <h3>{{ $regis->where('trn_type', 'I')->count() }}</h3>
+            <h3>{{ $regis->where('trn_type', 'R')->count() }}</h3>
             <p>Approved Document</p>
           </div>
           <div class="icon">
             <i class="far fa-file"></i>
           </div>
-          <a href="{{route('detail-iso-report',['stat' => 'I'])}}" class="small-box-footer">
+          <a href="{{route('detail-iso-report',['stat' => 'R'])}}" class="small-box-footer">
             More info <i class="fas fa-arrow-circle-right"></i>
           </a>
         </div>
@@ -76,13 +76,13 @@
       <div class="col-md-2">
         <div class="small-box bg-orange">
           <div class="inner">
-            <h3>{{ $regis->where('stat', 'E')->count() }}</h3>
+            <h3>{{ $regis->where('trn_type', 'I')->count() }}</h3>
             <p>Notified Document</p>
           </div>
           <div class="icon">
             <i class="far fa-file"></i>
           </div>
-          <a href="{{route('detail-iso-dashboard',['stat' => 'E'])}}" class="small-box-footer">
+          <a href="{{route('detail-iso-report',['stat' => 'I'])}}" class="small-box-footer">
             More info <i class="fas fa-arrow-circle-right"></i>
           </a>
         </div>
@@ -220,20 +220,20 @@
       </table>
     </div> --}}
   </section>
-  <div class="table-responsive">
-    <table id="iso"  class="table table-striped table-bordered display nowrap " data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:100%">
+  <div>
+    <table id="iso"  class="table table-striped table-bordered display nowrap " data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="min-width:1380px; width: 100%;">
       <thead>
         <tr>
-          <th  style="min-width: 10px; max-width: 10px;">#</th>
-          <th  style="min-width: 70px; max-width: 70px;">Action</th>
-          <th style="min-width: 70px; max-width: 70px;">Vendor Code</th>
-          <th style="min-width: 200px;">Vendor Name</th>
-          <th style="min-width: 100px;">Material Supply</th>
+          <th  style="min-width: 10px; ">#</th>
+          <th  style="min-width: 60px;">Action</th>
+          <th style="min-width: 50px;">Vendor Code</th>
+          <th style="min-width: 180px;">Vendor Name</th>
+          <th style="min-width: 70px;">Material Supply</th>
           <th style="min-width: 30px;">Simplikasi</th>
           <th style="min-width: 100px;">ISO Cert Num</th>
-          <th style="min-width: 100px;" >Expire Date</th>
-          <th style="min-width: 100px;" >Expired Status</th>
-          <th style="min-width: 100px;" >Doc Process</th>
+          <th style="min-width: 50px;" >Expire Date</th>
+          <th style="min-width: 70px;" >Expired Status</th>
+          <th style="min-width: 60px;" >Doc Process</th>
           <th style="min-width: 10000px;" >ISO Cert Date</th>
           <th style="min-width: 100px;" >Certified</th>
           <th style="min-width: 100px;" >ISO Type</th>
@@ -261,20 +261,22 @@
               </a>
               
               
-              <ul class="dropdown-menu">
-                <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
-                @if ($item->trn_type == 'R' OR $item->trn_type == 'I')
-                <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
-                @endif
-                @if( ($item->stat != 'N' AND $item->stat != 'E' ) AND $item->trn_type != 'R' AND $item->trn_type != 'I')
-                <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
-                @endif
-                @if(auth()->user()->role != "vendor")
-                @if(( $item->stat != 'N' AND $item->stat != 'E') AND $item->trn_type != 'R' AND $item->trn_type != 'I' )
-                <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
-                <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
-                @endif
-                @endif
+             <ul class="dropdown-menu">
+                  <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
+                  {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
+                  @if(empty($item->ref_doc) AND empty($item->ref_doc_year))
+                      <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
+                  @endif
+                  @if(($item->stat != 'A' AND $item->stat != 'E') )
+                       <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
+                  @endif
+                  @if(auth()->user()->role != "vendor")
+                  @if(($item->stat != 'A' AND $item->stat != 'E'))
+                      <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
+                      <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
+                  @endif
+                  @endif
+                  
               </ul>
                {{-- <ul class="dropdown-menu">
                 <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
@@ -311,8 +313,8 @@
           <td>{!! $simplify !!}</td>
           <td>{{ $item->cert_num }}</td>
           <td>{{date('d-m-Y', strtotime($date_full))}}</td>
-          <td>{!! strtotime($date_full) < strtotime(date('Y-m-d')) ? '<span class="badge bg-danger">Expired</span>' : '<span class="badge bg-success">Valid</span>' !!}</td>
-          <td>{!!$doc_proccess!!} </td>
+           <td><span class="badge bg-{{@$item->transaction->color}}">{{@$item->transaction->trn_name}}</span></td>
+          <td> {!!$doc_proccess!!} </td>
           <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
           <td>{{ $item->cert_name}}</td>
           <td>{{$item->iso_type_name}}</td>
@@ -351,11 +353,12 @@
 @section('javascript')
 <script data-require="datatables-responsive@*" data-semver="2.1.0" src="//cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
 <script type="text/javascript">
-  $('#iso').DataTable({
+  $('#iso').DataTable({scrollX: true,
       // autoWidth:true,
      order: [[7, 'desc']],
       responsive: true,
       columnDefs: [
+            { responsivePriority: 1, targets: 9 },
             { responsivePriority: 1, targets: 0 },
             { responsivePriority: 1, targets: 1 },
             { responsivePriority: 1, targets: 2 },
@@ -365,7 +368,6 @@
             { responsivePriority: 1, targets: 6 },
             { responsivePriority: 1, targets: 7 },
             { responsivePriority: 1, targets: 8 },
-            { responsivePriority: 1, targets: 9 },
         ]
    
   })

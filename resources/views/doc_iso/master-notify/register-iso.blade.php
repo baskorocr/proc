@@ -16,7 +16,7 @@
     <section class="section">
       <div class="row">
         <div class="col-lg-12">
-
+          
           <div class="card">
             <div class="card-body">
               <h5 class="card-title">General Form Register ISO</h5>
@@ -123,7 +123,7 @@
                 <div class="row mb-3">
                   <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
                   <div class="col-sm-10">
-                    <input name="file" class="form-control" type="file" id="formFile">
+                    <input name="file" required accept="application/pdf" class="form-control" type="file" id="formFile">
                   </div>
                 </div>
                 <div class="text-left">

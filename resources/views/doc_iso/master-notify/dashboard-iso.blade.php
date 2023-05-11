@@ -173,10 +173,10 @@
                         <th style="min-width: 200px;">Vendor Name</th>
                         <th style="min-width: 100px;">Material Supply</th>
                         <th style="min-width: 30px;">Simplikasi</th>
-                        <th style="min-width: 100px;">ISO Cert Num</th>
-                        <th style="min-width: 80px;" >Expire Date</th>
-                        <th style="min-width: 120px;" >Expired Status</th>
-                        <th style="min-width: 100px;" >Doc Process</th>
+                        <th style="max-width: 80px;">ISO Cert Num</th>
+                        <th style="max-width: 80px;" >Expire Date</th>
+                        <th style="max-width: 80px;" >Expired Status</th>
+                        <th style="max-width: 100px;" >Doc Process</th>
                         <th style="min-width: 10000px;" >ISO Cert Date</th>
                         <th style="min-width: 100px;" >Certified</th>
                         <th style="min-width: 100px;" >ISO Type</th>
