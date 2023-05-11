@@ -10,8 +10,9 @@
   <meta content="" name="keywords">
 
   <!-- Favicons -->
-  <link href="{{ URL::asset('assets/template/img/favicon.ico') }}" rel="icon">
-  <link href="{{ URL::asset('assets/template/img/favicon3.png') }}" rel="apple-touch-icon">
+   <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon3.png') }}" />
+    <link rel="SHORTCUT ICON" href="{{ asset('img/favicon3.png') }}" />
+    <link rel="icon" href="{{ asset('img/favicon.ico') }}" type="image/ico" />
 
   <!-- Google Fonts -->
   <link href="{{ URL::asset('assets/template/css/fontgoogle.css') }}" rel="stylesheet">
@@ -32,6 +33,14 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="{{ URL::asset('assets/template/css/style.css') }}" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+  .breadcrumb > li:first-of-type {
+   content: none;
+  }
+ /* .breadcrumb > li:before {
+   content: none;
+}*/
+</style>
 </head>
 
 <body>
@@ -40,19 +49,19 @@
   <header id="header" class="header fixed-top d-flex align-items-center">
   
     <div class="d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="/dashboard" class="logo d-flex align-items-center">
         <img src="{{ URL::asset('assets/template/img/logo1.png') }}" alt="">
         <span class="d-none d-lg-block">eProcurement</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div><!-- End Logo -->
 
-    <div class="search-bar">
+{{--     <div class="search-bar">
       <form class="search-form d-flex align-items-center" method="POST" action="#">
         <input type="text" name="query" placeholder="Search" title="Enter search keyword">
         <button type="submit" title="Search"><i class="bi bi-search"></i></button>
       </form>
-    </div><!-- End Search Bar -->
+    </div><!-- End Search Bar --> --}}
 
     <nav class="header-nav ms-auto">
       <ul class="d-flex align-items-center">
@@ -111,9 +120,9 @@
 
   <!-- ======= Footer ======= -->
   <footer id="footer" class="footer">
-    <div class="copyright">
+   {{--  <div class="copyright">
       &copy; Development By <strong><span>Kelola Bisnis Indonesia</span></strong>.
-    </div>
+    </div> --}}
   </footer><!-- End Footer -->
 
   <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
@@ -132,6 +141,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.1/sweetalert2.min.js" integrity="sha512-vCI1Ba/Ob39YYPiWruLs4uHSA3QzxgHBcJNfFMRMJr832nT/2FBrwmMGQMwlD6Z/rAIIwZFX8vJJWDj7odXMaw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- Additional -->
   <script src="{{ URL::asset('assets/template/js/jquery-3.5.1.js') }}"></script>
+  <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/jquery.dataTables.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -139,7 +149,8 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js" integrity="sha512-2ImtlRlf2VVmiGZsjm9bEyhjGW4dU7B6TNwh/hx/iSByxNENtj3WVE6o/9Lj4TJeVXPi4bnOIMXFIJJAeufa0A==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="{{ URL::asset('assets/template/js/main.js') }}"></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
   <script>
   $(document).ready(function () {
     $('.datatables').DataTable();

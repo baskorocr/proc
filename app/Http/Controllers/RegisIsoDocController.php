@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\RegisIsoDoc;
 use App\Models\Vendor;
+use App\Models\IsoLog;
 use App\Models\MasterNotify;
 
 use Illuminate\Support\Facades\File;
@@ -15,6 +16,7 @@ class RegisIsoDocController extends Controller
 {
     public function index(Request $request)
     {
+
         $data['vendor'] = Vendor::get();
         $data['notify'] = MasterNotify::get();
         
@@ -23,12 +25,240 @@ class RegisIsoDocController extends Controller
 
     public function show(Request $request, $id)
     {
-        $regis_iso_doc = RegisIsoDoc::findOrFail($id);
+        $data['iso'] = RegisIsoDoc::findOrFail($id);
+        $data['notify'] = MasterNotify::get();
+       
 
-        return response()->json([
-            'type' => 'success',
-            'data' =>  $regis_iso_doc
-        ]);
+        return view('doc_iso.master-notify.view-iso', $data);
+    }
+
+    public function renew(Request $request,$id)
+    {
+        $data['iso'] = RegisIsoDoc::findOrFail($id);
+        $data['notify'] = MasterNotify::get();
+         $data['vendor'] = Vendor::get();
+
+        return view('doc_iso.master-notify.renew-iso', $data);
+    }
+
+    public function change(Request $request,$id)
+    {
+        $data['iso'] = RegisIsoDoc::findOrFail($id);
+        $data['notify'] = MasterNotify::get();
+         $data['vendor'] = Vendor::get();
+
+        return view('doc_iso.master-notify.change-iso', $data);
+    }
+    public function approve(Request $request,$id)
+    {
+        $data['iso'] = RegisIsoDoc::findOrFail($id);
+        $data['notify'] = MasterNotify::get();
+         $data['vendor'] = Vendor::get();
+
+        return view('doc_iso.master-notify.approval-iso', $data);
+    }
+
+    public function approval_iso(Request $request)
+    {
+        
+         $id_user    =auth()->user()->id_user;
+            $trn_date   = date('Y-m-d');
+            $trn_time   = date('H:i:s');
+            $trn_detail = '';
+            $ip_addr    = $request->ip();
+            
+
+            if (isset($request->approve_doc)){
+
+                $trn_id     = $request->trn_id;
+                $doc_year   = $request->doc_year;
+                $trn_type   = 'R';
+                $id_vendor  = $request->id_vendor;
+
+                $mat_supply = $request->mat_supply;
+
+           
+                $exp_date_fm   = $request->exp_date;
+                $exp_date      = $exp_date_fm; //check expire date with d-date
+
+                //echo $_POST['simplf'] ;
+                if ($request->simplf == "on") {
+                    $simply      = 'X';
+                } else {
+                    $simply      = 'n';
+                }
+
+                $date_now = date("Y-m-d"); 
+                if ($exp_date > $date_now) {
+                   $stat = 'V';
+                }else {
+                    $stat = 'E';
+                }
+
+                //update_trn_reg_iso($trn_id, $doc_year, $trn_type);
+
+                RegisIsoDoc::where('_id',$request->id)
+                            ->where('del_indicator','<>','X')
+                            ->update(['trn_type' => $trn_type,'simply' => $simply,'mat_supply' => $mat_supply,'stat' => $stat]);
+
+                
+                // return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil Approve Dokumen ISO.']);
+                return redirect()->back()->with(['message_success' => 'Berhasil Approve Dokumen ISO.']);
+              
+        } else if (isset($request->reject_doc)){
+
+                $trn_id     = $request->trn_id;
+                $doc_year   = $request->doc_year;
+                $trn_type   = 'C';
+                $id_vendor  = $request->id_vendor;
+
+                $mat_supply = $request->mat_supply;
+
+                 $exp_date_fm   = $request->exp_date;
+                $exp_date      = $exp_date_fm; //check expire date with d-date
+
+                //echo $_POST['simplf'] ;
+                if ($request->simplf == "on") {
+                    $simply      = 'X';
+                } else {
+                    $simply      = '';
+                }
+
+                $date_now = date("Y-m-d"); 
+                if ($exp_date > $date_now) {
+                   $stat = 'V';
+                }else {
+                    $stat = 'E';
+                }
+
+                //update_trn_reg_iso($trn_id, $doc_year, $trn_type);
+
+                RegisIsoDoc::where(['trn_id' => $trn_id,'doc_year' => $doc_year])
+                            ->where('del_indicator','<>','X')
+                            ->update(['trn_type' => $trn_type,'simply' => $simply,'mat_supply' => $mat_supply,'stat' => $stat]);
+
+                
+                return redirect()->back()->with(['message_success' => 'Berhasil Reject Dokumen ISO.']);
+              
+        }
+    }
+
+    public function delete_act(Request $request)
+    {
+
+        RegisIsoDoc::where(['_id' => $request->id])
+                            ->update(['del_indicator' => "X"]);
+
+        IsoLog::create(['trn_id',
+                         'doc_year' => $request->doc_year,
+                         'id_user' => auth()->user()->id_user,
+                         'trn_type' => $request->doc_year,
+                         'trn_date' =>  $request->trn_date,
+                         'trn_time' =>  $request->trn_time,
+                         'ip_address' => $request->ip(),
+                         'trn_detail' =>  $request->trn_detail]);
+         return redirect()->back()->with(['message_success' => 'Data has been deleted']);
+    }
+    public function change_act(Request $request)
+    {
+        // $request->validate([
+        //     // 'username' => 'required|string|unique:users,username,'.$id.',_id',
+        //     //'email' => 'required|string',
+        //     // 'full_name' => 'required|string',
+        // ]);
+ // dd(strpos("2023/11/11","-"));
+       if (strtotime( $request->exp_date) > date('Y-m-d')) {
+                $stat = 'W';
+            }else{
+                $stat = 'E';
+            }
+        
+        $regis_iso_doc = RegisIsoDoc::findOrFail($request->id);
+        //$regis_iso_doc->vendor_code = $request->vendor_code;
+        $regis_iso_doc->trn_id = $request->trn_id;
+        // $regis_iso_doc->id_vendor = $request->id_vendor;
+        $regis_iso_doc->doc_year = $request->doc_year;
+        $regis_iso_doc->mat_supply = $request->mat_supply;
+        $regis_iso_doc->simply = $request->simply ? "X" : "";
+        $regis_iso_doc->cert_num = $request->cert_num;
+        $regis_iso_doc->cert_date = $request->cert_date;
+        $regis_iso_doc->cert_name = $request->cert_name;
+        $regis_iso_doc->iso_type_name = $request->iso_type_name;
+        $regis_iso_doc->exp_date = $request->exp_date;
+        $regis_iso_doc->stat =  $stat;
+         if ($request->has("file")){
+            $file = $request->file("file");
+            $path = public_path('files/regis_iso/');
+            $nameFile = date("Ymdhis")."_".$request->cert_num."_".$request->id_vendor."." . $file->getClientOriginalExtension();
+
+            $regis_iso_doc->doc_path = $nameFile;
+        }
+        $regis_iso_doc->remark = $request->remark;
+        $regis_iso_doc->trn_type = "U";
+        $regis_iso_doc->ref_doc = $request->ref_doc;
+        $regis_iso_doc->ref_doc_year = $request->ref_doc_year;
+        //$regis_iso_doc->created_by = auth()->user()->full_name;
+        $regis_iso_doc->changed_by = auth()->user()->id_user;
+        $regis_iso_doc->save();
+         if ($nameFile ?? false){
+            if(!File::isDirectory($path)) File::makeDirectory($path, 0777, true, true);
+
+            $file->move($path, $nameFile);
+        }
+
+        return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil memperbaharui ISO.']);
+    
+    }
+
+    public function renewal(Request $request)
+    {
+        // $request->validate([
+        //     // 'username' => 'required|string|unique:users,username,'.$id.',_id',
+        //     //'email' => 'required|string',
+        //     // 'full_name' => 'required|string',
+        // ]);
+
+       
+         if (strtotime( $request->exp_date) > date('Y-m-d')) {
+                $stat = 'W';
+            }else{
+                $stat = 'E';
+            }
+        $regis_iso_doc = RegisIsoDoc::findOrFail($request->id);
+        //$regis_iso_doc->vendor_code = $request->vendor_code;
+        $regis_iso_doc->trn_id = $request->trn_id;
+        // $regis_iso_doc->id_vendor = $request->id_vendor;
+        $regis_iso_doc->doc_year = $request->doc_year;
+        $regis_iso_doc->mat_supply = $request->mat_supply;
+        $regis_iso_doc->simply = $request->simply ? "X" : "";
+        $regis_iso_doc->cert_num = $request->cert_num;
+        $regis_iso_doc->cert_date = $request->cert_date;
+        $regis_iso_doc->cert_name = $request->cert_name;
+        $regis_iso_doc->iso_type_name = $request->iso_type_name;
+        $regis_iso_doc->exp_date = $request->exp_date;
+        $regis_iso_doc->stat = $stat;
+         if ($request->has("file")){
+            $file = $request->file("file");
+            $path = public_path('files/regis_iso/');
+            $nameFile = date("Ymdhis")."_".$request->cert_num."_".$request->id_vendor."." . $file->getClientOriginalExtension();
+
+            $regis_iso_doc->doc_path = $nameFile;
+        }
+        $regis_iso_doc->remark = $request->remark;
+        $regis_iso_doc->trn_type = "R";
+        $regis_iso_doc->ref_doc = $request->ref_doc;
+        $regis_iso_doc->ref_doc_year = $request->ref_doc_year;
+        //$regis_iso_doc->created_by = auth()->user()->full_name;
+        $regis_iso_doc->changed_by = auth()->user()->id_user;
+        $regis_iso_doc->save();
+         if ($nameFile ?? false){
+            if(!File::isDirectory($path)) File::makeDirectory($path, 0777, true, true);
+
+            $file->move($path, $nameFile);
+        }
+
+        return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil memperbaharui data.']);
+    
     }
 
     public function store(Request $request)
@@ -44,17 +274,18 @@ class RegisIsoDocController extends Controller
 
         if ($request->has("file")){
             $file = $request->file("file");
-            $path = 'files/regis_iso/';
-            $nameFile = md5($file->getClientOriginalName(). rand(rand(231, 992), 123882)). "." . $file->getClientOriginalExtension();
+            $path = public_path('files/regis_iso/');
+            $nameFile = date("Ymdhis")."_".$request->cert_num."_".$request->id_vendor."." . $file->getClientOriginalExtension();
 
-            $regis_iso_doc->doc_path = $path.$nameFile;
+            $regis_iso_doc->doc_path = $nameFile;
         }
     
 
         $regis_iso_doc->doc_year = date('Y');
+        $regis_iso_doc->trn_id = time();
         $regis_iso_doc->id_vendor = $request->id_vendor;
         $regis_iso_doc->mat_supply = $request->mat_supply;
-        $regis_iso_doc->simply = $request->simply ? true : false;
+        $regis_iso_doc->simply = $request->simply ? "X" : "";
         $regis_iso_doc->cert_name = $request->cert_name;
         $regis_iso_doc->iso_type_name = $request->iso_type_name;
         $regis_iso_doc->cert_num = $request->cert_num;
@@ -63,21 +294,21 @@ class RegisIsoDocController extends Controller
         $regis_iso_doc->remark = $request->remark;
 
         $regis_iso_doc->stat = 'v';
-        $regis_iso_doc->trn_type = '';
+        $regis_iso_doc->trn_type = 'S';
         $regis_iso_doc->ref_doc = '';
         $regis_iso_doc->ref_doc_year = '';
-        $regis_iso_doc->cr_by = Auth::user()->nm_user;
+        $regis_iso_doc->cr_by = Auth::user()->id_user;
         $regis_iso_doc->cr_dat = date('Y-m-d h:i:s');
         $regis_iso_doc->save();
 
         if ($nameFile ?? false){
-            if(!File::isDirectory($path)) File::makeDirectory($path, 0755, true, true);
+            if(!File::isDirectory($path)) File::makeDirectory($path, 0777, true, true);
 
             $file->move($path, $nameFile);
         }
         
 
-        return redirect()->back()->with(['message_success' => 'Berhasil menambah data.']);
+        return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil menambah data.']);
     }
 
     public function update(Request $request, $id)
@@ -88,6 +319,11 @@ class RegisIsoDocController extends Controller
         //     // 'full_name' => 'required|string',
         // ]);
 
+          if (strtotime( $request->exp_date) > date('Y-m-d')) {
+                $stat = 'W';
+            }else{
+                $stat = 'E';
+            }
         $regis_iso_doc = RegisIsoDoc::findOrFail($id);
         //$regis_iso_doc->vendor_code = $request->vendor_code;
         $regis_iso_doc->trn_id = $request->trn_id;
@@ -103,7 +339,7 @@ class RegisIsoDocController extends Controller
         $regis_iso_doc->stat = $request->stat;
         $regis_iso_doc->doc_path = $request->doc_path;
         $regis_iso_doc->remark = $request->remark;
-        $regis_iso_doc->trn_type = $request->trn_type;
+        $regis_iso_doc->trn_type = "U";
         $regis_iso_doc->ref_doc = $request->ref_doc;
         $regis_iso_doc->ref_doc_year = $request->ref_doc_year;
         //$regis_iso_doc->created_by = auth()->user()->full_name;

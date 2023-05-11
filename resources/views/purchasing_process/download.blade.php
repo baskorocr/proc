@@ -1,67 +1,90 @@
 @extends('layouts.main')
 @section('title',"Download List PO")
 @section('content')
+ <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <main id="main" class="main">
 	<div class="pagetitle">
 		<h1>Download List PO</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li> --}}
 				<li class="breadcrumb-item active">Download List PO</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
 		<section class="section">
       
-    <div class="row">
-          <div class="col-lg-6">
-            <div class="">
-              <label>Document Date</label>
-                  <?php 
-                      $date_from = "";
-                      $date_to = "";
-                      $list_po;
-                      $list_vendor;
-                      if (isset($_POST['submit-find'])) {
-                          $date_from      = trim($_POST['date_from']);
-                          $date_to        = trim($_POST['date_to']);
-                          $list_po        = rtrim($_POST['po_sel']);
-                          $list_vendor    = rtrim($_POST['vend_sel']);
-                      }
-                  ?>
-                <div class="" style="width: 200px;">
-                    <!-- <i class="fa fa-calendar"></i> -->
-                    from
-                    <input type="date" name="date_from" id="date_from" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/> to 
-                    <input type="date" name="date_to" id="date_to" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/>
+     <div class="card">
+        <div class="card-header">
+          Search Option
+        </div>
+        <div class="card-body">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="">
+                <label>Document Date</label>
+                <?php
+                $date_from = "";
+                $date_to = "";
+                $list_po;
+                $list_vendor;
+                if (isset($_POST['submit-find'])) {
+                $date_from      = trim($_POST['date_from']);
+                $date_to        = trim($_POST['date_to']);
+                $list_po        = rtrim($_POST['po_sel']);
+                $list_vendor    = rtrim($_POST['vend_sel']);
+                }
+                ?>
+                <div class="" style="width: 400px;">
+                  <!-- <i class="fa fa-calendar"></i> -->
+                 <div class="row">
+                    <div class="col-md-6">
+                      from
+                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
+                    </div>
+                    <div class="col-md-6"> to
+                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
+                    </div>
+                    
+                    <div class="col-12">
+                      <label>Purchase Order</label>
+                      <textarea class="form-control" rows="3" name="po_sel" id="po_textarea"  placeholder="5111000xxx"><?php if (isset($_POST['submit-find'])) { echo $list_po; } ?></textarea>
+                       <a href="javascript:void(0);" onclick="$('#po_textarea').val('');">Clear</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-5">
+                  <div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
+                    <button type="submit" name="submit-find" class="btn btn-primary btn-block" style="min-width: 100%;" onclick="search()">
+                    <i class="fa fa-search"></i> Search
+                    </button>
+                  </div>
                 </div>
               </div>
-          </div>
-          <div class="col-lg-5">
-            <div>
-              <label class="col-sm-5 col-form-label">Vendor</label>
+              <div class="col-lg-5">
+                <div>
+                  <label class="col-sm-5 col-form-label">Vendor</label>
                   <div class="col-sm-10">
-                      <select class="form-select select2" id="select_vendor" aria-label="Default select example">
-                      <option selected>Choose Vendor</option>
-                      @foreach($list_vendor as $vendor)
-                      <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
-                      @endforeach
-                      </select>
+                    <div class="row">
+                      <div class="col-10">
+                        <select class="form-select select2" name='vendor_select' id="select_vendor" aria-label="Default select example">
+                          <option selected>Choose Vendor</option>
+                          @foreach($list_vendor as $vendor)
+                          <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
+                          @endforeach
+                        </select>
+                      </div>
+                      <div class="col-2">
+                        <button id="add_vendor" class="btn btn-primary btn-sm" onclick="addVendor()" style="margin-left:-22px;min-width: 100%;" ><i class="fas fa-plus"></i></button>
+                      </div>
+                    </div>
+                    <textarea class="form-control" rows="3" name="vendor_list" id="vendor_list"  placeholder="1000xxx"></textarea>
+                    <a href="javascript:void(0);" onclick="$('#vendor_list').val('');">Clear</a>
                   </div>
+                </div>
+                <br>
               </div>
-              <br>
-              <div>
-                <label>Purchase Order</label>
-                  <textarea class="form-control" rows="3" name="po_sel" id="po_textarea"  placeholder="5111000xxx"><?php if (isset($_POST['submit-find'])) { echo $list_po; } ?></textarea>
-              </div>
-          </div>
-        </div>
-
-        <div class="col-lg-5">
-          <div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
-              <button type="submit" name="submit-find" class="btn btn-primary" onclick="search()">
-                  <i class="fa fa-search"></i> Search
-              </button>
+            </div>
           </div>
         </div>
 
@@ -84,21 +107,43 @@
 							</div> -->
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-download-list-po">
+                <button class="btn btn-secondary btn-sm mb-2" select-all><i class="fas fa-check"></i> Select All</button>
+								<table  class="table table-bordered table-striped nowrap table-sm" id="tb-download-list-po">
 									<thead>
                     <th>
                       <i class="fa fa-list"></i>
                     </th>
-										<th>PO Number</th>
-                    <th>Rev No</th>
-                    <th>Plant</th>
-                    <th>Vendor</th>
-                    <th>Vendor Name</th>
-                    <th>Vendor Mail</th>
-                    <th>Doc Date</th>
-                    <th>Pgr</th>
-                    <th>Curr</th>
-                    <th>Filename</th>
+										<th style="min-width: 106px" data-visible="true">PO Number</th>
+                      <th style="min-width: 65px">Rev No</th>
+                      <th style="min-width: 65px">Plant</th>
+                      <th style="min-width: 80px">Vendor</th>
+                      <th style="min-width: 156px">Vendor Name</th>
+                      {{-- <th style="min-width: 106px">Vendor Mail</th> --}}
+                      <th style="min-width: 106px">Doc Date</th>
+                      <th style="min-width: 30px">PGr</th>
+                      <th style="min-width: 106px" title="without Tax">PO Amount</th>
+                      <th style="min-width: 106px" title="with Tax">Total Amount</th>
+                      <th style="min-width: 50px">Curr</th>
+                      <th style="min-width: 106px">Sent Date</th>
+                      <th style="min-width: 26px">
+                          <i class="fa fa-envelope"></i>
+                      </th>
+                      <th style="min-width: 26px" >
+                          <i class="fa fa-file"></i>
+                      </th>
+                      <th style="min-width: 26px">
+                          <i class="fa fa-download"></i>
+                      </th>
+
+                      <th style="min-width: 26px">
+                          <i class="fa fa-clock"  title="Active Status (3 Months)"></i>
+
+
+
+                      </th>
+                      <th style="min-width: 106px">Upload Date</th>
+                      <th style="min-width: 106px">Upload Group</th>
+                      <th style="min-width: 106px" data-breakpoints="all">File Ver</th>
 									</thead>
 									<tbody>
 										
@@ -131,8 +176,32 @@
 	</main>
 	@endsection
 	@section('javascript')
+   <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 	<script>
-		
+    $('[select-all]').click(function(){
+       $('input:checkbox').trigger('click')
+      //  $('input:checkbox').prop('checked', true);
+      //  $('input:checkbox').each(function(i, obj) {
+      //     console.log();
+      // });
+    })
+   
+		function addVendor()
+     {
+      const textarea = document.getElementById('vendor_list');
+
+      textarea.value += document.getElementById('select_vendor').value+'\n'
+     }
+
+      $('#date_from').datepicker({
+            uiLibrary: 'bootstrap5',
+             format: 'yyyy-mm-dd'
+        });
+ $('#date_to').datepicker({
+            uiLibrary: 'bootstrap5',
+            format: 'yyyy-mm-dd'
+        });
+
 	// 	$(document).ready(function(){
 
 	// 	window.table = $('#tb-list-po').DataTable({
@@ -170,24 +239,56 @@
 		// });
 		// }).draw();
 		// })
-
+  Array.prototype.remove = function() {
+    var what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
       var data = [];
 		  function selectedDwn(id)
 		  {
         var val = $(id).val();
-        var dtval = $(id).data('filenm');
+        var dtval = $(id).data('mgid');
+        var flnm = $(id).data('filenm');
+        console.log($(id).val());
         if(!$(id).is(':checked'))
         {
-          data.remove(val);
-          $('#fl'+val).remove();
+          data.remove(dtval);
+          $('#fl'+dtval).remove();
         } else{
-          data.push(val);
-          $('#download-list-checked').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" />');
+          data.push(dtval);
+          $('#download-list-checked').append('<input type="hidden" id="fl'+dtval+'" name="download_doc[]" value="'+flnm+'" />');
         }
         console.log(data);
 		  }
 
-        var table = $('#tb-download-list-po').DataTable({
+        
+      $('#tb-download-list-po').on('draw.dt',   function () {
+      // console.log($('#63460809220e0000eb00d4b8').is('checked'))
+      // if($('#63460809220e0000eb00d4b8').is(':checked'))
+      // {
+      //  alert('SS')
+      // } 
+
+      var all = $(".checked").map(function() {
+        // console.log("#"+$(this).data('mgid'))
+          if(data.includes($(this).data('mgid')))
+          {
+            $("#"+$(this).data('mgid')).prop('checked', true);
+          }
+      }).get();
+
+      console.log(all.join());
+    }
+       ).DataTable();
+      function search() {
+         $('#tb-download-list-po').DataTable().destroy();
+        var table = $('#tb-download-list-po').DataTable({ autoWidth:false,
         "order": [[ 1, "DESC" ]],
         processing: true,
         serverSide: true,
@@ -201,6 +302,8 @@
                 item.date_from = $('#date_from').val();
                 item.date_to = $('#date_to').val();
                 item.id_vendor = $('#select_vendor').val().toString();
+                 item.vendor_list = $('#vendor_list').val();
+                 item.vendor_select = $('#select_vendor').val();
             },
             url:"{{ route('datatables.purchasing.process.download.listpo')}}",
         },  
@@ -209,51 +312,84 @@
             data: 'download_check',
             name: 'download_check'
           },
-          {
+           {
             data: 'po_num',
             name: 'po_num'
-          },
-          {
+            },
+            {
             data: 'revno',
             name: 'revno'
-          },
-          {
+            },
+            {
             data: 'plant',
             name: 'plant'
-          },
-          {
+            },
+            {
             data: 'id_vendor',
             name: 'id_vendor'
-          },
-          {
+            },
+            {
             data: 'nm_vendor',
             name: 'nm_vendor'
-          },
-          {
-            data: 'vend_email',
-            name: 'vend_email'
-          },
-          {
+            },
+            // {
+            // data: 'vend_email',
+            // name: 'vend_email'
+            // },
+            {
             data: 'doc_date',
             name: 'doc_date'
-          },
-          {
+            },
+            {
             data: 'pgr',
             name: 'pgr'
-          },
-          {
+            },
+            {
+            data: 'po_amount',
+            name: 'po_amount'
+            },
+            {
+            data: 'total_amount',
+            name: 'total_amount'
+            },
+            {
             data: 'curr',
             name: 'curr'
-          },
-          {
+            },
+            {
+            data: 'sent',
+            name: 'sent'
+            },
+            {
+            data: 'mail_stat',
+            name: 'mail_stat'
+            },
+            {
+            data: 'file_exist',
+            name: 'file_exist'
+            },
+            {
+            data: 'download_stat',
+            name: 'download_stat'
+            },
+            {
+            data: 'active',
+            name: 'active'
+            },
+            {
+            data: 'upload_date',
+            name: 'upload_date'
+            },
+            {
+            data: 'upload_group',
+            name: 'upload_group'
+            },
+            {
             data: 'file_nm',
             name: 'file_nm'
-          },
+            },
         ]
       });
-
-      function search() {
-        table.draw(); 
       }
 
       $('.select2').select2();

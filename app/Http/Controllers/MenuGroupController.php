@@ -41,9 +41,40 @@ class MenuGroupController extends Controller
             ->editColumn('number', function ($data) {
                 return 1;
             })
+             ->addColumn('status', function ($data) {
+             
+                if($data->mg_status == "A")
+                {
+                   
+                    $status = "<small><span class=\"badge bg-success\">Active</span></small>";
+                } elseif($data->mg_status=='N') {
+                    $status = "<small><span class=\"badge bg-warning\"> Non-Active</span></small>";
+                } else{
+                    $status = "<small><span class=\"badge bg-secondary\"> N/A</span></small>";
+                }
+
+                return $status;
+                
+            })
+            ->editColumn('assigned', function ($data) {
+              if ($data->assigned == 'Y'){
+                        $status = "<small class='badge bg-success'> Assigned</small>";
+                    }elseif ($data->assigned == 'N') {
+                        $status = "<small class='badge bg-warning'> Not-Assigned</small>";
+                    }else{
+                    $status = "<small><span class=\"badge bg-secondary\"> N/A</span></small>";
+                }
+
+                return $status;
+                
+            })
+            ->editColumn('last_changed_by', function ($data) {
+              return @$data->users->nm_user;
+                
+            })
             ->editColumn('last_changed', function ($data) {                    
-                return date('d/m/Y',strtotime($data->last_changed));
-            })->rawColumns(['action'])->addIndexColumn()->make(true);
+                return date('d.m.Y H:i:s',strtotime($data->last_changed));
+            })->rawColumns(['action','status','assigned'])->addIndexColumn()->make(true);
     }
 
 

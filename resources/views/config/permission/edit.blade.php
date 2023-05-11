@@ -5,9 +5,9 @@
     <div class="pagetitle">
         <h1>Edit Permission</h1>
         <nav>
-            <ol class="breadcrumb">
+            <ol {{-- class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Settings</a></li>
+                <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Settings</a></li> --}}
                 <li class="breadcrumb-item active">Permission</li>
             </ol>
         </nav>
@@ -106,7 +106,7 @@
                                     @enderror
                                 </div>
                              </div>
-                             <hr>
+                              
                              <div class="row">
                                 <div class="col-md-6">
                                   <button class="btn btn-primary btn-block" type="submit">Simpan</button>

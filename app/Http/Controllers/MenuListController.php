@@ -38,13 +38,45 @@ class MenuListController extends Controller
             })
             ->editColumn('action', function ($data) {
                 return  view('regis_user/menu-list/buttons')->with(['data' => $data]);
+            }) 
+            ->addColumn('status', function ($data) {
+             
+                if($data->mn_status == "A")
+                {
+                   
+                    $status = "<small><span class=\"badge bg-success\">Active</span></small>";
+                } elseif($data->mn_status=='N') {
+                    $status = "<small><span class=\"badge bg-warning\"> Non-Active</span></small>";
+                } else{
+                    $status = "<small><span class=\"badge bg-secondary\"> N/A</span></small>";
+                }
+
+                return $status;
+                
+            })
+            ->editColumn('assigned', function ($data) {
+              if ($data->assigned == 'Y'){
+                        $status = "<small class='badge bg-success'> Assigned</small>";
+                    }elseif ($data->assigned == 'N') {
+                        $status = "<small class='badge bg-warning'> Not-Assigned</small>";
+                    }else{
+                    $status = "<small><span class=\"badge bg-secondary\"> N/A</span></small>";
+                }
+
+                return $status;
+                
             })
             ->editColumn('number', function ($data) {
                 return 1;
             })
+            
+            ->editColumn('last_changed_by', function ($data) {
+              return @$data->users->nm_user;
+                
+            })
             ->editColumn('last_changed', function ($data) {                    
-                return date('d/m/Y',strtotime($data->last_changed));
-            })->rawColumns(['action'])->addIndexColumn()->make(true);
+                return date('d.m.Y H:i:s',strtotime($data->last_changed));
+            })->rawColumns(['action','status','assigned'])->addIndexColumn()->make(true);
     }
 
 
@@ -91,18 +123,16 @@ class MenuListController extends Controller
 
     }
 
-    public function store(Request $request){
+    public function listAdd(Request $request){
         $menu_list = new MenuList;
         $menu_list->menu_name = $request->menu_name;
         $menu_list->menu_object = $request->menu_object;
         $menu_list->object_path = $request->object_path;
+        $menu_list->mn_status = $request->mn_status;
         $menu_list->created_by = auth()->user()->full_name;
         $menu_list->save();
 
-        return response()->json([
-            'message' => 'data created has been successfully',
-            'type' => 'success'
-        ], 201);
+         return redirect()->route('regis-user.menu-list')->with(['message_success' => 'Berhasil menambah data.']);
     }
 
     public function show($id){
@@ -120,6 +150,7 @@ class MenuListController extends Controller
         $menu_list->menu_name = $request->menu_name;
         $menu_list->menu_object = $request->menu_object;
         $menu_list->object_path = $request->object_path;
+         $menu_list->mn_status = $request->mn_status;
         $menu_list->save();
 
         return redirect()->route('regis-user.menu-list')->with(['message_success' => 'Berhasil mengubah data.']);

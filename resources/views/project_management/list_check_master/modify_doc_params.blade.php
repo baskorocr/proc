@@ -6,7 +6,7 @@
 		<h1>Modify Document Check List Parameters</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Modify Document Check List Parameters</li>
 			</ol>
 		</nav>
@@ -46,7 +46,7 @@
 										@endforeach
 									</select>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer"> 
 										<button type="submit"  class="btn btn-primary"><i class="fas fa-eye"></i> View</button>
 									</div>
 								</form>

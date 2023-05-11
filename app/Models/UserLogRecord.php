@@ -17,12 +17,15 @@ class UserLogRecord extends Model
 	
 	// protected $primaryKey = 'id_menu';
 
-	protected $fillable = ['id_user','ip_address','datetime_log','attempt','activity'];
+	protected $fillable = ['id_user','ip_address','datetime_log','attempt','activity','info'];
 
 	public $dates = ['datetime_log'];
 
 	
 	//optional, already set in config::database
 	//protected $connection = 'mongodb';
-
+	 public function user()
+    {
+        return $this->belongsTo(User::class,'id_user','id_user');
+    }
 }

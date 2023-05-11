@@ -6,7 +6,7 @@
 		<h1>Access Group</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Edit Access Group</li>
 			</ol>
 		</nav>
@@ -25,7 +25,7 @@
 										<input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $access->access_group_name; ?>" required>
 									</div>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer"> 
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Update</button>
 									</div>
 								</form>

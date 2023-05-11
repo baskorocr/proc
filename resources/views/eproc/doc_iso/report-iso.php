@@ -193,7 +193,7 @@ include "project_mgt/project-mgt-query.php";
     <!--   -->
     <form role=form name="myForm" onSubmit="return downloadfunction()" action="zip_iso_all.php" method="post" enctype="multipart/form-data">
         
-		<table class="table table-striped display nowrap"  style="width:100%" data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true"> 
+		<table class="table table-striped display nowrap"  style="width:100%" > 
             <thead>
                  <?php
 

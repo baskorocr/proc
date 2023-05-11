@@ -24,7 +24,7 @@
 									
 									<div class="form-group">
 										<label>ID Vendor</label>
-										<input type="text" class="form-control" id="id_vendor" name="id_vendor" value="<?php echo $vendor->id_vendor; ?>" required>
+										<input type="text" disabled class="form-control" id="id_vendor" name="id_vendor" value="<?php echo $vendor->id_vendor; ?>" required>
 									</div>
 							
 									<div class="form-group">
@@ -39,12 +39,17 @@
 										<label>Street </label>
 										<input type="text" class="form-control" id="street" name="street" value="<?php echo $vendor->street; ?>" >
 									</div>
-									<div class="form-group">
+										<div class="form-group">
 										<label>Status Vendor</label>
-										<input type="text" class="form-control" id="status_vendor" name="status_vendor" value="<?php echo $vendor->status_vendor; ?>">
+										<select name="status_vendor" class="form-control select">
+											
+												<option @if($vendor->status_vendor == "A") selected="selected" @endif value="A">Aktif</option>
+												<option @if($vendor->status_vendor == "N") selected="selected" @endif value="N">Non-Aktif</option>
+											
+										</select>
 									</div>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer"> 
 										<button type="submit" id="edit-projmaster" name="edit-projmaster" class="btn btn-primary"><i class="fa fa-pencil-square-o"></i> Update</button>
 									</div>
 								</form>

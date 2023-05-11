@@ -6,8 +6,8 @@
 		<h1>Number Range</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Number Range</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+				<li class="breadcrumb-item active">Number Range</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -27,7 +27,7 @@
 							</div>
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="number-range">
+								<table  class="table table-bordered table-striped table-sm" id="number-range">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Doc Type</th>
@@ -50,7 +50,7 @@
 			</div>
 		</section>
 	</main>
-	
+	@include('regis_user.number-range.modals')
 	@endsection
 	@section('javascript')
     <script>
@@ -82,9 +82,9 @@
           {
             data: 'current_num', name: 'current_num'
           },
-		  {
-			data: 'last_changed_by', name: 'last_changed_by'
-		  },
+				  {
+						data: 'last_changed_by', name: 'last_changed_by'
+				  },
 		  {
 			data: 'last_changed', name: 'last_changed'
 		  },

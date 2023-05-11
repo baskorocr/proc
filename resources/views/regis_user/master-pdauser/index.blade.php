@@ -6,8 +6,8 @@
 		<h1>PDA User Master</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">PDA User Master</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+				<li class="breadcrumb-item active">PDA User Master</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -22,15 +22,15 @@
 								<i class="bi bi-list"></i></a>
 								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
 									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
-									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-master-pdauser" href="#"><i class="fas fa-plus-square"></i>Create Number Range</a></li>
+									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-master-pdauser" href="#"><i class="fas fa-plus-square"></i>Create PDA User</a></li>
 								</ul>
 							</div>
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-pdauser">
+								<table  class="table table-bordered table-striped table-sm" id="master-pdauser">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
-										<th>Doc User</th>
+										<th>ID User</th>
 										<th>User Login</th>
 										<th>Full Name</th>
 										<th>Status</th>
@@ -47,12 +47,17 @@
 			</div>
 		</section>
 	</main>
-	
+		@include('regis_user.master-pdauser.modals')
 	@endsection
 	@section('javascript')
+	<script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-colvis-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.js"></script>
     <script>
       $('#master-pdauser').DataTable({
         "order": [[ 1, "DESC" ]],
+        dom: 'Bfrtip',
+      	buttons: [
+              'excel','copy'
+            ],
         processing: true,
         serverSide: true,
         autoWidth:false,

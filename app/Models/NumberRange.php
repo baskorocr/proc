@@ -13,13 +13,13 @@ class NumberRange extends Model
     // END Connect
     protected $table = "doc_number";
 
-    protected $fillable = ['doc_type','doc_year','num_low','num_high','current_num','cr_date','ch_by','ch_date'];
+    protected $fillable = ['doc_type','doc_year','num_low','num_high','current_num','last_changed','last_changed_by'];
 
-    public $dates = ['cr_date','ch_date'];
+    public $dates = ['last_changed'];
 
 
     public function users()
     {
-        return $this->belongsTo(User::class,'cr_by','id_user');
+        return $this->belongsTo(User::class,'last_changed_by','id_user');
     }
 }

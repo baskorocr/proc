@@ -17,10 +17,15 @@ class PurchasingProcess extends Model
 
     protected $fillable = ['po_num','revno','plant','id_vendor','nm_vendor','vend_email','doc_date','pgr','curr','file_nm'];
 
-    public $dates = ['doc_date'];
+    public $dates = ['doc_date','downloaded','last_change','sent'];
 
     public function vendors()
     {
         return $this->belongsTo(Vendor::class,'id_vendor','id_vendor');
+    }
+
+      public function user()
+    {
+        return $this->belongsTo(User::class,'id_vendor','foreign_id');
     }
 }

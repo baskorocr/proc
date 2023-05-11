@@ -8,36 +8,85 @@ use Jenssegers\Mongodb\Eloquent\Model;
 
 class RegisIsoDoc extends Model
 {
+   
     //Connect To Other DB
     protected $connection = "mongodbpurch_proc";
     // END Connect
     protected $table = "trn_iso_doc";
 
     protected $fillable = [
-        'doc_year,',
-        'id_vendor,',
-        'mat_supply,',
-        'simply,',
-        'cert_num,',
-        'cert_date,',
-        'cert_name,',
-        'iso_type_name,',
-        'exp_date,',
-        'stat,',
-        'doc_path,',
-        'remark,',
-        'trn_type,',
-        'ref_doc,',
-        'ref_doc_year,',
-        'cr_by,',
+        'doc_year',
+        'id_vendor',
+        'mat_supply',
+        'simply',
+        'trn_id',
+        'cert_num',
+        'cert_date',
+        'cert_name',
+        'iso_type_name',
+        'exp_date',
+        'stat',
+        'doc_path',
+        'remark',
+        'trn_type',
+        'ref_doc',
+        'ref_doc_year',
+        'cr_by',
         'cr_date',
+        'ch_date',
     ];
 
-    public $dates = ['cert_date', 'cr_date'];
+    public $dates = [];
 
-
+   
     public function vendor()
     {
         return $this->belongsTo(Vendor::class,'id_vendor','id_vendor'); 
+    }
+
+    public function transaction()
+    {
+        return $this->belongsTo(Transaction::class,'stat','trn_id'); 
+    }
+    // public function setExpDateAttribute($value)
+    // {
+    //     $this->attributes['exp_date'] = $value;
+    // }
+    // public function setCertDateAttribute($value)
+    // {
+    //     $this->attributes['cert_date'] = $value;
+    // }
+    ////DRIVER DATES
+    public function getExpDateAttribute( $value ) 
+    {
+
+        if (strpos($value, "/") !== false) {
+            $date = explode("/",$value); 
+        } else{
+            $date = explode("-",$value); 
+        }
+        $d = strlen(@$date[0]) == 1 ? "0".@$date[0]:@$date[0];;
+        $m = strlen(@$date[1]) == 1 ? "0".@$date[1]:@$date[1];
+        $y= @$date[2];
+
+        $date_full = date('Y-m-d',strtotime($y."-".$m.'-'.$d));
+          // $this->attributes['exp_date'] = $date_full;
+          return $date_full;
+    }
+
+    public function getCertDateAttribute($value)
+    {
+        if (strpos($value, "/") !== false) {
+            $date = explode("/",$value); 
+        } else{
+            $date = explode("-",$value); 
+        }
+        $d = strlen(@$date[0]) == 1 ? "0".@$date[0]:@$date[0];;
+        $m = strlen(@$date[1]) == 1 ? "0".@$date[1]:@$date[1];
+        $y= @$date[2];
+
+        $date_full = date('Y-m-d',strtotime($y."-".$m.'-'.$d));
+          // $this->attributes['exp_date'] = $date_full;
+          return $date_full;
     }
 }

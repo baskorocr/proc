@@ -52,6 +52,8 @@
 	<script src="{{ asset('js/sweet-alert/sweetalert.min.js') }}" type="text/javascript"></script>
 	
 	<link rel="icon" type="image/x-icon" href="{{ asset('img/favicon3.png') }}" />
+    <link rel="SHORTCUT ICON" href="{{ asset('img/favicon.ico') }}" />
+    <link rel="icon" href="{{ asset('img/favicon.ico') }}" type="image/ico" />
 <style type="text/css">
     .invalid-feedback{
         display:block !important;

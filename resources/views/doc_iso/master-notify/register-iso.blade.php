@@ -1,12 +1,13 @@
 @extends('layouts.main')
 @section('title',"Form Input Page")
 @section('content')
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" integrity="sha512-xrbX64SIXOxo5cMQEDUQ3UyKsCreOEq1Im90z3B7KPoxLJ2ol/tCT0aBhuIzASfmBVdODioUdUPbt5EDEXmD9g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <main id="main" class="main">
     <div class="pagetitle">
       <h1>Register ISO Document</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li>
+          {{-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> --}}
           <li class="breadcrumb-item active">Register ISO</li>
         </ol>
       </nav>
@@ -27,13 +28,13 @@
               <h5 class="card-title">Multi Columns Form</h5>
 
               <!-- Multi Columns Form -->
-              <form class="row g-3" action="{{ route('doc-iso.register-iso.store') }}" method="POST" enctype="multipart/form-data">
+              <form id="regiso" class="row g-3" action="{{ route('doc-iso.register-iso.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Vendor</label>
                   <div class="col-sm-10">
-                    <select name="id_vendor" class="form-select" aria-label="Default select example">
-                      <option selected disabled>Open this select menu</option>
+                    <select name="id_vendor" id="id_vendor" required class="form-select" aria-label="Default select example">
+                      <option selected disabled>Select Vendor</option>
                       @foreach($vendor as $item)
                       <option value="{{ $item->id_vendor }}">{{ $item->nm_vendor }}</option>
                       @endforeach
@@ -44,46 +45,46 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Material Supply</label>
                   <div class="col-sm-10">
-                    <input name="mat_supply" type="text" class="form-control">
+                    <input name="mat_supply" type="text" class="form-control" required>
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <div class="col-12 ms-3 form-check">
-                    <input name="simply" class="form-check-input" type="checkbox" id="gridCheck2" checked="">
+                    <input name="simply" class="form-check-input" type="checkbox" id="gridCheck2" required checked="">
                     <label class="form-check-label" for="gridCheck2"> Simplikasi </label>
                   </div>
                 </div>
                 
                 <div class="row mb-3">
-                  <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Certified</label>
+                  <label  style="font-size:15px"  for="inputText" class="col-sm-2 col-form-label">Certified</label>
                   <div class="col-sm-10">
-                    <input name="cert_name" type="text" class="form-control">
+                    <input name="cert_name" required type="text" class="form-control">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">ISO Type</label>
                   <div class="col-sm-10">
-                    <input name="iso_type_name" type="text" class="form-control">
+                    <input name="iso_type_name" required type="text" class="form-control">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">ISO Certified Number</label>
                   <div class="col-sm-10">
-                    <input name="cert_num" type="text" class="form-control">
+                    <input name="cert_num" required type="text" class="form-control">
                   </div>
                 </div>
         
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Certified Date</label>
                   <div class="col-sm-10">
-                    <input name="cert_date" type="date" class="form-control">
+                    <input name="cert_date" required type="date" class="form-control">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label    style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Expired Date</label>
                   <div class="col-sm-10">
-                    <input name="exp_date" type="date" class="form-control">
+                    <input name="exp_date" required type="date" class="form-control">
                   </div>
                 </div>
                 <table  class="table" style="width:100%">
@@ -96,10 +97,19 @@
                   </thead>
                   <tbody>
                     @foreach($notify as $item)
-                    <tr>
+                   <tr>
+                       <?php 
+                       if ($item->uom == "M"){
+                                        $measure = "Months";
+                                    } elseif($item->uom == "D"){
+                                        $measure = "Days";
+                                    } elseif($item->uom  == "Y"){
+                                        $measure = "Year";
+                                    }
+                            ?>
                       <td style="font-size:12px">{{ $item->notif_id }}</td>
                       <td style="font-size:12px">{{ $item->notif_seq }}</td>
-                      <td style="font-size:12px">{{ $item->notif_before }}</td>
+                      <td style="font-size:12px">{{ $item->notif_before }} {{$measure}}</td>
                     </tr> 
                     @endforeach
                   </tbody>
@@ -117,7 +127,7 @@
                   </div>
                 </div>
                 <div class="text-left">
-                  <button type="submit" class="btn btn-primary">Submit</button>
+                  <button type="submit" id="submit-iso" class="btn btn-primary">Submit</button>
                   <button type="reset" class="btn btn-secondary">Reset</button>
                 </div>
               </form><!-- End Multi Columns Form -->
@@ -146,4 +156,34 @@
 
 
   </main><!-- End #main -->
+@endsection
+@section('javascript')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+<script>
+  $('#regiso').submit(function(e){
+    let timerInterval
+    Swal.fire({
+      title: 'Transaction Progress',
+      html: 'Please wait...',
+      timer: 30000,
+      // timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading()
+        const b = Swal.getHtmlContainer().querySelector('b')
+        timerInterval = setInterval(() => {
+          b.textContent = Swal.getTimerLeft()
+        }, 100)
+      },
+      willClose: () => {
+        clearInterval(timerInterval)
+      }
+    }).then((result) => {
+      $('#regiso').trigger('submit')
+    })
+  })
+
+    $(document).ready(function() {
+      $('#id_vendor').select2();
+    });
+</script>
 @endsection

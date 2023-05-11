@@ -6,8 +6,8 @@
         <h1>Edit Role</h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Settings</a></li>
+               {{--  <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Settings</a></li> --}}
                 <li class="breadcrumb-item active">Roles</li>
             </ol>
         </nav>
@@ -73,7 +73,7 @@
                                 </div>
                              </div>
 
-                             <hr>
+                              
                              <div class="row">
                                 <div class="col-md-6">
                                   <button class="btn btn-primary btn-block" type="submit">Simpan</button>

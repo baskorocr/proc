@@ -235,7 +235,9 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Numbering' => App\Helpers\Numbering::class,
         'PM' => App\Helpers\ProjectManagementHelper::class,
-        Alfa6661\AutoNumber\AutoNumberServiceProvider::class,
+        'AutoNumber'=>Alfa6661\AutoNumber\AutoNumberServiceProvider::class,
+        'IsoHelper'=>App\Helpers\IsoHelper::class,
+        'UserLogging'=>App\Helpers\UserLogging::class,
 
     ],
 

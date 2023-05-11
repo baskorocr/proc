@@ -12,7 +12,7 @@ $completed_arr  = array();
 		<h1>Check Uploaded Document from Vendor</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Check Uploaded Document from Vendor</li>
 			</ol>
 		</nav>
@@ -29,13 +29,13 @@ $completed_arr  = array();
 									
 									<label>Choose Project</label>
 									<select  style="width: 100%;"  class="form-control  option-select-doc" id="id_project" name="id_project" required>
-										
+										<option></option>
 										@foreach($project as $p)
 										<option value="{{$p->id_project}}">{{$p->nm_project}}</option>"
 										@endforeach
 									</select>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer">
 										<button type="submit"  class="btn btn-primary"><i class="fas fa-eye"></i> View</button>
 									</div>
 								</form>
@@ -51,7 +51,7 @@ $completed_arr  = array();
 										<input type="hidden" name="id_project" value="{{Request::get('id_project')}}">
 										<label>Choose Product - Part</label>
 										<select  style="width: 100%;"  class="form-control  option-select-doc" id="project_id" name="project_id" required>
-											
+											<option></option>
 											@foreach($prodforProject as $p)
 											
 											<option value="{{$p->id_product}}_{{$p->part->id_part}}">{{$p->product->nm_product}} - {{$p->part->nm_part}}</option>
@@ -75,13 +75,14 @@ $completed_arr  = array();
 										<div class="box-header">
 											<input type="hidden" name ="id_project" value="<?php echo Request::get('id_project'); ?>">
 											<label class="pull-left">Choose Vendor</label>
-											<select class="form-control selectpicker" name="id_vendor_1" data-live-search="true" required>
+											<select class="form-control selectpicker id_vendor" name="id_vendor" data-live-search="true" required>
+												<option></option>
 												<?php
 												//vendor yang terkait project tersebut
 												// $vendor = PM::get_vendor_assign_data($id_project);
 												
 												foreach($vendor as $v):
-												echo "<option value=".@$v->id_vendor.">".@$v->nm_vendor." (".@$v->allias.")</option>";
+												echo "<option value=".@$v->vendor->id_vendor.">".@$v->vendor->nm_vendor." (".@$v->vendor->allias.")</option>";
 												endforeach;
 												?>
 											</select>
@@ -96,8 +97,8 @@ $completed_arr  = array();
 					</div>
 					@endif
 
-					@if(!empty(Request::get('id_vendor_1')))
-						<div class="card">
+					@if(!empty(Request::get('id_vendor')))
+						{{-- <div class="card">
 							<div class="card-body mt-3">
 								<form role=form name="myForm1" id="myForm1" onSubmit="return validateForm()" action="" method="get" enctype="multipart/form-data">
 									<div class="box box-body box-primary">
@@ -106,13 +107,13 @@ $completed_arr  = array();
             								<input type="hidden" name ="id_vendor" value="<?php echo Request::get('id_vendor'); ?>">
 											<input type="hidden" name ="id_project" value="<?php echo Request::get('id_project'); ?>">
 											<label class="pull-left">Choose Vendor</label>
-											<select class="form-control selectpicker" name="id_vendor" data-live-search="true" required>
+											<select class="form-control selectpicker id_vendor_1" name="id_vendor" data-live-search="true" required>
 												<?php
 												//vendor yang terkait project tersebut
 												// $vendor = PM::get_vendor_assign_data($id_project);
 												
 												foreach($vendor as $v):
-												echo "<option value=".@$v->id_vendor.">".@$v->nm_vendor." (".@$v->allias.")</option>";
+													echo "<option value=".@$v->vendor->id_vendor.">".@$v->vendor->nm_vendor." (".@$v->vendor->allias.")</option>";
 												endforeach;
 												?>
 											</select>
@@ -125,7 +126,7 @@ $completed_arr  = array();
 						
 						</div>
 					</div>
-
+ --}}
 					<div class="card">
 							<div class="card-body mt-3">
 								<div class="table-responsive">
@@ -170,8 +171,8 @@ $completed_arr  = array();
 								                        $doc_required = $row2->doc_required;
 
 								                        if ($row2['upload_path'] != ""){
-								                            $status = "<h4><span class='badge bg-green'>Uploaded ($doc_required)</span></h4>";
-								                            $act    ="";
+								                            $status = "<h4><span class='badge badge-success'>Uploaded ($doc_required)</span></h4>";
+								                            $act    ="btn-flat ";
 								                            $nm_user = $row2->uploader->nm_user;
 								                            array_push($arr, "1"); // array doc yang ada path nya
 
@@ -188,8 +189,8 @@ $completed_arr  = array();
 								                            }
 
 								                        } else {
-								                            $status = "<h4><span class='badge bg-yellow'> Waiting ($doc_required)...</span></h4>";
-								                            $act    = "disabled";
+								                            $status = "<h4><span class='badge badge-warning'> Waiting ($doc_required)...</span></h4>";
+								                            $act    = "btn-secondary disabled text-dark";
 								                            $nm_user = "";
 								                        }
 
@@ -212,9 +213,9 @@ $completed_arr  = array();
 								                        $sum_of_row  = array();
 
 								                        if ($sum_tobe_checked == $sum_checked){
-								                            $stat_check =  "<h4><span class='badge bg-blue'>Completed ($sum_checked/$sum_tobe_checked)</span></h4>";
+								                            $stat_check =  "<h4><span class='badge badge-primary'>Completed ($sum_checked/$sum_tobe_checked)</span></h4>";
 								                        } else {
-								                            $stat_check =  "<h4><span class='badge bg-red'>Uncomplete ($sum_checked/$sum_tobe_checked)</span></h4>";
+								                            $stat_check =  "<h4><span class='badge badge-danger'>Uncomplete ($sum_checked/$sum_tobe_checked)</span></h4>";
 								                        }
 
 								                        $nama_data = $row2['file_nm'];
@@ -241,18 +242,18 @@ $completed_arr  = array();
 								                    <td><?php echo $row2->id_project;?></td>
 								                    <td><?php echo $row2->project->nm_project;?></td>
 								                    <td><?php echo $row2->product->nm_product;?></td>
-								                    <td><?php echo $row2->part->nm_part;?></td>
+								                    <td><?php echo @$row2->part->nm_part;?></td>
 								                    <td><?php echo $row2->docPart->nm_doc_part;?></td>
 								                    <td><?php echo $version;?></td>
 								                    <td><?php echo $upload_date;?></td>
 								                    <td><?php echo $nm_user;?></td>
 								                    <td>
-								                        <a href="DATA/viewpdf_2.php?id=<?php echo $id_project;?>&p=<?php echo $pathname; ?>&nm=<?php echo $filename; ?>" class="btn btn-flat <?php echo $act;?>" target="_blank" data-toggle='tooltip' title='click to preview' >
+								                        <a href="DATA/viewpdf_2.php?id=<?php echo $id_project;?>&p=<?php echo $pathname; ?>&nm=<?php echo $filename; ?>" class="btn <?php echo $act;?>" target="_blank" data-toggle='tooltip' title='click to preview' >
 								                           <?php echo $status;?>
 								                        </a>
 								                    </td>
 								                    <td>
-								                        <a href="home.php?mnu=checkdocproc&id_data=<?php echo $data;?>" class="btn btn-flat <?php echo $act;?>" data-toggle='tooltip' title='check document'>
+								                        <a href="home.php?mnu=checkdocproc&id_data=<?php echo $data;?>" class="btn  <?php echo $act;?>" data-toggle='tooltip' title='check document'>
 								                           <?php echo $stat_check;?>
 								                        </a>
 								                    </td>
@@ -292,7 +293,17 @@ $completed_arr  = array();
 			@section('javascript')
 			<script>
 				$('.option-select-doc').select2({
+					placeholder: "Nothing Selected"
 				});
+				$('.id_vendor').select2({
+					placeholder: "Nothing Selected"
+				});
+				@if(!empty(Request::get('id_project')))
+				$("#id_project").val('{{Request::get('id_project')}}');
+				$('#id_project').trigger('change');
+				$(".id_vendor").val('{{Request::get('id_vendor')}}');
+				$('.id_vendor').trigger('change');
+				@endif
 				@if(!empty($docpart))
 				
 				$(document).ready(function(){

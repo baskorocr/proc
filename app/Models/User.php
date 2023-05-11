@@ -18,7 +18,7 @@ class User extends Authenticable
         'api_token'
     ];
 
-    protected $fillable = ['role'];
+    // protected $fillable = ['role',''];
 
     //protected $appends = ['photo_url'];
     
@@ -36,5 +36,10 @@ class User extends Authenticable
     public function vendor()
     {
         return $this->belongsTo(Vendor::class,'foreign_id','id_vendor');
+    }
+
+    public function tipeUser()
+    {
+        return $this->belongsTo(TypeUser::class,'id_tipe_user','id_tipe_user');
     }
 }

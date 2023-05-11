@@ -35,6 +35,10 @@ class MasterNotifyController extends Controller
             })
             ->editColumn('cr_by', function ($data) {
                 return @$data->users->nm_user;
+            }) ->editColumn('ch_date', function ($data) {
+                return date('d/m/Y',strtotime($data->ch_date));
+            })->editColumn('cr_date', function ($data) {
+                return date('d/m/Y',strtotime($data->ch_date));
             })
             ->editColumn('action', function ($data) {
                 return  view('doc_iso/master-notify/buttons')->with(['data' => $data]);

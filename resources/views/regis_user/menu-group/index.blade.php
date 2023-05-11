@@ -6,8 +6,8 @@
 		<h1>Menu Group</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Menu Group</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+				<li class="breadcrumb-item active ">Menu Group</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -17,13 +17,14 @@
 					<div class="card">
 						<div class="card-body">
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="menu-group">
+								<table  class="table table-bordered nowrap table-striped table-sm" id="menu-group">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Menu Group Name</th>
 										<th>Menu Group Object</th>
 										<th>Last Changed by</th>
 										<th>Last Changed Date</th>
+										<th>Status</th>
 										<th>Assigned</th>
 										<th>Action</th>
 									</thead>
@@ -67,6 +68,9 @@
           {
             data: 'last_changed', name: 'last_changed'
           },
+		  {
+			data: 'status', name: 'status'
+		  }, 
 		  {
 			data: 'assigned', name: 'assigned'
 		  },

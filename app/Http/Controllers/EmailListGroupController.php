@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\EmailListGroup;
+use App\Models\EmailGroup;
 
 class EmailListGroupController extends Controller
 {
@@ -11,13 +12,15 @@ class EmailListGroupController extends Controller
     public function editListEmail($id)
     {
         $data = EmailListGroup::findOrFail($id);
-        return view('regis_user/email-list-group/edit')->with(['listemail' => $data]);
+        $dept = EmailGroup::get();
+        return view('regis_user/email-list-group/edit')->with(['listemail' => $data,'dept' => $dept]);
     } 
 
     public function getEmailListGroup()
     {
+         $dept = EmailGroup::get();
         $data = EmailListGroup::all();
-        return view('regis_user/email-list-group/index')->with(['listemail' => $data]);
+        return view('regis_user/email-list-group/index')->with(['listemail' => $data,'dept' => $dept]);
     }
 
     public function getDataEmailListGroup()
@@ -36,15 +39,40 @@ class EmailListGroupController extends Controller
             ->editColumn('cr_by', function ($data) {
                 return @$data->users->nm_user;
             })
+            ->editColumn('dept_code', function ($data) {
+                if (@$data->deptMaster->abrev == null) {
+                        $abrev = "";
+                    } else {
+                         $abrev = "<small>[".$data->dept_code."] [".@$data->deptMaster->abrev."]</small>";
+                }
+                return @@$data->deptMaster->dept_desc."<br>".$abrev;
+            })
             ->editColumn('action', function ($data) {
                 return  view('regis_user/email-list-group/buttons')->with(['data' => $data]);
             })
             ->editColumn('number', function ($data) {
                 return 1;
+            })->editColumn('last_changed_by', function ($data) {
+              return @$data->users->nm_user;
+                
+            }) ->addColumn('status', function ($data) {
+             
+                if($data->active == "A")
+                {
+                   
+                    $status = "<small><span class=\"badge bg-success\">Active</span></small>";
+                } elseif($data->active=='N') {
+                    $status = "<small><span class=\"badge bg-warning\"> Non-Active</span></small>";
+                } else{
+                    $status = "<small><span class=\"badge bg-secondary\"> N/A</span></small>";
+                }
+
+                return $status;
+                
             })
             ->editColumn('last_changed', function ($data) {                    
-                return date('d/m/Y',strtotime($data->last_changed));
-            })->rawColumns(['action'])->addIndexColumn()->make(true);
+                 return date('d.m.Y H:i:s',strtotime($data->last_changed));
+            })->rawColumns(['action','status','dept_code'])->addIndexColumn()->make(true);
     }
 
 
@@ -91,18 +119,17 @@ class EmailListGroupController extends Controller
 
     }
 
-    public function store(Request $request){
+    public function listemailAdd(Request $request){
         $email_list_group = new EmailListGroup;
         $email_list_group->mail = $request->mail;
         $email_list_group->dept_code = $request->dept_code;
         $email_list_group->name = $request->name;
-        $email_list_group->created_by = auth()->user()->full_name;
+        $email_list_group->active = "A";
+        $email_list_group->last_changed_by = auth()->user()->id_user;
+         $email_list_group->last_changed = now();
         $email_list_group->save();
 
-        return response()->json([
-            'message' => 'data created has been successfully',
-            'type' => 'success'
-        ], 201);
+        return redirect()->route('regis-user.email-listemail')->with(['message_success' => 'Berhasil menambah data.']);
     }
 
     public function show($id){
@@ -119,6 +146,9 @@ class EmailListGroupController extends Controller
         $email_list_group->mail = $request->mail;
         $email_list_group->dept_code = $request->dept_code;
         $email_list_group->name = $request->name;
+        $email_list_group->active = $request->active;
+         $email_list_group->last_changed_by = auth()->user()->id_user;
+         $email_list_group->last_changed = now();
         $email_list_group->save();
 
         return redirect()->route('regis-user.email-listemail')->with(['message_success' => 'Berhasil mengubah data.']);
@@ -128,6 +158,6 @@ class EmailListGroupController extends Controller
         $email_list_group = EmailListGroup::find($id);
         $email_list_group->delete();
 
-        return redirect()->route('regis-user.email-list-group')->with(['message_success' => 'Berhasil menghapus data.']);
+        return redirect()->route('regis-user.email-listemail')->with(['message_success' => 'Berhasil menghapus data.']);
     }
 }
