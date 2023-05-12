@@ -81,16 +81,17 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>{{Session::get('nm_user')}}</h6>
-              <span>{{Session::get('role')}}</span>
+              <span>{{Session::get('role')}}</span><br>
+              <span>{{Request::ip()}}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
+              <a class="dropdown-item d-flex align-items-center" href="{{route('change.pwd.link')}}">
+                <i class="bi bi-key"></i>
+                <span>Change Password</span>
               </a>
             </li>
             <li>

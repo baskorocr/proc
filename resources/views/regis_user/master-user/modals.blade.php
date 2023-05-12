@@ -25,7 +25,7 @@
                                     
                                     <div class="form-group">
                                         <label>Tipe User</label>
-                                        <select name="access_group_name" id="tipe_user" class="form-control select">
+                                        <select name="id_tipe_user" id="tipe_user" class="form-control select">
                                             @foreach($type as $t)
                                                 <option  value="{{$t->id_tipe_user}}">{{$t->nm_tipe_user}}</option>
                                             @endforeach

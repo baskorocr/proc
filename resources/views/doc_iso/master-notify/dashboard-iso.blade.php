@@ -3,7 +3,13 @@
 @section('content')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
 <style type="text/css">
-
+    div.table-responsive > div.dataTables_wrapper > div.row
+        {
+            overflow:auto !important;
+        }
+        div.dataTables_wrapper div.dt-row{
+    min-height:300px;
+}
 </style>
 <main id="main" class="main">
     <div class="pagetitle">
@@ -164,8 +170,8 @@
             </table>
             </div> --}}
           {{-- </div> --}}
-        <div class="table-responsive-sm">
-       <table id="iso"  class="table table-striped table-bordered"   style="width:100%">
+        <div class="table-responsive">
+       <table id="iso"  class="table table-striped table-bordered"   style="width:1260px">
                   <thead>
                     <tr>
                     {{-- <th style="min-width: 100px;">Action</th> --}}
@@ -300,7 +306,22 @@
       
    
   })
+var originaldocumentwidth = $(document).width();
+var newdocumentwidth = $(document).width();
+var zoomratio = originaldocumentwidth / newdocumentwidth;
 
+function updateZoom() {
+    newdocumentwidth = $(document).width();
+    zoomratio = originaldocumentwidth / newdocumentwidth;
+    
+    // $('#originaldocumentwidth').html(originaldocumentwidth);
+    $('#iso').css("width", newdocumentwidth-150+'px');
+    console.log(zoomratio);
+}
+$(window).resize(function() {
+    updateZoom();
+});
+updateZoom();
 
 </script>
 @endsection

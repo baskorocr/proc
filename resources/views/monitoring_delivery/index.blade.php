@@ -2,6 +2,15 @@
 @section('title',"Monitoring Delivery")
 @section('content')
 <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+    div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+div.dataTables_wrapper div.dt-row{
+    min-height:100px;
+}
+</style>
 <main id="main" class="main">
     <div class="pagetitle">
         <h1>Monitoring Delivery</h1>
@@ -46,7 +55,7 @@
                                         </div>
                                         <div class="col-lg-5">
                                             <div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
-                                                <button type="submit" name="submit-find" class="btn btn-primary btn-block" style="min-width: 100%;">
+                                                <button type="submit" name="submit-find" value="1" class="btn btn-primary btn-block" style="min-width: 100%;">
                                                 <i class="fa fa-search"></i> Search
                                                 </button>
                                             </div>
@@ -83,7 +92,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive mt-3">
-                                @if(!empty(Request::get('start')) && !empty(Request::get('end')))
+                                @if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')) || Request::get('submit-find'))
                                 <table  class="table table-bordered table-striped table-sm" id="monitoring-delivery">
                                     <thead>
                                         <th>Manifest</th>
@@ -155,7 +164,7 @@ $(document).ready(function(){
             uiLibrary: 'bootstrap5',
             format: 'yyyy-mm-dd'
         });
-        @if(empty(Request::get('start')) && empty(Request::get('end')))
+      @if((empty(Request::get('start')) && empty(Request::get('end'))) || empty(Request::get('vendor_select')) || empty(Request::get('manifest')) || empty(Request::get('submit-find')))
 $('#monitoring-delivery-dummy').DataTable();
 @endif
     $('#monitoring-delivery').DataTable({
