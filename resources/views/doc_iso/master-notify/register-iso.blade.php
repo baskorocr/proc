@@ -1,6 +1,7 @@
 @extends('layouts.main')
-@section('title',"Form Input Page")
+@section('title',"Register New ISO Doc")
 @section('content')
+    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/css/select2.min.css" integrity="sha512-xrbX64SIXOxo5cMQEDUQ3UyKsCreOEq1Im90z3B7KPoxLJ2ol/tCT0aBhuIzASfmBVdODioUdUPbt5EDEXmD9g==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <main id="main" class="main">
     <div class="pagetitle">
@@ -19,13 +20,13 @@
           
           <div class="card">
             <div class="card-body">
-              <h5 class="card-title">General Form Register ISO</h5>
+              <h5 class="card-title mb-3">Form Register ISO</h5>
 
               <!-- General Form Elements -->
          
               <div class="card">
             <div class="card-body">
-              <h5 class="card-title">Multi Columns Form</h5>
+              {{-- <h5 class="card-title">Multi Columns Form</h5> --}}
 
               <!-- Multi Columns Form -->
               <form id="regiso" class="row g-3" action="{{ route('doc-iso.register-iso.store') }}" method="POST" enctype="multipart/form-data">
@@ -78,13 +79,13 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Certified Date</label>
                   <div class="col-sm-10">
-                    <input name="cert_date" required type="date" class="form-control">
+                    <input name="cert_date" id="cert_date" placeholder="DD-MM-YYYY" required type="text" class="form-control">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label    style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Expired Date</label>
                   <div class="col-sm-10">
-                    <input name="exp_date" required type="date" class="form-control">
+                    <input name="exp_date" id="exp_date" placeholder="DD-MM-YYYY" required type="text" class="form-control">
                   </div>
                 </div>
                 <table  class="table" style="width:100%">
@@ -124,6 +125,7 @@
                   <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
                   <div class="col-sm-10">
                     <input name="file" required accept="application/pdf" class="form-control" type="file" id="formFile">
+                    <small>upload ISO pdf file</small>
                   </div>
                 </div>
                 <div class="text-left">
@@ -159,6 +161,8 @@
 @endsection
 @section('javascript')
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 <script>
   $('#regiso').submit(function(e){
     let timerInterval
@@ -185,5 +189,14 @@
     $(document).ready(function() {
       $('#id_vendor').select2();
     });
+
+ $('#cert_date').datepicker({
+            uiLibrary: 'bootstrap5',
+             format: 'dd-mm-yyyy'
+        });
+ $('#exp_date').datepicker({
+            uiLibrary: 'bootstrap5',
+            format: 'dd-mm-yyyy'
+        });
 </script>
 @endsection

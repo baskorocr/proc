@@ -2,6 +2,13 @@
 @section('title',"Download Manifest Order ")
 @section('content')
 <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+	div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+
+</style>
 <main id="main" class="main">
 	<div class="pagetitle">
 		<h1>Download Manifest Order</h1>
@@ -46,7 +53,7 @@
 										</div>
 										<div class="col-lg-5">
 											<div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
-												<button type="submit" name="submit-find" class="btn btn-primary btn-block" style="min-width: 100%;">
+												<button type="submit" name="submit-find" value="1" class="btn btn-primary btn-block" style="min-width: 100%;">
 												<i class="fa fa-search"></i> Search
 												</button>
 											</div>
@@ -82,7 +89,7 @@
 						<div class="card">
 							<div class="card-body">
 								
-								@if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')))
+								@if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')) || Request::get('submit-find'))
 								<div class="table-responsive mt-3">
 									<table  class="table table-bordered table-striped table-sm" id="download-manifest">
 										<thead>
@@ -132,7 +139,7 @@
 						</div>
 						@endif
 						<div class="card-footer">
-							@if(!empty(Request::get('start')) && !empty(Request::get('end')) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')))
+						@if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')) || Request::get('submit-find'))
 							<form action="{{route('delivery.schedule.mf.download')}}" method="POST">
 								@csrf
 								<div class="row">

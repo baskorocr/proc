@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"Approval ISO Doc")
+@section('title',"Approve/Reject ISO Document")
 @section('content')
 <?php
 $count = count(IsoHelper::get_transaction_type_id(@$iso->trn_type));
@@ -21,7 +21,7 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
 ?>
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1>Approval ISO Document</h1>
+    <h1>Approve/Reject ISO Document</h1>
     <nav>
       <ol class="breadcrumb">
         {{-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> --}}
@@ -135,15 +135,15 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
               <div class="row mb-3">
                 <div class="form-group">
                   <label for="">Last Document</label><br>
-                  <a href="{{asset('files/regis_iso/'.@$iso->doc_path)}}" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
+                  <a href="{{asset('files/regis_iso/'.@$iso->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
                   <i class="fa fa-file"></i> Click to Preview (<?php echo @$iso->doc_path; ?>)</label>
                 </a>
                 
               </div>
-              <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
+             {{--  <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
               <div class="col-sm-10">
                 <input disabled name="file" class="form-control" type="file" id="formFile">
-              </div>
+              </div> --}}
             </div>
             <?php
             if (@$iso->trn_type != 'R')

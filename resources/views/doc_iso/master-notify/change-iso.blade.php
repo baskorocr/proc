@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('title',"Change ISO Document")
 @section('content')
+   <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
  <?php
     $count = count(IsoHelper::get_transaction_type_id($iso->trn_type));
     $trans = IsoHelper::get_transaction_type_id_first($iso->trn_type);
@@ -43,7 +44,7 @@
               <h5 class="card-title"></h5>
 
               <!-- Multi Columns Form -->
-              <form class="row g-3" action="{{ route('doc-iso.change_iso') }}" method="POST" enctype="multipart/form-data">
+              <form class="row g-3" id="regiso" action="{{ route('doc-iso.change_iso') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="id" value="{{$iso->_id}}">
                 <input type="hidden" name="id_vendor" value="{{$iso->id_vendor}}">
@@ -106,14 +107,14 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Certified Date</label>
                   <div class="col-sm-10">
-                    <input name="cert_date" type="date" class="form-control" value="<?php echo $iso->cert_date; ?>">
+                    <input name="cert_date" id="cert_date" placeholder="DD-MM-YYYY" required type="text"  value="<?php echo $iso->cert_date; ?>">
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <label    style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Expired Date</label>
                   <div class="col-sm-10">
-                    <input name="exp_date" type="date" class="form-control" value="<?php echo $iso->exp_date; ?>">
+                    <input name="exp_date" id="exp_date" placeholder="DD-MM-YYYY" required type="text"  value="<?php echo $iso->exp_date; ?>">
                   </div>
                 </div>
                 <table  class="table" style="width:100%">
@@ -153,7 +154,7 @@
                 <div class="row mb-3">
                      <div class="form-group">
                           <label for="">Last Document</label><br>
-                          <a href="{{asset('files/regis_iso/'.$iso->doc_path)}}" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
+                          <a href="{{asset('files/regis_iso/'.$iso->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
                               <i class="fa fa-file"></i> Click to Preview (<?php echo $iso->doc_path; ?>)</label>
                           </a>
                          
@@ -161,6 +162,7 @@
                   <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
                   <div class="col-sm-10">
                     <input name="file" class="form-control" type="file" id="formFile">
+                    <small>upload ISO pdf file</small>
                   </div>
                 </div>
                 <div class="text-left">
@@ -190,4 +192,45 @@
 
 
   </main><!-- End #main -->
+@endsection
+@section('javascript')
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
+
+<script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
+<script>
+  $('#regiso').submit(function(e){
+    let timerInterval
+    Swal.fire({
+      title: 'Transaction Progress',
+      html: 'Please wait...',
+      timer: 30000,
+      // timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading()
+        const b = Swal.getHtmlContainer().querySelector('b')
+        timerInterval = setInterval(() => {
+          b.textContent = Swal.getTimerLeft()
+        }, 100)
+      },
+      willClose: () => {
+        clearInterval(timerInterval)
+      }
+    }).then((result) => {
+      $('#regiso').trigger('submit')
+    })
+  })
+
+    $(document).ready(function() {
+      $('#id_vendor').select2();
+    });
+
+  $('#cert_date').datepicker({
+            uiLibrary: 'bootstrap5',
+             format: 'dd-mm-yyyy'
+        });
+ $('#exp_date').datepicker({
+            uiLibrary: 'bootstrap5',
+            format: 'dd-mm-yyyy'
+        });
+</script>
 @endsection
