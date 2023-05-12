@@ -49,7 +49,7 @@
                 
             <div class="form-group">
                 <label>New Password</label>
-                <input type="password" class="form-control" id="new-pass" min="8" name="password" placeholder="New password" required=""> 
+                <input type="password" class="form-control" title ="Minimum 5 Character" id="new-pass" min="8" name="password" placeholder="New password" required=""> 
             </div>
 
             <div class="form-group">
