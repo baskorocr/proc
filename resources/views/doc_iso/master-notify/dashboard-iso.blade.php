@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"Form Input Page")
+@section('title',"Dashboard ISO")
 @section('content')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
 <style type="text/css">

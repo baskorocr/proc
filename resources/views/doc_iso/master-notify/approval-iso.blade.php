@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"Approval ISO Doc")
+@section('title',"Approve/Reject ISO Document")
 @section('content')
 <?php
 $count = count(IsoHelper::get_transaction_type_id(@$iso->trn_type));
@@ -21,7 +21,7 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
 ?>
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1>Approval ISO Document</h1>
+    <h1>Approve/Reject ISO Document</h1>
     <nav>
       <ol class="breadcrumb">
         {{-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> --}}
