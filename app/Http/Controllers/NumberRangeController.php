@@ -55,7 +55,7 @@ class NumberRangeController extends Controller
 
         $number_range = new NumberRange;
         $number_range->doc_year = $request->doc_year;
-        $number_range->doc_type = $request->doc_type;
+        $number_range->doc_type = strtolower($request->doc_type);
         $number_range->num_low = $request->num_low;
         $number_range->num_high = $request->num_high;
         $number_range->current_num = 0;

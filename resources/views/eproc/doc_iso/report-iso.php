@@ -144,9 +144,9 @@ include "project_mgt/project-mgt-query.php";
             <!-- small box -->
             <?php
                 if($role == 'vendor') {
-                    $query_exec_notifd = get_reg_iso_by_trn_type('I', $id_vendor);
+                    $query_exec_notifd = get_reg_iso_by_trn_type('E', $id_vendor);
                 } else {
-                    $query_exec_notifd = get_reg_iso_by_trn_type('I', '');
+                    $query_exec_notifd = get_reg_iso_by_trn_type('E', '');
                 }
                 $count_notifd = mysqli_num_rows($query_exec_notifd);
             ?>

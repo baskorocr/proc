@@ -28,6 +28,9 @@
               <form class="row g-3" action="{{ route('doc-iso.renewal') }}" method="POST" enctype="multipart/form-data">
                 @csrf
                 <input type="hidden" name="id" value="{{$iso->_id}}">
+                <input type="hidden" name="ref_doc" value="{{$iso->trn_id}}">
+                <input type="hidden" name="ref_doc_year" value="{{$iso->doc_year}}">
+                <input type="hidden" name="id" value="{{$iso->_id}}">
                 <input type="hidden" name="id_vendor" value="{{$iso->id_vendor}}">
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Vendor</label>
@@ -130,7 +133,7 @@
                        </div>
                   <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
                   <div class="col-sm-10">
-                    <input name="file" class="form-control" type="file" id="formFile">
+                    <input name="file" accept="application/pdf" required class="form-control" type="file" id="formFile">
                   </div>
                 </div>
                 <div class="text-left">

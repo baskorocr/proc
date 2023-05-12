@@ -50,7 +50,7 @@
                   <div class="form-group">
                 <label><b>Doc Status</b></label>
                 <h4>
-                {!!$stat!!}
+               <span class="badge bg-{{@$iso->transaction->color}}">{{@$iso->transaction->trn_name}}</span>
                 </h4>
               </div>
               <div class="form-group">
