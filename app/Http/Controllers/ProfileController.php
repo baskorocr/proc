@@ -23,6 +23,11 @@ class ProfileController extends Controller
 
     public function changePwdAct(Request $request)
     {
+        if(strlen($request->password) < 5)
+        {
+             return redirect()->back()->with(['message_fail' => 'New Password minimum 5 character!']);
+        } 
+
         if(md5($request->password) == md5($request->curr_pass))
         {
              return redirect()->back()->with(['message_fail' => 'Please input brand new password.']);
