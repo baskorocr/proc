@@ -154,7 +154,7 @@
                 <div class="row mb-3">
                      <div class="form-group">
                           <label for="">Last Document</label><br>
-                          <a href="{{asset('files/regis_iso/'.$iso->doc_path)}}" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
+                          <a href="{{asset('files/regis_iso/'.$iso->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
                               <i class="fa fa-file"></i> Click to Preview (<?php echo $iso->doc_path; ?>)</label>
                           </a>
                          
