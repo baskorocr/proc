@@ -208,7 +208,7 @@ class UserController extends Controller
 
         if (!empty($user)) {
 
-            if (!Hash::check($request->pin, $user->pin)){
+            if ($request->pin != $user->pin){
 
                 return response()->json([
                     'type' => 'error',
