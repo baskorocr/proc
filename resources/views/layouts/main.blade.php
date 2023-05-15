@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 
 <head>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>EPROC :: @yield('title')</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <title>eProc Dharma Polimetal | @yield('title')</title>
+  <meta content="e-Procurement Dharma Polimetal" name="description">
+  <meta content="eproc,Dharma Polimetal,eprocurement" name="keywords">
 
   <!-- Favicons -->
    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon3.png') }}" />

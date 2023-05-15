@@ -114,7 +114,7 @@ div.dataTables_wrapper div.dt-row{
     
   </section>
   <div class="table-responsive" style="min-height:500px">
-                <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:1560px">
+                <table id="iso"  class="table table-striped table-bordered"   style="width:1560px">
                     <thead>
                         <tr>
                            
