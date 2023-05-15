@@ -26,8 +26,8 @@ class DeliveryScheduleController extends Controller
     {
         foreach(ManifestHeader::get() as $mf){
            $filenm = explode("#", $mf->file_nm);
-          \File::copy(storage_path('template_dummy/dummymf.pdf'), storage_path('MF_TEST/'.strtoupper($mf->mf_type).'/'.$filenm[0]));
-          \File::copy(storage_path('template_dummy/dummymf.pdf'), storage_path('MF_TEST/'.strtoupper($mf->mf_type).'-KANBAN/'.$filenm[1]));
+          \File::copy(storage_path('template_dummy/dummymf.pdf'), storage_path('MF_TEST/'.strtoupper($mf->mf_type).'/'.@$filenm[0]));
+          \File::copy(storage_path('template_dummy/dummymf.pdf'), storage_path('MF_TEST/'.strtoupper($mf->mf_type).'-KANBAN/'.@$filenm[1]));
         }
         return true;
     }
@@ -58,9 +58,9 @@ class DeliveryScheduleController extends Controller
                     // dd(file_get_contents( $file));
                     if(file_exists($file))
                     {
-                        $zip->addFile($file, $filenm[0]);
+                        $zip->addFile($file, "01 Manifest/".$filenm[0]);
                     } else{
-                         $zip->addFile($file_qas, $filenm[0]);
+                         $zip->addFile($file_qas, "01 Manifest/".$filenm[0]);
                     }
 
                     $file = Storage::disk('mf_kanban_directory')->path("").$filenm[1];
@@ -69,9 +69,9 @@ class DeliveryScheduleController extends Controller
 
                     if(file_exists($file))
                     {
-                        $zip->addFile($file, $filenm[1]);
+                        $zip->addFile($file, "02 Kanban/".$filenm[1]);
                     } else{
-                         $zip->addFile($file_qas, $filenm[1]);
+                         $zip->addFile($file_qas, "02 Kanban/".$filenm[1]);
                     }
                 }
                 $zip->close();
@@ -108,11 +108,12 @@ class DeliveryScheduleController extends Controller
                     $file_qas = Storage::disk('so_qas_directory')->path("").$filenm[0];
                     $relativeName = basename($file);
                     // dd($filenm[0])
+                    // dd(file_get_contents( $file));
                     if(file_exists($file))
                     {
-                        $zip->addFile($file, $filenm[0]);
+                        $zip->addFile($file, "01 Manifest/".$filenm[0]);
                     } else{
-                         $zip->addFile($file_qas, $filenm[0]);
+                         $zip->addFile($file_qas, "01 Manifest/".$filenm[0]);
                     }
 
                     $file = Storage::disk('so_kanban_directory')->path("").$filenm[1];
@@ -120,9 +121,9 @@ class DeliveryScheduleController extends Controller
                     $relativeName = basename($file);
                     if(file_exists($file))
                     {
-                        $zip->addFile($file, $filenm[1]);
+                        $zip->addFile($file, "02 Kanban/".$filenm[1]);
                     } else{
-                         $zip->addFile($file_qas, $filenm[1]);
+                         $zip->addFile($file_qas,"02 Kanban/". $filenm[1]);
                     }
                     $zip->addFile($file, $filenm[1]);
                 }

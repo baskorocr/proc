@@ -1,6 +1,11 @@
 @extends('layouts.main')
 @section('title',"PDA User Master ")
 @section('content')
+<style type="text/css">
+	.dataTables_length{
+		margin-top:1rem;
+	}
+</style>
 <main id="main" class="main">
 	<div class="pagetitle">
 		<h1>PDA User Master</h1>
@@ -54,10 +59,12 @@
     <script>
       $('#master-pdauser').DataTable({
         "order": [[ 1, "DESC" ]],
-        dom: 'Bfrtip',
+        dom: 'Blfrtip',
       	buttons: [
               'excel','copy'
             ],
+
+				"lengthMenu": [ [10, 25, 50,100, -1], [10, 25, 50,100, "All"] ],
         processing: true,
         serverSide: true,
         autoWidth:false,

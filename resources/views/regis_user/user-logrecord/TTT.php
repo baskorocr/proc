@@ -80,7 +80,7 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('mail_stat', function($data){
           
-             if($data->sent != '0000-00-00 00:00:00' AND isset($data->sent) ){
+             if($data->sent != '0000-00-00 00:00:00'){
             $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                 data-toggle=tooltip' data-placement='left' title='Sent'>
                                 </i>
@@ -112,7 +112,7 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if($data->downloaded != '0000-00-00 00:00:00'  AND isset($data->downloaded)){
+             if($data->downloaded != '0000-00-00 00:00:00'){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
@@ -279,7 +279,7 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('mail_stat', function($data){
           
-             if($data->sent != '0000-00-00 00:00:00'  AND isset($data->sent)){
+             if($data->sent != '0000-00-00 00:00:00'){
             $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                 data-toggle=tooltip' data-placement='left' title='Sent'>
                                 </i>
@@ -311,7 +311,7 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if($data->downloaded != '0000-00-00 00:00:00' AND isset($data->downloaded) ){
+             if($data->downloaded != '0000-00-00 00:00:00'){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>

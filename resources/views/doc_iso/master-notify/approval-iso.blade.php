@@ -99,13 +99,13 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
               <div class="row mb-3">
                 <label  style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Certified Date</label>
                 <div class="col-sm-10">
-                  <input disabled name="cert_date" type="date" class="form-control" value="<?php echo @$iso->cert_date; ?>">
+                  <input disabled name="cert_date" type="text" class="form-control" value="<?php echo  date("d-m-Y",strtotime(@$iso->cert_date)); ?>">
                 </div>
               </div>
               <div class="row mb-3">
                 <label    style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Expired Date</label>
                 <div class="col-sm-10">
-                  <input disabled name="exp_date" type="date" class="form-control" value="<?php echo @$iso->exp_date; ?>">
+                  <input disabled name="exp_date" type="text" class="form-control" value="<?php echo date("d-m-Y",strtotime(@$iso->exp_date)); ?>">
                 </div>
               </div>
               <table  class="table" style="width:100%">
@@ -118,12 +118,21 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
                 </thead>
                 <tbody>
                   @foreach($notify as $item)
-                  <tr>
-                    <td style="font-size:12px">{{ $item->notif_id }}</td>
-                    <td style="font-size:12px">{{ $item->notif_seq }}</td>
-                    <td style="font-size:12px">{{ $item->notif_before }}</td>
-                  </tr>
-                  @endforeach
+                    <tr>
+                      <?php
+                      if ($item->uom == "M"){
+                      $measure = "Months";
+                      } elseif($item->uom == "D"){
+                      $measure = "Days";
+                      } elseif($item->uom  == "Y"){
+                      $measure = "Year";
+                      }
+                      ?>
+                      <td style="font-size:12px">{{ $item->notif_id }}</td>
+                      <td style="font-size:12px">{{ $item->notif_seq }}</td>
+                      <td style="font-size:12px">{{ $item->notif_before }} {{$measure}}</td>
+                    </tr>
+                    @endforeach
                 </tbody>
               </table>
               <div style="marginTop: 100%;" class="row mb-3">

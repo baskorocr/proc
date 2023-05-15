@@ -107,14 +107,14 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Certified Date</label>
                   <div class="col-sm-10">
-                    <input name="cert_date" id="cert_date" placeholder="DD-MM-YYYY" required type="text"  value="<?php echo $iso->cert_date; ?>">
+                    <input name="cert_date" id="cert_date" placeholder="DD-MM-YYYY" required type="text"  value="<?php echo date("d-m-Y",strtotime($iso->cert_date)); ?>">
                   </div>
                 </div>
 
                 <div class="row mb-3">
                   <label    style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Expired Date</label>
                   <div class="col-sm-10">
-                    <input name="exp_date" id="exp_date" placeholder="DD-MM-YYYY" required type="text"  value="<?php echo $iso->exp_date; ?>">
+                    <input name="exp_date" id="exp_date" placeholder="DD-MM-YYYY" required type="text"  value="<?php echo  date("d-m-Y",strtotime($iso->exp_date)); ?>">
                   </div>
                 </div>
                 <table  class="table" style="width:100%">

@@ -27,13 +27,7 @@ class MonitoringDeliveryController extends Controller
 
     public function getDelivery(Request $request)
     {
-       // if(auth()->user()->role == 'vendor')
-       // {
-       //       $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->orderBy('delivery_date','DESC')->get();
-       // } else {
-       //      $data = ManifestHeader::orderBy('delivery_date','DESC')->get();
-       // }
-      $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+       $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
 
         $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
        if(auth()->user()->role == 'vendor')
@@ -61,9 +55,23 @@ class MonitoringDeliveryController extends Controller
                 } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
                     $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
-                $data = $mf->get();
+                $data = $mf->where('mf_type','MI')->get();
             }else{
-             $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->get();
+             // $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
+
+             $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id);
+
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->get();
 
             }
        } else {
@@ -95,7 +103,20 @@ class MonitoringDeliveryController extends Controller
                 }
                 $data = $mf->get();
             }else{
-             $data = ManifestHeader::get();
+
+                $mf =  ManifestHeader::where('mf_type','like','%');
+
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->get();
 
             }
        }

@@ -8,7 +8,7 @@ div.table-responsive > div.dataTables_wrapper > div.row
     overflow:auto !important;
 }
 div.dataTables_wrapper div.dt-row{
-    min-height:300px;
+    min-height:50vh;
 }
 </style>
 <main id="main" class="main">
@@ -28,7 +28,7 @@ div.dataTables_wrapper div.dt-row{
       <div class="col-md-2">
         <div class="small-box bg-blue">
           <div class="inner">
-            <h3>{{ $regis->where('trn_type', 'S')->count() }}</h3>
+            <h3>{{ IsoHelper::countDoc("S") }}</h3>
             <p>Submitted Document</p>
           </div>
           <div class="icon">
@@ -42,21 +42,7 @@ div.dataTables_wrapper div.dt-row{
       <div class="col-md-2">
         <div class="small-box bg-orange">
           <div class="inner">
-            <h3>{{ $regis->where('trn_type', 'C')->count() }}</h3>
-            <p>Rejected Document</p>
-          </div>
-          <div class="icon">
-            <i class="far fa-file"></i>
-          </div>
-          <a href="{{route('detail-iso-report',['stat' => 'C'])}}" class="small-box-footer">
-            More info <i class="fas fa-arrow-circle-right"></i>
-          </a>
-        </div>
-      </div>
-      <div class="col-md-2">
-        <div class="small-box bg-red">
-          <div class="inner">
-            <h3>{{ $regis->where('trn_type', 'U')->count() }}</h3>
+            <h3>{{ IsoHelper::countDoc("U") }} </h3>
             <p>Updated Document</p>
           </div>
           <div class="icon">
@@ -68,9 +54,23 @@ div.dataTables_wrapper div.dt-row{
         </div>
       </div>
       <div class="col-md-2">
+        <div class="small-box bg-red">
+          <div class="inner">
+            <h3>{{ IsoHelper::countDoc("C") }} </h3>
+            <p>Rejected Document</p>
+          </div>
+          <div class="icon">
+            <i class="far fa-file"></i>
+          </div>
+          <a href="{{route('detail-iso-report',['stat' => 'C'])}}" class="small-box-footer">
+            More info <i class="fas fa-arrow-circle-right"></i>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-2">
         <div class="small-box bg-green">
           <div class="inner">
-            <h3>{{ $regis->where('trn_type', 'R')->count() }}</h3>
+            <h3>{{ IsoHelper::countDoc("R") }}</h3>
             <p>Approved Document</p>
           </div>
           <div class="icon">
@@ -85,7 +85,7 @@ div.dataTables_wrapper div.dt-row{
       <div class="col-md-2">
         <div class="small-box bg-orange">
           <div class="inner">
-            <h3>{{ $regis->where('trn_type', 'I')->count() }}</h3>
+            <h3>{{IsoHelper::countDoc("I") }}</h3>
             <p>Notified Document</p>
           </div>
           <div class="icon">
@@ -99,7 +99,7 @@ div.dataTables_wrapper div.dt-row{
       <div class="col-md-2">
         <div class="small-box bg-navy">
           <div class="inner">
-            <h3>{{ $regis->count() }}</h3>
+            <h3>{{ IsoHelper::countDoc() }}</h3>
             <p>Total Document</p>
           </div>
           <div class="icon">
@@ -113,8 +113,8 @@ div.dataTables_wrapper div.dt-row{
     </div>
     
   </section>
-  <div class="table-responsive" style="min-height:500px">
-                <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:1560px">
+  <div class="table-responsive" >
+                <table id="iso"  class="table table-striped table-bordered"   style="width:1560px">
                     <thead>
                         <tr>
                            
@@ -157,7 +157,7 @@ div.dataTables_wrapper div.dt-row{
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                        @if(empty($item->ref_doc) AND empty($item->ref_doc_year))
+                                          @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) AND $item->trn_type != "U")
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
                                         @endif
                                         @if(($item->stat != 'A' AND $item->stat != 'E') )
@@ -256,7 +256,7 @@ div.dataTables_wrapper div.dt-row{
   $('#iso').DataTable({
          "autoWidth": false,
         responsive:true,
-
+         order: [[7, 'desc']],
    
   })
 

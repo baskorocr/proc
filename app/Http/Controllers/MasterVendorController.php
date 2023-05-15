@@ -149,7 +149,7 @@ class MasterVendorController extends Controller
         $master_vendor->pay_term = $request->pay_term;
         $master_vendor->sales_person = $request->sales_person;
         $master_vendor->phone_2 = $request->phone_2;
-        $master_vendor->status_vendor = "N";
+        $master_vendor->status_vendor = "A";
         $master_vendor->created_by = auth()->user()->full_name;
         $master_vendor->save();
 
