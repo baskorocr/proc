@@ -13,10 +13,14 @@ $(document).ready(function () {
 				processData: false,
 				success : function(data) {
 					if(data.type==="success"){
-						location.href=base_url+"/blank";	
+						location.href=base_url+"/dashboard";	
 					}else{
                   	 	$('.div_notif').show();
 						$('#label_notif').html('<i class="fa fa-warning"> '+data.message+'</i>');
+						$('#label_notif').html('<i class="fa fa-warning"> Please check username or password!</i>');
+						$("#username").val("");
+						$("#password").val("");
+						// $("#username").attr("placeholder", "Username");
                     }
 				},
 				error: function( xhr, textStatus, error ){
@@ -24,9 +28,9 @@ $(document).ready(function () {
 					// console.log(xhr.statusText);
 					$('.div_notif').show();
 					$('#label_notif').html('<i class="fa fa-warning"> Please check username or password!</i>');
-					$("#username").val(null);
-					$("#password").val(null);
-					$("#password").attr("placeholder", "Type your answer here");
+					$("#username").val("");
+					$("#password").val("");
+					// $("#password").attr("placeholder", "Password");
 				}
 			});
 	});  

@@ -15,11 +15,16 @@ class EmailListGroup extends Model
 
     protected $fillable = ['mail','abrev','dept_code','name','cr_by','cr_date','ch_by','ch_date'];
 
-    public $dates = ['cr_date','ch_date'];
+    public $dates = ['last_changed'];
 
 
     public function users()
     {
         return $this->belongsTo(User::class,'last_changed_by','id_user');
+    } 
+
+    public function deptMaster()
+    {
+        return $this->belongsTo(EmailGroup::class,'dept_code','dept_code');
     }
 }

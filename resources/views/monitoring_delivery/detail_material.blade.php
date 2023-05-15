@@ -6,8 +6,8 @@
        <h1>Detail Material <br> <small class="text-muted">{{$manifest}}</small></h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Monitoring Delivery</a></li>
+                {{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+                {{-- <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Monitoring Delivery</a></li> --}}
                 <li class="breadcrumb-item active">Detail Material</li>
             </ol>
         </nav>
@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive mt-3">
-                                <table  class="table table-bordered table-stripped table-sm" id="detail-material">
+                                <table  class="table table-bordered table-striped table-sm" id="detail-material">
                                     <thead>
                                         <th>Manifest</th>
                                         <th>Delivery Date</th>

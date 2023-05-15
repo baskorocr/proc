@@ -6,7 +6,7 @@
 		<h1>Edit List Check Doc</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Edit List Check Doc</li>
 			</ol>
 		</nav>
@@ -55,7 +55,7 @@
 					                        </select>
 					                    </div>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer"> 
 										<button type="submit" id="edit-prodmaster" name="edit-prodMaster" class="btn btn-primary"><i class="fas fa-edit"></i> Update</button>
 									</div>
 								</form>

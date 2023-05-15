@@ -1,13 +1,20 @@
 @extends('layouts.main')
 @section('title',"Master Vendor ")
 @section('content')
+<style>
+	table.dataTable thead tr th {
+    word-wrap: break-word;
+    word-break: break-all;
+}
+</style>
 <main id="main" class="main">
 	<div class="pagetitle">
-		<h1>Master Vendor</h1>
+		<h1>Master Vendor </h1>
+
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Master Vendor</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+				<li class="breadcrumb-item active">Master Vendor</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -16,29 +23,39 @@
 				<div class="col-lg-12">
 					<div class="card">
 						<div class="card-body">
-							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-vendor">
+							<div class="filter mt-2 " align="right">
+						
+								<a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+								<i class="bi bi-list"></i></a>
+								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
+									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
+									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-vendor" href="#"><i class="fas fa-plus-square"></i>Create Vendor</a></li>	<li><a class="dropdown-item" href="{{route('regis-user.upload.vendor')}}"><i class="fas fa-upload"></i>Upload Vendor</a></li>
+								</ul>
+								
+							</div>
+							<div class="mt-3">
+								<table  class="table table-bordered table-striped table-sm" id="master-vendor">
 									<thead>
-										<th><i class="fa fa-list"></i></th>
-										<th>ID Vendor</th>
-										<th>Purch Org</th>
-										<th>Vendor Name</th>
-										<th>Email</th>
-										<th>Alias</th>
-										<th>Street</th>
-										<th>District</th>
-										<th>Post Code</th>
-										<th>City</th>
-										<th>Country</th>
-										<th>Region</th>
-										<th>Phone 1</th>
-										<th>Vat Reg</th>
-										<th>Order Curr</th>
-										<th>Pay Term</th>
-										<th>Sales Person</th>
-										<th>Phone 2</th>
-										<th>Status</th>
-										<th>Action</th>
+										<th style="max-width: 26px"><i class="fa fa-list"></i></th>
+										<th style="min-width: 100px">ID Vendor</th>
+										<th style="min-width: 100px">Purch Org</th>
+										<th style="min-width: 250px">Vendor Name</th>
+										<th style="min-width: 160px">Email</th>
+										<th style="min-width: 86px">Alias</th>
+										<th style="min-width: 300px">Street</th>
+										<th style="min-width: 100px">District</th>
+										<th style="min-width: 100px">Post Code</th>
+										<th style="min-width: 100px">City</th>
+										<th style="min-width: 100px">Country</th>
+										<th style="min-width: 100px">Region</th>
+										<th style="min-width: 180px">Phone 1</th>
+										<th style="min-width: 180px">Vat Reg</th>
+										<th style="min-width: 180px">Order Curr</th>
+										<th style="min-width: 100px">Pay Term</th>
+										<th style="min-width: 150px">Sales Person</th>
+										<th style="min-width: 150px">Phone 2</th>
+										<th style="min-width: 100px">Status</th>
+										<th style="min-width: 170px">Action</th>
 									</thead>
 									<tbody>
 										
@@ -51,12 +68,14 @@
 			</div>
 		</section>
 	</main>
+	@include('regis_user.master-vendor.modals')
 	@endsection
 
 	@section('javascript')
 	<script src="https://cdn.datatables.net/v/bs5/jq-3.6.0/jszip-2.5.0/dt-1.13.4/b-2.3.6/b-colvis-2.3.6/b-html5-2.3.6/b-print-2.3.6/datatables.min.js"></script>
     <script>
-      $('#master-vendor').DataTable({  dom: 'Bfrtip',
+    	$.fn.dataTable.ext.errMode = 'none';
+      $('#master-vendor').DataTable({ autoWidth:false, dom: 'Bfrtip', scrollX: true,
       	buttons: [
               'excel'
             ],
@@ -132,6 +151,7 @@
 		  
         ]
       });
+
 
 	  function deleteProject(url,id)
 		{

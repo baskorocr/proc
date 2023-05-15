@@ -26,37 +26,39 @@ class HomeController extends Controller
      */
     public function index()
     {
-		require_once resource_path('views').'/eproc/registration/master-data-query.php';
+		// require_once resource_path('views').'/eproc/registration/master-data-query.php';
 		
-		$user = Auth::user();
-		$vendor = get_vendor_login("", "");
-		$data = array();
+		// $user = Auth::user();
+		// $vendor = get_vendor_login("", "");
+		// $data = array();
 		
-		if($vendor) {
-			$data = array($vendor);
-		} else {
-			$data = get_user_login("", "");
-		}
+		// if($vendor) {
+		// 	$data = array($vendor);
+		// } else {
+		// 	$data = get_user_login("", "");
+		// }
 		
-		//get menu group for user (admin & vendor)
-		$get_menu_group = get_menu_group_by_id_user($user->id_user);
-		$menu_arr = array();
-		foreach ($get_menu_group as $row) {
-			array_push($menu_arr, $row['menu_group_object']);	
-		}
-		session(['menu_group' => $menu_arr]); 
+		// //get menu group for user (admin & vendor)
+		// $get_menu_group = get_menu_group_by_id_user($user->id_user);
+		// $menu_arr = array();
+		// foreach ($get_menu_group as $row) {
+		// 	array_push($menu_arr, $row['menu_group_object']);	
+		// }
+		// session(['menu_group' => $menu_arr]); 
 		
-		//get user's access group
-		$get_acccess_group = get_access_group_by_id_user($user->id_user);
-		$access_arr = array();
-		foreach ($get_acccess_group as $row) {
-			array_push($access_arr, $row['menu_object']);	
-		}
-		session(['access_group' => $access_arr]);
+		// //get user's access group
+		// $get_acccess_group = get_access_group_by_id_user($user->id_user);
+		// $access_arr = array();
+		// foreach ($get_acccess_group as $row) {
+		// 	array_push($access_arr, $row['menu_object']);	
+		// }
+		// session(['access_group' => $access_arr]);
 		
-		//var_dump($user->id_user);die;
-		//var_dump($data);die;
+		// //var_dump($user->id_user);die;
+		// //var_dump($data);die;
 				
-        return view('home', ['user' => $data]);
+        // return view('home', ['user' => $data]);
+
+        return redirect('/dashboard');
     }
 }

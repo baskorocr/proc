@@ -33,7 +33,7 @@ class AccessGroupController extends Controller
                     return 'Months';
                 }
             })
-            ->editColumn('cr_by', function ($data) {
+            ->editColumn('last_changed_by', function ($data) {
                 return @$data->users->nm_user;
             })
             ->editColumn('action', function ($data) {

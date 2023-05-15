@@ -1,12 +1,14 @@
 @extends('layouts.main')
 @section('title',"List PO")
 @section('content')
+
+    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <main id="main" class="main">
   <div class="pagetitle">
     <h1>List PO</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li>
+        {{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li> --}}
         <li class="breadcrumb-item active">List PO</li>
       </ol>
     </nav>
@@ -38,10 +40,10 @@
                   <div class="row">
                     <div class="col-md-6">
                       from
-                      <input type="date" name="date_from" id="date_from" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
+                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
                     </div>
                     <div class="col-md-6"> to
-                      <input type="date" name="date_to" id="date_to" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
+                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
                     </div>
                     
                     <div class="col-12">
@@ -65,7 +67,7 @@
                   <div class="col-sm-10">
                     <div class="row">
                       <div class="col-10">
-                        <select class="form-select select2" id="select_vendor" aria-label="Default select example">
+                        <select name="vendor_select" class="form-select select2" id="select_vendor" aria-label="Default select example">
                           <option selected>Choose Vendor</option>
                           @foreach($list_vendor as $vendor)
                           <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
@@ -92,37 +94,37 @@
             <div class="card">
               <div class="card-body">
                 <div class="table-responsive mt-3">
-                  <table  class="table table-bordered table-stripped table-sm" id="tb-list-po">
+                  <table  class="table table-bordered nowrap table-striped table-sm" id="tb-list-po">
                     <thead>
-                <th data-visible="true">PO Number</th>
-                <th>Rev No</th>
-                <th>Plant</th>
-                <th>Vendor</th>
-                <th>Vendor Name</th>
-                <th>Vendor Mail</th>
-                <th>Doc Date</th>
-                <th>PGr</th>
-                <th title="without Tax">PO Amount</th>
-                <th title="with Tax">Total Amount</th>
-                <th>Curr</th>
-                <th>
+                <th style="min-width: 106px" data-visible="true">PO Number</th>
+                <th style="min-width: 65px">Rev No</th>
+                <th style="min-width: 60px">Plant</th>
+                <th style="min-width:  60px">Vendor</th>
+                <th style="min-width: 250px">Vendor Name</th>
+                <th style="min-width: 220">Vendor Mail</th>
+                <th style="min-width: 106px">Doc Date</th>
+                <th style="min-width:  30px">PGr</th>
+                <th style="min-width: 106px" title="without Tax">PO Amount</th>
+                <th style="min-width: 106px" title="with Tax">Total Amount</th>
+                <th style="min-width: 30px">Curr</th>
+                <th style="min-width: 26px">
                     <i class="fa fa-check"></i>
 
 
 
                 </th>
-                <th>
+                <th style="min-width: 26px">
                     <i class="fa fa-envelope"></i>
                 </th>
-                <th >
+                <th style="min-width: 26px" >
                     <i class="fa fa-file"></i>
                 </th>
-                <th>
+                <th style="min-width: 26px">
                     <i class="fa fa-download"></i>
                 </th>
-                <th>Upload Date</th>
-                <th>Upload Group</th>
-                <th data-breakpoints="all">Filename</th>
+                <th style="min-width: 106px">Upload Date</th>
+                <th style="min-width: 106px">Upload Group</th>
+                <th style="min-width: 106px" data-breakpoints="all">Filename</th>
                      {{--  <th>PO Number</th>
                       <th>Rev No</th>
                       <th>Plant</th>
@@ -147,6 +149,8 @@
     </main>
     @endsection
     @section('javascript')
+     {{-- <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> --}}
+    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
     <script>
      function addVendor()
      {
@@ -155,7 +159,14 @@
       textarea.value += document.getElementById('select_vendor').value+'\n'
      }
 
-
+ $('#date_from').datepicker({
+            uiLibrary: 'bootstrap5',
+             format: 'yyyy-mm-dd'
+        });
+ $('#date_to').datepicker({
+            uiLibrary: 'bootstrap5',
+            format: 'yyyy-mm-dd'
+        });
   
     //  $(document).ready(function(){
     //  window.table = $('#tb-list-po').DataTable({
@@ -192,7 +203,10 @@
     // });
     // }).draw();
     // })
-    var table = $('#tb-list-po').DataTable({
+    $('#tb-list-po').DataTable();
+    function search() {
+       $('#tb-list-po').DataTable().destroy();
+    var table = $('#tb-list-po').DataTable({autoWidth:false,
     "order": [[ 1, "DESC" ]],
     processing: true,
     serverSide: true,
@@ -209,6 +223,8 @@
     item.date_to = $('#date_to').val();
     item.id_vendor = $('#select_vendor').val().toString();
     item.vendor_list = $('#vendor_list').val();
+     item.vendor_select = $('#select_vendor').val();
+     item.search = true;
     },
     url: "{{ route('datatables.purchasing.process.listpo')}}"
     },
@@ -291,8 +307,6 @@
     },
     ]
     });
-    function search() {
-    table.draw();
     }
     $('.select2').select2();
    

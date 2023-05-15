@@ -6,7 +6,7 @@
 		<h1>Project Assigment</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item">Project Master</li>
 				<li class="breadcrumb-item active">Project Assigment</li>
 			</ol>
@@ -40,7 +40,7 @@
 
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-proj-assign">
+								<table  class="table table-bordered table-striped table-sm" id="tb-proj-assign">
 									<thead>
 										<th>#</th>
 										<th>ID Project</th>

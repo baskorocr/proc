@@ -6,7 +6,7 @@
 		<h1>Document Master</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item">Document Master</li>
 			</ol>
 		</nav>
@@ -31,7 +31,7 @@
 
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-doc-master">
+								<table  class="table table-bordered table-striped table-sm" id="tb-doc-master">
 									<thead>
 										<th >ID Document</th>
 						                <th>Doc Name</th>

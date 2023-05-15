@@ -12,7 +12,7 @@ $completed_arr  = array();
 		<h1>Check Uploaded Document from Vendor</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Check Uploaded Document from Vendor</li>
 			</ol>
 		</nav>
@@ -35,7 +35,7 @@ $completed_arr  = array();
 										@endforeach
 									</select>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer">
 										<button type="submit"  class="btn btn-primary"><i class="fas fa-eye"></i> View</button>
 									</div>
 								</form>

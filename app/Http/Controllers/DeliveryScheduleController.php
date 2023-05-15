@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ManifestHeader;
+use App\Models\Vendor;
 use Config;
 use Storage;
 use MongoDB\BSON\UTCDateTime;
@@ -12,12 +13,14 @@ class DeliveryScheduleController extends Controller
 {
     public function index()
     {
-        return view('delivery_schedule/index');
+        $vendor = Vendor::all();
+        return view('delivery_schedule/index')->with(['list_vendor' => $vendor]);
     }
 
     public function index_spo()
     {
-        return view('delivery_schedule/index_spc');
+       $vendor = Vendor::all();
+        return view('delivery_schedule/index_spc')->with(['list_vendor' => $vendor]);
     }
     public function createDummyFile()
     {
@@ -30,12 +33,17 @@ class DeliveryScheduleController extends Controller
     }
     public function zipMF(Request $request)
     {
+        if(empty($request->download_doc))
+        {
+            return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
+        }
         // dd(\Storage::disk('mf_directory')->path("/"));
         // Storage::disk('mf_directory')->put('file.txt', 'Contents');
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_MI_MFPDF_".date("d-m-Y").".zip";
+        $zipnm = md5($request->ip().time().$fileName);
         // try{
-             if ($zip->open(storage_path('temp_zip/MI-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
+             if ($zip->open(storage_path('temp_zip/MI-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             
             {
 
@@ -44,18 +52,31 @@ class DeliveryScheduleController extends Controller
                       // dd($filenm);
                     // dd(scandir("D:/MI_TEST/MI/"));
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = Storage::disk('mf_directory')->path("/").$filenm[0];
+                    $file = Storage::disk('mf_directory')->path("").$filenm[0];
+                    $file_qas = Storage::disk('mf_qas_directory')->path("").$filenm[0];
                     $relativeName = basename($file);
-                    // dd($filenm[0])
-                    $zip->addFile($file, $filenm[0]);
+                    // dd(file_get_contents( $file));
+                    if(file_exists($file))
+                    {
+                        $zip->addFile($file, $filenm[0]);
+                    } else{
+                         $zip->addFile($file_qas, $filenm[0]);
+                    }
 
-                    $file = Storage::disk('mf_kanban_directory')->path("/").$filenm[1];
+                    $file = Storage::disk('mf_kanban_directory')->path("").$filenm[1];
+                    $file_qas = Storage::disk('mf_qas_kanban_directory')->path("").$filenm[1];
                     $relativeName = basename($file);
-                    $zip->addFile($file, $filenm[1]);
+
+                    if(file_exists($file))
+                    {
+                        $zip->addFile($file, $filenm[1]);
+                    } else{
+                         $zip->addFile($file_qas, $filenm[1]);
+                    }
                 }
                 $zip->close();
 
-                  return response()->download(storage_path('temp_zip/MI-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
+                  return response()->download(storage_path('temp_zip/MI-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         // } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         // {
@@ -67,11 +88,15 @@ class DeliveryScheduleController extends Controller
 
     public function zipMFSP(Request $request)
     {
-
+        if(empty($request->download_doc))
+        {
+            return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
+        }
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_SO_MFPDF_".date("d-m-Y").".zip";
+        $zipnm = md5($request->ip().time().$fileName);
         try{
-             if ($zip->open(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', \ZipArchive::CREATE) == TRUE)
+             if ($zip->open(storage_path('temp_zip/SO-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             
             {
                 
@@ -79,18 +104,31 @@ class DeliveryScheduleController extends Controller
                     $filenm = explode("#", $k);
                       // dd($filenm);
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = Storage::disk('so_directory')->path("/").$filenm[0];
+                    $file = Storage::disk('so_directory')->path("").$filenm[0];
+                    $file_qas = Storage::disk('so_qas_directory')->path("").$filenm[0];
                     $relativeName = basename($file);
                     // dd($filenm[0])
-                    $zip->addFile($file, $filenm[0]);
+                    if(file_exists($file))
+                    {
+                        $zip->addFile($file, $filenm[0]);
+                    } else{
+                         $zip->addFile($file_qas, $filenm[0]);
+                    }
 
-                    $file = Storage::disk('so_kanban_directory')->path("/").$filenm[1];
+                    $file = Storage::disk('so_kanban_directory')->path("").$filenm[1];
+                    $file_qas = Storage::disk('so_qas_kanban_directory')->path("").$filenm[1];
                     $relativeName = basename($file);
+                    if(file_exists($file))
+                    {
+                        $zip->addFile($file, $filenm[1]);
+                    } else{
+                         $zip->addFile($file_qas, $filenm[1]);
+                    }
                     $zip->addFile($file, $filenm[1]);
                 }
                 $zip->close();
 
-                  return response()->download(storage_path('temp_zip/SO-'.md5($request->ip().time().$fileName)).'.tmp', $fileName)->deleteFileAfterSend(true);
+                  return response()->download(storage_path('temp_zip/SO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         {
@@ -102,59 +140,99 @@ class DeliveryScheduleController extends Controller
 
    
 
-    public function getDeliveryMf($start=null,$end=null,$manifest=null)
+    public function getDeliveryMf(Request $request)
     {
+         $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+
+        $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
        if(auth()->user()->role == 'vendor')
        {
-            if(!empty($start) && !empty($end))
+            if(!empty($request->dt_start) && !empty($request->dt_end))
             {
-                $sYear = date("Y",strtotime($start));
-                $sMonth = date("m",strtotime($start));
-                $sDay = date("d",strtotime($start));
+                $sYear = date("Y",strtotime($request->dt_start));
+                $sMonth = date("m",strtotime($request->dt_start));
+                $sDay = date("d",strtotime($request->dt_start));
 
-                $eYear = date("Y",strtotime($end));
-                $eMonth = date("m",strtotime($end));
-                $eDay = date("d",strtotime($end));
+                $eYear = date("Y",strtotime($request->dt_end));
+                $eMonth = date("m",strtotime($request->dt_end));
+                $eDay = date("d",strtotime($request->dt_end));
                  $mf = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
                              'delivery_date', array(
                                  \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
                                   \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
                              ));
-                    
-                if(!empty($manifest))
+                if(count($manifest) > 0)
                 {
-                    $mf->where('manifest', $manifest);
+                    $mf->whereIn('manifest', $manifest);
+                }
+                 if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
                 $data = $mf->where('mf_type','MI')->get();
             }else{
-             $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
+             // $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
+
+             $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI');
+
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->get();
 
             }
        } else {
-              // dd($start);
-           if(!empty($start) && !empty($end))
+              // dd($request->dt_end);
+           if(!empty($request->dt_start) && !empty($request->dt_end))
             { 
 
-                $sYear = date("Y",strtotime($start));
-                $sMonth = date("m",strtotime($start));
-                $sDay = date("d",strtotime($start));
+                $sYear = date("Y",strtotime($request->dt_start));
+                $sMonth = date("m",strtotime($request->dt_start));
+                $sDay = date("d",strtotime($request->dt_start));
 
-                $eYear = date("Y",strtotime($end));
-                $eMonth = date("m",strtotime($end));
-                $eDay = date("d",strtotime($end));
+                $eYear = date("Y",strtotime($request->dt_end));
+                $eMonth = date("m",strtotime($request->dt_end));
+                $eDay = date("d",strtotime($request->dt_end));
 
                  $mf = ManifestHeader::whereBetween(
                          'delivery_date', array(
                              \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
                               \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
                          ));
-                if(!empty($manifest))
+               if(count($manifest) > 0)
                 {
-                    $mf->where('manifest', $manifest);
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
                 $data = $mf->where('mf_type','MI')->get();
             }else{
-             $data = ManifestHeader::where('mf_type','MI')->get();
+
+
+             $mf =  ManifestHeader::where('mf_type','MI');
+
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->get();
 
             }
        }
@@ -169,7 +247,15 @@ class DeliveryScheduleController extends Controller
                return empty($data->vendors) ? "-":$data->vendors->nm_vendor;
             })
             ->addColumn('vendor_email', function ($data) {
-               return empty($data->vendors->user) ? "-":$data->vendors->user->username;
+       
+            if(@$data->vendors->user->status_user == "A")
+            {
+                $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s="<i title='User Non Active' class='fas fa-exclamation-circle text-warning'></i>";
+            }
+            
+               return empty($data->vendors->user) ? "-":$data->vendors->user->username." ".$s;
             })
 
             ->addColumn('download_check', function ($data) {
@@ -207,62 +293,101 @@ class DeliveryScheduleController extends Controller
                  return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             })
-            ->rawColumns(['download_check','mail_stat','downloaded','file_stat','active'])
+            ->rawColumns(['download_check','mail_stat','vendor_email','downloaded','file_stat','active'])
             ->make(true);
     }
 
-    public function getDeliverySPC($start=null,$end=null,$manifest=null)
+    public function getDeliverySPC(Request $request)
     {
-        if(auth()->user()->role == 'vendor')
-       {
-            if(!empty($start) && !empty($end))
-            {
-                $sYear = date("Y",strtotime($start));
-                $sMonth = date("m",strtotime($start));
-                $sDay = date("d",strtotime($start));
+         $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
 
-                $eYear = date("Y",strtotime($end));
-                $eMonth = date("m",strtotime($end));
-                $eDay = date("d",strtotime($end));
+        $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
+       if(auth()->user()->role == 'vendor')
+       {
+            if(!empty($request->dt_start) && !empty($request->dt_end))
+            {
+                $sYear = date("Y",strtotime($request->dt_start));
+                $sMonth = date("m",strtotime($request->dt_start));
+                $sDay = date("d",strtotime($request->dt_start));
+
+                $eYear = date("Y",strtotime($request->dt_end));
+                $eMonth = date("m",strtotime($request->dt_end));
+                $eDay = date("d",strtotime($request->dt_end));
                  $mf = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
                              'delivery_date', array(
                                  \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
                                   \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
                              ));
-                if(!empty($manifest))
+                if(count($manifest) > 0)
                 {
-                    $mf->where('manifest', $manifest);
-                }    
-                 $data =$mf->where('mf_type','SO')->get();
+                    $mf->whereIn('manifest', $manifest);
+                }
+                 if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+                $data = $mf->where('mf_type','SO')->get();
             }else{
-             $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','SO')->get();
+              
+             $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','SO');
+
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->get();
 
             }
        } else {
-              // dd($start);
-           if(!empty($start) && !empty($end))
+              // dd($request->dt_end);
+           if(!empty($request->dt_start) && !empty($request->dt_end))
             { 
 
-                $sYear = date("Y",strtotime($start));
-                $sMonth = date("m",strtotime($start));
-                $sDay = date("d",strtotime($start));
+                $sYear = date("Y",strtotime($request->dt_start));
+                $sMonth = date("m",strtotime($request->dt_start));
+                $sDay = date("d",strtotime($request->dt_start));
 
-                $eYear = date("Y",strtotime($end));
-                $eMonth = date("m",strtotime($end));
-                $eDay = date("d",strtotime($end));
+                $eYear = date("Y",strtotime($request->dt_end));
+                $eMonth = date("m",strtotime($request->dt_end));
+                $eDay = date("d",strtotime($request->dt_end));
 
                  $mf = ManifestHeader::whereBetween(
                          'delivery_date', array(
                              \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
                               \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
                          ));
-                if(!empty($manifest))
+               if(count($manifest) > 0)
                 {
-                    $mf->where('manifest', $manifest);
-                }    
-                 $data =$mf->where('mf_type','SO')->get();
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+                $data = $mf->where('mf_type','SO')->get();
             }else{
-             $data = ManifestHeader::where('mf_type','SO')->get();
+               
+             $mf =   ManifestHeader::where('mf_type','SO');
+
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->get();
 
             }
        }
@@ -276,7 +401,15 @@ class DeliveryScheduleController extends Controller
                return empty($data->vendors) ? "-":$data->vendors->nm_vendor;
             })
             ->addColumn('vendor_email', function ($data) {
-               return empty($data->vendors->user) ? "-":$data->vendors->user->username;
+       
+            if(@$data->vendors->user->status_user == "A")
+            {
+                $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s="<i title='Pengguna Non-aktif' class='fas fa-exclamation-circle text-warning'></i> ";
+            }
+            
+               return empty($data->vendors->user) ? "-":$data->vendors->user->username." ".$s;
             })
 
             ->addColumn('download_check', function ($data) {
@@ -314,7 +447,7 @@ class DeliveryScheduleController extends Controller
                  return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
             
             })
-            ->rawColumns(['download_check','mail_stat','downloaded','file_stat','active'])
+            ->rawColumns(['download_check','vendor_email','mail_stat','downloaded','file_stat','active'])
             ->make(true);
     }
 }

@@ -148,7 +148,7 @@
         ?>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="simply" <?php echo $check; ?> > Simplikasi
+                    <input type="checkbox" name="simply" <?php echo $check; ?> disabled> Simplikasi
                 </label>
             </div>
         <?php 
@@ -182,7 +182,7 @@
 
         <div class="form-group">
             <label>Certified</label>
-            <input class="form-control" type="text" value="<?php echo $row['cert_name'] ; ?>" name="cert_name" placeholder="BVCH, TUV, etc" id="cert_name_id" onkeyup="uppercase('cert_name_id')" >
+            <input class="form-control" type="text" value="<?php echo $row['cert_name'] ; ?>" name="cert_name" placeholder="BVCH, TUV, etc" id="cert_name_id" onkeyup="uppercase('cert_name_id')" disabled>
         </div>  
         
         <!--
@@ -213,7 +213,7 @@
 
         <div class="form-group">
             <label>ISO Type</label>
-            <input class="form-control" type="text" value="<?php echo $row['iso_type_name'] ; ?>" name="iso_type_name" placeholder="" id="iso_name_id" onkeyup="uppercase('iso_name_id')" >
+            <input class="form-control" type="text" value="<?php echo $row['iso_type_name'] ; ?>" name="iso_type_name" placeholder="" id="iso_name_id" onkeyup="uppercase('iso_name_id')" disabled>
             <!--
             <select class="form-control selectpicker" name="iso_type_id" data-live-search="true">
                 <option value="">-</option>
@@ -236,7 +236,7 @@
 
         <div class="form-group">
             <label for="exampleInputEmail1">ISO Certified Number</label>
-            <input type="text" class="form-control" name = "cert_num" value = "<?php echo $row['cert_num'] ; ?>" placeholder="ISO Certified Number" id="iso_number_id" onkeyup="uppercase('iso_number_id')" required>
+            <input type="text" class="form-control" name = "cert_num" value = "<?php echo $row['cert_num'] ; ?>" placeholder="ISO Certified Number" id="iso_number_id" onkeyup="uppercase('iso_number_id')" disabled>
         </div>
         
         <!--
@@ -252,7 +252,7 @@
                 <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                 </div>
-                <input type="text" id="cert-date" name="cert_date" class="form-control datepicker" autocomplete="off" value = "<?php echo $row['cert_date'] ; ?>" required/>
+                <input type="text" id="cert-date" name="cert_date" class="form-control datepicker" autocomplete="off" value = "<?php echo $row['cert_date'] ; ?>" disabled/>
             </div>
         </div>
         
@@ -269,7 +269,7 @@
                 <div class="input-group-addon">
                     <i class="fa fa-calendar"></i>
                 </div>
-                <input type="text" id="exp-date" name="exp_date" class="form-control datepicker" autocomplete="off" value = "<?php echo $row['exp_date'] ; ?>" required />
+                <input type="text" id="exp-date" name="exp_date" class="form-control datepicker" autocomplete="off" value = "<?php echo $row['exp_date'] ; ?>" disabled />
             </div>
         </div>  
         
@@ -335,7 +335,7 @@
 
         <div class="form-group">
             <label>Remarks</label>
-            <textarea class="form-control" rows="3" name="remark" placeholder="Enter ..." ><?php echo $row['remark']; ?></textarea>
+            <textarea class="form-control" rows="3" name="remark" placeholder="Enter ..." disabled ><?php echo $row['remark']; ?></textarea>
         </div>
 
         <div class="form-group">
@@ -346,14 +346,11 @@
            
         </div>
 
-        <div class="form-group">
-            <label for="">File input</label>
-            <input type='file' id='file' name='doc_iso' accept='.pdf' onchange='ValidateSize(this)'>
-            <p class="help-block">upload ISO pdf file</p>
-        </div>
+        
 
         <div class="box-footer">
-            <button type="submit" name="change_doc" id="submit-btn" class="btn btn-primary">Update</button>
+            <button type="submit" name="change_doc" id="submit-btn" class="btn btn-primary">Approve</button>
+            <button type="submit" name="change_doc" id="submit-btn" class="btn btn-primary">Reject</button>
         </div>
         
     </form>

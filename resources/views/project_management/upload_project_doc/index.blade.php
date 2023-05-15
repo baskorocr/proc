@@ -12,7 +12,7 @@
 		<h1>Upload Document Project</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
 				<li class="breadcrumb-item active">Upload Document Project</li>
 			</ol>
 		</nav>
@@ -44,7 +44,7 @@
 										@endforeach
 									</select>
 									</div><!-- /.box-body -->
-									<div class="box-footer"><hr>
+									<div class="box-footer">
 										<button type="submit"  class="btn btn-primary"><i class="fas fa-eye"></i> View</button>
 									</div>
 								</form>
@@ -68,10 +68,8 @@
 										
 										@endforeach
 									</select>
+									<button type="submit"  class="btn btn-outline-secondary"><i class="fas fa-search"></i> Search</button>
 									</div><!-- /.box-body -->
-									<div class="box-footer">
-										<button type="submit"  class="btn btn-outline-secondary"><i class="fas fa-search"></i> Search</button>
-									</div>
 								</form>
 							</div>
 						</div>
@@ -201,8 +199,6 @@
 									</tbody>
 								</table>
 							</div>
-						</div>
-						<div class="card-footer">
 							<button class="ml-4 btn btn-primary" type="submit"><i class="fas fa-upload"></i> Upload</button>
 						</div>
 					</div>

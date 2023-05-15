@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\MasterVendor;
+use Numbering;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\ImportVendor;
 
 class MasterVendorController extends Controller
 {
@@ -20,8 +23,30 @@ class MasterVendorController extends Controller
         return view('regis_user/master-vendor/index')->with(['vendor' => $data]);
     }
 
+    public function upload()
+    {
+        // $data = MasterVendor::all();
+        return view('regis_user/master-vendor/upload');
+    }
+
+
+    public function upload_vendor(Request $request)
+    {
+        $file = $request->file('file');
+        config(['excel.import.startRow' => 2]);
+        try{
+             Excel::import(new ImportVendor, $file);
+             return redirect()->back()->with(['message_success' => 'Berhasil import excel']);
+        } catch(\Exception $e)
+        {   
+            // dd($e);
+             return redirect()->back()->with(['message_fail' => 'Format Excel tidak sesuai']);
+        }
+    }
+
     public function getDataMasterVendor()
     {
+        error_reporting(0);
         $data = MasterVendor::get();
 
         return \DataTables::of($data)
@@ -106,9 +131,12 @@ class MasterVendorController extends Controller
 
     public function store(Request $request){
         $master_vendor = new MasterVendor;
-        $master_vendor->id_vendor = $request->id_vendor;
+        // $num =  Numbering::generateAuto(new \App\Models\MasterVendor(),"id_vendor", 4, 4, 1, "10");
+        $num =  \Numbering::autoIncrement(new \App\Models\MasterVendor(),"id_vendor");
+        $master_vendor->id_vendor =  strval($num);
+        $master_vendor->purch_org = "1100";
         $master_vendor->nm_vendor = $request->nm_vendor;
-        $master_vendor->alias = $request->alias;
+        $master_vendor->allias = $request->allias;
         $master_vendor->street = $request->street;
         $master_vendor->district = $request->district;
         $master_vendor->postal_code = $request->postal_code;
@@ -121,14 +149,11 @@ class MasterVendorController extends Controller
         $master_vendor->pay_term = $request->pay_term;
         $master_vendor->sales_person = $request->sales_person;
         $master_vendor->phone_2 = $request->phone_2;
-        $master_vendor->status_vendor = $request->status_vendor;
+        $master_vendor->status_vendor = "N";
         $master_vendor->created_by = auth()->user()->full_name;
         $master_vendor->save();
 
-        return response()->json([
-            'message' => 'data created has been successfully',
-            'type' => 'success'
-        ], 201);
+         return redirect()->route('regis-user.master-vendor')->with(['message_success' => 'Berhasil menambah data.']);
     }
 
     public function show($id){
@@ -143,7 +168,7 @@ class MasterVendorController extends Controller
         
         $master_vendor = MasterVendor::find($request->id);
         // dd($master_vendor, $request);
-        $master_vendor->id_vendor = $request->id_vendor;
+        // $master_vendor->id_vendor = $request->id_vendor;
         $master_vendor->nm_vendor = $request->nm_vendor;
         $master_vendor->alias = $request->alias;
         $master_vendor->street = $request->street;

@@ -6,8 +6,8 @@
 		<h1>Master ISO Expired Notify</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Master ISO Expired Notify</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+				<li class="breadcrumb-item active">Master ISO Expired Notify</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -17,7 +17,7 @@
 					<div class="card">
 						<div class="card-body">
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="master-notify">
+								<table  class="table table-bordered table-striped table-sm" id="master-notify">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Notify ID</th>
