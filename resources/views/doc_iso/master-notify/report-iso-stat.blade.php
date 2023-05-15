@@ -8,7 +8,7 @@ div.table-responsive > div.dataTables_wrapper > div.row
     overflow:auto !important;
 }
 div.dataTables_wrapper div.dt-row{
-    min-height:300px;
+    min-height:70vh;
 }
 </style>
 <main id="main" class="main">
@@ -67,7 +67,7 @@ div.dataTables_wrapper div.dt-row{
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                        @if(empty($item->ref_doc) AND empty($item->ref_doc_year))
+                                        @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) AND $item->trn_type != "U")
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
                                         @endif
                                         @if(($item->stat != 'A' AND $item->stat != 'E') )
@@ -167,7 +167,7 @@ div.dataTables_wrapper div.dt-row{
 <script data-require="datatables-responsive@*" data-semver="2.1.0" src="//cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
 <script type="text/javascript">
   $('#iso').DataTable({
-     
+      order: [[7, 'desc']],
          "autoWidth": false,
         responsive:true,
 

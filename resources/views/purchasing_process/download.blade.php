@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('title',"Download List PO")
 @section('content')
+
  <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <main id="main" class="main">
 	<div class="pagetitle">
@@ -260,14 +261,16 @@
         {
           data.remove(dtval);
           $('#fl'+dtval).remove();
+          $(".cl-"+dtval).removeClass('selected');
         } else{
           data.push(dtval);
+          $(".cl-"+dtval).addClass('selected');
           $('#download-list-checked').append('<input type="hidden" id="fl'+dtval+'" name="download_doc[]" value="'+flnm+'" />');
         }
         console.log(data);
 		  }
 
-        
+          $.fn.dataTable.ext.errMode = 'none';
       $('#tb-download-list-po').on('draw.dt',   function () {
       // console.log($('#63460809220e0000eb00d4b8').is('checked'))
       // if($('#63460809220e0000eb00d4b8').is(':checked'))
@@ -280,6 +283,12 @@
           if(data.includes($(this).data('mgid')))
           {
             $("#"+$(this).data('mgid')).prop('checked', true);
+            if($("#"+$(this).data('mgid')).prop('checked'))
+            {
+              $(".cl-"+$(this).data('mgid')).addClass('selected');
+            } else{
+              $(".cl-"+$(this).data('mgid')).removeClass('selected');
+            }
           }
       }).get();
 
@@ -307,6 +316,13 @@
             },
             url:"{{ route('datatables.purchasing.process.download.listpo')}}",
         },  
+        'columnDefs': [
+              {
+                  'targets': [19],
+                  'visible': false,
+                  'searchable': false
+              },
+          ],
         columns: [
           {
             data: 'download_check',
@@ -388,7 +404,15 @@
             data: 'file_nm',
             name: 'file_nm'
             },
-        ]
+            {
+              data: '_id',
+              name: '_id'
+              },
+        ],
+
+    "createdRow": function( row, data, dataIndex ) {
+       $(row).addClass('cl-'+data._id)
+      }
       });
       }
 

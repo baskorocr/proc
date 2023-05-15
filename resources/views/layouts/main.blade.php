@@ -43,6 +43,17 @@
    content: none;
 }*/
 </style>
+<style>
+  table.dataTable > tbody > tr.selected > * {
+  box-shadow: inset 0 0 0 9999px #848484    !important;
+  color: white;
+}
+table.dataTable.table-striped > tbody > tr.odd.selected {
+  box-shadow: inset 0 0 0 9999px #848484   !important;
+  color: white;
+}
+
+</style>
 </head>
 
 <body>
