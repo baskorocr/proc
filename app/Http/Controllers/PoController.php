@@ -26,7 +26,7 @@ class PoController extends Controller
         $po->pgr = $request->pgr;
         $po->porg = $request->porg;
         $po->creator = $request->creator;
-        $po->file_name = $request->file_name;
+        $po->file_nm = $request->file_nm;
         $po->sent = $request->sent;
         $po->downloaded = $request->downloaded;
         $po->accepted = $request->accepted;
