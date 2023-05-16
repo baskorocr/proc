@@ -1,7 +1,12 @@
 @extends('layouts.main')
 @section('title',"List PO")
 @section('content')
-
+<style type="text/css">
+  div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+</style>
     <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <main id="main" class="main">
   <div class="pagetitle">
