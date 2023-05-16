@@ -19,6 +19,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/security/changepwd', [App\Http\Controllers\ProfileController::class, 'changePwdLink'])->name('change.pwd.link');
     Route::get('/security/change-password', [App\Http\Controllers\ProfileController::class, 'changePwd'])->name('change.pwd');
+    Route::get('/security/chpwd/logout', [App\Http\Controllers\ProfileController::class, 'passwordLogout'])->name('pwd.logout');
     Route::post('/security/do/change-password', [App\Http\Controllers\ProfileController::class, 'changePwdAct'])->name('change.pwd.act');
 
     Route::prefix('doc-iso')->group(function(){

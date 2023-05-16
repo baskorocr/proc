@@ -137,6 +137,7 @@ div.dataTables_wrapper div.dt-row{
                             <th style="min-width: 100px;" >Remark</th>
                              <th style="min-width: 100px;" >Doc Number</th>
                             <th style="min-width: 100px;" >Ref Number</th>
+                            <th style="min-width: 100px;" >unixtime</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -157,9 +158,9 @@ div.dataTables_wrapper div.dt-row{
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                          @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) )
+                                         {{--  @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) )
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
-                                        @endif
+                                        @endif --}}
                                         @if(($item->stat != 'A' AND $item->stat != 'E') )
                                              <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
                                         @endif
@@ -239,7 +240,8 @@ div.dataTables_wrapper div.dt-row{
                         <?php    
                             }
 
-                        ?>   
+                        ?> 
+                        <td>{{strtotime($item->cert_date)}}</td>  
                       </tr>
                     @endforeach
                   </tbody>    
@@ -256,7 +258,15 @@ div.dataTables_wrapper div.dt-row{
   $('#iso').DataTable({
          "autoWidth": false,
         responsive:true,
-         order: [[10, 'desc']],
+         order: [[19, 'desc']],
+          'columnDefs': [
+              { 'orderData':[19], 'targets': [1] },
+              {
+                  'targets': [19],
+                  'visible': false,
+                  'searchable': false
+              },
+          ],
    
   })
 
