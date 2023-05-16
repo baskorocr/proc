@@ -140,7 +140,7 @@ class MasterPDAUserController extends Controller
         }
         $master_pdauser = MasterPDAUser::findOrFail($request->_id);
         // dd($master_pdauser, $request);
-        $master_pdauser->id = $request->id;
+        // $master_pdauser->id = $request->id;
         $master_pdauser->username = $request->username;
         $master_pdauser->full_name = $request->full_name;
         $master_pdauser->user_stat = $request->user_stat;

@@ -114,7 +114,7 @@ div.dataTables_wrapper div.dt-row{
     
   </section>
   <div class="table-responsive" >
-                <table id="iso"  class="table table-striped table-bordered"   style="width:1560px">
+                <table id="iso"  class="table table-striped table-bordered table-sm"   style="width:1560px">
                     <thead>
                         <tr>
                            
@@ -128,15 +128,15 @@ div.dataTables_wrapper div.dt-row{
                             <th style="max-width: 80px;" >Expire Date</th>
                             <th style="max-width: 80px;" >Expired Status</th>
                             <th style="max-width: 80px" >Doc Process</th>
-                            <th style="min-width: 10000px;" >Certified</th>
-                            <th style="max-width: 80px;" >ISO Cert Date</th>
+                            <th style="min-width: 10000px;" >ISO Cert Date</th>
+                            <th style="min-width: 80px;" >Certified</th>
                             <th style="min-width: 100px;" >ISO Type</th>
                             <th style="min-width: 30px;" >File</th>
                             <th style="min-width: 100px;" >Last change</th>
                             <th style="min-width: 100px;" >Entry Date</th>
                             <th style="min-width: 100px;" >Remark</th>
-                            {{--  <th style="min-width: 100px;" >Doc Number</th>
-                            <th style="min-width: 100px;" >Ref Number</th> --}}
+                             <th style="min-width: 100px;" >Doc Number</th>
+                            <th style="min-width: 100px;" >Ref Number</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -157,7 +157,7 @@ div.dataTables_wrapper div.dt-row{
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                          @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) AND $item->trn_type != "U")
+                                          @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) )
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
                                         @endif
                                         @if(($item->stat != 'A' AND $item->stat != 'E') )
@@ -213,8 +213,8 @@ div.dataTables_wrapper div.dt-row{
                          <td>{{date('d-m-Y', strtotime($date_full))}}</td>
                           <td><span class="badge bg-{{@$item->transaction->color}}">{{@$item->transaction->trn_name}}</span></td>
                         <td>{!!$doc_proccess!!} </td>
-                        <td>{{ $item->cert_name}}</td>
                         <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
+                        <td>{{ $item->cert_name}}</td>
                         <td>{{$item->iso_type_name}}</td>
                         <td><a href="{{asset('files/regis_iso/'.$item->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
                                 <i class="fa fa-file"></i>
@@ -224,9 +224,9 @@ div.dataTables_wrapper div.dt-row{
                          <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
                         <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
-                       {{--  <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
+                        <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
                          <?php
-                            if ( $item->ref_doc == '0000000000') {
+                            if ( $item->ref_doc == '') {
                                 echo "<td></td>";
                             }  else {
                             ?>
@@ -239,7 +239,7 @@ div.dataTables_wrapper div.dt-row{
                         <?php    
                             }
 
-                        ?>   --}} 
+                        ?>   
                       </tr>
                     @endforeach
                   </tbody>    
@@ -256,7 +256,7 @@ div.dataTables_wrapper div.dt-row{
   $('#iso').DataTable({
          "autoWidth": false,
         responsive:true,
-         order: [[7, 'desc']],
+         order: [[10, 'desc']],
    
   })
 
