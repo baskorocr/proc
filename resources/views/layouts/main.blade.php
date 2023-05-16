@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 
 <head>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>EPROC :: @yield('title')</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <title>eProc Dharma Polimetal | @yield('title')</title>
+  <meta content="e-Procurement Dharma Polimetal" name="description">
+  <meta content="eproc,Dharma Polimetal,eprocurement" name="keywords">
 
   <!-- Favicons -->
    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon3.png') }}" />
@@ -40,6 +42,17 @@
  /* .breadcrumb > li:before {
    content: none;
 }*/
+</style>
+<style>
+  table.dataTable > tbody > tr.selected > * {
+  box-shadow: inset 0 0 0 9999px #848484    !important;
+  color: white;
+}
+table.dataTable.table-striped > tbody > tr.odd.selected {
+  box-shadow: inset 0 0 0 9999px #848484   !important;
+  color: white;
+}
+
 </style>
 </head>
 
@@ -81,16 +94,17 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>{{Session::get('nm_user')}}</h6>
-              <span>{{Session::get('role')}}</span>
+              <span>{{Session::get('role')}}</span><br>
+              <span>{{Request::ip()}}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
+              <a class="dropdown-item d-flex align-items-center" href="{{route('change.pwd.link')}}">
+                <i class="bi bi-key"></i>
+                <span>Change Password</span>
               </a>
             </li>
             <li>

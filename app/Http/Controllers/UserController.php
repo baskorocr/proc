@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use App\Models\User;
 
 class UserController extends Controller
@@ -171,16 +172,30 @@ class UserController extends Controller
     public function check(Request $request)
     {   
         $user = User::where('username', $request->username)->first();
+        $isExists = !empty($user) ? true : false ;
 
         if (!empty($user)) {
             return response()->json([
                 'type' => 'success',
-                'data' => $user
+                'isExists' => $isExists,
+                'data' => [
+                        "id" => $user->id,
+                        "username"=> $user->username,
+                        "pin"=> $user->pin,
+                        "full_name"=> $user->nm_user,
+                        "user_stat"=> $user->status_user
+                ]
             ]);
     
         } else {
             return response()->json([
-            'message' => 'Username Not Found'
+            'message' => 'Username Not Found',
+            'isExists' => $isExists,
+            'errors' => [
+                'username' => [
+                    'Username not found!'
+                ]
+            ]
             ], 422);
         }
     }
@@ -188,21 +203,41 @@ class UserController extends Controller
     public function checkPin(Request $request)
     {   
         $user = User::where('username', $request->username)->first();
+        $token = Str::random(25);
+        $isExists = !empty($user) ? true : false ;
 
         if (!empty($user)) {
 
-            if (!Hash::check($request->pin, $user->pin)){
+            if ($request->pin != $user->pin){
 
                 return response()->json([
                     'type' => 'error',
-                    'message' => 'Please check pin!'
+                    'message' => 'Please check pin!',
+                    'errors' => [
+                        'pin' => [
+                            'Wrong pin!'
+                        ]
+                    ]
                 ], 422);
     
             } else {
+                $user->forceFill([
+                    'api_token' => hash('sha256', $token)
+                ])->save();
                 return response()->json([
                     'type' => 'success',
-                    'message' => 'Username & Pin matched!',
-                    'data' => $user,
+                    'message' => 'Login Success!',
+                    'data' => [
+                        'isExists' => $isExists,
+                        'token' => $token,
+                        'data' => [
+                            "id" => $user->id,
+                            "username"=> $user->username,
+                            "pin"=> $user->pin,
+                            "full_name"=> $user->nm_user,
+                            "user_stat"=> $user->status_user
+                        ]
+                    ]
                 ], 200);
             }
     

@@ -1,9 +1,15 @@
 @extends('layouts.main')
-@section('title',"Form Input Page")
+@section('title',"Dashboard ISO")
 @section('content')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
 <style type="text/css">
-
+    div.table-responsive > div.dataTables_wrapper > div.row
+        {
+            overflow:auto !important;
+        }
+        div.dataTables_wrapper div.dt-row{
+    min-height:300px;
+}
 </style>
 <main id="main" class="main">
     <div class="pagetitle">
@@ -164,8 +170,8 @@
             </table>
             </div> --}}
           {{-- </div> --}}
-        <div class="table-responsive-sm">
-       <table id="iso"  class="table table-striped table-bordered"   style="width:100%">
+        <div class="table-responsive">
+       <table id="iso"  class="table table-striped table-bordered"   style="width:1260px">
                   <thead>
                     <tr>
                     {{-- <th style="min-width: 100px;">Action</th> --}}
@@ -173,10 +179,10 @@
                         <th style="min-width: 200px;">Vendor Name</th>
                         <th style="min-width: 100px;">Material Supply</th>
                         <th style="min-width: 30px;">Simplikasi</th>
-                        <th style="min-width: 100px;">ISO Cert Num</th>
-                        <th style="min-width: 80px;" >Expire Date</th>
-                        <th style="min-width: 120px;" >Expired Status</th>
-                        <th style="min-width: 100px;" >Doc Process</th>
+                        <th style="max-width: 80px;">ISO Cert Num</th>
+                        <th style="max-width: 80px;" >Expire Date</th>
+                        <th style="max-width: 80px;" >Expired Status</th>
+                        <th style="max-width: 100px;" >Doc Process</th>
                         <th style="min-width: 10000px;" >ISO Cert Date</th>
                         <th style="min-width: 100px;" >Certified</th>
                         <th style="min-width: 100px;" >ISO Type</th>
@@ -285,7 +291,7 @@
   var table = $('#iso').DataTable({
      
       responsive: true,
-     
+      order: [[8, 'desc']],
       rowReorder:{dataSrc: 0, snapX: true, enable: true},
        columnDefs: [
             { responsivePriority: 1, targets: 0 },
@@ -300,7 +306,22 @@
       
    
   })
+var originaldocumentwidth = $(document).width();
+var newdocumentwidth = $(document).width();
+var zoomratio = originaldocumentwidth / newdocumentwidth;
 
+function updateZoom() {
+    newdocumentwidth = $(document).width();
+    zoomratio = originaldocumentwidth / newdocumentwidth;
+    
+    // $('#originaldocumentwidth').html(originaldocumentwidth);
+    $('#iso').css("width", newdocumentwidth-150+'px');
+    console.log(zoomratio);
+}
+$(window).resize(function() {
+    updateZoom();
+});
+updateZoom();
 
 </script>
 @endsection

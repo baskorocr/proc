@@ -37,7 +37,7 @@
               <div class="form-group">
                 <label><b>Doc Status</b></label>
                 <h4>
-                {!!$stat!!}
+                    <span class="badge bg-{{@$iso->transaction->color}}">{{@$iso->transaction->trn_name}}</span>
                 </h4>
               </div>
               <div class="form-group">
@@ -94,7 +94,7 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text" style="height: 37.6px;" id="basic-addon1"><i class="fas fa-calendar"></i></span>
                       </div>
-                      <input type="text" disabled class="form-control" value="<?php echo date('d/m/Y',strtotime($iso->cert_date)); ?>" aria-describedby="basic-addon1">
+                      <input type="text" disabled class="form-control" value="<?php echo date('d-m-Y',strtotime($iso->cert_date)); ?>" aria-describedby="basic-addon1">
                     </div>
                 {{-- </div> --}}
                
@@ -105,7 +105,7 @@
                       <div class="input-group-prepend">
                         <span class="input-group-text" style="height: 37.6px;" id="basic-addon1"><i class="fas fa-calendar"></i></span>
                       </div>
-                      <input type="text" disabled class="form-control" value="<?php echo date('d/m/Y',strtotime($iso->exp_date)); ?>" aria-describedby="basic-addon1">
+                      <input type="text" disabled class="form-control" value="<?php echo date('d-m-Y',strtotime($iso->exp_date)); ?>" aria-describedby="basic-addon1">
                     </div>
                 <div class="form-group">
                   <label><b>Notify Before</b></label>

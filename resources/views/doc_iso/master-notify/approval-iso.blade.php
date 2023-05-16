@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"Approval ISO Doc")
+@section('title',"Approve/Reject ISO Document")
 @section('content')
 <?php
 $count = count(IsoHelper::get_transaction_type_id(@$iso->trn_type));
@@ -21,7 +21,7 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
 ?>
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1>Approval ISO Document</h1>
+    <h1>Approve/Reject ISO Document</h1>
     <nav>
       <ol class="breadcrumb">
         {{-- <li class="breadcrumb-item"><a href="index.html">Dashboard</a></li> --}}
@@ -45,7 +45,7 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
               <div class="form-group">
                 <label><b>Doc Status</b></label>
                 <h4>
-                {!!$stat!!}
+                 <span class="badge bg-{{@$iso->transaction->color}}">{{@$iso->transaction->trn_name}}</span>
                 </h4>
               </div>
               <div class="form-group">
@@ -99,13 +99,13 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
               <div class="row mb-3">
                 <label  style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Certified Date</label>
                 <div class="col-sm-10">
-                  <input disabled name="cert_date" type="date" class="form-control" value="<?php echo @$iso->cert_date; ?>">
+                  <input disabled name="cert_date" type="text" class="form-control" value="<?php echo  date("d-m-Y",strtotime(@$iso->cert_date)); ?>">
                 </div>
               </div>
               <div class="row mb-3">
                 <label    style="font-size:15px" for="inputDate" class="col-sm-2 col-form-label">ISO Expired Date</label>
                 <div class="col-sm-10">
-                  <input disabled name="exp_date" type="date" class="form-control" value="<?php echo @$iso->exp_date; ?>">
+                  <input disabled name="exp_date" type="text" class="form-control" value="<?php echo date("d-m-Y",strtotime(@$iso->exp_date)); ?>">
                 </div>
               </div>
               <table  class="table" style="width:100%">
@@ -118,12 +118,21 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
                 </thead>
                 <tbody>
                   @foreach($notify as $item)
-                  <tr>
-                    <td style="font-size:12px">{{ $item->notif_id }}</td>
-                    <td style="font-size:12px">{{ $item->notif_seq }}</td>
-                    <td style="font-size:12px">{{ $item->notif_before }}</td>
-                  </tr>
-                  @endforeach
+                    <tr>
+                      <?php
+                      if ($item->uom == "M"){
+                      $measure = "Months";
+                      } elseif($item->uom == "D"){
+                      $measure = "Days";
+                      } elseif($item->uom  == "Y"){
+                      $measure = "Year";
+                      }
+                      ?>
+                      <td style="font-size:12px">{{ $item->notif_id }}</td>
+                      <td style="font-size:12px">{{ $item->notif_seq }}</td>
+                      <td style="font-size:12px">{{ $item->notif_before }} {{$measure}}</td>
+                    </tr>
+                    @endforeach
                 </tbody>
               </table>
               <div style="marginTop: 100%;" class="row mb-3">
@@ -135,21 +144,21 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
               <div class="row mb-3">
                 <div class="form-group">
                   <label for="">Last Document</label><br>
-                  <a href="{{asset('files/regis_iso/'.@$iso->doc_path)}}" class="btn btn-flat" target="_blank" data-toggle='tooltip' title='click to preview' >
+                  <a href="{{asset('files/regis_iso/'.@$iso->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
                   <i class="fa fa-file"></i> Click to Preview (<?php echo @$iso->doc_path; ?>)</label>
                 </a>
                 
               </div>
-              <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
+             {{--  <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
               <div class="col-sm-10">
                 <input disabled name="file" class="form-control" type="file" id="formFile">
-              </div>
+              </div> --}}
             </div>
             <?php
             if (@$iso->trn_type != 'R')
             {
             ?>
-            <form class="row g-3" action="{{ route('doc-iso.approval_iso') }}" method="POST" enctype="multipart/form-data">
+            <form class="row g-3" id="approval" action="{{ route('doc-iso.approval_iso') }}" method="POST" enctype="multipart/form-data">
               @csrf
               <input type="hidden" name ="id" value ="<?php echo @$iso->_id; ?>" />
               <input type="hidden" name ="trn_id" value ="<?php echo @$iso->trn_id; ?>" />
@@ -158,8 +167,8 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
               <input type="hidden" name ="id_vendor" value ="<?php echo @$iso->id_vendor; ?>">
               <input type="hidden" name ="exp_date" value ="<?php echo @$iso->exp_date; ?>">
               <div class="text-left">
-                <button type="submit" name="approve_doc" onclick="return confirm('Are you sure to approve this doc iso?')" value="1" class="btn btn-success">Approve</button>
-                <button type="submit" name="reject_doc" onclick="return confirm('Are you sure to reject this doc iso?')"   value="1" class="btn btn-danger">Reject</button>
+                <button type="submit" name="approve_doc"  value="1" class="btn btn-success">Approve</button>
+                <button type="submit" name="reject_doc" value="1" class="btn btn-danger">Reject</button>
               </div>
               </form><!-- End Multi Columns Form -->
               <?php
@@ -181,4 +190,29 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
 </div>
 </section>
 </main><!-- End #main -->
+@endsection
+@section('javascript')
+  <script type="text/javascript">
+    $('#approval').submit(function(e){
+        let timerInterval
+        Swal.fire({
+          title: 'Transaction Progress',
+          html: 'Please wait...',
+          timer: 30000,
+          // timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading()
+            const b = Swal.getHtmlContainer().querySelector('b')
+            timerInterval = setInterval(() => {
+              b.textContent = Swal.getTimerLeft()
+            }, 100)
+          },
+          willClose: () => {
+            clearInterval(timerInterval)
+          }
+        }).then((result) => {
+          $('#regiso').trigger('submit')
+        })
+      })
+  </script>
 @endsection

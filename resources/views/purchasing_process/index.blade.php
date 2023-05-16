@@ -206,6 +206,7 @@
     $('#tb-list-po').DataTable();
     function search() {
        $('#tb-list-po').DataTable().destroy();
+       $.fn.dataTable.ext.errMode = 'none';
     var table = $('#tb-list-po').DataTable({autoWidth:false,
     "order": [[ 1, "DESC" ]],
     processing: true,

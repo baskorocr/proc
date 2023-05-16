@@ -29,6 +29,7 @@ class ImportPo implements ToCollection, WithHeadingRow, WithStartRow
     public function collection(Collection $rows)
     {
 
+
         //\Log::info($rows);
 
         // Validator::make($rows->toArray(), [
@@ -37,22 +38,21 @@ class ImportPo implements ToCollection, WithHeadingRow, WithStartRow
         // ])->validate();
 
         foreach ($rows as $row) {
-
+        if(!empty($row['po_number']))
+        {
             $list_po = new PurchasingProcess;
-            $list_po->po_num = strVal($row['po_num']);
-            $list_po->revno = $row['revno'];
+            $list_po->po_num = strVal($row['po_number']);
             $list_po->plant = $row['plant'];
-            $list_po->id_vendor = $row['id_vendor'];
+            $list_po->id_vendor = $row['vendor'];
             $list_po->doc_date = !empty(Carbon::parse($row['doc_date'])->format('Y-m-d')) ? Carbon::parse($row['doc_date'])->format('Y-m-d') : string ($row['doc_date']);
             $list_po->pgr = $row['pgr'];
-            $list_po->po_amount = (float)$row['po_amount'];
-            $list_po->total_amount = (float)$row['total_amount'];
-            $list_po->curr = $row['curr'];
             $list_po->porg = $row['porg'];
-            $list_po->rel_state = $row['rel_state'];
+            $list_po->rel_state = $row['rel'];
             $list_po->creator = $row['creator'];
             //$list_po->created_by = !empty(auth()->user()->full_name) ? auth()->user()->full_name : 'user1';
             $list_po->save();
+        }
+            
 
         }
     }

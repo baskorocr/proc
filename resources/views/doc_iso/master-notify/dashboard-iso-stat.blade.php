@@ -3,7 +3,13 @@
 @section('content')
 <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/responsive/2.1.0/css/responsive.dataTables.min.css"/>
 <style type="text/css">
-    
+    div.table-responsive > div.dataTables_wrapper > div.row
+        {
+            overflow:auto !important;
+        }
+    div.dataTables_wrapper div.dt-row{
+    min-height:300px;
+}
 </style>
 <main id="main" class="main">
     <div class="pagetitle">
@@ -15,65 +21,68 @@
         </ol>
       </nav>
     </div><!-- End Page Title -->
-    <section class="section dashboard">
-     <div class="table-responsive" style="min-height:500px">
-       <table id="iso"  class="table table-striped table-bordered"  data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true" style="width:1560px">
-                  <thead>
-                    <tr>
-                        @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
-                    <th style="max-width: 10px;"></th>
-                    <th style="max-width: 30px;">Action</th>
-                    @endif
-                        <th style="max-width: 70px;">Vendor Code</th>
-                        <th style="max-width: 160px;">Vendor Name</th>
-                        <th style="max-width: 80px;">Material Supply</th>
-                        <th style="max-width: 30px;">Simplikasi</th>
-                        <th style="max-width: 80px;">ISO Cert Num</th>
-                        <th style="max-width: 80px;" >ISO Cert Date</th>
-                        <th style="max-width: 80px;" >Expire Date</th>
-                        <th style="max-width: 80px;" >Expired Status</th>
-                        <th style="max-width: 80px" >Doc Process</th>
-                        <th style="min-width: 10000px;" >Certified</th>
-                        <th style="min-width: 100px;" >ISO Type</th>
-                        <th style="min-width: 30px;" >File</th>
-                        <th style="min-width: 100px;" >Last change</th>
-                        <th style="min-width: 100px;" >Entry Date</th>
-                        <th style="min-width: 100px;" >Remark</th>
-                       {{--  <th style="min-width: 100px;" >Doc Number</th>
-                        <th style="min-width: 100px;" >Ref Number</th> --}}
-                    </tr>
-                  </thead>   
-                  <tbody>
-                    @foreach($regis as $item)
-                    <?php 
-                 
-                    $date_full = $item->exp_date;
-
-                    ?>
-                      <tr>
-                     @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
-                   
-                        <td></td>
-                        <td>
-                          <div class="dropdown">
-                            <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                              Choose
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
-                               
-                                <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
-                               
-                                
-                                <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
-                                
-                              
-                                <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
-                                <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
-                                
-                              </ul>
+           <section class="section dashboard">
+            <div class="table-responsive" style="min-height:500px">
+                <table id="iso"  class="table table-striped table-bordered"  style="width:1560px">
+                    <thead>
+                        <tr>
+                            @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
+                            <th style="max-width: 10px;"></th>
+                            <th style="max-width: 30px;">Action</th>
+                            @endif
+                            <th style="max-width: 70px;">Vendor Code</th>
+                            <th style="max-width: 160px;">Vendor Name</th>
+                            <th style="max-width: 80px;">Material Supply</th>
+                            <th style="max-width: 30px;">Simplikasi</th>
+                            <th style="max-width: 80px;">ISO Cert Num</th>
+                            <th style="max-width: 80px;" >ISO Cert Date</th>
+                            <th style="max-width: 80px;" >Expire Date</th>
+                            <th style="max-width: 80px;" >Expired Status</th>
+                            <th style="max-width: 80px" >Doc Process</th>
+                            <th style="min-width: 10000px;" >Certified</th>
+                            <th style="min-width: 100px;" >ISO Type</th>
+                            <th style="min-width: 30px;" >File</th>
+                            <th style="min-width: 100px;" >Last change</th>
+                            <th style="min-width: 100px;" >Entry Date</th>
+                            <th style="min-width: 100px;" >Remark</th>
+                            {{--  <th style="min-width: 100px;" >Doc Number</th>
+                            <th style="min-width: 100px;" >Ref Number</th> --}}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($regis as $item)
+                        <?php
+                        
+                        $date_full = $item->exp_date;
+                        ?>
+                        <tr>
+                            @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
                             
-                         {{--   <ul class="dropdown-menu">
+                            <td></td>
+                            <td>
+                                <div class="dropdown">
+                                    <a class="btn btn-primary btn-sm dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Choose
+                                    </a>
+                                    <ul class="dropdown-menu">
+                                        <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
+                                        {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
+                                         @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) AND $item->trn_type != "U")
+                                            <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
+                                        @endif
+                                        @if(($item->stat != 'A' AND $item->stat != 'E') )
+                                             <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
+                                        @endif
+                                        @if(auth()->user()->role != "vendor")
+                                            @if(($item->stat != 'A' AND $item->stat != 'E'))
+                                                <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
+                                                <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
+                                            @endif
+                                        @endif
+                                        
+                                    </ul>
+                          
+                           {{-- <ul class="dropdown-menu">
                               <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                               @if ($item->trn_type == 'R' OR $item->trn_type == 'I')
                               <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
@@ -158,11 +167,28 @@
 <script data-require="datatables-responsive@*" data-semver="2.1.0" src="//cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
 <script type="text/javascript">
   $('#iso').DataTable({
-     
+         order: [[7, 'desc']],
          "autoWidth": false,
         responsive:true,
       
    
   })
+
+  var originaldocumentwidth = $(document).width();
+            var newdocumentwidth = $(document).width();
+            var zoomratio = originaldocumentwidth / newdocumentwidth;
+
+            function updateZoom() {
+                newdocumentwidth = $(document).width();
+                zoomratio = originaldocumentwidth / newdocumentwidth;
+                
+                // $('#originaldocumentwidth').html(originaldocumentwidth);
+                $('#iso').css("width", newdocumentwidth-150+'px');
+                console.log(zoomratio);
+            }
+            $(window).resize(function() {
+                updateZoom();
+            });
+            updateZoom();
 </script>
 @endsection

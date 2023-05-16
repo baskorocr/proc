@@ -60,6 +60,7 @@ class RegisIsoDocController extends Controller
 
     public function approval_iso(Request $request)
     {
+        // dd($request->exp_date);
         
          $id_user    =auth()->user()->id_user;
             $trn_date   = date('Y-m-d');
@@ -89,7 +90,7 @@ class RegisIsoDocController extends Controller
                 }
 
                 $date_now = date("Y-m-d"); 
-                if ($exp_date > $date_now) {
+                if (strtotime( $exp_date) > strtotime( $date_now )) {
                    $stat = 'V';
                 }else {
                     $stat = 'E';
@@ -99,7 +100,7 @@ class RegisIsoDocController extends Controller
 
                 RegisIsoDoc::where('_id',$request->id)
                             ->where('del_indicator','<>','X')
-                            ->update(['trn_type' => $trn_type,'simply' => $simply,'mat_supply' => $mat_supply,'stat' => $stat]);
+                            ->update(['trn_type' => $trn_type,'stat' => $stat]);
 
                 
                 // return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil Approve Dokumen ISO.']);
@@ -125,7 +126,7 @@ class RegisIsoDocController extends Controller
                 }
 
                 $date_now = date("Y-m-d"); 
-                if ($exp_date > $date_now) {
+                if (strtotime( $exp_date) > strtotime( $date_now )) {
                    $stat = 'V';
                 }else {
                     $stat = 'E';
@@ -133,9 +134,9 @@ class RegisIsoDocController extends Controller
 
                 //update_trn_reg_iso($trn_id, $doc_year, $trn_type);
 
-                RegisIsoDoc::where(['trn_id' => $trn_id,'doc_year' => $doc_year])
+                RegisIsoDoc::where('_id',$request->id)
                             ->where('del_indicator','<>','X')
-                            ->update(['trn_type' => $trn_type,'simply' => $simply,'mat_supply' => $mat_supply,'stat' => $stat]);
+                            ->update(['trn_type' => $trn_type,'stat' => $stat]);
 
                 
                 return redirect()->back()->with(['message_success' => 'Berhasil Reject Dokumen ISO.']);
@@ -166,8 +167,8 @@ class RegisIsoDocController extends Controller
         //     //'email' => 'required|string',
         //     // 'full_name' => 'required|string',
         // ]);
- // dd(strpos("2023/11/11","-"));
-       if (strtotime( $request->exp_date) > date('Y-m-d')) {
+ // dd(strtotime( $request->exp_date));
+       if (strtotime( $request->exp_date) > strtotime(date('Y-m-d'))) {
                 $stat = 'W';
             }else{
                 $stat = 'E';
@@ -219,38 +220,78 @@ class RegisIsoDocController extends Controller
         // ]);
 
        
-         if (strtotime( $request->exp_date) > date('Y-m-d')) {
-                $stat = 'W';
+         if (strtotime( $request->exp_date) > strtotime(date('Y-m-d'))) {
+                $stat = 'N';
             }else{
                 $stat = 'E';
             }
+         $doc_type = 'iso';
+        $doc_year = date('Y');
+        $numRange =  \IsoHelper::get_number_range($doc_type, $doc_year);
+        if(empty($numRange))
+        {
+             return redirect()->back()->with(['message_fail' => 'Please maintain Document Number!']);
+        }
+        // dd($numRange);
+
+      
+
+
         $regis_iso_doc = RegisIsoDoc::findOrFail($request->id);
-        //$regis_iso_doc->vendor_code = $request->vendor_code;
-        $regis_iso_doc->trn_id = $request->trn_id;
-        // $regis_iso_doc->id_vendor = $request->id_vendor;
-        $regis_iso_doc->doc_year = $request->doc_year;
-        $regis_iso_doc->mat_supply = $request->mat_supply;
-        $regis_iso_doc->simply = $request->simply ? "X" : "";
-        $regis_iso_doc->cert_num = $request->cert_num;
-        $regis_iso_doc->cert_date = $request->cert_date;
-        $regis_iso_doc->cert_name = $request->cert_name;
-        $regis_iso_doc->iso_type_name = $request->iso_type_name;
-        $regis_iso_doc->exp_date = $request->exp_date;
+   
+        // $regis_iso_doc->mat_supply = $request->mat_supply;
+        // $regis_iso_doc->simply = $request->simply ? "X" : "";
+        // $regis_iso_doc->cert_num = $request->cert_num;
+        // $regis_iso_doc->cert_date = $request->cert_date;
+        // $regis_iso_doc->cert_name = $request->cert_name;
+        // $regis_iso_doc->iso_type_name = $request->iso_type_name;
+        // $regis_iso_doc->exp_date = $request->exp_date;
         $regis_iso_doc->stat = $stat;
+        // $regis_iso_doc->remark = $request->remark;
+        $regis_iso_doc->trn_type = "S";
+        $regis_iso_doc->ref_doc = $numRange;
+        $regis_iso_doc->ref_doc_year = intval($doc_year);
+        //$regis_iso_doc->created_by = auth()->user()->full_name;
+        $regis_iso_doc->changed_by = auth()->user()->id_user;
+        $regis_iso_doc->save();
+        
+        
+        if (strtotime( $request->exp_date) > strtotime(date('Y-m-d'))) {
+                $stat2 = 'W';
+            }else{
+                $stat2 = 'E';
+            }
+      
+        $regisdata =  RegisIsoDoc::where('_id',$request->id)->first();
+      
+        $create = new RegisIsoDoc();
+        $create->doc_year = intval($doc_year);
+        $create->trn_id = $numRange;
+        // $create->vendor_code = $regisdata->vendor_code;
+        $create->id_vendor = $regisdata->id_vendor;
+        $create->mat_supply = $request->mat_supply;
+        $create->simply = $request->simply ? "X" : "";
+        $create->cert_num = $request->cert_num;
+        $create->cert_date = $request->cert_date;
+        $create->cert_name = $request->cert_name;
+        $create->iso_type_name = $request->iso_type_name;
+        $create->exp_date = $request->exp_date;
+        $create->stat = $stat2;
          if ($request->has("file")){
             $file = $request->file("file");
             $path = public_path('files/regis_iso/');
             $nameFile = date("Ymdhis")."_".$request->cert_num."_".$request->id_vendor."." . $file->getClientOriginalExtension();
 
-            $regis_iso_doc->doc_path = $nameFile;
+            $create->doc_path = $nameFile;
         }
-        $regis_iso_doc->remark = $request->remark;
-        $regis_iso_doc->trn_type = "R";
-        $regis_iso_doc->ref_doc = $request->ref_doc;
-        $regis_iso_doc->ref_doc_year = $request->ref_doc_year;
-        //$regis_iso_doc->created_by = auth()->user()->full_name;
-        $regis_iso_doc->changed_by = auth()->user()->id_user;
-        $regis_iso_doc->save();
+        $create->remark = $request->remark;
+        $create->trn_type = "S";
+        $create->ref_doc = '';
+        $create->ref_doc_year = '';
+        //$create->created_by = auth()->user()->full_name;
+        $create->changed_by = auth()->user()->id_user;
+        $create->save();
+         \IsoHelper::update_number_range($doc_type, $doc_year);
          if ($nameFile ?? false){
             if(!File::isDirectory($path)) File::makeDirectory($path, 0777, true, true);
 
@@ -269,7 +310,13 @@ class RegisIsoDocController extends Controller
         //     //'email' => 'required|string',
         //     // 'full_name' => 'required|string',
         // ]);
-
+        $doc_type = 'iso';
+        $doc_year = date('Y');
+        $numRange =  \IsoHelper::get_number_range($doc_type, $doc_year);
+        if(empty($numRange))
+        {
+             return redirect()->back()->with(['message_fail' => 'Please maintain Document Number!']);
+        }
         $regis_iso_doc = new RegisIsoDoc;
 
         if ($request->has("file")){
@@ -279,10 +326,10 @@ class RegisIsoDocController extends Controller
 
             $regis_iso_doc->doc_path = $nameFile;
         }
-    
 
-        $regis_iso_doc->doc_year = date('Y');
-        $regis_iso_doc->trn_id = time();
+
+        $regis_iso_doc->doc_year =  intval(date('Y'));
+        $regis_iso_doc->trn_id = $numRange;
         $regis_iso_doc->id_vendor = $request->id_vendor;
         $regis_iso_doc->mat_supply = $request->mat_supply;
         $regis_iso_doc->simply = $request->simply ? "X" : "";
@@ -293,14 +340,14 @@ class RegisIsoDocController extends Controller
         $regis_iso_doc->exp_date = $request->exp_date;
         $regis_iso_doc->remark = $request->remark;
 
-        $regis_iso_doc->stat = 'v';
+        $regis_iso_doc->stat = 'W';
         $regis_iso_doc->trn_type = 'S';
         $regis_iso_doc->ref_doc = '';
         $regis_iso_doc->ref_doc_year = '';
         $regis_iso_doc->cr_by = Auth::user()->id_user;
         $regis_iso_doc->cr_dat = date('Y-m-d h:i:s');
         $regis_iso_doc->save();
-
+        \IsoHelper::update_number_range($doc_type, $doc_year);
         if ($nameFile ?? false){
             if(!File::isDirectory($path)) File::makeDirectory($path, 0777, true, true);
 
@@ -319,16 +366,16 @@ class RegisIsoDocController extends Controller
         //     // 'full_name' => 'required|string',
         // ]);
 
-          if (strtotime( $request->exp_date) > date('Y-m-d')) {
+          if (strtotime( $request->exp_date) > strtotime(date('Y-m-d'))) {
                 $stat = 'W';
             }else{
                 $stat = 'E';
             }
         $regis_iso_doc = RegisIsoDoc::findOrFail($id);
         //$regis_iso_doc->vendor_code = $request->vendor_code;
-        $regis_iso_doc->trn_id = $request->trn_id;
+        // $regis_iso_doc->trn_id = $request->trn_id;
         $regis_iso_doc->id_vendor = $request->id_vendor;
-        $regis_iso_doc->doc_year = $request->doc_year;
+        // $regis_iso_doc->doc_year = $request->doc_year;
         $regis_iso_doc->mat_supply = $request->mat_supply;
         $regis_iso_doc->simply = $request->simply;
         $regis_iso_doc->cert_num = $request->cert_num;
@@ -340,8 +387,8 @@ class RegisIsoDocController extends Controller
         $regis_iso_doc->doc_path = $request->doc_path;
         $regis_iso_doc->remark = $request->remark;
         $regis_iso_doc->trn_type = "U";
-        $regis_iso_doc->ref_doc = $request->ref_doc;
-        $regis_iso_doc->ref_doc_year = $request->ref_doc_year;
+        // $regis_iso_doc->ref_doc = $request->ref_doc;
+        // $regis_iso_doc->ref_doc_year = $request->ref_doc_year;
         //$regis_iso_doc->created_by = auth()->user()->full_name;
         $regis_iso_doc->changed_by = auth()->user()->full_name;
         $regis_iso_doc->save();

@@ -10,9 +10,9 @@ class ReportIsoDocController extends Controller
     public function index(Request $request)
     {
         if(auth()->user()->role == 'vendor'){
-            $data['regis'] = RegisIsoDoc::with('vendor')->where('del_indicator','!=','X')->where('id_vendor',auth()->user()->foreign_id)->get();
+            $data['regis'] = RegisIsoDoc::with('vendor')->whereIn('ref_doc',["",null])->whereIn('ref_doc_year',['',null])->where('del_indicator','!=','X')->where('id_vendor',auth()->user()->foreign_id)->get();
         } else{
-            $data['regis'] = RegisIsoDoc::with('vendor')->where('del_indicator','!=','X')->get();
+            $data['regis'] = RegisIsoDoc::with('vendor')->whereIn('ref_doc',["",null])->whereIn('ref_doc_year',['',null])->where('del_indicator','!=','X')->get();
         }
         
         
@@ -20,10 +20,11 @@ class ReportIsoDocController extends Controller
     }
     public function stat_iso($stat)
     {
+        $stats = [$stat];
         if(auth()->user()->role == 'vendor'){
-            $data['regis'] = RegisIsoDoc::with('vendor')->where('trn_type',$stat)->where('del_indicator','!=','X')->where('id_vendor',auth()->user()->foreign_id)->get();
+            $data['regis'] = RegisIsoDoc::with('vendor')->whereIn('trn_type',$stats)->where('del_indicator','!=','X')->where('id_vendor',auth()->user()->foreign_id)->get();
         } else{
-            $data['regis'] = RegisIsoDoc::with('vendor')->where('trn_type',$stat)->where('del_indicator','!=','X')->get();
+            $data['regis'] = RegisIsoDoc::with('vendor')->whereIn('trn_type',$stats)->where('del_indicator','!=','X')->get();
         }
         switch ($stat) {
             case 'S':
