@@ -125,11 +125,11 @@ div.dataTables_wrapper div.dt-row{
                             <th style="max-width: 80px;">Material Supply</th>
                             <th style="max-width: 30px;">Simplikasi</th>
                             <th style="max-width: 80px;">ISO Cert Num</th>
-                            <th style="max-width: 80px;" >ISO Cert Date</th>
                             <th style="max-width: 80px;" >Expire Date</th>
                             <th style="max-width: 80px;" >Expired Status</th>
                             <th style="max-width: 80px" >Doc Process</th>
                             <th style="min-width: 10000px;" >Certified</th>
+                            <th style="max-width: 80px;" >ISO Cert Date</th>
                             <th style="min-width: 100px;" >ISO Type</th>
                             <th style="min-width: 30px;" >File</th>
                             <th style="min-width: 100px;" >Last change</th>
@@ -210,11 +210,11 @@ div.dataTables_wrapper div.dt-row{
                         <td>{{ $item->mat_supply }}</td>
                         <td>{!! $simplify !!}</td>
                         <td>{{ $item->cert_num }}</td>
-                        <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
                          <td>{{date('d-m-Y', strtotime($date_full))}}</td>
                           <td><span class="badge bg-{{@$item->transaction->color}}">{{@$item->transaction->trn_name}}</span></td>
                         <td>{!!$doc_proccess!!} </td>
                         <td>{{ $item->cert_name}}</td>
+                        <td>{{ date('d-m-Y', strtotime($item->cert_date)) }}</td>
                         <td>{{$item->iso_type_name}}</td>
                         <td><a href="{{asset('files/regis_iso/'.$item->doc_path)}}" class="btn btn-flat text-primary" target="_blank" data-toggle='tooltip' title='click to preview' >
                                 <i class="fa fa-file"></i>
