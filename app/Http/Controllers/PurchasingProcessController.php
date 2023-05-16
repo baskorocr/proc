@@ -414,7 +414,7 @@ class PurchasingProcessController extends Controller
             return date('d.m.Y',strtotime($data->doc_date));
         }) 
         ->addColumn('download_check', function ($data) {
-             return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+             // return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
             if($data->file_nm=="-"  || empty($data->file_nm)){
                  return '<input type="checkbox" data-filenm="'.@$data->file_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled  style="cursor: not-allowed;" value="'.@$data->po_num.'">';
 
