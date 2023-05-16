@@ -20,7 +20,12 @@
   <link href="{{ URL::asset('assets/template/css/fontgoogle.css') }}" rel="stylesheet">
   
   <!-- Vendor CSS Files -->
-  
+  <style type="text/css">
+  div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+</style>
   <link href="{{ URL::asset('assets/template/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
