@@ -167,8 +167,8 @@ $stat = '<span class="badge bg-primary">'.@$trans->trn_name.'</span>';
               <input type="hidden" name ="id_vendor" value ="<?php echo @$iso->id_vendor; ?>">
               <input type="hidden" name ="exp_date" value ="<?php echo @$iso->exp_date; ?>">
               <div class="text-left">
-                <button type="submit" name="approve_doc" onclick="return confirm('Are you sure to approve this doc iso?')" value="1" class="btn btn-success">Approve</button>
-                <button type="submit" name="reject_doc" onclick="return confirm('Are you sure to reject this doc iso?')"   value="1" class="btn btn-danger">Reject</button>
+                <button type="submit" name="approve_doc"  value="1" class="btn btn-success">Approve</button>
+                <button type="submit" name="reject_doc" value="1" class="btn btn-danger">Reject</button>
               </div>
               </form><!-- End Multi Columns Form -->
               <?php

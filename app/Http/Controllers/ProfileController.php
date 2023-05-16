@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use App\Models\MasterUser;
+use UserLogging;
 
 class ProfileController extends Controller
 {
@@ -40,6 +41,14 @@ class ProfileController extends Controller
             {
                  $new_hashed_password = Hash::make($request->password);
                  MasterUser::where('_id',auth()->user()->_id)->update(['password' => $new_hashed_password]);
+                    try{
+                        UserLogging::trace(auth()->user()->id_user,$request->ip(),now(),"S","out",auth()->user()->username);
+                        \Auth::logout();
+                        return redirect('/')->with(['title_msg'=>"Logged out!",'message' => "You've logged out from eProc Dharma Polimetal!"]);
+                    } catch(\Exception $e)
+                    {
+                        UserLogging::trace(auth()->user()->id_user,$request->ip(),now(),"F","out",auth()->user()->username);
+                    }
                  return redirect()->back()->with(['message_success' => 'Password updated succesfully.']);
                  
             }

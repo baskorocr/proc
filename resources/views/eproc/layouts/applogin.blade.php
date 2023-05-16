@@ -143,6 +143,17 @@
 	<script src="{{ asset('js/jquery-ui-1.10.3.min.js') }}" type="text/javascript"></script>
 	
 	 <script>
+          $(document).ready(function(){
+            
+            @if(Session::has('title_msg'))
+            swal({
+                    title: "{{Session::get('title_msg')}}",
+                    text: "{!!Session::get('message')!!}",
+                    allowOutsideClick: false,
+                    
+                })
+            @endif
+        })
             function myLoader(){
 
                 swal({
