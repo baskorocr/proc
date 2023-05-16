@@ -23,7 +23,7 @@
     </div><!-- End Page Title -->
            <section class="section dashboard">
             <div class="table-responsive" style="min-height:500px">
-                <table id="iso"  class="table table-striped table-bordered"  style="width:1560px">
+                <table id="iso"  class="table table-striped table-bordered table-sm"  style="width:1560px">
                     <thead>
                         <tr>
                             @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
@@ -67,7 +67,7 @@
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                         @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) AND $item->trn_type != "U")
+                                         @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) )
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
                                         @endif
                                         @if(($item->stat != 'A' AND $item->stat != 'E') )

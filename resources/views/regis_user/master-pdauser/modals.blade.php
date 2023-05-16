@@ -25,11 +25,11 @@
                                     </div>
                                     <div class="form-group">
                                         <label>PIN</label>
-                                        <input type="password"  class="form-control" placeholder="ex. {{rand(111111,999999)}}" id="pin" name="pin" value="">
+                                        <input type="password" maxlength="6"   class="form-control" placeholder="ex. {{rand(111111,999999)}}" id="pin" name="pin" value="">
                                     </div>
                                     <div class="form-group">
                                         <label>Confirm PIN</label>
-                                        <input type="password" class="form-control" placeholder="Confirm PIN" id="pin_confirm" name="pin_confirm" value="">
+                                        <input type="password" maxlength="6"  class="form-control" placeholder="Confirm PIN" id="pin_confirm" name="pin_confirm" value="">
                                     </div>
                                     </div><!-- /.box-body -->
                                     <div class="box-footer"> 

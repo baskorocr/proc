@@ -24,8 +24,6 @@
 
               <!-- General Form Elements -->
          
-              <div class="card">
-            <div class="card-body">
               {{-- <h5 class="card-title">Multi Columns Form</h5> --}}
 
               <!-- Multi Columns Form -->
@@ -147,10 +145,9 @@
         </div>
 
        
-              </form>
+      
 
-            </div>
-          </div>
+        
 
         </div>
       </div>

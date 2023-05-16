@@ -171,7 +171,7 @@
             </div> --}}
           {{-- </div> --}}
         <div class="table-responsive">
-       <table id="iso"  class="table table-striped table-bordered"   style="width:1260px">
+       <table id="iso"  class="table table-striped table-bordered table-sm"   style="width:1260px">
                   <thead>
                     <tr>
                     {{-- <th style="min-width: 100px;">Action</th> --}}
