@@ -313,6 +313,7 @@
         processing: true,
         serverSide: true,
         autoWidth:false,
+          "lengthMenu": [ [10, 25, 50,100, -1], [10, 25, 50,100, "All"] ],
         "language": {
         "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
         },
