@@ -23,7 +23,7 @@
     </div><!-- End Page Title -->
            <section class="section dashboard">
             <div class="table-responsive" style="min-height:500px">
-                <table id="iso"  class="table table-striped table-bordered table-sm"  style="width:1560px">
+                <table id="iso"  class="table table-striped table-bordered table-sm"  style="width:100%">
                     <thead>
                         <tr>
                             @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
@@ -183,21 +183,21 @@
         ],
   })
 
-  var originaldocumentwidth = $(document).width();
-            var newdocumentwidth = $(document).width();
-            var zoomratio = originaldocumentwidth / newdocumentwidth;
+    var originaldocumentwidth = $(document).width();
+    var newdocumentwidth = $(document).width();
+    var zoomratio = originaldocumentwidth / newdocumentwidth;
 
-            function updateZoom() {
-                newdocumentwidth = $(document).width();
-                zoomratio = originaldocumentwidth / newdocumentwidth;
+            // function updateZoom() {
+            //     newdocumentwidth = $(document).width();
+            //     zoomratio = originaldocumentwidth / newdocumentwidth;
                 
-                // $('#originaldocumentwidth').html(originaldocumentwidth);
-                $('#iso').css("width", newdocumentwidth-150+'px');
-                console.log(zoomratio);
-            }
-            $(window).resize(function() {
-                updateZoom();
-            });
-            updateZoom();
+            //     // $('#originaldocumentwidth').html(originaldocumentwidth);
+            //     $('#iso').css("width", newdocumentwidth-150+'px');
+            //     console.log(zoomratio);
+            // }
+            // $(window).resize(function() {
+            //     updateZoom();
+            // });
+            // updateZoom();
 </script>
 @endsection
