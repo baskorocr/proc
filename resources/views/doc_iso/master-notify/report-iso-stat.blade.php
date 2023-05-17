@@ -23,7 +23,7 @@ div.dataTables_wrapper div.dt-row{
         </div><!-- End Page Title -->
         <section class="section dashboard">
             <div class="table-responsive" style="min-height:500px">
-                <table id="iso"  class="table table-striped table-bordered"   style="width:1560px">
+                <table id="iso"  class="table table-striped table-bordered table-sm"   style="width:1560px">
                     <thead>
                         <tr>
                             @if($stat_type == 'Valid' || $stat_type="Renewed" || $stat_type="Expired")
@@ -45,6 +45,7 @@ div.dataTables_wrapper div.dt-row{
                             <th style="min-width: 100px;" >Last change</th>
                             <th style="min-width: 100px;" >Entry Date</th>
                             <th style="min-width: 100px;" >Remark</th>
+                            <th style="min-width: 100px;" >unixtime</th>
                             {{--  <th style="min-width: 100px;" >Doc Number</th>
                             <th style="min-width: 100px;" >Ref Number</th> --}}
                         </tr>
@@ -67,7 +68,7 @@ div.dataTables_wrapper div.dt-row{
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                        @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) AND $item->trn_type != "U")
+                                        @if((empty($item->ref_doc) AND empty($item->ref_doc_year)))
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
                                         @endif
                                         @if(($item->stat != 'A' AND $item->stat != 'E') )
@@ -134,6 +135,7 @@ div.dataTables_wrapper div.dt-row{
            <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
           <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
+                        <td>{{strtotime($item->cert_date)}}</td>
                        {{--  <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
                          <?php
                             if ( $item->ref_doc == '0000000000') {
@@ -171,6 +173,14 @@ div.dataTables_wrapper div.dt-row{
          "autoWidth": false,
         responsive:true,
 
+        'columnDefs': [
+            { 'orderData':[17], 'targets': [1] },
+            {
+                'targets': [17],
+                'visible': false,
+                'searchable': false
+            },
+        ],
       
    
   })

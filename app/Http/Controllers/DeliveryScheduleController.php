@@ -124,8 +124,7 @@ class DeliveryScheduleController extends Controller
                         $zip->addFile($file, "02 Kanban/".$filenm[1]);
                     } else{
                          $zip->addFile($file_qas,"02 Kanban/". $filenm[1]);
-                    }
-                    $zip->addFile($file, $filenm[1]);
+                    }    
                 }
                 $zip->close();
 
