@@ -45,6 +45,7 @@
                             <th style="min-width: 100px;" >Last change</th>
                             <th style="min-width: 100px;" >Entry Date</th>
                             <th style="min-width: 100px;" >Remark</th>
+                            <th style="min-width: 10px;" >unixtime</th>
                             {{--  <th style="min-width: 100px;" >Doc Number</th>
                             <th style="min-width: 100px;" >Ref Number</th> --}}
                         </tr>
@@ -150,6 +151,7 @@
                             }
 
                         ?>   --}} 
+                        <td>{{strtotime($item->cert_date)}}</td>
                       </tr>
                     @endforeach
                   </tbody>    
@@ -171,7 +173,14 @@
          "autoWidth": false,
         responsive:true,
       
-   
+        'columnDefs': [
+            { 'orderData':[17], 'targets': [1] },
+            {
+                'targets': [17],
+                'visible': false,
+                'searchable': false
+            },
+        ],
   })
 
   var originaldocumentwidth = $(document).width();

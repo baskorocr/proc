@@ -84,5 +84,21 @@
     x.type = "password";
   }
 } 
+
+@if(Session::has('msg_pwd'))
+Swal.fire({
+  title: "{{Session::get('msg_pwd')}}",
+  showDenyButton: false,
+  showCancelButton: false,
+  confirmButtonText: 'OK',
+  denyButtonText: `Don't save`,
+  allowOutsideClick: false,
+}).then((result) => {
+  /* Read more about isConfirmed, isDenied below */
+  if (result.isConfirmed) {
+   window.location.href = "{{route('pwd.logout')}}";
+  } 
+})
+@endif
 </script>
 @endsection

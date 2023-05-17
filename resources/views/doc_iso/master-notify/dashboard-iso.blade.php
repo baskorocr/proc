@@ -190,6 +190,7 @@
                         <th style="min-width: 100px;" >Last change</th>
                         <th style="min-width: 100px;" >Entry Date</th>
                         <th style="min-width: 100px;" >Remark</th>
+                        <th style="min-width: 100px;" >unixtime</th>
                         {{-- <th style="min-width: 100px;" >Doc Number</th>
                         <th style="min-width: 100px;" >Ref Number</th> --}}
                     </tr>
@@ -256,6 +257,7 @@
            <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
           <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
+                        <td>{{strtotime($item->cert_date)}}</td>
                         {{-- <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
                          <?php
                             if ( $item->ref_doc == '0000000000') {
@@ -289,20 +291,18 @@
 <script data-require="datatables-responsive@*" data-semver="2.1.0" src="//cdn.datatables.net/responsive/2.1.0/js/dataTables.responsive.min.js"></script>
 <script type="text/javascript">
   var table = $('#iso').DataTable({
-     
+       "autoWidth": false,
       responsive: true,
-      order: [[8, 'desc']],
-      rowReorder:{dataSrc: 0, snapX: true, enable: true},
-       columnDefs: [
-            { responsivePriority: 1, targets: 0 },
-            { responsivePriority: 1, targets: 1 },
-            { responsivePriority: 1, targets: 2 },
-            { responsivePriority: 1, targets: 3 },
-            { responsivePriority: 1, targets: 4 },
-            { responsivePriority: 1, targets: 5 },
-            { responsivePriority: 1, targets: 6 },
-            { responsivePriority: 1, targets: 7 },
-        ]
+       order: [[15, 'desc']],
+        'columnDefs': [
+            { 'orderData':[15], 'targets': [1] },
+            {
+                'targets': [15],
+                'visible': false,
+                'searchable': false
+            },
+        ],
+      
       
    
   })
