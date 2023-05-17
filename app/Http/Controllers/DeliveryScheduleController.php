@@ -33,6 +33,10 @@ class DeliveryScheduleController extends Controller
     }
     public function zipMF(Request $request)
     {
+        if(!extension_loaded('zip'))
+        {
+            return redirect()->back()->with(['message_fail' => 'Zip extension not enabled or not installed on server, please contact the IT team.']);
+        }
         if(empty($request->download_doc))
         {
             return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
@@ -42,11 +46,11 @@ class DeliveryScheduleController extends Controller
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_MI_MFPDF_".date("d-m-Y").".zip";
         $zipnm = md5($request->ip().time().$fileName);
-        // try{
+        try{
              if ($zip->open(storage_path('temp_zip/MI-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             
             {
-
+               
                 foreach ($request->download_doc as $k){
                     $filenm = explode("#", $k);
                       // dd($filenm);
@@ -75,27 +79,46 @@ class DeliveryScheduleController extends Controller
                     }
                 }
                 $zip->close();
-
+                  ///SET DOWNLOAD FLAG
+                foreach($request->id_mf as $mf)
+                {
+                     ManifestHeader::where('manifest',$mf)->update(['downloaded' => date('Y-m-d H:i:s')]);
+                }
+                ///DOWNLOADING
                   return response()->download(storage_path('temp_zip/MI-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
-        // } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
-        // {
-        //     return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
-        // }
+        }  catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
+        {
+            // return $e;
+            return redirect()->back()->with(['message_fail' => 'File Not Found.']);
+        } catch(\InvalidArgumentException $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'PO Directory filesystem driver has not been set in  application, please contact the IT team.']);
+        } catch(\Exception $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton or directory not been mount on server, please contact IT Team']);
+        }
 
       
     }
 
     public function zipMFSP(Request $request)
     {
+        if(!extension_loaded('zip'))
+        {
+            return redirect()->back()->with(['message_fail' => 'Zip extension not enabled or not installed on server, please contact the IT team.']);
+        }
         if(empty($request->download_doc))
         {
             return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
         }
+
         $zip = new \ZipArchive();
         $fileName = "DHARMA_POLIMETAL_SO_MFPDF_".date("d-m-Y").".zip";
         $zipnm = md5($request->ip().time().$fileName);
         try{
+
+
              if ($zip->open(storage_path('temp_zip/SO-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             
             {
@@ -127,12 +150,24 @@ class DeliveryScheduleController extends Controller
                     }    
                 }
                 $zip->close();
-
+                ///SET DOWNLOAD FLAG
+                foreach($request->id_mf as $mf)
+                {
+                    ManifestHeader::where('manifest',$mf)->update(['downloaded' => date('Y-m-d H:i:s')]);
+                }
+                ///DOWNLOADING
                   return response()->download(storage_path('temp_zip/SO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
-        } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
+        }  catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         {
-            return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
+            // return $e;
+            return redirect()->back()->with(['message_fail' => 'File Not Found.']);
+        } catch(\InvalidArgumentException $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'PO Directory filesystem driver has not been set in  application, please contact the IT team.']);
+        } catch(\Exception $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton or directory not been mount on server, please contact IT Team']);
         }
 
       
@@ -262,7 +297,7 @@ class DeliveryScheduleController extends Controller
                return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->manifest.'" onclick="selectedDwn(\'#'.$data->manifest.'\')"  name="downloadchk[]" value="'.$data->manifest.'">';
             })
             ->addColumn('mail_stat', function ($data) {
-               if(!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00'))
+               if((!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00')) AND isset($data->sent))
                {
                 return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
@@ -270,7 +305,7 @@ class DeliveryScheduleController extends Controller
             
             }) 
             ->addColumn('downloaded', function ($data) {
-               if(!empty($data->downloaded) || ($data->downloaded != '0000-00-00 00:00:00'))
+               if((!empty($data->downloaded) || ($data->downloaded != '0000-00-00 00:00:00')) AND isset($data->downloaded))
                {
                 return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
@@ -416,7 +451,7 @@ class DeliveryScheduleController extends Controller
                  return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->manifest.'" onclick="selectedDwn(\'#'.$data->manifest.'\')"  name="downloadchk[]" value="'.$data->manifest.'">';
             })
             ->addColumn('mail_stat', function ($data) {
-               if(!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00'))
+             if((!empty($data->sent) || ($data->sent != '0000-00-00 00:00:00')) AND isset($data->sent))
                {
                 return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
@@ -424,7 +459,7 @@ class DeliveryScheduleController extends Controller
             
             }) 
             ->addColumn('downloaded', function ($data) {
-               if(!empty($data->downloaded) || ($data->downloaded != '0000-00-00 00:00:00'))
+              if((!empty($data->downloaded) || ($data->downloaded != '0000-00-00 00:00:00')) AND isset($data->downloaded))
                {
                 return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 

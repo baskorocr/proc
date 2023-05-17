@@ -34,7 +34,7 @@
                   <div class="col-sm-10">
                     <select name="v" disabled class="form-select" aria-label="Default select example">
                       
-                      <option value=""><?php echo $iso->id_vendor." - ".$iso->vendor->nm_vendor; ?></option>
+                      <option value=""><?php echo @$iso->id_vendor." - ".@$iso->vendor->nm_vendor; ?></option>
                       
                     </select>
                   </div>
@@ -42,7 +42,7 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Material Supply</label>
                   <div class="col-sm-10">
-                    <input name="mat_supply" type="text" value="{{$iso->mat_supply}}" class="form-control">
+                    <input name="mat_supply" type="text" value="{{$iso->mat_supply}}" class="form-control upper">
                   </div>
                 </div>
                 <div class="row mb-3">
@@ -55,19 +55,19 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Certified</label>
                   <div class="col-sm-10">
-                    <input name="cert_name" type="text" class="form-control" value="<?php echo $iso->cert_name; ?>">
+                    <input name="cert_name" type="text" class="form-control upper" value="<?php echo $iso->cert_name; ?>">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">ISO Type</label>
                   <div class="col-sm-10">
-                    <input name="iso_type_name" type="text" class="form-control" value=" <?php echo $iso->iso_type_name; ?>">
+                    <input name="iso_type_name" type="text" class="form-control upper" value=" <?php echo $iso->iso_type_name; ?>">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">ISO Certified Number</label>
                   <div class="col-sm-10">
-                    <input name="cert_num" type="text" class="form-control" value="<?php echo $iso->cert_num; ?>">
+                    <input name="cert_num" type="text" class="form-control upper" value="<?php echo $iso->cert_num; ?>">
                   </div>
                 </div>
                 
@@ -154,6 +154,11 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.8/js/select2.min.js" defer></script>
 <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 <script>
+  // $(".upper").on( "keyup", function( event ) {
+  //       $(this).val(function(i,val) {
+  //          return val.toUpperCase();
+  //       });
+  //   });
   $('#regiso').submit(function(e){
     let timerInterval
     Swal.fire({

@@ -44,7 +44,7 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Material Supply</label>
                   <div class="col-sm-10">
-                    <input name="mat_supply" type="text" class="form-control" required>
+                    <input name="mat_supply" type="text"  class="form-control upper" required>
                   </div>
                 </div>
 
@@ -58,19 +58,19 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px"  for="inputText" class="col-sm-2 col-form-label">Certified</label>
                   <div class="col-sm-10">
-                    <input name="cert_name" required type="text" class="form-control">
+                    <input name="cert_name"  required type="text" class="form-control upper">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">ISO Type</label>
                   <div class="col-sm-10">
-                    <input name="iso_type_name" required type="text" class="form-control">
+                    <input name="iso_type_name"   required type="text" class="form-control upper">
                   </div>
                 </div>
                 <div class="row mb-3">
-                  <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">ISO Certified Number</label>
+                  <label  style="font-size:15px" for="inputText"  class="col-sm-2 col-form-label">ISO Certified Number</label>
                   <div class="col-sm-10">
-                    <input name="cert_num" required type="text" class="form-control">
+                    <input name="cert_num" required type="text" class="form-control upper">
                   </div>
                 </div>
         
@@ -161,6 +161,12 @@
 
     <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 <script>
+  $(".upper").on( "keyup", function( event ) {
+        $(this).val(function(i,val) {
+           return val.toUpperCase();
+        });
+    });
+ 
   $('#regiso').submit(function(e){
     let timerInterval
     Swal.fire({

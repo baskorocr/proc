@@ -94,7 +94,7 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
-           $filenm = $data->filenm;
+           $filenm = $data->file_nm;
             if ($filenm != "-" && $filenm != "" ) {
             //activate
             $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
@@ -293,7 +293,7 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
-           $filenm = $data->filenm;
+           $filenm = $data->file_nm;
             if ($filenm != "-" && $filenm != "" ) {
             //activate
             $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
@@ -472,6 +472,10 @@ class PurchasingProcessController extends Controller
 
     public function zipPurchasingProcess(Request $request)
     {
+        if(!extension_loaded('zip'))
+        {
+            return redirect()->back()->with(['message_fail' => 'Zip extension not enabled or not installed on server, please contact the IT team.']);
+        }
         if(empty($request->download_doc))
         {
             return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
@@ -481,15 +485,13 @@ class PurchasingProcessController extends Controller
         $fileName = "DHARMA_POLIMETAL_PO_LIST_".date("d-m-Y").".zip";
         try{
             $zipnm = md5($request->ip().time().$fileName);
-             if ($zip->open(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
-            
+            ///ZIPPING FILES
+            if ($zip->open(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             {
-                
+               
                 foreach ($request->download_doc as $k){
+
                     $filenm = $k;
-                      // dd($filenm);
-                 // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    // $content[] =\File::get(Storage::disk('po_directory')->path("/").$filenm);
                     $file = Storage::disk('po_directory')->path("").$filenm;
                     $file_qas = Storage::disk('po_qas_directory')->path("").$filenm;
                     $relativeName = basename($file);
@@ -501,8 +503,13 @@ class PurchasingProcessController extends Controller
                     }
                 }
                 $zip->close();
-                // dd( $content);
-                  return response()->download(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
+                ///SET DOWNLOAD FLAG
+                foreach($request->id_po as $po)
+                {
+                     PurchasingProcess::where('_id',$po)->update(['downloaded' => date('Y-m-d H:i:s')]);
+                }
+                ///DOWNLOADING
+                return response()->download(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         {
@@ -513,7 +520,7 @@ class PurchasingProcessController extends Controller
             return redirect()->back()->with(['message_fail' => 'PO Directory filesystem driver has not been set in  application, please contact the IT team.']);
         } catch(\Exception $e)
         {
-            return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton, please contact IT Team']);
+            return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton or directory not been mount on server, please contact IT Team']);
         }
 
       
