@@ -158,7 +158,7 @@ div.dataTables_wrapper div.dt-row{
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                         {{--  @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) )
+                                         {{-- @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) OR $item->stat == 'E')
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
                                         @endif --}}
                                         @if(($item->stat != 'A' AND $item->stat != 'E') )

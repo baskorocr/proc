@@ -74,7 +74,7 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Material Supply</label>
                   <div class="col-sm-10">
-                    <input name="mat_supply" type="text" value="{{$iso->mat_supply}}" class="form-control">
+                    <input name="mat_supply"  type="text" value="{{$iso->mat_supply}}" class="form-control upper">
                   </div>
                 </div>
 
@@ -88,19 +88,19 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Certified</label>
                   <div class="col-sm-10">
-                    <input name="cert_name" type="text" class="form-control" value="<?php echo $iso->cert_name; ?>">
+                    <input name="cert_name" type="text"  class="form-control upper" value="<?php echo $iso->cert_name; ?>">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">ISO Type</label>
                   <div class="col-sm-10">
-                    <input name="iso_type_name" type="text" class="form-control" value=" <?php echo $iso->iso_type_name; ?>">
+                    <input name="iso_type_name" type="text"  class="form-control upper" value=" <?php echo $iso->iso_type_name; ?>">
                   </div>
                 </div>
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">ISO Certified Number</label>
                   <div class="col-sm-10">
-                    <input name="cert_num" type="text" class="form-control" value="<?php echo $iso->cert_num; ?>">
+                    <input name="cert_num" type="text"  class="form-control upper" value="<?php echo $iso->cert_num; ?>">
                   </div>
                 </div>
         
@@ -161,7 +161,7 @@
                        </div>
                   <label for="inputNumber" class="col-sm-2 col-form-label">File Input</label>
                   <div class="col-sm-10">
-                    <input name="file" class="form-control" type="file" id="formFile">
+                    <input name="file" accept="application/pdf" class="form-control" type="file" id="formFile">
                     <small>upload ISO pdf file</small>
                   </div>
                 </div>
@@ -219,7 +219,11 @@
       $('#regiso').trigger('submit')
     })
   })
-
+  $(".upper").on( "keyup", function( event ) {
+        $(this).val(function(i,val) {
+           return val.toUpperCase();
+        });
+    });
     $(document).ready(function() {
       $('#id_vendor').select2();
     });

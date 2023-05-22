@@ -52,13 +52,14 @@
 									</div>
 									<div class="form-group">
 										<label>Access Group</label>
-										<select name="access_group_name" class="form-control select">
-											@foreach($accessgrp as $grp)
-												<option  value="{{$grp->id_access_group}}">{{$grp->access_group_name}}</option>
+										<select name="role" class="form-control select">
+											@foreach($roles as $r)
+												<option value="{{$r->_id}}">{{$r->name}}</option>
 											@endforeach
 										</select>
 										{{-- <input type="text" class="form-control" id="access_group_name" name="access_group_name" value="<?php echo $user->access_group_name; ?>" > --}}
 									</div>
+									<input 
 									
 									
 									</div><!-- /.box-body -->

@@ -220,7 +220,7 @@ $("#end").change(function(e){
 				$('#fl'+val).remove();
 			} else{
 				data.push(val);
-				$('#download-list').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" />');
+				$('#download-list').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" /> <input type="hidden" id="mf'+val+'" name="id_mf[]" value="'+val+'" />');
 			}
 			console.log(data);
 
@@ -282,12 +282,12 @@ $("#end").change(function(e){
 	name: 'mail_stat'
 	},
 	{
-	data: 'downloaded',
-	name: 'downloaded'
-	},
-	{
 	data: 'file_stat',
 	name: 'file_stat'
+	},
+	{
+	data: 'downloaded',
+	name: 'downloaded'
 	},
 	{
 	data: 'active',

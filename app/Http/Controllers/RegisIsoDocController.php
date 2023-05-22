@@ -190,7 +190,7 @@ class RegisIsoDocController extends Controller
          if ($request->has("file")){
             $file = $request->file("file");
             $path = public_path('files/regis_iso/');
-            $nameFile = date("Ymdhis")."_".$request->cert_num."_".$request->id_vendor."." . $file->getClientOriginalExtension();
+            $nameFile = date("Ymdhis")."_".$this->remove_illegal_filename($request->cert_num)."_".$request->id_vendor."." . $file->getClientOriginalExtension();
 
             $regis_iso_doc->doc_path = $nameFile;
         }
@@ -280,7 +280,7 @@ class RegisIsoDocController extends Controller
          if ($request->has("file")){
             $file = $request->file("file");
             $path = public_path('files/regis_iso/');
-            $nameFile = date("Ymdhis")."_".$request->cert_num."_".$request->id_vendor."." . $file->getClientOriginalExtension();
+            $nameFile = date("Ymdhis")."_".$this->remove_illegal_filename($request->cert_num)."_".$request->id_vendor."." . $file->getClientOriginalExtension();
 
             $create->doc_path = $nameFile;
         }
@@ -322,7 +322,7 @@ class RegisIsoDocController extends Controller
         if ($request->has("file")){
             $file = $request->file("file");
             $path = public_path('files/regis_iso/');
-            $nameFile = date("Ymdhis")."_".$request->cert_num."_".$request->id_vendor."." . $file->getClientOriginalExtension();
+            $nameFile = date("Ymdhis")."_".$this->remove_illegal_filename($request->cert_num)."_".$request->id_vendor."." . $file->getClientOriginalExtension();
 
             $regis_iso_doc->doc_path = $nameFile;
         }
@@ -387,6 +387,14 @@ class RegisIsoDocController extends Controller
         $regis_iso_doc->doc_path = $request->doc_path;
         $regis_iso_doc->remark = $request->remark;
         $regis_iso_doc->trn_type = "U";
+         if ($request->has("file")){
+            $file = $request->file("file");
+            $path = public_path('files/regis_iso/');
+            $nameFile = date("Ymdhis")."_".$this->remove_illegal_filename($request->cert_num)."_".$request->id_vendor."." . $file->getClientOriginalExtension();
+
+            $regis_iso_doc->doc_path = $nameFile;
+        }
+
         // $regis_iso_doc->ref_doc = $request->ref_doc;
         // $regis_iso_doc->ref_doc_year = $request->ref_doc_year;
         //$regis_iso_doc->created_by = auth()->user()->full_name;
@@ -408,5 +416,12 @@ class RegisIsoDocController extends Controller
             'type' => 'success',
             'message' => 'Data Deleted Successfully!'
         ], 201);
+    }
+
+    private function remove_illegal_filename($str)
+    {
+        $res = str_replace(array('\\','/',':','*','?','"','<','>','|'),'-',$str);
+
+        return $res;
     }
 }

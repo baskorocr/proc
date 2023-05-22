@@ -114,7 +114,7 @@
 
 							<div class="table-responsive mt-3">
                 <button class="btn btn-secondary btn-sm mb-2" select-all><i class="fas fa-check"></i> Select All</button>
-								<table  class="table table-bordered table-hover table-striped nowrap table-sm" id="tb-download-list-po">
+								<table  class="table table-bordered table-striped nowrap table-sm" id="tb-download-list-po">
 									<thead>
                     <th>
                       <i class="fa fa-list"></i>
@@ -266,12 +266,13 @@
         {
           data.remove(dtval);
           $('#fl'+dtval).remove();
+          $('#po'+dtval).remove();
           $(".cl-"+dtval).removeClass('selected');
         } else{
           if($("#fl"+dtval).length == 0) {
             data.push(dtval);
             $(".cl-"+dtval).addClass('selected');
-            $('#download-list-checked').append('<input type="hidden" id="fl'+dtval+'" name="download_doc[]" value="'+flnm+'" />');
+            $('#download-list-checked').append('<input type="hidden" id="fl'+dtval+'" name="download_doc[]" value="'+flnm+'" /> <input type="hidden" id="po'+dtval+'" name="id_po[]" value="'+dtval+'" />');
           } else{
             // console.log(dtval+' is Exists.');
           }
@@ -312,6 +313,7 @@
         processing: true,
         serverSide: true,
         autoWidth:false,
+          "lengthMenu": [ [10, 25, 50,100, -1], [10, 25, 50,100, "All"] ],
         "language": {
         "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
         },

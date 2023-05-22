@@ -26,6 +26,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $token = Str::random(25);
             $user = User::where('username', $request->username)->first();
+            // dd($request->password, $user->password);
             if ($user == null){
 
                 return response()->json([
@@ -79,6 +80,7 @@ class AuthController extends Controller
                 // });
 
                 $permissions = Permission::whereNull('parent_id')->orderBy('order_number')->get();
+                // dd($permissions);
                 $permission_allowed = $permissions->map(function ($permission) use ($user) {
                     $permission_allowed = collect($user->roles->permissions)->where('allow', true);
 
