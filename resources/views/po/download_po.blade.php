@@ -6,7 +6,7 @@
       <h1>Datatable</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Component</a></li>
+          {{-- <li class="breadcrumb-item"><a href="index.html">Component</a></li> --}}
           <li class="breadcrumb-item">Pages</li>
           <li class="breadcrumb-item active">Datatable</li>
         </ol>

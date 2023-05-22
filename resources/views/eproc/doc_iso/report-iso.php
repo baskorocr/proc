@@ -144,9 +144,9 @@ include "project_mgt/project-mgt-query.php";
             <!-- small box -->
             <?php
                 if($role == 'vendor') {
-                    $query_exec_notifd = get_reg_iso_by_trn_type('I', $id_vendor);
+                    $query_exec_notifd = get_reg_iso_by_trn_type('E', $id_vendor);
                 } else {
-                    $query_exec_notifd = get_reg_iso_by_trn_type('I', '');
+                    $query_exec_notifd = get_reg_iso_by_trn_type('E', '');
                 }
                 $count_notifd = mysqli_num_rows($query_exec_notifd);
             ?>
@@ -193,7 +193,7 @@ include "project_mgt/project-mgt-query.php";
     <!--   -->
     <form role=form name="myForm" onSubmit="return downloadfunction()" action="zip_iso_all.php" method="post" enctype="multipart/form-data">
         
-		<table class="table table-striped display nowrap"  style="width:100%" data-striping="false" data-toggle-column="last" data-paging="true" data-sorting="true" data-filtering="true"> 
+		<table class="table table-striped display nowrap"  style="width:100%" > 
             <thead>
                  <?php
 

@@ -1,12 +1,13 @@
 @extends('layouts.main')
 @section('title',"List PO")
 @section('content')
+
 <main id="main" class="main">
     <div class="pagetitle">
       <h1>List PO</h1>
       <nav>
         <ol class="breadcrumb">
-          <li class="breadcrumb-item"><a href="index.html">Purchasing Process</a></li>
+          {{-- <li class="breadcrumb-item"><a href="index.html">Purchasing Process</a></li> --}}
           <li class="breadcrumb-item active">List PO</li>
         </ol>
       </nav>

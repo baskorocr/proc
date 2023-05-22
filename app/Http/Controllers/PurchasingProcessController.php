@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\PurchasingProcess;
 use Carbon\Carbon;
 use App\Models\Vendor;
+use App\Models\MasterUser;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ImportPo;
 use Storage;
@@ -25,26 +26,36 @@ class PurchasingProcessController extends Controller
 
     public function getListPo(Request $request)
     {
-        $vendor_list =preg_split('/\r\n|\r|\n/',$request->vendor_list);
-        $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
-            if (!empty($request->po_num)) {
-               return $query->where('po_num', 'like', "%" . $request->po_num . "%");
-            }
+        if($request->search == true)
+        {
+             $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+            $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
+                if (!empty($request->po_num)) {
+                   return $query->where('po_num', 'like', "%" . $request->po_num . "%");
+                }
 
-            if (!empty($request->date_from) && !empty($request->date_to)) {
-                return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
-            }
+                if (!empty($request->date_from) && !empty($request->date_to)) {
+                    return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
+                }
 
-            if (!empty($vendor_list)) {
-                return $query->whereIn('id_vendor', $vendor_list);
-            }
-        });
-         if (!empty($request->vendor_list)) {
-            // dd($vendor_list);
-                $q->whereIn('id_vendor', $vendor_list);
-            }
-        $data = $q->where('id_vendor','!=','')->get();
+                if (!empty($vendor_list)) {
+                    return $query->whereIn('id_vendor', $vendor_list);
+                }
+            });
+             // AND $request->vendor_select != "Choose Vendor"
 
+            if((count($vendor_list)>0) || ($request->vendor_select != "Choose Vendor"))
+            {
+              if ((count($vendor_list)>0)) {
+                    $q->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0)){
+                   $q->whereIn('id_vendor',[$request->vendor_select]);
+                }
+            }
+            $data = $q->where('id_vendor','!=','')->get();
+
+        }
+       
         return \DataTables::of($data)
         ->editColumn('number', function($data){
             return 1;
@@ -69,7 +80,7 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('mail_stat', function($data){
           
-             if($data->sent != '0000-00-00 00:00:00'){
+             if($data->sent != '0000-00-00 00:00:00' AND isset($data->sent) ){
             $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                 data-toggle=tooltip' data-placement='left' title='Sent'>
                                 </i>
@@ -83,7 +94,7 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
-           $filenm = $data->filenm;
+           $filenm = $data->file_nm;
             if ($filenm != "-" && $filenm != "" ) {
             //activate
             $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
@@ -101,7 +112,7 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if($data->downloaded != '0000-00-00 00:00:00'){
+             if($data->downloaded != '0000-00-00 00:00:00'  AND isset($data->downloaded)){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
@@ -139,14 +150,26 @@ class PurchasingProcessController extends Controller
         ->editColumn('nm_vendor', function($data){
             return @$data->vendors->nm_vendor;
         })->editColumn('vend_email', function($data){
-            return @$data->vendors->vend_email;
+            if(!empty($data->vendors)){
+                $v = @$data->vendors->vend_email;
+            } else{
+                $v="";
+            }
+            $get = MasterUser::where('foreign_id', $data->id_vendor)->first();
+            if(@$get->status_user == "A")
+            {
+                $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
+            }
+            return $v.($v!=""?$s:"");
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
         })
         // ->whereBetween('doc_date', [Carbon::parse($data->doc_date.' 00:00:00'), Carbon::parse($data->doc_date.' 23:59:59')])
         // ->where('id_vendor', $data->id_vendor)
-        ->rawColumns(['action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
+        ->rawColumns(['action','vend_email','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
                 // ->editColumn('last_change_by', function ($data) {
                                 
                 //                return @$data->users->nm_user;
@@ -202,25 +225,37 @@ class PurchasingProcessController extends Controller
 
     public function getDownloadListPo(Request $request)
     {
-        $vendor_list =preg_split('/\r\n|\r|\n/',$request->vendor_list);
-         $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
-            if (!empty($request->po_num)) {
-               return $query->where('po_num', 'like', "%" . $request->po_num . "%");
-            }
+         if($request->search)
+        {
+             $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+            $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
+                if (!empty($request->po_num)) {
+                   return $query->where('po_num', 'like', "%" . $request->po_num . "%");
+                }
 
-            if (!empty($request->date_from) && !empty($request->date_to)) {
-                return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
-            }
+                if (!empty($request->date_from) && !empty($request->date_to)) {
+                    return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
+                }
 
-            if (!empty($vendor_list)) {
-                return $query->whereIn('id_vendor', $vendor_list);
+                if (!empty($vendor_list)) {
+                    return $query->whereIn('id_vendor', $vendor_list);
+                }
+            });
+             // AND $request->vendor_select != "Choose Vendor"
+
+            if((count($vendor_list)>0) || ($request->vendor_select != "Choose Vendor"))
+            {
+              if ((count($vendor_list)>0)) {
+                    $q->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0)){
+                   $q->whereIn('id_vendor',[$request->vendor_select]);
+                }
             }
-        });
-         if (!empty($request->vendor_list)) {
-            // dd($vendor_list);
-                $q->whereIn('id_vendor', $vendor_list);
-            }
-        $data = $q->where('id_vendor','!=','')->get();
+            $data = $q->where('id_vendor','!=','')->get();
+
+        } else{
+            $data = [];
+        }
 
         return \DataTables::of($data)
 
@@ -244,7 +279,7 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('mail_stat', function($data){
           
-             if($data->sent != '0000-00-00 00:00:00'){
+             if($data->sent != '0000-00-00 00:00:00'  AND isset($data->sent)){
             $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                 data-toggle=tooltip' data-placement='left' title='Sent'>
                                 </i>
@@ -258,7 +293,7 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
-           $filenm = $data->filenm;
+           $filenm = $data->file_nm;
             if ($filenm != "-" && $filenm != "" ) {
             //activate
             $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
@@ -276,7 +311,7 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if($data->downloaded != '0000-00-00 00:00:00'){
+             if($data->downloaded != '0000-00-00 00:00:00' AND isset($data->downloaded) ){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
@@ -361,15 +396,45 @@ class PurchasingProcessController extends Controller
             return @$data->vendors->nm_vendor;
         })
         ->editColumn('vend_email', function($data){
-            return @$data->vendors->vend_email;
+            if(!empty($data->vendors)){
+                $v = @$data->vendors->vend_email;
+            } else{
+                $v="";
+            }
+            $get = MasterUser::where('foreign_id', $data->id_vendor)->first();
+            if(@$get->status_user == "A")
+            {
+                $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s=" <i title='Pengguna Non-aktif' class='fas fa-exclamation-circle text-warning'></i> ";
+            }
+            return $v.($v!=""?$s:"");
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
         }) 
         ->addColumn('download_check', function ($data) {
-            return '<input type="checkbox" data-filenm="'.$data->file_nm.'"  class="checked" id="'.$data->po_num.'" onclick="selectedDwn(\'#'.$data->po_num.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+             // return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+            if($data->file_nm=="-"  || empty($data->file_nm)){
+                 return '<input type="checkbox" data-filenm="'.@$data->file_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled  style="cursor: not-allowed;" value="'.@$data->po_num.'">';
+
+            }
+            $file = Storage::disk('po_directory')->path(""). $data->file_nm;
+            $file_qas = Storage::disk('po_qas_directory')->path(""). $data->file_nm;
+            $relativeName = basename($file);
+            if(file_exists($file))
+            {
+              return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+            } elseif(file_exists($file_qas)){
+
+                 return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+            }else{
+               return '<input type="checkbox" data-filenm="'.@$data->file_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled style="cursor: not-allowed;"  value="'.@$data->po_num.'">';
+            }
+           
+            
         })
-        ->rawColumns(['download_check','active','action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
+        ->rawColumns(['download_check','vend_email','active','action','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
                 // ->editColumn('last_change_by', function ($data) {
                                 
                 //                return @$data->users->nm_user;
@@ -407,6 +472,10 @@ class PurchasingProcessController extends Controller
 
     public function zipPurchasingProcess(Request $request)
     {
+        if(!extension_loaded('zip'))
+        {
+            return redirect()->back()->with(['message_fail' => 'Zip extension not enabled or not installed on server, please contact the IT team.']);
+        }
         if(empty($request->download_doc))
         {
             return redirect()->back()->with(['message_fail' => 'Belum ada data yang dipilih.']);
@@ -416,15 +485,13 @@ class PurchasingProcessController extends Controller
         $fileName = "DHARMA_POLIMETAL_PO_LIST_".date("d-m-Y").".zip";
         try{
             $zipnm = md5($request->ip().time().$fileName);
-             if ($zip->open(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
-            
+            ///ZIPPING FILES
+            if ($zip->open(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), \ZipArchive::CREATE) == TRUE)
             {
-                
+               
                 foreach ($request->download_doc as $k){
+
                     $filenm = $k;
-                      // dd($filenm);
-                 // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    // $content[] =\File::get(Storage::disk('po_directory')->path("/").$filenm);
                     $file = Storage::disk('po_directory')->path("").$filenm;
                     $file_qas = Storage::disk('po_qas_directory')->path("").$filenm;
                     $relativeName = basename($file);
@@ -436,16 +503,24 @@ class PurchasingProcessController extends Controller
                     }
                 }
                 $zip->close();
-                // dd( $content);
-                  return response()->download(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
+                ///SET DOWNLOAD FLAG
+                foreach($request->id_po as $po)
+                {
+                     PurchasingProcess::where('_id',$po)->update(['downloaded' => date('Y-m-d H:i:s')]);
+                }
+                ///DOWNLOADING
+                return response()->download(storage_path('temp_zip/PO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         } catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         {
             // return $e;
-            return redirect()->back()->with(['message_fail' => 'File Tidak Ditemukan.']);
+            return redirect()->back()->with(['message_fail' => 'File Not Found.']);
         } catch(\InvalidArgumentException $e)
         {
             return redirect()->back()->with(['message_fail' => 'PO Directory filesystem driver has not been set in  application, please contact the IT team.']);
+        } catch(\Exception $e)
+        {
+            return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton or directory not been mount on server, please contact IT Team']);
         }
 
       

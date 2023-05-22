@@ -1,12 +1,19 @@
 @extends('layouts.main')
 @section('title',"List PO")
 @section('content')
+<style type="text/css">
+  div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+</style>
+    <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <main id="main" class="main">
   <div class="pagetitle">
     <h1>List PO</h1>
     <nav>
       <ol class="breadcrumb">
-        <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li>
+        {{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li> --}}
         <li class="breadcrumb-item active">List PO</li>
       </ol>
     </nav>
@@ -38,10 +45,10 @@
                   <div class="row">
                     <div class="col-md-6">
                       from
-                      <input type="date" name="date_from" id="date_from" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
+                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
                     </div>
                     <div class="col-md-6"> to
-                      <input type="date" name="date_to" id="date_to" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
+                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
                     </div>
                     
                     <div class="col-12">
@@ -65,7 +72,7 @@
                   <div class="col-sm-10">
                     <div class="row">
                       <div class="col-10">
-                        <select class="form-select select2" id="select_vendor" aria-label="Default select example">
+                        <select name="vendor_select" class="form-select select2" id="select_vendor" aria-label="Default select example">
                           <option selected>Choose Vendor</option>
                           @foreach($list_vendor as $vendor)
                           <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
@@ -92,14 +99,14 @@
             <div class="card">
               <div class="card-body">
                 <div class="table-responsive mt-3">
-                  <table  class="table table-bordered table-stripped table-sm" id="tb-list-po">
+                  <table  class="table table-bordered nowrap table-striped table-sm" id="tb-list-po">
                     <thead>
                 <th style="min-width: 106px" data-visible="true">PO Number</th>
                 <th style="min-width: 65px">Rev No</th>
                 <th style="min-width: 60px">Plant</th>
                 <th style="min-width:  60px">Vendor</th>
-                <th style="min-width: 156px">Vendor Name</th>
-                <th style="min-width: 106px">Vendor Mail</th>
+                <th style="min-width: 250px">Vendor Name</th>
+                <th style="min-width: 220">Vendor Mail</th>
                 <th style="min-width: 106px">Doc Date</th>
                 <th style="min-width:  30px">PGr</th>
                 <th style="min-width: 106px" title="without Tax">PO Amount</th>
@@ -147,6 +154,8 @@
     </main>
     @endsection
     @section('javascript')
+     {{-- <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script> --}}
+    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
     <script>
      function addVendor()
      {
@@ -155,7 +164,14 @@
       textarea.value += document.getElementById('select_vendor').value+'\n'
      }
 
-
+ $('#date_from').datepicker({
+            uiLibrary: 'bootstrap5',
+             format: 'yyyy-mm-dd'
+        });
+ $('#date_to').datepicker({
+            uiLibrary: 'bootstrap5',
+            format: 'yyyy-mm-dd'
+        });
   
     //  $(document).ready(function(){
     //  window.table = $('#tb-list-po').DataTable({
@@ -192,6 +208,10 @@
     // });
     // }).draw();
     // })
+    $('#tb-list-po').DataTable();
+    function search() {
+       $('#tb-list-po').DataTable().destroy();
+       $.fn.dataTable.ext.errMode = 'none';
     var table = $('#tb-list-po').DataTable({autoWidth:false,
     "order": [[ 1, "DESC" ]],
     processing: true,
@@ -209,6 +229,8 @@
     item.date_to = $('#date_to').val();
     item.id_vendor = $('#select_vendor').val().toString();
     item.vendor_list = $('#vendor_list').val();
+     item.vendor_select = $('#select_vendor').val();
+     item.search = true;
     },
     url: "{{ route('datatables.purchasing.process.listpo')}}"
     },
@@ -291,8 +313,6 @@
     },
     ]
     });
-    function search() {
-    table.draw();
     }
     $('.select2').select2();
    

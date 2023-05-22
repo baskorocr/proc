@@ -1,12 +1,19 @@
 @extends('layouts.main')
 @section('title',"Download List PO")
 @section('content')
+<style type="text/css">
+  div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+</style>
+ <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <main id="main" class="main">
 	<div class="pagetitle">
 		<h1>Download List PO</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li> --}}
 				<li class="breadcrumb-item active">Download List PO</li>
 			</ol>
 		</nav>
@@ -36,13 +43,13 @@
                 ?>
                 <div class="" style="width: 400px;">
                   <!-- <i class="fa fa-calendar"></i> -->
-                  <div class="row">
+                 <div class="row">
                     <div class="col-md-6">
                       from
-                      <input type="date" name="date_from" id="date_from" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
+                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
                     </div>
                     <div class="col-md-6"> to
-                      <input type="date" name="date_to" id="date_to" class="form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
+                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
                     </div>
                     
                     <div class="col-12">
@@ -66,7 +73,7 @@
                   <div class="col-sm-10">
                     <div class="row">
                       <div class="col-10">
-                        <select class="form-select select2" id="select_vendor" aria-label="Default select example">
+                        <select class="form-select select2" name='vendor_select' id="select_vendor" aria-label="Default select example">
                           <option selected>Choose Vendor</option>
                           @foreach($list_vendor as $vendor)
                           <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
@@ -106,7 +113,8 @@
 							</div> -->
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="tb-download-list-po">
+                <button class="btn btn-secondary btn-sm mb-2" select-all><i class="fas fa-check"></i> Select All</button>
+								<table  class="table table-bordered table-striped nowrap table-sm" id="tb-download-list-po">
 									<thead>
                     <th>
                       <i class="fa fa-list"></i>
@@ -116,7 +124,7 @@
                       <th style="min-width: 65px">Plant</th>
                       <th style="min-width: 80px">Vendor</th>
                       <th style="min-width: 156px">Vendor Name</th>
-                      <th style="min-width: 106px">Vendor Mail</th>
+                      {{-- <th style="min-width: 106px">Vendor Mail</th> --}}
                       <th style="min-width: 106px">Doc Date</th>
                       <th style="min-width: 30px">PGr</th>
                       <th style="min-width: 106px" title="without Tax">PO Amount</th>
@@ -174,13 +182,31 @@
 	</main>
 	@endsection
 	@section('javascript')
+   <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 	<script>
+    $('[select-all]').click(function(){
+       $('input:checkbox').trigger('click')
+      //  $('input:checkbox').prop('checked', true);
+      //  $('input:checkbox').each(function(i, obj) {
+      //     console.log();
+      // });
+    })
+   
 		function addVendor()
      {
       const textarea = document.getElementById('vendor_list');
 
       textarea.value += document.getElementById('select_vendor').value+'\n'
      }
+
+      $('#date_from').datepicker({
+            uiLibrary: 'bootstrap5',
+             format: 'yyyy-mm-dd'
+        });
+ $('#date_to').datepicker({
+            uiLibrary: 'bootstrap5',
+            format: 'yyyy-mm-dd'
+        });
 
 	// 	$(document).ready(function(){
 
@@ -219,28 +245,75 @@
 		// });
 		// }).draw();
 		// })
-
+  Array.prototype.remove = function() {
+    var what, a = arguments, L = a.length, ax;
+    while (L && this.length) {
+        what = a[--L];
+        while ((ax = this.indexOf(what)) !== -1) {
+            this.splice(ax, 1);
+        }
+    }
+    return this;
+};
       var data = [];
 		  function selectedDwn(id)
 		  {
         var val = $(id).val();
-        var dtval = $(id).data('filenm');
+        var dtval = $(id).data('mgid');
+        var flnm = $(id).data('filenm');
+        // console.log($(id).val());
         if(!$(id).is(':checked'))
         {
-          data.remove(val);
-          $('#fl'+val).remove();
+          data.remove(dtval);
+          $('#fl'+dtval).remove();
+          $('#po'+dtval).remove();
+          $(".cl-"+dtval).removeClass('selected');
         } else{
-          data.push(val);
-          $('#download-list-checked').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" />');
+          if($("#fl"+dtval).length == 0) {
+            data.push(dtval);
+            $(".cl-"+dtval).addClass('selected');
+            $('#download-list-checked').append('<input type="hidden" id="fl'+dtval+'" name="download_doc[]" value="'+flnm+'" /> <input type="hidden" id="po'+dtval+'" name="id_po[]" value="'+dtval+'" />');
+          } else{
+            // console.log(dtval+' is Exists.');
+          }
+          
         }
         console.log(data);
 		  }
 
+          $.fn.dataTable.ext.errMode = 'none';
+      $('#tb-download-list-po').on('draw.dt',   function () {
+      // console.log($('#63460809220e0000eb00d4b8').is('checked'))
+      // if($('#63460809220e0000eb00d4b8').is(':checked'))
+      // {
+      //  alert('SS')
+      // } 
+
+      var all = $(".checked").map(function() {
+        // console.log("#"+$(this).data('mgid'))
+          if(data.includes($(this).data('mgid')))
+          {
+            $("#"+$(this).data('mgid')).prop('checked', true);
+            if($("#"+$(this).data('mgid')).prop('checked'))
+            {
+              $(".cl-"+$(this).data('mgid')).addClass('selected');
+            } else{
+              $(".cl-"+$(this).data('mgid')).removeClass('selected');
+            }
+          }
+      }).get();
+
+      console.log(all.join());
+    }
+       ).DataTable();
+      function search() {
+         $('#tb-download-list-po').DataTable().destroy();
         var table = $('#tb-download-list-po').DataTable({ autoWidth:false,
         "order": [[ 1, "DESC" ]],
         processing: true,
         serverSide: true,
         autoWidth:false,
+          "lengthMenu": [ [10, 25, 50,100, -1], [10, 25, 50,100, "All"] ],
         "language": {
         "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
         },
@@ -250,10 +323,18 @@
                 item.date_from = $('#date_from').val();
                 item.date_to = $('#date_to').val();
                 item.id_vendor = $('#select_vendor').val().toString();
-                   item.vendor_list = $('#vendor_list').val();
+                 item.vendor_list = $('#vendor_list').val();
+                 item.vendor_select = $('#select_vendor').val();
             },
             url:"{{ route('datatables.purchasing.process.download.listpo')}}",
         },  
+        'columnDefs': [
+              {
+                  'targets': [19],
+                  'visible': false,
+                  'searchable': false
+              },
+          ],
         columns: [
           {
             data: 'download_check',
@@ -279,10 +360,10 @@
             data: 'nm_vendor',
             name: 'nm_vendor'
             },
-            {
-            data: 'vend_email',
-            name: 'vend_email'
-            },
+            // {
+            // data: 'vend_email',
+            // name: 'vend_email'
+            // },
             {
             data: 'doc_date',
             name: 'doc_date'
@@ -335,11 +416,16 @@
             data: 'file_nm',
             name: 'file_nm'
             },
-        ]
-      });
+            {
+              data: '_id',
+              name: '_id'
+              },
+        ],
 
-      function search() {
-        table.draw(); 
+    "createdRow": function( row, data, dataIndex ) {
+       $(row).addClass('cl-'+data._id)
+      }
+      });
       }
 
       $('.select2').select2();

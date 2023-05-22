@@ -1,61 +1,104 @@
 @extends('layouts.main')
 @section('title',"Download Special Order ")
 @section('content')
+<link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+	div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+
+</style>
 <main id="main" class="main">
 	<div class="pagetitle">
 		<h1>Download Special Order</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.spc')}}">Download  Spc Order</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+				<li class="breadcrumb-item active">Download  Spc Order</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
 		<section class="section">
 			<div class="row">
 				<div class="col-lg-12">
+					<form action="" method="get">
 					<div class="card">
+						<div class="card-header">
+							Search Option
+						</div>
 						<div class="card-body">
-							{{-- <form action="" method="get">
-							<div class="row mt-3">
-							
-								<div class="col-md-6">
-									<div class="row">
-										<div class="col-md-6">
-											<h5>Set Date Ranges</h5>
-											<input type="text" id="start" required onfocus="(this.type='date')" value="{{Request::get('start')}}"  placeholder="Start Date (dd/mm/yyyy)" name="start" class="form-control">
+							<div class="row">
+								<div class="col-lg-6">
+									<div class="">
+										<label>Manifest Date</label>
+										
+										<div class="" style="width: 400px;">
+											<!-- <i class="fa fa-calendar"></i> -->
+											<div class="row">
+												<div class="col-md-6">
+													from
+													<input type="text" name="start" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{Request::get('start')}}"/>
+												</div>
+												<div class="col-md-6"> to
+													<input type="text" name="end" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{Request::get('end')}}"/></div>
+												</div>
+												
+												<div class="col-12">
+													<label>Manifest Number</label>
+													<textarea class="form-control" rows="3" name="manifest" id="po_textarea"   placeholder="SO{{date('y')}}00xxx">{{Request::get('manifest')}}</textarea>
+													<a href="javascript:void(0);" onclick="$('#po_textarea').val('');">Clear</a>
+												</div>
+											</div>
 										</div>
-										<div class="col-md-6">
-											<h5>&nbsp;</h5>
-											<input type="text" id="end"  required onfocus="(this.type='date')" @if(!empty(Request::get('end'))) min="{{Request::get('start')}}" @endif value="{{Request::get('end')}}"   placeholder="End Date (dd/mm/yyyy)" name="end" class="form-control">
+										<div class="col-lg-5">
+											<div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
+												<button type="submit" name="submit-find" value="1" class="btn btn-primary btn-block" style="min-width: 100%;">
+												<i class="fa fa-search"></i> Search
+												</button>
+											</div>
 										</div>
 									</div>
-								</div>
-								
-								<div class="col-md-6 ">
-									<div class="row">
-									<div class="col-md-6">
-											<h5>No Manifest</h5>
-											<input type="text" id="manifest"   value="{{Request::get('manifest')}}"  placeholder="cth: MI2200000495" name="manifest" class="form-control">
+									<div class="col-lg-5">
+										<div>
+											<label class="col-sm-5 col-form-label">Vendor</label>
+											<div class="col-sm-10">
+												<div class="row">
+													<div class="col-10">
+														<select name="vendor_select" class="form-select select2" id="select_vendor" aria-label="Default select example">
+															<option value="" >Choose Vendor</option>
+															@foreach($list_vendor as $vendor)
+															<option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
+															@endforeach
+														</select>
+													</div>
+													<div class="col-2">
+														<button id="add_vendor" type="button" class="btn btn-primary btn-sm" onclick="addVendor()" style="margin-left:-22px;min-width: 100%;" ><i class="fas fa-plus"></i></button>
+													</div>
+												</div>
+												<textarea class="form-control" rows="3" name="vendor_list" id="vendor_list"  placeholder="1000xxx">{{Request::get('vendor_list')}}</textarea>
+												<a href="javascript:void(0);" onclick="$('#vendor_list').val('');">Clear</a>
+											</div>
 										</div>
+										<br>
 									</div>
-								</div>
-								<div class="col-md-3 col-xs-12 mt-3">
-									<button class="btn btn-outline-secondary btn-block" type="submit"> <i class="fas fa-search"></i> Search</button>
 								</div>
 							</div>
-						</form> --}}
-						{{-- @if(!empty(Request::get('start')) && !empty(Request::get('end'))) --}}
+						</div>
+					</form>
+					<div class="card">
+						<div class="card-body">
+						@if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')) || Request::get('submit-find'))
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="download-manifest">
+								<table  class="table table-bordered table-striped table-sm" id="download-manifest">
 									<thead>
 										<th style="min-width: 16px"><i class="fa fa-list"></i></th>
 										<th style="min-width: 106px">Manifest</th>
 										<th style="min-width: 106px">Delivery Date</th>
 										<th style="min-width: 106px">PO Number</th>
 										<th style="min-width: 106px">Vendor</th>
-										<th style="min-width: 106px">Vendor Name</th>
-										<th style="min-width: 106px">Email</th>
+										<th style="min-width: 215px">Vendor Name</th>
+										<th style="min-width: 215px">Email</th>
 										<th style="min-width: 16px"><i class="fa fa-envelope"></i></th>
 										<th style="min-width: 16px"><i class="fa fa-file"></i></th>
 										<th style="min-width: 16px"><i class="fa fa-download"></i></th>
@@ -68,9 +111,9 @@
 									</tbody>
 								</table>
 							</div>
-							{{-- @else
+							@else
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="download-manifest-dummy">
+								<table  class="table table-bordered table-striped table-sm" id="download-manifest-dummy">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Manifest</th>
@@ -91,10 +134,10 @@
 									</tbody>
 								</table>
 							</div>
-							@endif --}}
+							@endif
 						</div>
 						<div class="card-footer">
-							{{-- @if(!empty(Request::get('start')) && !empty(Request::get('end'))) --}}
+						@if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')) || Request::get('submit-find'))
 							<form action="{{route('delivery.schedule.spc.download')}}" method="POST">
 								@csrf
 							<div class="row">
@@ -111,7 +154,7 @@
 								</div>
 							</div>
 						</form>
-						{{-- @endif --}}
+						@endif
 						</div>
 					</div>
 				</div>
@@ -120,7 +163,30 @@
 	</main>
 	@endsection
 	@section('javascript')
+	<script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 	<script>
+
+    	$(document).ready(function(){
+			$('#select_vendor').val('{{Request::get('vendor_select')}}').trigger('change');
+	})
+  function addVendor()
+     {
+      const textarea = document.getElementById('vendor_list');
+      if(document.getElementById('select_vendor').value != "")
+      {
+      	  textarea.value += document.getElementById('select_vendor').value+'\n'
+      }
+    
+     }
+ $('#date_from').datepicker({
+            uiLibrary: 'bootstrap5',
+             format: 'yyyy-mm-dd'
+        });
+ $('#date_to').datepicker({
+            uiLibrary: 'bootstrap5',
+            format: 'yyyy-mm-dd'
+        });
+  
 		Array.prototype.remove = function() {
     var what, a = arguments, L = a.length, ax;
     while (L && this.length) {
@@ -154,12 +220,28 @@ $("#end").change(function(e){
 				$('#fl'+val).remove();
 			} else{
 				data.push(val);
-				$('#download-list').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" />');
+				$('#download-list').append('<input type="hidden" id="fl'+val+'" name="download_doc[]" value="'+dtval+'" /> <input type="hidden" id="mf'+val+'" name="id_mf[]" value="'+val+'" />');
 			}
 			console.log(data);
 
 		}
-		$('#download-manifest').DataTable({
+		$('#download-manifest').on('draw.dt',   function () {
+      // console.log($('#63460809220e0000eb00d4b8').is('checked'))
+      // if($('#63460809220e0000eb00d4b8').is(':checked'))
+      // {
+      //  alert('SS')
+      // } 
+
+      var all = $(".checked").map(function() {
+          if(data.includes(this.value))
+          {
+            $("#"+this.value).prop('checked', true);
+          }
+      }).get();
+
+      console.log(all.join());
+    }
+       ).DataTable({
 
 	"order": [[ 1, "DESC" ]],
 	processing: true,
@@ -168,7 +250,7 @@ $("#end").change(function(e){
 	"language": {
 	"processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
 	},
-	ajax: "{!! route('api.schedule.delivery.spc.datatables',['start' => Request::get('start'),'end' => Request::get('end'),'manifest' => Request::get('manifest')])!!}",
+	ajax: "{!! route('api.schedule.delivery.spc.datatables',['dt_start' => Request::get('start'),'dt_end' => Request::get('end'),'manifest' => Request::get('manifest'),'vendor_list' => Request::get('vendor_list'),'vendor_select' => Request::get('vendor_select')])!!}",
 	columns: [
 	{
 	data: 'download_check',
@@ -200,12 +282,12 @@ $("#end").change(function(e){
 	name: 'mail_stat'
 	},
 	{
-	data: 'downloaded',
-	name: 'downloaded'
-	},
-	{
 	data: 'file_stat',
 	name: 'file_stat'
+	},
+	{
+	data: 'downloaded',
+	name: 'downloaded'
 	},
 	{
 	data: 'active',
@@ -218,6 +300,8 @@ $("#end").change(function(e){
 	],
 	"oLanguage": {"sSearch": "Search No Manifest:"}
 	});
-	
+	$('.select2').select2();
+
+
 	</script>
 	@endsection

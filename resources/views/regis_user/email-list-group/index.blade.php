@@ -6,8 +6,8 @@
 		<h1>Email List Group</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">Email List Group</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+				<li class="breadcrumb-item active">Email List Group</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -26,12 +26,12 @@
 								
 							</div>
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="email-list-group">
+								<table  class="table table-bordered nowrap table-striped table-sm" id="email-list-group">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
-										<th>Email</th>
+										<th >Email</th>
 										<th>Departement </th>
-										<th>Name</th>
+										<th style="width: 200px;">Name</th>
 										<th>Last Changed by</th>
 										<th>Last Changed Date</th>
 										<th>Status</th>

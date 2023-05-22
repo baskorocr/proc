@@ -1,13 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+
 
 <head>
+  <meta name="csrf-token" content="{{ csrf_token() }}">
   <meta charset="utf-8">
   <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-  <title>EPROC :: @yield('title')</title>
-  <meta content="" name="description">
-  <meta content="" name="keywords">
+  <title>eProc Dharma Polimetal | @yield('title')</title>
+  <meta content="e-Procurement Dharma Polimetal" name="description">
+  <meta content="eproc,Dharma Polimetal,eprocurement" name="keywords">
 
   <!-- Favicons -->
    <link rel="icon" type="image/x-icon" href="{{ asset('img/favicon3.png') }}" />
@@ -18,7 +20,12 @@
   <link href="{{ URL::asset('assets/template/css/fontgoogle.css') }}" rel="stylesheet">
   
   <!-- Vendor CSS Files -->
-  
+  <style type="text/css">
+  div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+</style>
   <link href="{{ URL::asset('assets/template/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
   <link href="{{ URL::asset('assets/template/vendor/boxicons/css/boxicons.min.css') }}" rel="stylesheet">
@@ -33,6 +40,25 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css" integrity="sha512-q3eWabyZPc1XTCmF+8/LuE1ozpg5xxn7iO89yfSOd5/oKvyqLngoNGsx8jq92Y8eXJ/IRxQbEC+FGSYxtk2oiw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
   <link href="{{ URL::asset('assets/template/css/style.css') }}" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<style>
+  .breadcrumb > li:first-of-type {
+   content: none;
+  }
+ /* .breadcrumb > li:before {
+   content: none;
+}*/
+</style>
+<style>
+  table.dataTable > tbody > tr.selected > * {
+  box-shadow: inset 0 0 0 9999px #848484    !important;
+  color: white;
+}
+table.dataTable.table-striped > tbody > tr.odd.selected {
+  box-shadow: inset 0 0 0 9999px #848484   !important;
+  color: white;
+}
+
+</style>
 </head>
 
 <body>
@@ -73,16 +99,17 @@
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>{{Session::get('nm_user')}}</h6>
-              <span>{{Session::get('role')}}</span>
+              <span>{{Session::get('role')}}</span><br>
+              <span>{{Request::ip()}}</span>
             </li>
             <li>
               <hr class="dropdown-divider">
             </li>
 
             <li>
-              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
-                <i class="bi bi-person"></i>
-                <span>My Profile</span>
+              <a class="dropdown-item d-flex align-items-center" href="{{route('change.pwd.link')}}">
+                <i class="bi bi-key"></i>
+                <span>Change Password</span>
               </a>
             </li>
             <li>
@@ -133,6 +160,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert2/11.7.1/sweetalert2.min.js" integrity="sha512-vCI1Ba/Ob39YYPiWruLs4uHSA3QzxgHBcJNfFMRMJr832nT/2FBrwmMGQMwlD6Z/rAIIwZFX8vJJWDj7odXMaw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <!-- Additional -->
   <script src="{{ URL::asset('assets/template/js/jquery-3.5.1.js') }}"></script>
+  <script src="https://cdn.datatables.net/buttons/2.3.6/js/buttons.colVis.min.js"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/jquery.dataTables.min.js') }}"></script>
   <script src="{{ URL::asset('assets/template/vendor/simple-datatables/dataTables.bootstrap5.min.js') }}"></script>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>

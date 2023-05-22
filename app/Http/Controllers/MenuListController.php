@@ -46,7 +46,7 @@ class MenuListController extends Controller
                    
                     $status = "<small><span class=\"badge bg-success\">Active</span></small>";
                 } elseif($data->mn_status=='N') {
-                    $status = "<small><span class=\"badge bg-primary\"> Non-Active</span></small>";
+                    $status = "<small><span class=\"badge bg-warning\"> Non-Active</span></small>";
                 } else{
                     $status = "<small><span class=\"badge bg-secondary\"> N/A</span></small>";
                 }
@@ -128,13 +128,11 @@ class MenuListController extends Controller
         $menu_list->menu_name = $request->menu_name;
         $menu_list->menu_object = $request->menu_object;
         $menu_list->object_path = $request->object_path;
+        $menu_list->mn_status = $request->mn_status;
         $menu_list->created_by = auth()->user()->full_name;
         $menu_list->save();
 
-        return response()->json([
-            'message' => 'data created has been successfully',
-            'type' => 'success'
-        ], 201);
+         return redirect()->route('regis-user.menu-list')->with(['message_success' => 'Berhasil menambah data.']);
     }
 
     public function show($id){
@@ -152,6 +150,7 @@ class MenuListController extends Controller
         $menu_list->menu_name = $request->menu_name;
         $menu_list->menu_object = $request->menu_object;
         $menu_list->object_path = $request->object_path;
+         $menu_list->mn_status = $request->mn_status;
         $menu_list->save();
 
         return redirect()->route('regis-user.menu-list')->with(['message_success' => 'Berhasil mengubah data.']);

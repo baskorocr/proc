@@ -4,34 +4,122 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\ManifestHeader;
+use App\Models\Vendor;
 use App\Models\ManifestDetail;
 
 class MonitoringDeliveryController extends Controller
 {
     public function index()
     {
-        return view('monitoring_delivery/index');
+        $vendor = Vendor::all();
+        return view('monitoring_delivery/index')->with(['list_vendor' => $vendor]);
     }
     
-    public function detail_material($manifest)
+    public function detail_material($manifest = null)
     {
         return view('monitoring_delivery/detail_material')->with(['manifest' => $manifest]);
     }
 
-    public function detail_kanban($manifest)
+    public function detail_kanban($manifest = null)
     {
         return view('monitoring_delivery/detail_kanban')->with(['manifest' => $manifest]);
     }
 
     public function getDelivery(Request $request)
     {
+       $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+
+        $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
        if(auth()->user()->role == 'vendor')
        {
-             $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->orderBy('delivery_date','DESC')->get();
+            if(!empty($request->dt_start) && !empty($request->dt_end))
+            {
+                $sYear = date("Y",strtotime($request->dt_start));
+                $sMonth = date("m",strtotime($request->dt_start));
+                $sDay = date("d",strtotime($request->dt_start));
+
+                $eYear = date("Y",strtotime($request->dt_end));
+                $eMonth = date("m",strtotime($request->dt_end));
+                $eDay = date("d",strtotime($request->dt_end));
+                 $mf = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
+                             'delivery_date', array(
+                                 \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
+                                  \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
+                             ));
+                if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                 if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+                $data = $mf->where('mf_type','MI')->get();
+            }else{
+             // $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
+
+             $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id);
+
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->get();
+
+            }
        } else {
-            $data = ManifestHeader::orderBy('delivery_date','DESC')->get();
+              // dd($request->dt_end);
+           if(!empty($request->dt_start) && !empty($request->dt_end))
+            { 
+
+                $sYear = date("Y",strtotime($request->dt_start));
+                $sMonth = date("m",strtotime($request->dt_start));
+                $sDay = date("d",strtotime($request->dt_start));
+
+                $eYear = date("Y",strtotime($request->dt_end));
+                $eMonth = date("m",strtotime($request->dt_end));
+                $eDay = date("d",strtotime($request->dt_end));
+
+                 $mf = ManifestHeader::whereBetween(
+                         'delivery_date', array(
+                             \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
+                              \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
+                         ));
+               if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+                $data = $mf->get();
+            }else{
+
+                $mf =  ManifestHeader::where('mf_type','like','%');
+
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->get();
+
+            }
        }
-      
        return \DataTables::of($data)
           
             ->editColumn('manifest', function ($data) {

@@ -6,8 +6,8 @@
 		<h1>User Log Record</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-				<li class="breadcrumb-item active"><a href="{{route('delivery.schedule.mf')}}">User Log Record</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+				<li class="breadcrumb-item active">User Log Record</li>
 			</ol>
 		</nav>
 		</div><!-- End Page Title -->
@@ -17,17 +17,10 @@
 					<div class="card">
 						<div class="card-body">
 
-						<div class="filter mt-2 " align="right">
-								<a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
-								<i class="bi bi-list"></i></a>
-								<ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style="">
-									{{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
-									<li><a class="dropdown-item" data-bs-toggle="modal" data-bs-target="#create-user-logrecord" href="#"><i class="fas fa-plus-square"></i>Create Number Range</a></li>
-								</ul>
-							</div>
+						
 
 							<div class="table-responsive mt-3">
-								<table  class="table table-bordered table-stripped table-sm" id="user-logrecord">
+								<table  class="table table-bordered table-striped table-sm" id="user-logrecord">
 									<thead>
 										<th><i class="fa fa-list"></i></th>
 										<th>Username</th>
@@ -56,7 +49,15 @@
     <script>
     	$.fn.dataTable.ext.errMode = 'none';
       $('#user-logrecord').DataTable({
-        "order": [[ 1, "DESC" ]],
+        // order: [[ 4, "desc" ]],
+        'columnDefs': [
+					    { 'orderData':[9], 'targets': [1] },
+					    {
+					        'targets': [9],
+					        'visible': false,
+					        'searchable': false
+					    },
+					],
         processing: true,
         serverSide: true,
         autoWidth:false,
@@ -91,15 +92,20 @@
           }, 
 		  {
 			data: 'action', name: 'action'
-          },   
+          }, 
+          {
+			data: 'datetime_sort', name: 'datetime_sort'
+          },
+
+
         ]
       });
 
-	  function deleteProject(url,id)
+	  function blockuser(url,name)
 		{
 			Swal.fire({
 				  title: '',
-				  html: 'All reference data will be deleted. Are you sure want to delete this data <b>['+id+']</b>?',
+				  html: 'Are you sure to block user ['+name+']?',
 				  // showDenyButton: true,
 				  showCancelButton: true,
 				  confirmButtonText: 'Confirm',

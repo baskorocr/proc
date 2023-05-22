@@ -3,7 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
+    <meta content="e-Procurement Dharma Polimetal Login" name="description">
+    <meta content="eproc,Dharma Polimetal,eprocurement" name="keywords">
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -142,6 +143,17 @@
 	<script src="{{ asset('js/jquery-ui-1.10.3.min.js') }}" type="text/javascript"></script>
 	
 	 <script>
+          $(document).ready(function(){
+            
+            @if(Session::has('title_msg'))
+            swal({
+                    title: "{{Session::get('title_msg')}}",
+                    text: "{!!Session::get('message')!!}",
+                    allowOutsideClick: false,
+                    
+                })
+            @endif
+        })
             function myLoader(){
 
                 swal({

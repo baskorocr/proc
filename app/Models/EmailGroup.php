@@ -13,9 +13,9 @@ class EmailGroup extends Model
     // END Connect
     protected $table = "dept_master";
 
-    protected $fillable = ['dept_code','abrev','dept_desc','cr_by','cr_date','ch_by','ch_date'];
+    protected $fillable = ['dept_code','abrev','dept_desc','last_changed_by','last_changed','status_active','ch_by','ch_date'];
 
-    public $dates = ['cr_date','ch_date'];
+    public $dates = ['last_changed','ch_date'];
 
 
     public function users()

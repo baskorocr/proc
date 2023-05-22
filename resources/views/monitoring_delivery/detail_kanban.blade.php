@@ -6,8 +6,8 @@
         <h1>Detail Kanban <br> <small class="text-muted">{{$manifest}}</small></h1>
         <nav>
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li>
-                <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Monitoring Delivery</a></li>
+                {{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Dashboard</a></li> --}}
+                {{-- <li class="breadcrumb-item"><a href="{{route('monitoring.delivery')}}">Monitoring Delivery</a></li> --}}
                 <li class="breadcrumb-item active">Detail Kanban</li>
             </ol>
         </nav>
@@ -18,7 +18,7 @@
                     <div class="card">
                         <div class="card-body">
                             <div class="table-responsive mt-3">
-                                <table  class="table table-bordered table-stripped table-sm" id="detail-kanban">
+                                <table  class="table table-bordered table-striped table-sm" id="detail-kanban">
                                     <thead>
                                         <th>Kanban</th>
                                         <th>Arrival Date & Time</th>

@@ -6,7 +6,7 @@
 		<h1>Upload Approved PO</h1>
 		<nav>
 			<ol class="breadcrumb">
-				<li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li>
+				{{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li> --}}
 				<li class="breadcrumb-item active">Upload Approved PO</li>
 			</ol>
 		</nav>
@@ -21,7 +21,7 @@
                     <div class="row mb-3">
                         <label for="inputNumber" class="col-sm-24 col-form-label">File Upload</label>
                         <div class="col-sm-20">
-                            <input class="form-control" style="width:250px" type="file" name="file" id="formFile">
+                            <input class="form-control" style="width:250px" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" required type="file" name="file" id="formFile">
                             <p class="help-block">po-approved-list.xls</p>
                         </div>
                     </div>
