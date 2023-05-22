@@ -98,7 +98,7 @@ class ManifestController extends Controller
             $manifest_detail->kanban = $detail['kanban'];
             $manifest_detail->seq_kanban = $detail['seq_kanban'];
             $manifest_detail->item = $detail['item'];
-            $manifest_detail->manifest = $detail['manifest'];
+            $manifest_detail->manifest = $request->manifest;
             $manifest_detail->material = $detail['material'];
             $manifest_detail->material_desc = $detail['material_desc'];
             $manifest_detail->qty_pack = $detail['qty_pack'];
