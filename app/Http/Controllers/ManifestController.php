@@ -82,91 +82,45 @@ class ManifestController extends Controller
     {
         $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
 
-        // $manifest = new ManifestHeader;
-        // $manifest->manifest = $request->manifest;
-        // $manifest->id_vendor = $request->id_vendor;
-        // $manifest->delivery_time = $request->delivery_time;
-        // $manifest->delivery_date = $request->delivery_date;
-        // $manifest->po_num = $request->po_num;
-        // $manifest->file_nm = $request->file_nm;
-        // $manifest->mf_type = $request->mf_type;
-        // $manifest->release_date = $request->release_date;
-        // $manifest->save();
+        $manifest = new ManifestHeader;
+        $manifest->manifest = $request->manifest;
+        $manifest->id_vendor = $request->id_vendor;
+        $manifest->delivery_time = $request->delivery_time;
+        $manifest->delivery_date = $request->delivery_date;
+        $manifest->po_num = $request->po_num;
+        $manifest->file_nm = $request->file_nm;
+        $manifest->mf_type = $request->mf_type;
+        $manifest->release_date = $request->release_date;
+        $manifest->save();
 
-        // foreach ($request->details as $detail){
-        //     $manifest_detail = new ManifestDetail;
-        //     $manifest_detail->kanban = $detail['kanban'];
-        //     $manifest_detail->seq_kanban = $detail['seq_kanban'];
-        //     $manifest_detail->item = $detail['item'];
-        //     $manifest_detail->manifest = $detail['manifest'];
-        //     $manifest_detail->material = $detail['material'];
-        //     $manifest_detail->material_desc = $detail['material_desc'];
-        //     $manifest_detail->qty_pack = $detail['qty_pack'];
-        //     $manifest_detail->qty_in = $detail['qty_in'];
-        //     $manifest_detail->arrival_date = Carbon::parse($detail['arrival_date']);
-        //     $manifest_detail->arrival_time = Carbon::parse($detail['arrival_time']);
-        //     $manifest_detail->scan_date = Carbon::parse($detail['scan_date']);
-        //     $manifest_detail->scan_time = Carbon::parse($detail['scan_time']);
-        //     $manifest_detail->scan_by = $detail['scan_by'];
-        //     $manifest_detail->issued_date = Carbon::parse($detail['issued_date']);
-        //     $manifest_detail->issued_time = Carbon::parse($detail['issued_time']);
-        //     $manifest_detail->issued_by = $detail['issued_by'];
-        //     $manifest_detail->active = $detail['active'];
-        //     $manifest_detail->save();
-        // }
-
-        // Mail::to($vendor->vend_email)->send(new ManifestMail($manifest, $vendor));
-
-        $ZGOODSMVT_ITEM = [];
         foreach ($request->details as $detail){
-
-            $ZGOODSMVT_ITEM[] = [
-                'MNNUM' => $detail['manifest'],
-                'ITEM' => $detail['item'],
-                'KBNNO' => $detail['kanban'],
-                'SEQUN' => $detail['seq_kanban'],
-                "GRDATE" => '-',
-                "GRTIME" => '-',
-                "ENTRY_QNT" => $detail['qty_pack']
-            ];
-
-            //$get_header = $this->getTokenSap();
-            $username = 'wcs-abap';
-            $password = 'Wilmar12';
-
-            $payload = json_encode($ZGOODSMVT_ITEM);
-            $url = 'http://erpdev-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=110&format=json';
-            
-            $curl = curl_init();
-            curl_setopt($curl, CURLOPT_URL, $url);
-            //curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=110; Path=/; Domain=erpprd-app1.dharmap.com;');
-            //curl_setopt($curl, CURLOPT_COOKIE, $get_header['cookie']);
-            curl_setopt($curl, CURLOPT_POST, 1);
-            curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
-            curl_setopt($curl, CURLOPT_HTTPHEADER, array(
-                //'X-CSRF-TOKEN: '.$get_header['csrf'],
-                'Content-Type: application/json'
-            ));
-
-            curl_setopt($curl, CURLOPT_USERPWD, $username . ":" . $password);
-            curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-            $response = curl_exec($curl);
-            curl_close ($curl);
+            $manifest_detail = new ManifestDetail;
+            $manifest_detail->kanban = $detail['kanban'];
+            $manifest_detail->seq_kanban = $detail['seq_kanban'];
+            $manifest_detail->item = $detail['item'];
+            $manifest_detail->manifest = $request->manifest;
+            $manifest_detail->material = $detail['material'];
+            $manifest_detail->material_desc = $detail['material_desc'];
+            $manifest_detail->qty_pack = $detail['qty_pack'];
+            $manifest_detail->qty_in = $detail['qty_in'];
+            $manifest_detail->arrival_date = Carbon::parse($detail['arrival_date']);
+            $manifest_detail->arrival_time = Carbon::parse($detail['arrival_time']);
+            $manifest_detail->scan_date = Carbon::parse($detail['scan_date']);
+            $manifest_detail->scan_time = Carbon::parse($detail['scan_time']);
+            $manifest_detail->scan_by = $detail['scan_by'];
+            $manifest_detail->issued_date = Carbon::parse($detail['issued_date']);
+            $manifest_detail->issued_time = Carbon::parse($detail['issued_time']);
+            $manifest_detail->issued_by = $detail['issued_by'];
+            $manifest_detail->active = $detail['active'];
+            $manifest_detail->save();
         }
-    
-        $data = [
-            // 'Idcode' => $dropbox->send_sap_code,
-            // 'ZBAPI_INCINV_CREATE_HEADERSet' => collect($ZBAPI_INCINV_CREATE_HEADERSet)->unique('AllocNmbr')->values(),
-            // 'ZBAPI_INCINV_CREATE_TAXSet' => collect($ZBAPI_INCINV_CREATE_TAXSet)->unique('Invno')->values(),
-            // 'ZBAPI_INCINV_CREATE_WITHTAXSet' => collect($ZBAPI_INCINV_CREATE_WITHTAXSet)->unique('Invno')->values(),
-            'ZGOODSMVT_ITEM' => $ZGOODSMVT_ITEM
-        ];
+
+        Mail::to($vendor->vend_email)->send(new ManifestMail($manifest, $vendor));
+
         
         return response()->json([
-            // 'message' => 'Data saved successfully',
-            // 'data' => $manifest,
-            'data' => $data,
-            'response' => $response
+            'message' => 'Data saved successfully',
+            'data' => $manifest,
         ], 200);
     }
 
