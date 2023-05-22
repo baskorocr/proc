@@ -12,17 +12,17 @@ class PoMail extends Mailable
     use Queueable, SerializesModels;
 
     public $po;
-    public $vendor;
+    public $user;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($po, $vendor)
+    public function __construct($po, $user)
     {
         $this->po = $po;
-        $this->vendor = $vendor;
+        $this->user = $user;
     }
 
     /**
@@ -32,6 +32,6 @@ class PoMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mails.pomail', ['po' => $this->po, 'vendor' => $this->vendor]);
+        return $this->markdown('mails.pomail', ['po' => $this->po, 'user' => $this->user]);
     }
 }

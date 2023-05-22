@@ -1,7 +1,7 @@
 @component('mail::message')
 Subject : Purchase Order from PT Dharma Polimetal {{$po['created_at']}} NO REPLY
 
-# Dear {{$vendor['nm_vendor']}}
+# Dear {{$user['nm_user']}}
 
 You have new puchase order.
 
@@ -16,7 +16,7 @@ Purchase Order from PT. DHARMA POLIMETAL
 @component('mail::table')
 | No       | PO Number         | Rev  | Plant | Doc Date | File | Vendor Name | PGr | Total Amount with Tax | Curr
 | ------------- |:-------------:|:-----------:|:-----------:|:----------:|:-------------:|:-----------:|:---------:|:---------:|--------:|
-| 1      | {{$po['po_num']}}      | {{$po['revno']}}   | {{$po['plant']}}    | {{$po['doc_date']}}     | {{$po['file_name']}}   | {{$vendor['nm_vendor']}}   | {{$po['pgr']}}    | {{$po['tot_val']}}  | {{$po['curr']}}  |
+| 1      | {{$po['po_num']}}      | {{$po['revno']}}   | {{$po['plant']}}    | {{$po['doc_date']}}     | {{$po['file_name']}}   | {{$user['username']}}   | {{$po['pgr']}}    | {{$po['tot_val']}}  | {{$po['curr']}}  |
 @endcomponent
 
 Use your user access to login. If you can't, please contact our adminstrator to activate your account.
