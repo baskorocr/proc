@@ -175,9 +175,9 @@
                   <thead>
                     <tr>
                     {{-- <th style="min-width: 100px;">Action</th> --}}
-                        <th style="min-width: 70px; max-width: 70px;">Vendor Code</th>
+                        <th style="min-width: 70px; max-width: 45px;">Vendor Code</th>
                         <th style="min-width: 200px;">Vendor Name</th>
-                        <th style="min-width: 100px;">Material Supply</th>
+                        <th style="min-width: 45px;">Material Supply</th>
                         <th style="min-width: 30px;">Simplikasi</th>
                         <th style="max-width: 80px;">ISO Cert Num</th>
                         <th style="max-width: 80px;" >Expire Date</th>

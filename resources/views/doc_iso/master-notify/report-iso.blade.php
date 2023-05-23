@@ -120,13 +120,13 @@ div.dataTables_wrapper div.dt-row{
                            
                             <th style="max-width: 10px;"></th>
                             <th style="max-width: 30px;">Action</th>
-                            <th style="max-width: 70px;">Vendor Code</th>
+                            <th style="max-width: 45px;">Vendor Code</th>
                             <th style="max-width: 160px;">Vendor Name</th>
-                            <th style="max-width: 80px;">Material Supply</th>
+                            <th style="max-width: 45px;">Material Supply</th>
                             <th style="max-width: 30px;">Simplikasi</th>
                             <th style="max-width: 80px;">ISO Cert Num</th>
-                            <th style="max-width: 80px;" >Expire Date</th>
-                            <th style="max-width: 80px;" >Expired Status</th>
+                            <th style="max-width: 45px;" >Expire Date</th>
+                            <th style="max-width: 45px;" >Expired Status</th>
                             <th style="max-width: 80px" >Doc Process</th>
                             <th style="min-width: 10000px;" >ISO Cert Date</th>
                             <th style="min-width: 80px;" >Certified</th>

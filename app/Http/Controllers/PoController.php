@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Po;
-use App\Models\Vendor;
+use App\Models\User;
 use Mail;
 use App\Mail\PoMail;
 
@@ -12,46 +12,57 @@ class PoController extends Controller
 {
     public function sendPo(Request $request)
     {
-        $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
-        
-        $po = new Po;
-        $po->po_num = $request->po_num;
-        $po->comp_code = $request->comp_code;
-        $po->doc_type = $request->doc_type;
-        $po->doc_catg = $request->doc_catg;
-        $po->plant = $request->plant;
-        $po->id_vendor = $request->id_vendor;
-        $po->doc_date = $request->doc_date;
-        $po->relind = $request->relind;
-        $po->pgr = $request->pgr;
-        $po->porg = $request->porg;
-        $po->creator = $request->creator;
-        $po->file_nm = $request->file_nm;
-        $po->sent = $request->sent;
-        $po->downloaded = $request->downloaded;
-        $po->accepted = $request->accepted;
-        $po->id_user = $request->id_user;
-        $po->last_change = $request->last_change;
-        $po->revno = $request->revno;
-        $po->revdt = $request->revdt;
-        $po->revtm = $request->revtm;
-        $po->rel_state = $request->rel_state;
-        $po->po_val = $request->po_val;
-        $po->tot_val = $request->tot_val;
-        $po->curr = $request->curr;
-        $po->pay_term = $request->pay_term;
-        $po->aprvdt = $request->aprvdt;
-        $po->aprvtm = $request->aprvtm;
-        $po->approver = $request->approver;
-        $po->batch = $request->batch;
-        $po->stat = $request->stat;
-        $po->save();
+        //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
+        $user = User::where('id_user', $request->id_user)->first();
 
-        Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
-        
-        return response()->json([
-            'message' => 'Data PO saved successfully',
-            'data' => $po
-        ], 200);
+        if($user){
+            if($user->status_user === 'A'){
+                $po = new Po;
+                $po->po_num = $request->po_num;
+                $po->comp_code = $request->comp_code;
+                $po->doc_type = $request->doc_type;
+                $po->doc_catg = $request->doc_catg;
+                $po->plant = $request->plant;
+                $po->id_vendor = $request->id_vendor;
+                $po->doc_date = $request->doc_date;
+                $po->relind = $request->relind;
+                $po->pgr = $request->pgr;
+                $po->porg = $request->porg;
+                $po->creator = $request->creator;
+                $po->file_nm = $request->file_nm;
+                $po->sent = $request->sent;
+                $po->downloaded = $request->downloaded;
+                $po->accepted = $request->accepted;
+                $po->id_user = $request->id_user;
+                $po->last_change = $request->last_change;
+                $po->revno = $request->revno;
+                $po->revdt = $request->revdt;
+                $po->revtm = $request->revtm;
+                $po->rel_state = $request->rel_state;
+                $po->po_val = $request->po_val;
+                $po->tot_val = $request->tot_val;
+                $po->curr = $request->curr;
+                $po->pay_term = $request->pay_term;
+                $po->aprvdt = $request->aprvdt;
+                $po->aprvtm = $request->aprvtm;
+                $po->approver = $request->approver;
+                $po->batch = $request->batch;
+                $po->stat = $request->stat;
+                $po->save();
+
+                //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
+                Mail::to($user->username)->send(new PoMail($po, $user));
+                
+                return response()->json([
+                    'message' => 'Data PO saved successfully',
+                    'data' => $po
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Mail user not active!',
+                    //'data' => $po
+                ], 401);
+            }
+        }    
     }
 }
