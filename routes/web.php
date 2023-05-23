@@ -301,10 +301,13 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::prefix('purchasing-process')->group(function(){
+        Route::get('/testMail', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.uploadpo');
         Route::get('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'upload'])->name('purchasing.process.uploadpo');
         Route::get('/list-po', [App\Http\Controllers\PurchasingProcessController::class, 'index'])->name('purchasing.process.listpo');
+        Route::get('/send-mail-po', [App\Http\Controllers\PurchasingProcessController::class, 'send_mail'])->name('purchasing.process.send.mail');
         //Datatables
         Route::post('/datatables/get-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPo'])->name('datatables.purchasing.process.listpo');
+        Route::post('/datatables/send-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPoSend'])->name('datatables.purchasing.process.listposend');
 
         Route::get('/download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'download'])->name('purchasing.process.download.listpo');
         //Datatables

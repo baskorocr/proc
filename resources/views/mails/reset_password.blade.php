@@ -29,8 +29,8 @@
             >
             Click here to Login
         </a>
-        <br><br>Use your user access to login. If you can\'t, please contact our adminstrator to activate your account.
-        <br><br><b>This message is sent by system, please don\'t reply.</b>
+        <br><br>Use your user access to login. If you can't, please contact our adminstrator to activate your account.
+        <br><br><b>This message is sent by system, please don't reply.</b>
         <br>
         <br>Thanks,
         <br>

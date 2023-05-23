@@ -14,6 +14,12 @@ class IsoHelper {
 		return $tr;
 	}
 
+	function get_iso($trn_id){
+
+		$tr = RegisIsoDoc::where('trn_id',$trn_id)->first();
+		return $tr;
+	}
+
 	function get_transaction_type_id_first($trn_id){
 
 		$tr = Transaction::where('trn_id',$trn_id)->first();

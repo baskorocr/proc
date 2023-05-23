@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title',"List PO")
+@section('title',"PO Approved List Master")
 @section('content')
 <style type="text/css">
   div.table-responsive > div.dataTables_wrapper > div.row
@@ -10,20 +10,32 @@
     <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <main id="main" class="main">
   <div class="pagetitle">
-    <h1>List PO</h1>
+    <h1>PO Approved List Master</h1>
     <nav>
       <ol class="breadcrumb">
         {{-- <li class="breadcrumb-item"><a href="{{route('home')}}">Purchasing Process</a></li> --}}
-        <li class="breadcrumb-item active">List PO</li>
+        <li class="breadcrumb-item active">PO Approved List Master</li>
       </ol>
     </nav>
     </div><!-- End Page Title -->
     <section class="section">
       <div class="card">
+
         <div class="card-header">
-          Search Option
+          Search Option 
+          {{-- <div class="filter  " style="margin-top:-30px;" align="right">
+                <a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
+                <i class="bi bi-list"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style=""> --}}
+                  {{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
+                {{--   <li><a class="dropdown-item" href="{{route('purchasing.process.send.mail')}}"><i class="fas fa-envelope"></i>Send Mail</a></li>
+                </ul>
+                
+              </div> --}}
+
         </div>
         <div class="card-body">
+
           <div class="row">
             <div class="col-lg-6">
               <div class="">

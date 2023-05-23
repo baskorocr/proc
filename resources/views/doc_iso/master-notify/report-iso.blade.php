@@ -222,25 +222,22 @@ div.dataTables_wrapper div.dt-row{
                             </a></td>
                         
                                       
-                         <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
-                        <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
+                         <td>{{date('d/m/Y H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
+                        <td>{{date('d/m/Y H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
                         <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
-                         <?php
-                            if ( $item->ref_doc == '') {
-                                echo "<td></td>";
-                            }  else {
-                            ?>
+                     
                                 <td>
-                                    <a href="{{route('doc-iso.view',['id' => $item->_id])}}" 
+                                    <a href="{{route('doc-iso.view',['id' => IsoHelper::get_iso($item->last_ref_doc)->_id])}}" 
                                         target="_blank">
+                                 @if(!empty($item->last_ref_doc) AND !empty($item->last_doc_year))
+                                        <?php echo $item->last_ref_doc."-".$item->last_doc_year ?>
+                                        @else
                                         <?php echo $item->ref_doc."-".$item->ref_doc_year ?>
+                                        @endif
                                     </a> 
                                 </td>
-                        <?php    
-                            }
-
-                        ?> 
+                      
                         <td>{{strtotime($item->cert_date)}}</td>  
                       </tr>
                     @endforeach

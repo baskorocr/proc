@@ -249,7 +249,7 @@ class RegisIsoDocController extends Controller
         $regis_iso_doc->stat = $stat;
         // $regis_iso_doc->remark = $request->remark;
         $regis_iso_doc->trn_type = "S";
-        $regis_iso_doc->ref_doc = $numRange;
+        $regis_iso_doc->ref_doc = str_pad($numRange, 8, 0, STR_PAD_LEFT);
         $regis_iso_doc->ref_doc_year = intval($doc_year);
         //$regis_iso_doc->created_by = auth()->user()->full_name;
         $regis_iso_doc->changed_by = auth()->user()->id_user;
@@ -266,7 +266,7 @@ class RegisIsoDocController extends Controller
       
         $create = new RegisIsoDoc();
         $create->doc_year = intval($doc_year);
-        $create->trn_id = $numRange;
+        $create->trn_id = str_pad($numRange, 8, 0, STR_PAD_LEFT);
         // $create->vendor_code = $regisdata->vendor_code;
         $create->id_vendor = $regisdata->id_vendor;
         $create->mat_supply = $request->mat_supply;
@@ -287,6 +287,8 @@ class RegisIsoDocController extends Controller
         $create->remark = $request->remark;
         $create->trn_type = "S";
         $create->ref_doc = '';
+        $create->last_ref_doc = $regisdata->trn_id;
+        $create->last_doc_year = $regisdata->doc_year;
         $create->ref_doc_year = '';
         //$create->created_by = auth()->user()->full_name;
         $create->changed_by = auth()->user()->id_user;
@@ -329,7 +331,7 @@ class RegisIsoDocController extends Controller
 
 
         $regis_iso_doc->doc_year =  intval(date('Y'));
-        $regis_iso_doc->trn_id = $numRange;
+        $regis_iso_doc->trn_id = str_pad($numRange, 8, 0, STR_PAD_LEFT);
         $regis_iso_doc->id_vendor = $request->id_vendor;
         $regis_iso_doc->mat_supply = $request->mat_supply;
         $regis_iso_doc->simply = $request->simply ? "X" : "";

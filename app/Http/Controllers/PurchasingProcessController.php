@@ -24,6 +24,28 @@ class PurchasingProcessController extends Controller
         return view('purchasing_process/index', ['list_vendor' => $vendor]);
     }
 
+
+    public function sendmail(Request $request)
+    {
+        $vendor = Vendor::where('id_vendor',$request->id_vendor)->first();
+        $po = PurchasingProcess::where('id_vendor',$request->id_vendor)->where(function ($query) {
+                                        $query->where('sent','=','0000-00-00 00:00:00')
+                                            ->orWhereNull('sent');
+                                    })->get();
+        try{
+            \Mail::to('irfa@indihealth.com')->send(new \App\Mail\SendPOMail($vendor,$po));
+
+        } catch(\Exception $e) {
+
+        }
+    }
+
+    public function send_mail()
+    {
+        $vendor = Vendor::all();
+        return view('purchasing_process/send_mail', ['list_vendor' => $vendor]);
+    }
+
     public function getListPo(Request $request)
     {
         if($request->search == true)
@@ -55,6 +77,165 @@ class PurchasingProcessController extends Controller
             $data = $q->where('id_vendor','!=','')->get();
 
         }
+       
+        return \DataTables::of($data)
+        ->editColumn('number', function($data){
+            return 1;
+        })
+        ->editColumn('rel_stat', function($data){
+             if($data->relind == '1'){
+            $rel_stat = "<small><i class='fa fa-check-circle' style='color: green;' 
+                                data-toggle=tooltip' data-placement='left' title='Released'>
+                                </i>
+                        </small>";
+        } else {
+            $rel_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                data-toggle=tooltip' data-placement='left' title='Not Released'>
+                                </i>
+                        </small>";
+        }
+
+       
+
+      
+            return $rel_stat;
+        })
+        ->editColumn('mail_stat', function($data){
+          
+             if($data->sent != '0000-00-00 00:00:00' AND isset($data->sent) ){
+            $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
+                                data-toggle=tooltip' data-placement='left' title='Sent'>
+                                </i>
+                        </small>";
+        } else {
+            $mail_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                data-toggle=tooltip' data-placement='left' title='Not Sent'>
+                                </i>
+                        </small>";
+        }
+        return $mail_stat;
+        })
+        ->editColumn('file_exist', function($data){
+           $filenm = $data->file_nm;
+            if ($filenm != "-" && $filenm != "" ) {
+            //activate
+            $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle='tooltip' data-placement='left' title='Exist'>
+                                  </i>
+                          </small>";
+            } else {
+                $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                        data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                    </i>
+                               </small>";
+                
+            }
+             return $file_exist;
+
+        })
+        ->editColumn('download_stat', function($data){
+             if($data->downloaded != '0000-00-00 00:00:00'  AND isset($data->downloaded)){
+            $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle=tooltip' data-placement='left' title='Downloaded'>
+                                </i>
+                          </small>";
+        } else {
+            $dwld_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                    data-toggle=tooltip' data-placement='left' title='Not Downloaded'>
+                                 </i>
+                        </small>";
+           
+        }
+         return $dwld_stat;
+        })
+        ->editColumn('upload_date', function($data){
+            return @$data->last_change;
+        })
+        ->editColumn('po_amount', function($data){
+           
+            $po_value = number_format($data->po_val, 2, '.', ',');
+            $po_val   = "<p class='text-right' >".$po_value."</p>";
+
+             return @$po_val;
+        })
+        ->editColumn('total_amount', function($data){
+            
+
+            $total_value = number_format($data->tot_va, 2, '.', ',');
+            $tot_val   = "<p class='text-right' >".$total_value."</p>";
+
+            return @$tot_val ;
+        })
+        ->editColumn('upload_group', function($data){
+            return @$data->batch;
+        })
+        ->editColumn('nm_vendor', function($data){
+            return @$data->vendors->nm_vendor;
+        })->editColumn('vend_email', function($data){
+            if(!empty($data->vendors)){
+                $v = @$data->vendors->vend_email;
+            } else{
+                $v="";
+            }
+            $get = MasterUser::where('foreign_id', $data->id_vendor)->first();
+            if(@$get->status_user == "A")
+            {
+                $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
+            }
+            return $v.($v!=""?$s:"");
+        })
+        ->editColumn('doc_date', function ($data) {                    
+            return date('d.m.Y',strtotime($data->doc_date));
+        })
+        // ->whereBetween('doc_date', [Carbon::parse($data->doc_date.' 00:00:00'), Carbon::parse($data->doc_date.' 23:59:59')])
+        // ->where('id_vendor', $data->id_vendor)
+        ->rawColumns(['action','vend_email','rel_stat','mail_stat','file_exist','download_stat','po_amount','total_amount'])->make(true);
+                // ->editColumn('last_change_by', function ($data) {
+                                
+                //                return @$data->users->nm_user;
+                //             })  
+                // ->editColumn('modify_date', function ($data) {
+                                
+                //                return date('d.m.y',strtotime($data->modify_date));
+                //             }) 
+                // ->editColumn('prod_assc', function ($data) {
+                //             if ($data->assigned == 'Y'){
+                //                 $assigned = "<small class='badge bg-success'> Assigned</small>";
+                //             } elseif ($data->assigned == 'N') {
+                //                 $assigned = "<small class='badge bg-warning'> Not-Assigned</small>";
+                //             }
+
+                //             if ($data->status == "A"){
+                //                 $status = "<small class='badge bg-success'> Active</small>";
+                //             } elseif ($data->status == "N") {
+                //                 $status = "<small class='badge bg-danger'> Non-active</small>";
+                //             }
+ 
+                //                return   $assigned;
+                //             }) 
+                // ->editColumn('action', function ($data) {
+                                
+                //                return  view('project_management/project_master/buttons')->with(['data' => $data]);
+                //             }) 
+                // ->editColumn('number', function ($data) {
+                                
+                //                return 1;
+                //             }) 
+                // ->rawColumns(['prod_assc','action'])
+                             
+    } 
+
+    public function getListPoSend(Request $request)
+    {
+       
+            $data = PurchasingProcess::where('id_vendor','!=','')->where(function ($query) {
+                                        $query->where('sent','=','0000-00-00 00:00:00')
+                                            ->orWhereNull('sent');
+                                    })->get();
+
+        
        
         return \DataTables::of($data)
         ->editColumn('number', function($data){

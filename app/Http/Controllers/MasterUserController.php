@@ -60,7 +60,7 @@ class MasterUserController extends Controller
 
         $data = MasterUser::findOrFail($id);
         $email = $data->username;
-        $pwd = \Str::random(8);
+        $pwd = "Dharmap08";
         $newpassword = bcrypt($pwd);
         $nm_vendor = empty($data->vendor) ? $data->nm_user:$data->vendor->nm_vendor;
         try{
