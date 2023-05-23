@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Po;
 use App\Models\User;
+use App\Models\EmailGroup;
 use Mail;
 use App\Mail\PoMail;
 
@@ -12,7 +13,6 @@ class PoController extends Controller
 {
     public function sendPo(Request $request)
     {
-        //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
         $user = User::where('id_user', $request->id_user)->first();
 
         if($user){
@@ -51,8 +51,9 @@ class PoController extends Controller
                 $po->save();
 
                 //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
-                Mail::to($user->username)->send(new PoMail($po, $user));
                 
+                $this->mailer_send($po, $user);
+
                 return response()->json([
                     'message' => 'Data PO saved successfully',
                     'data' => $po
@@ -64,5 +65,28 @@ class PoController extends Controller
                 ], 401);
             }
         }    
+    }
+
+    private function mailer_send($po, $user)
+    {
+        $nameGroupMail  = $this->split_creator($po->creator);
+
+        $emaillist = EmailGroup::where('abrev',$nameGroupMail)->first()->mailgroup;
+        //TO USER
+        Mail::to($user->username)->send(new PoMail($po, $user));
+        //TO Listed Group DEPT
+        foreach ($emaillist as $e) {
+             Mail::to($e->mail)->send(new PoMail($po, $user));
+        }
+    }
+
+    private function split_creator($creator)
+    {
+        //PISAHKAN TEXT dan Spesial Karakter
+        $get_group = preg_split('/(\w+)/', $creator, -1, PREG_SPLIT_DELIM_CAPTURE);
+        // Pisahkan numeric dan alpha
+        $get_name = sscanf($get_group[3], "%[A-Z]%d");
+        //Get PUR
+        return $get_name[0];
     }
 }

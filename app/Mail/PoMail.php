@@ -32,6 +32,7 @@ class PoMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mails.pomail', ['po' => $this->po, 'user' => $this->user]);
+        $date = date("d-m-Y H:i:s");
+        return $this->subject('PO from PT Dharma Polimetal ('.$date.') [NO REPLY]')->markdown('mails.pomailnew', ['po' => $this->po, 'user' => $this->user]);
     }
 }

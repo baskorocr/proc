@@ -228,14 +228,21 @@ div.dataTables_wrapper div.dt-row{
                         <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
                      
                                 <td>
-                                    <a href="{{route('doc-iso.view',['id' => IsoHelper::get_iso($item->last_ref_doc)->_id])}}" 
-                                        target="_blank">
+                                    
                                  @if(!empty($item->last_ref_doc) AND !empty($item->last_doc_year))
+                                 <a href="{{route('doc-iso.view',['id' => IsoHelper::get_iso($item->last_ref_doc)->_id])}}" 
+                                        target="_blank">
                                         <?php echo $item->last_ref_doc."-".$item->last_doc_year ?>
+                                      </a>
                                         @else
-                                        <?php echo $item->ref_doc."-".$item->ref_doc_year ?>
+                                        @if(!empty($item->ref_doc) AND !empty($item->ref_doc))
+                                            <a href="{{route('doc-iso.view',['id' => IsoHelper::get_iso($item->ref_doc)->_id])}}" 
+                                            target="_blank">
+                                            <?php echo $item->ref_doc."-".$item->ref_doc_year ?>
+                                          </a>
+                                      @endif
                                         @endif
-                                    </a> 
+                                   
                                 </td>
                       
                         <td>{{strtotime($item->cert_date)}}</td>  
