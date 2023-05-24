@@ -15,6 +15,7 @@ class PoController extends Controller
     public function sendPo(Request $request)
     {
         $user = User::where('id_user', $request->id_user)->first();
+        $msg_mail = '';
 
         if($user){
             if($user->status_user === 'A'){
@@ -54,21 +55,72 @@ class PoController extends Controller
 
                 //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
                 
-                $this->mailer_send($po, $user);
+                
+                try {
+                    $this->mailer_send($po, $user);
+                    // Mail::to($user->username)->send(new PoMail($po, $user));
+                    $msg_mail = 'PO send mailed to vendor successfully.';
+                } catch (Exception $e) {
+                    $msg_mail = $e->getMessage();
+                }
 
                 return response()->json([
-                    'message' => 'Data PO saved successfully',
+                    'msg_data' => 'PO send to eproc saved successfully.',
+                    'msg_mail' => $msg_mail,
                     'data' => $po
                 ], 200);
             } else {
                 return response()->json([
-                    'message' => 'Mail user not active!',
+                    'msg_data' => 'PO send to eproc failed, Mail user not active!',
+                    'msg_mail' => 'PO send to vendor failed.',
                     //'data' => $po
                 ], 422);
             }
         } else {
             return response()->json([
-                'message' => 'ID User Not Found!',
+                'msg_data' => 'PO send to eproc failed, ID User Not Found!',
+                'msg_mail' => 'PO send to vendor failed.',
+                    //'data' => $po
+            ], 422);
+        }
+    }
+
+    public function resendEmailPo(Request $request)
+    {
+        //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
+        $po = Po::where('po_num', $request->po_num)->first();
+        $user = User::where('id_user', $po->id_user)->first();
+        $msg_mail = '';
+
+        if($user){
+            if($user->status_user === 'A'){
+
+                //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
+                try {
+                    $this->mailer_send($po, $user);
+                    // Mail::to($user->username)->send(new PoMail($po, $user));
+                    $msg_mail = 'PO send mailed to vendor succesfully.';
+                } catch (Exception $e) {
+                    $msg_mail = $e->getMessage();
+                }
+                
+
+                return response()->json([
+                    'msg_data' => 'PO send to eproc saved successfully.',
+                    'msg_mail' => $msg_mail,
+                    'data' => $po
+                ], 200);
+            } else {
+                return response()->json([
+                    'msg_data' => 'PO send to eproc failed, Mail user not active!',
+                    'msg_mail' => 'PO send to vendor failed.',
+                    //'data' => $po
+                ], 422);
+            }
+        } else {
+            return response()->json([
+                'msg_data' => 'PO send to eproc failed, ID User Not Found!',
+                'msg_mail' => 'PO send to vendor failed.',
                 //'data' => $po
             ], 422);
         }
