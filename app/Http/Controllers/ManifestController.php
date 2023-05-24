@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\ManifestHeader;
 use App\Models\ManifestDetail;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\MasterUser;
 use Carbon\Carbon;
 use App\Models\Vendor;
 use Mail;
@@ -77,7 +80,10 @@ class ManifestController extends Controller
             'data' => $manifest_detail
         ]);
     }
-
+    public function manifest_test_mail($manifestId)
+    {
+        $this->mailer_send($manifestId);
+    }
     public function sendManifest(Request $request)
     {
         $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
@@ -114,8 +120,8 @@ class ManifestController extends Controller
             $manifest_detail->active = $detail['active'];
             $manifest_detail->save();
         }
-
-        Mail::to($vendor->vend_email)->send(new ManifestMail($manifest, $vendor));
+        $this->mailer_send($request->manifest);
+        // Mail::to($vendor->vend_email)->send(new ManifestMail($manifest, $vendor));
 
         
         return response()->json([
@@ -123,7 +129,55 @@ class ManifestController extends Controller
             'data' => $manifest,
         ], 200);
     }
+    private function mailer_send($manifestHead_id)
+    {
+        $manifestHead = ManifestHeader::where('_id',$manifestHead_id)->orWhere('manifest',$manifestHead_id)->first();
 
+
+        $getMenu = Permission::where('name','Delivery Schedule')->first();
+        $role =  Role::get();
+
+        $allowed = [];
+        $sended = [];
+        foreach($role as $r)
+        {
+            $permissions=[];
+            foreach($r->permissions as $p){
+                $permissions[] = $p->permission_id; 
+                
+            }
+            
+            if(in_array($getMenu->_id, $permissions))
+            {
+                $allowed[] = $r->_id;
+            }
+
+        }
+
+        $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
+        $user =  MasterUser::whereIn('role_id',$allowed)->get();
+        foreach($user as $u)
+        {
+            if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
+                Mail::to($u->username)->send(new ManifestMail($manifestHead,$vendor));
+                $sended[] = $u->username;
+            }
+        }
+
+
+        $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->get();
+        foreach($vendor_user as $vendor_user){
+            if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+                if(!in_array($vendor_user->username,$sended))
+                {
+                    Mail::to($vendor_user->username)->send(new ManifestMail($manifestHead,$vendor));
+                }
+            }
+        }
+
+        ManifestHeader::where('_id',$manifestHead_id)->orWhere('manifest',$manifestHead_id)->update(['sent' => date('Y-m-d H:i:s')]);
+        
+    }
     public function closeManifest(Request $request)
     {
         $manifest = ManifestHeader::where('manifest', $request->manifest)->first();

@@ -158,14 +158,14 @@ div.dataTables_wrapper div.dt-row{
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                         {{-- @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) OR $item->stat == 'E')
+                                         @if(((empty($item->ref_doc) AND empty($item->ref_doc_year)) AND $item->trn_type == 'R') OR $item->trn_type == 'I')
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
-                                        @endif --}}
-                                        @if(($item->stat != 'A' AND $item->stat != 'E') )
+                                        @endif
+                                        @if(($item->stat != 'N' AND $item->stat != 'E' ) AND $item->trn_type != 'R' AND $item->trn_type != 'I' )
                                              <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
                                         @endif
                                         @if(auth()->user()->role != "vendor")
-                                            @if(($item->stat != 'A' AND $item->stat != 'E'))
+                                            @if(( $item->stat != 'N' AND $item->stat != 'E') AND $item->trn_type != 'R' AND $item->trn_type != 'I' )
                                                 <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
                                                 <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
                                             @endif

@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\EmailGroup;
 use Mail;
 use App\Mail\PoMail;
+use Carbon\Carbon;
 
 class PoController extends Controller
 {
@@ -19,6 +20,7 @@ class PoController extends Controller
             if($user->status_user === 'A'){
                 $po = new Po;
                 $po->po_num = $request->po_num;
+                $po->mf_type = $request->mf_type;
                 $po->comp_code = $request->comp_code;
                 $po->doc_type = $request->doc_type;
                 $po->doc_catg = $request->doc_catg;
@@ -78,6 +80,8 @@ class PoController extends Controller
         foreach ($emaillist as $e) {
              Mail::to($e->mail)->send(new PoMail($po, $user));
         }
+        //set sent datetime
+        Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
     }
 
     private function split_creator($creator)

@@ -13,6 +13,22 @@ use Storage;
 
 class PurchasingProcessController extends Controller
 {
+    //Testing Purpose Only
+    public function test_read()
+    {
+        $dir1 = preg_grep('~^5111010602-.*\.pdf$~', scandir(public_path('PROD/')));
+        $dir2 = preg_grep('~^5111010602-.*\.pdf$~', scandir(public_path('QAS/')));
+
+        $files = array_merge($dir1,$dir2);
+        $gf = [];
+        foreach($files as $key => $file)
+        {
+            $gf[] = $file;
+        }
+        dd($gf);
+    }
+    //End Testing Purpose Only
+
     public function upload()
     {
         return view('purchasing_process/upload');
