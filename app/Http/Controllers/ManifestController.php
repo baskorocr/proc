@@ -230,22 +230,25 @@ class ManifestController extends Controller
         //Ambil Data Vendor
         $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
         $user =  MasterUser::whereIn('role_id',$allowed)->get();
+        $cc=[];
         //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
         foreach($user as $u)
         {
             if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
-                Mail::to($u->username)->send(new ManifestMail($manifestHead,$vendor));
+                $cc[] =$u->username;
                 $sended[] = $u->username;
             }
         }
 
 
-        $vendor_user = MasterUser::where('foreign_id', $manifestHead->id_vendor)->get();
+        //Kirim Ke Akun Vendor
+        $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
+
         foreach($vendor_user as $vendor_user){
             if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
                 if(!in_array($vendor_user->username,$sended))
                 {
-                    Mail::to($vendor_user->username)->send(new ManifestMail($manifestHead,$vendor));
+                    Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
                 }
             }
         }

@@ -132,11 +132,15 @@ class PoController extends Controller
 
         $emaillist = EmailGroup::where('abrev',$nameGroupMail)->first()->mailgroup;
         //TO USER
-        Mail::to($user->username)->send(new PoMail($po, $user));
         //TO Listed Group DEPT
+        $cc = [];
         foreach ($emaillist as $e) {
-             Mail::to($e->mail)->send(new PoMail($po, $user));
+            if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
+             $cc[] =$e->mail;
+            }
+        
         }
+        Mail::to($user->username)->cc($cc)->send(new PoMail($po, $user));
         //set sent datetime
         Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
     }
