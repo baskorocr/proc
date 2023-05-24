@@ -131,14 +131,16 @@ class ManifestController extends Controller
     }
     private function mailer_send($manifestHead_id)
     {
+        //AMBIL Data Header Manifest
         $manifestHead = ManifestHeader::where('_id',$manifestHead_id)->orWhere('manifest',$manifestHead_id)->first();
 
-
+        //Ambil Permission dengan nama Delivery Schedule
         $getMenu = Permission::where('name','Delivery Schedule')->first();
         $role =  Role::get();
 
         $allowed = [];
         $sended = [];
+        //Proses Pencarian Role mana saja yang diizinkan mengakses permission
         foreach($role as $r)
         {
             $permissions=[];
@@ -153,9 +155,10 @@ class ManifestController extends Controller
             }
 
         }
-
+        //Ambil Data Vendor
         $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
         $user =  MasterUser::whereIn('role_id',$allowed)->get();
+        //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
         foreach($user as $u)
         {
             if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
@@ -164,7 +167,7 @@ class ManifestController extends Controller
             }
         }
 
-
+        //Kirim Ke Akun Vendor
         $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->get();
         foreach($vendor_user as $vendor_user){
             if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
@@ -174,7 +177,7 @@ class ManifestController extends Controller
                 }
             }
         }
-
+        //Set field 'sent' untuk flag terkirim
         ManifestHeader::where('_id',$manifestHead_id)->orWhere('manifest',$manifestHead_id)->update(['sent' => date('Y-m-d H:i:s')]);
         
     }
