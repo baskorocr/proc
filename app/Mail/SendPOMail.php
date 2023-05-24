@@ -7,22 +7,19 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class PoMail extends Mailable
+class SendPOMail extends Mailable
 {
     use Queueable, SerializesModels;
-
-    public $po;
-    public $user;
 
     /**
      * Create a new message instance.
      *
      * @return void
      */
-    public function __construct($po, $user)
+    public function __construct($vendor,$po)
     {
+        $this->vendor = $vendor;
         $this->po = $po;
-        $this->user = $user;
     }
 
     /**
@@ -32,7 +29,10 @@ class PoMail extends Mailable
      */
     public function build()
     {
+        $vendor = $this->vendor;
+        $po = $this->po;
         $date = date("d-m-Y H:i:s");
-        return $this->subject('PO from PT Dharma Polimetal ('.$date.') [NO REPLY]')->markdown('mails.pomailnew', ['po' => $this->po, 'user' => $this->user]);
+        return $this->subject('PO from PT Dharma Polimetal ('.$date.') [NO REPLY]')
+                   ->view('mails/po_mail')->with(['po' => $po,'vendor' => $vendor]);
     }
 }

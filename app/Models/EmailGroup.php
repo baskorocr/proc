@@ -22,4 +22,9 @@ class EmailGroup extends Model
     {
         return $this->belongsTo(User::class,'last_changed_by','id_user');
     }
+
+    public function mailgroup()
+    {
+        return $this->hasMany(EmailListGroup::class,'dept_code','dept_code');
+    }
 }

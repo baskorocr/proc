@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\RegisIsoDoc;
+use App\Models\Role;
 use App\Models\Vendor;
+use App\Models\MasterUser;
 use App\Models\IsoLog;
+use App\Models\Permission;
 use App\Models\MasterNotify;
-
+use App\Mail\IsoRegMail;
 use Illuminate\Support\Facades\File;
-
+use Mail;
 use Auth;
 
 class RegisIsoDocController extends Controller
@@ -17,7 +20,7 @@ class RegisIsoDocController extends Controller
     public function index(Request $request)
     {
 
-        $data['vendor'] = Vendor::get();
+        $data['vendor'] = Vendor::where('status_vendor','A')->get();
         $data['notify'] = MasterNotify::get();
         
         return view('doc_iso.master-notify.register-iso', $data);
@@ -49,6 +52,8 @@ class RegisIsoDocController extends Controller
 
         return view('doc_iso.master-notify.change-iso', $data);
     }
+
+
     public function approve(Request $request,$id)
     {
         $data['iso'] = RegisIsoDoc::findOrFail($id);
@@ -102,7 +107,7 @@ class RegisIsoDocController extends Controller
                             ->where('del_indicator','<>','X')
                             ->update(['trn_type' => $trn_type,'stat' => $stat]);
 
-                
+                 $this->mailer_send($request->id);
                 // return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil Approve Dokumen ISO.']);
                 return redirect()->back()->with(['message_success' => 'Berhasil Approve Dokumen ISO.']);
               
@@ -150,7 +155,7 @@ class RegisIsoDocController extends Controller
         RegisIsoDoc::where(['_id' => $request->id])
                             ->update(['del_indicator' => "X"]);
 
-        IsoLog::create(['trn_id',
+        IsoLog::create([
                          'doc_year' => $request->doc_year,
                          'id_user' => auth()->user()->id_user,
                          'trn_type' => $request->doc_year,
@@ -206,7 +211,7 @@ class RegisIsoDocController extends Controller
 
             $file->move($path, $nameFile);
         }
-
+          $this->mailer_send($request->id);
         return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil memperbaharui ISO.']);
     
     }
@@ -249,7 +254,7 @@ class RegisIsoDocController extends Controller
         $regis_iso_doc->stat = $stat;
         // $regis_iso_doc->remark = $request->remark;
         $regis_iso_doc->trn_type = "S";
-        $regis_iso_doc->ref_doc = $numRange;
+        $regis_iso_doc->ref_doc = str_pad($numRange, 8, 0, STR_PAD_LEFT);
         $regis_iso_doc->ref_doc_year = intval($doc_year);
         //$regis_iso_doc->created_by = auth()->user()->full_name;
         $regis_iso_doc->changed_by = auth()->user()->id_user;
@@ -266,7 +271,7 @@ class RegisIsoDocController extends Controller
       
         $create = new RegisIsoDoc();
         $create->doc_year = intval($doc_year);
-        $create->trn_id = $numRange;
+        $create->trn_id = str_pad($numRange, 8, 0, STR_PAD_LEFT);
         // $create->vendor_code = $regisdata->vendor_code;
         $create->id_vendor = $regisdata->id_vendor;
         $create->mat_supply = $request->mat_supply;
@@ -287,6 +292,8 @@ class RegisIsoDocController extends Controller
         $create->remark = $request->remark;
         $create->trn_type = "S";
         $create->ref_doc = '';
+        $create->last_ref_doc = $regisdata->trn_id;
+        $create->last_doc_year = $regisdata->doc_year;
         $create->ref_doc_year = '';
         //$create->created_by = auth()->user()->full_name;
         $create->changed_by = auth()->user()->id_user;
@@ -297,6 +304,7 @@ class RegisIsoDocController extends Controller
 
             $file->move($path, $nameFile);
         }
+        $this->mailer_send($request->id);
 
         return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil memperbaharui data.']);
     
@@ -329,7 +337,7 @@ class RegisIsoDocController extends Controller
 
 
         $regis_iso_doc->doc_year =  intval(date('Y'));
-        $regis_iso_doc->trn_id = $numRange;
+        $regis_iso_doc->trn_id = str_pad($numRange, 8, 0, STR_PAD_LEFT);
         $regis_iso_doc->id_vendor = $request->id_vendor;
         $regis_iso_doc->mat_supply = $request->mat_supply;
         $regis_iso_doc->simply = $request->simply ? "X" : "";
@@ -347,6 +355,8 @@ class RegisIsoDocController extends Controller
         $regis_iso_doc->cr_by = Auth::user()->id_user;
         $regis_iso_doc->cr_dat = date('Y-m-d h:i:s');
         $regis_iso_doc->save();
+
+        $this->mailer_send($regis_iso_doc->_id);
         \IsoHelper::update_number_range($doc_type, $doc_year);
         if ($nameFile ?? false){
             if(!File::isDirectory($path)) File::makeDirectory($path, 0777, true, true);
@@ -356,6 +366,69 @@ class RegisIsoDocController extends Controller
         
 
         return redirect()->route('doc-iso.report-iso')->with(['message_success' => 'Berhasil menambah data.']);
+    }
+
+   
+    private function mailer_send($regis_iso_doc_id)
+    {
+        $regis_iso_doc = RegisIsoDoc::where('_id',$regis_iso_doc_id)->first();
+        // return view('mails.iso_reg_mail')->with(['regisiso' => $regis_iso_doc]);
+
+        $getMenu = Permission::where('name','Doc ISO Manage')->first();
+       $role =  Role::get();
+       // dd($role);
+        $allowed = [];
+        $sended = [];
+       foreach($role as $r)
+       {
+        $permissions=[];
+           foreach($r->permissions as $p){
+            $permissions[] = $p->permission_id; 
+                
+           }
+           if(in_array($getMenu->_id, $permissions))
+           {
+             $allowed[] = $r->_id;
+           }
+
+       }
+      $user =  MasterUser::whereIn('role_id',$allowed)->get();
+      foreach($user as $u)
+      {
+         if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
+             Mail::to($u->username)->send(new IsoRegMail($regis_iso_doc));
+             $sended[] = $u->username;
+        }
+      }
+
+        $vendor_user = MasterUser::where('foreign_id',$regis_iso_doc->id_vendor)->get();
+        foreach($vendor_user as $vendor_user){
+                if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+                    if(!in_array($vendor_user->username,$sended))
+                    {
+                        Mail::to($vendor_user->username)->send(new IsoRegMail($regis_iso_doc));
+                    }
+                }
+            }
+         // $nameGroupMail  = $this->split_creator($po->creator);
+
+        // $emaillist = EmailGroup::where('abrev',$nameGroupMail)->first()->mailgroup;
+        // //TO USER
+       
+        // //TO Listed Group DEPT
+        // foreach ($emaillist as $e) {
+        //      Mail::to($e->mail)->send(new PoMail($po, $user));
+        // }
+    }
+
+    private function split_creator($creator)
+    {
+        //PISAHKAN TEXT dan Spesial Karakter
+        $get_group = preg_split('/(\w+)/', $creator, -1, PREG_SPLIT_DELIM_CAPTURE);
+        // Pisahkan numeric dan alpha
+        $get_name = sscanf($get_group[3], "%[A-Z]%d");
+        //Get PUR
+        return $get_name[0];
     }
 
     public function update(Request $request, $id)
