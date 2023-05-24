@@ -7,6 +7,7 @@ use App\Models\Po;
 use App\Models\User;
 use Mail;
 use App\Mail\PoMail;
+use Exception;
 
 class PoController extends Controller
 {
@@ -50,11 +51,55 @@ class PoController extends Controller
                 $po->stat = $request->stat;
                 $po->save();
 
+                
+
                 //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
-                Mail::to($user->username)->send(new PoMail($po, $user));
+                try {
+                    Mail::to($user->username)->send(new PoMail($po, $user));
+                    $message2 = 'PO mailed to vendor';
+                } catch (Exception $e) {
+                    $message2 = $e->getMessage();
+                }
                 
                 return response()->json([
-                    'message' => 'Data PO saved successfully',
+                    'message1' => 'PO Sent to Eproc',
+                    'message2' => $message2,
+                    'data' => $po
+                ], 200);
+            } else {
+                return response()->json([
+                    'message' => 'Mail user not active!',
+                    //'data' => $po
+                ], 422);
+            }
+        } else {
+            return response()->json([
+                'message' => 'ID User Not Found!',
+                //'data' => $po
+            ], 422);
+        }
+    }
+
+    public function resendEmailPo(Request $request)
+    {
+        //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
+        $po = Po::where('po_num', $request->po_num)->first();
+        $user = User::where('id_user', $po->id_user)->first();
+
+        if($user){
+            if($user->status_user === 'A'){
+
+                //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
+                try {
+                    Mail::to($user->username)->send(new PoMail($po, $user));
+                    $message2 = 'PO mailed to vendor';
+                } catch (Exception $e) {
+                    $message2 = $e->getMessage();
+                }
+                
+                return response()->json([
+                    'message1' => 'PO Sent to Eproc',
+                    'message2' => $message2,
                     'data' => $po
                 ], 200);
             } else {

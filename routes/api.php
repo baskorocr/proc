@@ -29,6 +29,7 @@ Route::post('/manifest/close', 'ManifestController@closeManifest');
 Route::post('/vendor', 'VendorController@store');
 Route::post('/vendor/{id_vendor}', 'VendorController@update');
 Route::post('/send-po', 'PoController@sendPo');
+Route::post('/resend-email-po', 'PoController@resendEmailPo');
 
 Route::group(['middleware' => ['auth:api']], function () {
 
