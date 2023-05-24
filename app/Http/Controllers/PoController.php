@@ -61,8 +61,13 @@ class PoController extends Controller
                 return response()->json([
                     'message' => 'Mail user not active!',
                     //'data' => $po
-                ], 401);
+                ], 422);
             }
-        }    
+        } else {
+            return response()->json([
+                'message' => 'ID User Not Found!',
+                //'data' => $po
+            ], 422);
+        }
     }
 }
