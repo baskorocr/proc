@@ -3,46 +3,41 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>PO</title>
+        <title>MF</title>
     </head>
     <body>
         Dear <b>{{$vendor->nm_vendor}}</b>, <br><br>
         
-        <label>You have new Purchase Order</label><br>
-        Our purchase order document now available online, just download it.<br>
-        Download link will be temporary and active for <b>3 months from the document date.</b><br><br>
-        Visit our website on the link below the list to get our PO document(s), here's the list:
+       You have new Manifest Order.<br>
+       Out Manifest Instruction document now available online, just download it.<br>
+       Visit our website on the link below the list to get our Manifest Order, here's the list:
         
         <br>
-        <h3>PURCHASE ORDER From PT. DHARMA POLIMETAL</h3>
+        <h3>Manifest Order from PT. DHARMA POLIMETAL</h3>
         
         <table width="100%" style=" ">
             <tr>
-                <th width="30px" align="left" style="background-color: #4CAF50; color: white;">No</th>
-                <th width="70px" align="left" style="background-color: #4CAF50; color: white;">PO Number</th>
-                <th width="70px" align="left" style="background-color: #4CAF50; color: white;">Plant</th>
-                <th width="70px" align="left" style="background-color: #4CAF50; color: white;">Doc. Date</th>
-                <th width="70px" align="left" style="background-color: #4CAF50; color: white;">Rev.</th>
-                <th width="70px" align="left" style="background-color: #4CAF50; color: white;">File Ver.</th>
-                <th width="150px" align="left" style="background-color: #4CAF50; color: white;">Vendor Name</th>
-                <th width="40px" align="left" style="background-color: #4CAF50; color: white;">PGr</th>
+                <th width="30px" align="left" style="background-color: #00008b; color: white;">No</th>
+                <th width="70px" align="left" style="background-color: #00008b; color: white;">MI Date</th>
+                <th width="70px" align="left" style="background-color: #00008b; color: white;">MI Number</th>
+                <th width="70px" align="left" style="background-color: #00008b; color: white;">Delivery Date</th>
+                <th width="70px" align="left" style="background-color: #00008b; color: white;">Vendor Name</th>
+                <th width="70px" align="left" style="background-color: #00008b; color: white;">PO Number</th>
+                <th width="150px" align="left" style="background-color: #00008b; color: white;">Plant</th>
             </tr>
             <?php $i=1; ?>
-            @foreach($po as $po)
             <tr>
-                <td>{{$i++}}</td>
-                <td>{{$po->po_num}}</td>
-                <td>{{$po->plant}}</td>
-                <td>{{$po->doc_date}}</td>
-                <td>{{$po->revno}}</td>
-                <td>{{$po->file_nm}}</td>
-                <td>{{@$po->vendors->nm_vendor}}</td>
-                <td>{{$po->pgr}}</td>
+                <td>1</td>
+                <td>{{date("d.m.Y",strtotime($manifest->release_date))}}</td>
+                <td>{{$manifest->manifest}}</td>
+                <td>{{date("d.m.Y",strtotime($manifest->delivery_date))}}</td>
+                <td>{{@$manifest->vendors->nm_vendor}}</td>
+                <td>{{$manifest->po_num}}</td>
+                <td>{{@$manifest->po->plant}}</td>
             </tr>
-            @endforeach
         </table>
             <br>
-            <a href="{{url('/')}}" target="_blank" style="background-color: #4CAF50;
+            <a href="{{url('/')}}" target="_blank" style="background-color: #00008b;
                 border: none;
                 color: white;
                 padding: 13px 30px;
@@ -53,7 +48,7 @@
                 margin: 4px 2px;
                 cursor: pointer;"
                 >
-                Click here to download the PO
+                Click here to download the Manifest Order
             </a>
             <br><br>Use your user access to login. If you can't, please contact our adminstrator to activate your account.
             <br><br><b>This message is sent by system, please don't reply.</b>

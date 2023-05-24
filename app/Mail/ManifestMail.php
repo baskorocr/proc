@@ -32,6 +32,7 @@ class ManifestMail extends Mailable
      */
     public function build()
     {
-        return $this->markdown('mails.manifestmail', ['manifest' => $this->manifest, 'vendor' => $this->vendor]);
+        $date = date("d-m-Y H:i:s");
+        return $this->subject('Manifest Order from PT Dharma Polimetal ('.$date.') [NO REPLY]')->markdown('mails.manifestmailnew', ['manifest' => $this->manifest, 'vendor' => $this->vendor]);
     }
 }
