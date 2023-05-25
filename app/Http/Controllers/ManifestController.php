@@ -88,76 +88,81 @@ class ManifestController extends Controller
 
     public function sendManifest(Request $request)
     {
+        // $cekManifest = ManifestHeader::where('manifest', $request->manifest)->first();
         $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
         $msg_mail = '';
+        $msg_data = '';
+
+        $cekManifest = ManifestHeader::where('manifest', $request->manifest)->get();
+
+        $manifest = new ManifestHeader;
+
+        if(count($cekManifest) > 0) {
+            $msg_data = 'Manifest send to eproc failed, cannot insert duplicate data manifest.';
+
+        } else {
+            $manifest->manifest = $request->manifest;
+            $manifest->id_vendor = $request->id_vendor;
+            $manifest->delivery_time = $request->delivery_time;
+            $manifest->delivery_date = $request->delivery_date;
+            $manifest->po_num = $request->po_num;
+            $manifest->file_nm = $request->file_nm;
+            $manifest->mf_type = $request->mf_type;
+            $manifest->release_date = $request->release_date;
+            $manifest->save();
+            
+            foreach ($request->details as $detail){
+                $manifest_detail = new ManifestDetail;
+                $manifest_detail->kanban = $detail['kanban'];
+                $manifest_detail->seq_kanban = $detail['seq_kanban'];
+                $manifest_detail->item = $detail['item'];
+                $manifest_detail->manifest = $request->manifest;
+                $manifest_detail->material = $detail['material'];
+                $manifest_detail->material_desc = $detail['material_desc'];
+                $manifest_detail->qty_pack = $detail['qty_pack'];
+                $manifest_detail->qty_in = $detail['qty_in'];
+                $manifest_detail->arrival_date = Carbon::parse($detail['arrival_date']);
+                $manifest_detail->arrival_time = Carbon::parse($detail['arrival_time']);
+                $manifest_detail->scan_date = Carbon::parse($detail['scan_date']);
+                $manifest_detail->scan_time = Carbon::parse($detail['scan_time']);
+                $manifest_detail->scan_by = $detail['scan_by'];
+                $manifest_detail->issued_date = Carbon::parse($detail['issued_date']);
+                $manifest_detail->issued_time = Carbon::parse($detail['issued_time']);
+                $manifest_detail->issued_by = $detail['issued_by'];
+                $manifest_detail->active = $detail['active'];
+                $manifest_detail->save();
+            }
+
+            $msg_data = 'Manifest send to eproc saved successfully.';
+        }
 
         if($vendor) {
             if($vendor->status_vendor === 'A') {
-                $manifest = new ManifestHeader;
-                $manifest->manifest = $request->manifest;
-                $manifest->id_vendor = $request->id_vendor;
-                $manifest->delivery_time = $request->delivery_time;
-                $manifest->delivery_date = $request->delivery_date;
-                $manifest->po_num = $request->po_num;
-                $manifest->file_nm = $request->file_nm;
-                $manifest->mf_type = $request->mf_type;
-                $manifest->release_date = $request->release_date;
-                $manifest->save();
-        
-                foreach ($request->details as $detail){
-                    $manifest_detail = new ManifestDetail;
-                    $manifest_detail->kanban = $detail['kanban'];
-                    $manifest_detail->seq_kanban = $detail['seq_kanban'];
-                    $manifest_detail->item = $detail['item'];
-                    $manifest_detail->manifest = $request->manifest;
-                    $manifest_detail->material = $detail['material'];
-                    $manifest_detail->material_desc = $detail['material_desc'];
-                    $manifest_detail->qty_pack = $detail['qty_pack'];
-                    $manifest_detail->qty_in = $detail['qty_in'];
-                    $manifest_detail->arrival_date = Carbon::parse($detail['arrival_date']);
-                    $manifest_detail->arrival_time = Carbon::parse($detail['arrival_time']);
-                    $manifest_detail->scan_date = Carbon::parse($detail['scan_date']);
-                    $manifest_detail->scan_time = Carbon::parse($detail['scan_time']);
-                    $manifest_detail->scan_by = $detail['scan_by'];
-                    $manifest_detail->issued_date = Carbon::parse($detail['issued_date']);
-                    $manifest_detail->issued_time = Carbon::parse($detail['issued_time']);
-                    $manifest_detail->issued_by = $detail['issued_by'];
-                    $manifest_detail->active = $detail['active'];
-                    $manifest_detail->save();
-                }
-
                 try {
-                    $this->mailer_send($request->manifest);
+                    $this->mailer_send($request->manifest, $cekManifest);
                     $msg_mail = 'Manifest send mailed to vendor successfully.';
                 } catch (Exception $e) {
                     $msg_mail = $e->getMessage();
                 }
 
                 return response()->json([
-                    'msg_data' => 'Manifest send to eproc saved successfully',
+                    'msg_data' => $msg_data,
                     'msg_mail' => $msg_mail,
                     'data' => $manifest,
                 ], 200);
 
             } else {
                 return response()->json([
-                    'msg_data' => 'Manifest send to eproc failed, Status vendor not active, please confirm to administrator!',
+                    'msg_data' => $msg_data,
                     'msg_mail' => 'Manifest send to vendor failed.',
-                ], 422);
+                ], 200);
             }
         } else {
             return response()->json([
-                'msg_data' => 'Manifest send to eproc failed, Vendor Not Found!',
+                'msg_data' => $msg_data,
                 'msg_mail' => 'Manifest send to vendor failed.',
             ], 422);
         }
-
-
-        
-        // $this->mailer_send($request->manifest);
-        // Mail::to($vendor->vend_email)->send(new ManifestMail($manifest, $vendor));
-
-        
         
     }
 
@@ -167,6 +172,7 @@ class ManifestController extends Controller
         $mannifest = ManifestHeader::where('manifest', $request->manifest)->first();
         $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
         $msg_mail = '';
+        $msg_data = 'Manifest send to eproc saved successfully.';
 
         if($vendor){
             if($vendor->status_vendor === 'A'){
@@ -175,85 +181,89 @@ class ManifestController extends Controller
                 try {
                     $this->mailer_send($mannifest);
                     // Mail::to($user->username)->send(new PoMail($po, $user));
-                    $msg_mail = 'PO send mailed to vendor successfully';
+                    $msg_mail = 'Manifest send mailed to vendor successfully';
                 } catch (Exception $e) {
                     $msg_mail = $e->getMessage();
                 }
                 
 
                 return response()->json([
-                    'msg_data' => 'Manifest send to eproc saved successfully.',
+                    'msg_data' => $msg_data,
                     'msg_mail' => $msg_mail,
-                    'data' => $po
+                    'data' => $manifest
                 ], 200);
             } else {
                 return response()->json([
-                    'msg_data' => 'Manifest send to eproc failed, Mail user not active!',
+                    'msg_data' => $msg_data,
                     'msg_mail' => 'Manifest send to vendor failed.',
                     //'data' => $po
                 ], 422);
             }
         } else {
             return response()->json([
-                'msg_data' => 'Manifest send to eproc failed, ID User Not Found!',
+                'msg_data' => $msg_data,
                 'msg_mail' => 'Manifest send to vendor failed.',
                 //'data' => $po
             ], 422);
         }
     }
 
-    private function mailer_send($manifestHead_id)
+    private function mailer_send($manifest, $cekManifest)
     {
-        $manifestHead = ManifestHeader::where('_id', $manifestHead_id)->orWhere('manifest',$manifestHead_id)->first();
-
-        //Ambil Permission dengan nama Delivery Schedule
-        $getMenu = Permission::where('name','Delivery Schedule')->first();
-        $role =  Role::get();
-
-        $allowed = [];
-        $sended = [];
-        //Proses Pencarian Role mana saja yang diizinkan mengakses permission
-        foreach($role as $r)
-        {
-            $permissions=[];
-            foreach($r->permissions as $p){
-                $permissions[] = $p->permission_id; 
-                
-            }
-            
-            if(in_array($getMenu->_id, $permissions))
+        if(count($cekManifest) > 0) {
+            $manifestHead = ManifestHeader::where('manifest', $manifest)->first();
+    
+            //Ambil Permission dengan nama Delivery Schedule
+            $getMenu = Permission::where('name','Delivery Schedule')->first();
+            $role =  Role::get();
+    
+            $allowed = [];
+            $sended = [];
+            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+            foreach($role as $r)
             {
-                $allowed[] = $r->_id;
-            }
-
-        }
-        //Ambil Data Vendor
-        $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
-        $user =  MasterUser::whereIn('role_id',$allowed)->get();
-        $cc=[];
-        //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
-        foreach($user as $u)
-        {
-            if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
-                $cc[] =$u->username;
-                $sended[] = $u->username;
-            }
-        }
-
-
-        //Kirim Ke Akun Vendor
-        $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
-
-        foreach($vendor_user as $vendor_user){
-            if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
-                if(!in_array($vendor_user->username,$sended))
+                $permissions=[];
+                foreach($r->permissions as $p){
+                    $permissions[] = $p->permission_id; 
+                    
+                }
+                
+                if(in_array($getMenu->_id, $permissions))
                 {
-                    Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
+                    $allowed[] = $r->_id;
+                }
+    
+            }
+    
+            //Ambil Data Vendor
+            $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
+            $user =  MasterUser::whereIn('role_id',$allowed)->get();
+            $cc=[];
+            //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
+            foreach($user as $u)
+            {
+                if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
+                    $cc[] =$u->username;
+                    $sended[] = $u->username;
                 }
             }
+    
+            //Kirim Ke Akun Vendor
+            $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
+    
+            foreach($vendor_user as $vendor_user){
+                if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+                    if(!in_array($vendor_user->username,$sended))
+                    {
+                        Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
+                    }
+                }
+            }
+            //Set field 'sent' untuk flag terkirim
+            ManifestHeader::where('_id',$manifestHead)->orWhere('manifest',$manifestHead)->update(['sent' => date('Y-m-d H:i:s')]);
+        } else {
+            return false;
         }
-        //Set field 'sent' untuk flag terkirim
-        ManifestHeader::where('_id',$manifestHead_id)->orWhere('manifest',$manifestHead_id)->update(['sent' => date('Y-m-d H:i:s')]);
         
     }
 
