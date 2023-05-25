@@ -177,7 +177,7 @@ class PurchasingProcessController extends Controller
         ->editColumn('total_amount', function($data){
             
 
-            $total_value = number_format($data->tot_va, 2, '.', ',');
+            $total_value = number_format($data->tot_val, 2, '.', ',');
             $tot_val   = "<p class='text-right' >".$total_value."</p>";
 
             return @$tot_val ;
