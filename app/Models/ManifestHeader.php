@@ -29,6 +29,11 @@ class ManifestHeader extends Model
     {
         return $this->belongsTo(Vendor::class,'id_vendor','id_vendor');
     }
+
+    public function po()
+    {
+        return $this->belongsTo(Po::class,'po_num','po_num');
+    }
     
    
 }

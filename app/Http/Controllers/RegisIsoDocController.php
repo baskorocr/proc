@@ -396,17 +396,17 @@ class RegisIsoDocController extends Controller
       foreach($user as $u)
       {
          if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
-             Mail::to($u->username)->send(new IsoRegMail($regis_iso_doc));
+             $cc[] =$u->username;
              $sended[] = $u->username;
         }
       }
 
-        $vendor_user = MasterUser::where('foreign_id',$regis_iso_doc->id_vendor)->get();
+        $vendor_user = MasterUser::where('foreign_id',$regis_iso_doc->id_vendor)->limit(1)->get();
         foreach($vendor_user as $vendor_user){
                 if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
                     if(!in_array($vendor_user->username,$sended))
                     {
-                        Mail::to($vendor_user->username)->send(new IsoRegMail($regis_iso_doc));
+                        Mail::to($vendor_user->username)->cc($cc)->send(new IsoRegMail($regis_iso_doc));
                     }
                 }
             }
