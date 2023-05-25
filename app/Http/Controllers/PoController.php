@@ -21,8 +21,8 @@ class PoController extends Controller
 
         $cekPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
         
-        $dir1 = preg_grep('~^'.$row['po_number'].'-.*\.pdf$~', scandir(Storage::disk('po_directory')->path("")));
-        $dir2 = preg_grep('~^'.$row['po_number'].'-.*\.pdf$~', scandir(Storage::disk('po_qas_directory')->path("")));
+        $dir1 = preg_grep('~^'. $request->po_num .'-.*\.pdf$~', scandir(Storage::disk('po_directory')->path("")));
+        $dir2 = preg_grep('~^'. $request->po_num .'-.*\.pdf$~', scandir(Storage::disk('po_qas_directory')->path("")));
 
         $files = array_merge($dir1,$dir2);
         $gf = [];
