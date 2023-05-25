@@ -190,29 +190,47 @@ class PoController extends Controller
     private function mailer_send($po, $user)
     {
         $nameGroupMail  = $this->split_creator($po->creator);
+        $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
 
-        $emaillist = EmailGroup::where('abrev',$nameGroupMail)->first()->mailgroup;
-        //TO USER
-        //TO Listed Group DEPT
-        $cc = [];
-        foreach ($emaillist as $e) {
-            if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
-             $cc[] =$e->mail;
+        if(!empty($emailgrp))
+        {
+           $emaillist = $emailgrp->mailgroup;
+            //TO USER
+            //TO Listed Group DEPT
+            $cc = [];
+            foreach ($emaillist as $e) {
+                if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
+                 $cc[] =$e->mail;
+                }
+            
             }
-        
+            Mail::to($user->username)->cc($cc)->send(new PoMail($po, $user));
+            //set sent datetime
+            Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]); 
+        } else{
+            throw new Exception("Email Group ".$nameGroupMail." is not Found.");
         }
-        Mail::to($user->username)->cc($cc)->send(new PoMail($po, $user));
-        //set sent datetime
-        Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+        
     }
 
     private function split_creator($creator)
     {
-        //PISAHKAN TEXT dan Spesial Karakter
-        $get_group = preg_split('/(\w+)/', $creator, -1, PREG_SPLIT_DELIM_CAPTURE);
-        // Pisahkan numeric dan alpha
-        $get_name = sscanf($get_group[3], "%[A-Z]%d");
-        //Get PUR
-        return $get_name[0];
+        try{
+             //PISAHKAN TEXT dan Spesial Karakter
+            $get_group = array_filter(preg_split('/(\w+)/', $creator, -1, PREG_SPLIT_DELIM_CAPTURE));
+            // Pisahkan numeric dan alpha
+            $res = [];
+            foreach($get_group as $key => $gg)
+            {
+                $res[] = $gg;
+            }
+            $get_name = sscanf(isset($get_group[2]) ? $res[2]:$res[0], "%[A-Z]%d");
+            //Get PUR
+            return $get_name[0];
+        } catch(\Exception $e)
+        {
+            throw new Exception("Creator format invalid");
+        }
+       
     }
 }
