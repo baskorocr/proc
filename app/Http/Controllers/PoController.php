@@ -35,10 +35,10 @@ class PoController extends Controller
             $po->id_vendor = $request->id_vendor;
             $po->doc_date = $request->doc_date;
             $po->relind = $request->relind;
-            $po->pgr = $request->pgr;
-            $po->porg = $request->porg;
+            $po->pgr = $request->purch_grp;
+            $po->porg = $request->purch_org;
             $po->creator = $request->creator;
-            $po->file_nm = $request->file_nm;
+            $po->file_nm = $request->file_name;
             $po->sent = $request->sent;
             $po->downloaded = $request->downloaded;
             $po->accepted = $request->accepted;
@@ -81,14 +81,14 @@ class PoController extends Controller
             } else {
                 return response()->json([
                     'msg_data' => $msg_data,
-                    'msg_mail' => 'PO send to vendor failed.',
+                    'msg_mail' => 'PO send to vendor failed. 1',
                     //'data' => $po
                 ], 422);
             }
         } else {
             return response()->json([
                 'msg_data' => $msg_data,
-                'msg_mail' => 'PO send to vendor failed.',
+                'msg_mail' => 'PO send to vendor failed. 2',
                     //'data' => $po
             ], 422);
         }
