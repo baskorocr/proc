@@ -225,12 +225,13 @@ class PoController extends Controller
             {
                 $res[] = $gg;
             }
-            $get_name = sscanf(isset($get_group[2]) ? $res[2]:$res[0], "%[A-Z]%d");
+            // dd($res);
+            $get_name = sscanf(isset($res[2]) ? $res[2]:$res[0], "%[A-Z]%d");
             //Get PUR
             return $get_name[0];
         } catch(\Exception $e)
         {
-            throw new Exception("Creator format invalid");
+            throw new Exception("Creator format is invalid.");
         }
        
     }
