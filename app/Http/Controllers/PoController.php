@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Models\EmailGroup;
 use Mail;
 use App\Mail\PoMail;
+use Exception;
 use Carbon\Carbon;
 
 class PoController extends Controller
@@ -93,13 +94,51 @@ class PoController extends Controller
         }
     }
 
+    // public function resendEmailPo(Request $request)
+    // {
+    //     //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
+    //     $po = Po::where('po_num', $request->po_num)->first();
+    //     $user = User::where('id_user', $po->id_user)->first();
+    //     $msg_mail = '';
+    //     $msg_data = 'PO send to eproc saved successfully.';
+
+    //     if($user){
+    //         if($user->status_user === 'A'){
+
+                
+
+    //             //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
+    //             try {
+    //                 Mail::to($user->username)->send(new PoMail($po, $user));
+    //                 $message2 = 'PO mailed to vendor';
+    //             } catch (Exception $e) {
+    //                 $message2 = $e->getMessage();
+    //             }
+                
+    //             return response()->json([
+    //                 'message1' => 'PO Sent to Eproc',
+    //                 'message2' => $message2,
+    //                 'data' => $po
+    //             ], 200);
+    //         } else {
+    //             return response()->json([
+    //                 'message' => 'Mail user not active!',
+    //                 //'data' => $po
+    //             ], 422);
+    //         }
+    //     } else {
+    //         return response()->json([
+    //             'message' => 'ID User Not Found!',
+    //             //'data' => $po
+    //         ], 422);
+    //     }
+    // }
+
     public function resendEmailPo(Request $request)
     {
         //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
         $po = Po::where('po_num', $request->po_num)->first();
         $user = User::where('id_user', $po->id_user)->first();
-        $msg_mail = '';
-        $msg_data = 'PO send to eproc saved successfully.';
 
         if($user){
             if($user->status_user === 'A'){
