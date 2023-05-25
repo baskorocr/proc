@@ -21,6 +21,16 @@ class PoController extends Controller
 
         $cekPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
         
+        $dir1 = preg_grep('~^'.$row['po_number'].'-.*\.pdf$~', scandir(Storage::disk('po_directory')->path("")));
+        $dir2 = preg_grep('~^'.$row['po_number'].'-.*\.pdf$~', scandir(Storage::disk('po_qas_directory')->path("")));
+
+        $files = array_merge($dir1,$dir2);
+        $gf = [];
+        foreach($files as $key => $file)
+        {
+            $gf[] = $file;
+        }
+
         $po = new Po;
         
         if(count($cekPo) > 0) {
@@ -38,7 +48,8 @@ class PoController extends Controller
             $po->pgr = $request->purch_grp;
             $po->porg = $request->purch_org;
             $po->creator = $request->creator;
-            $po->file_nm = $request->file_name;
+            $po->file_nm = empty($gf[0]) ? "":$gf[0];
+            // $po->file_nm = $request->file_name;
             $po->sent = $request->sent;
             $po->downloaded = $request->downloaded;
             $po->accepted = $request->accepted;
