@@ -93,15 +93,14 @@ class ManifestController extends Controller
         $msg_mail = '';
         $msg_data = '';
 
-        $cekManifest = ManifestHeader::firstOrNew([
-            'manifest' => $request->manifest
-        ]);
+        $cekManifest = ManifestHeader::where('manifest', $request->manifest)->get();
 
-        if($cekManifest || $cekManifest->exists()) {
+        $manifest = new ManifestHeader;
+
+        if(count($cekManifest) > 0) {
             $msg_data = 'Manifest send to eproc failed, cannot insert duplicate data manifest.';
 
         } else {
-            $manifest = new ManifestHeader;
             $manifest->manifest = $request->manifest;
             $manifest->id_vendor = $request->id_vendor;
             $manifest->delivery_time = $request->delivery_time;
@@ -140,7 +139,7 @@ class ManifestController extends Controller
         if($vendor) {
             if($vendor->status_vendor === 'A') {
                 try {
-                    $this->mailer_send($request->manifest);
+                    $this->mailer_send($request->manifest, $cekManifest);
                     $msg_mail = 'Manifest send mailed to vendor successfully.';
                 } catch (Exception $e) {
                     $msg_mail = $e->getMessage();
@@ -209,58 +208,62 @@ class ManifestController extends Controller
         }
     }
 
-    private function mailer_send($manifestHead_id)
+    private function mailer_send($manifest, $cekManifest)
     {
-        $manifestHead = ManifestHeader::where('_id', $manifestHead_id)->orWhere('manifest',$manifestHead_id)->first();
-
-        //Ambil Permission dengan nama Delivery Schedule
-        $getMenu = Permission::where('name','Delivery Schedule')->first();
-        $role =  Role::get();
-
-        $allowed = [];
-        $sended = [];
-        //Proses Pencarian Role mana saja yang diizinkan mengakses permission
-        foreach($role as $r)
-        {
-            $permissions=[];
-            foreach($r->permissions as $p){
-                $permissions[] = $p->permission_id; 
-                
-            }
-            
-            if(in_array($getMenu->_id, $permissions))
+        if(count($cekManifest) > 0) {
+            $manifestHead = ManifestHeader::where('manifest', $manifest)->first();
+    
+            //Ambil Permission dengan nama Delivery Schedule
+            $getMenu = Permission::where('name','Delivery Schedule')->first();
+            $role =  Role::get();
+    
+            $allowed = [];
+            $sended = [];
+            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+            foreach($role as $r)
             {
-                $allowed[] = $r->_id;
-            }
-
-        }
-        //Ambil Data Vendor
-        $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
-        $user =  MasterUser::whereIn('role_id',$allowed)->get();
-        $cc=[];
-        //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
-        foreach($user as $u)
-        {
-            if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
-                $cc[] =$u->username;
-                $sended[] = $u->username;
-            }
-        }
-
-
-        //Kirim Ke Akun Vendor
-        $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
-
-        foreach($vendor_user as $vendor_user){
-            if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
-                if(!in_array($vendor_user->username,$sended))
+                $permissions=[];
+                foreach($r->permissions as $p){
+                    $permissions[] = $p->permission_id; 
+                    
+                }
+                
+                if(in_array($getMenu->_id, $permissions))
                 {
-                    Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
+                    $allowed[] = $r->_id;
+                }
+    
+            }
+    
+            //Ambil Data Vendor
+            $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
+            $user =  MasterUser::whereIn('role_id',$allowed)->get();
+            $cc=[];
+            //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
+            foreach($user as $u)
+            {
+                if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
+                    $cc[] =$u->username;
+                    $sended[] = $u->username;
                 }
             }
+    
+            //Kirim Ke Akun Vendor
+            $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
+    
+            foreach($vendor_user as $vendor_user){
+                if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+                    if(!in_array($vendor_user->username,$sended))
+                    {
+                        Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
+                    }
+                }
+            }
+            //Set field 'sent' untuk flag terkirim
+            ManifestHeader::where('_id',$manifestHead)->orWhere('manifest',$manifestHead)->update(['sent' => date('Y-m-d H:i:s')]);
+        } else {
+            return false;
         }
-        //Set field 'sent' untuk flag terkirim
-        ManifestHeader::where('_id',$manifestHead_id)->orWhere('manifest',$manifestHead_id)->update(['sent' => date('Y-m-d H:i:s')]);
         
     }
 

@@ -18,15 +18,13 @@ class PoController extends Controller
         $msg_mail = '';
         $msg_data = '';
 
-        $cekPo = Po::firstOrNew([
-            'po_num' => $request->po_num
-        ]);
-
-        if($cekPo || $cekPo->exists()) {
-            $msg_data = 'PO send to eproc failed, cannot insert duplicate data po.';
-
+        $cekPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
+        
+        $po = new Po;
+        
+        if(count($cekPo) > 0) {
+            $msg_data = 'PO send to eproc failed, cannot insert duplicate data po with same revno.';
         } else {
-            $po = new Po;
             $po->po_num = $request->po_num;
             $po->mf_type = $request->mf_type;
             $po->comp_code = $request->comp_code;
