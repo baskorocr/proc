@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use App\Models\User;
+use App\Models\MasterPDAUser;
 
 class UserController extends Controller
 {
@@ -202,7 +203,7 @@ class UserController extends Controller
 
     public function checkPin(Request $request)
     {   
-        $user = User::where('username', $request->username)->first();
+        $user = MasterPDAUser::where('username', $request->username)->first();
         $token = Str::random(25);
         $isExists = !empty($user) ? true : false ;
 
