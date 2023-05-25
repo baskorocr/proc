@@ -5,21 +5,23 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Po;
 use App\Models\User;
+use App\Models\EmailGroup;
 use Mail;
 use App\Mail\PoMail;
 use Exception;
+use Carbon\Carbon;
 
 class PoController extends Controller
 {
     public function sendPo(Request $request)
     {
-        //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
         $user = User::where('id_user', $request->id_user)->first();
 
         if($user){
             if($user->status_user === 'A'){
                 $po = new Po;
                 $po->po_num = $request->po_num;
+                $po->mf_type = $request->mf_type;
                 $po->comp_code = $request->comp_code;
                 $po->doc_type = $request->doc_type;
                 $po->doc_catg = $request->doc_catg;
@@ -97,6 +99,8 @@ class PoController extends Controller
                     $message2 = $e->getMessage();
                 }
                 
+                $this->mailer_send($po, $user);
+
                 return response()->json([
                     'message1' => 'PO Sent to Eproc',
                     'message2' => $message2,
@@ -114,5 +118,30 @@ class PoController extends Controller
                 //'data' => $po
             ], 422);
         }
+    }
+
+    private function mailer_send($po, $user)
+    {
+        $nameGroupMail  = $this->split_creator($po->creator);
+
+        $emaillist = EmailGroup::where('abrev',$nameGroupMail)->first()->mailgroup;
+        //TO USER
+        Mail::to($user->username)->send(new PoMail($po, $user));
+        //TO Listed Group DEPT
+        foreach ($emaillist as $e) {
+             Mail::to($e->mail)->send(new PoMail($po, $user));
+        }
+        //set sent datetime
+        Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+    }
+
+    private function split_creator($creator)
+    {
+        //PISAHKAN TEXT dan Spesial Karakter
+        $get_group = preg_split('/(\w+)/', $creator, -1, PREG_SPLIT_DELIM_CAPTURE);
+        // Pisahkan numeric dan alpha
+        $get_name = sscanf($get_group[3], "%[A-Z]%d");
+        //Get PUR
+        return $get_name[0];
     }
 }

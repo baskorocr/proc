@@ -2,6 +2,7 @@
 namespace App\Helpers;
 
 use App\Models\Transaction;
+use App\Models\MasterVendor;
 use App\Models\RegisIsoDoc;
 use App\Models\NumberRange;
 use DB;
@@ -11,6 +12,18 @@ class IsoHelper {
 	function get_transaction_type_id($trn_id){
 
 		$tr = Transaction::where('trn_id',$trn_id)->get();
+		return $tr;
+	}
+
+	function get_vendor($id_vendor){
+
+		$tr = MasterVendor::where('id_vendor',$id_vendor)->first();
+		return $tr;
+	}
+
+	function get_iso($trn_id){
+
+		$tr = RegisIsoDoc::where('trn_id',$trn_id)->first();
 		return $tr;
 	}
 

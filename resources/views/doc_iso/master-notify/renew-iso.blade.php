@@ -164,7 +164,7 @@
     Swal.fire({
       title: 'Transaction Progress',
       html: 'Please wait...',
-      timer: 30000,
+      timer: 300000,
       // timerProgressBar: true,
       didOpen: () => {
         Swal.showLoading()

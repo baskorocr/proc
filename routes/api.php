@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+Route::get('mailer_send/{regis_iso_doc_id}', 'RegisIsoDocController@mailer_send');
 Route::get('check', 'UserController@check');
 Route::get('check-pin', 'UserController@checkPin');
 Route::get('/outstanding', 'ManifestController@outstanding');
@@ -26,6 +27,7 @@ Route::get('manifest/{manifest}', 'ManifestController@manifestDetail');
 Route::get('check-kanban', 'ManifestController@checkKanban');
 Route::post('/send-manifest', 'ManifestController@sendManifest');
 Route::post('/manifest/close', 'ManifestController@closeManifest');
+Route::post('/vendor', 'VendorController@store');
 Route::post('/vendor', 'VendorController@store');
 Route::post('/vendor/{id_vendor}', 'VendorController@update');
 Route::post('/send-po', 'PoController@sendPo');

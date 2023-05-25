@@ -158,14 +158,14 @@ div.dataTables_wrapper div.dt-row{
                                     <ul class="dropdown-menu">
                                         <li> <a href="{{route('doc-iso.view',['id' => $item->_id])}}" class="dropdown-item"><i class='fas fa-eye'></i> View</a></li>
                                         {{-- @dd(\IsoHelper::get_number_range_data($item->ref_doc, $item->ref_doc_year)) --}}
-                                         {{-- @if((empty($item->ref_doc) AND empty($item->ref_doc_year)) OR $item->stat == 'E')
+                                         @if(((empty($item->ref_doc) AND empty($item->ref_doc_year)) AND $item->trn_type == 'R') OR $item->trn_type == 'I')
                                             <li><a href="{{route('doc-iso.renew',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-copy'></i> Renew</a></li>
-                                        @endif --}}
-                                        @if(($item->stat != 'A' AND $item->stat != 'E') )
+                                        @endif
+                                        @if(($item->stat != 'N' AND $item->stat != 'E' ) AND $item->trn_type != 'R' AND $item->trn_type != 'I' )
                                              <li> <a href="{{route('doc-iso.change',['id' => $item->_id])}}" class="dropdown-item"> <i class='fas fa-edit'></i> Change</a></li>
                                         @endif
                                         @if(auth()->user()->role != "vendor")
-                                            @if(($item->stat != 'A' AND $item->stat != 'E'))
+                                            @if(( $item->stat != 'N' AND $item->stat != 'E') AND $item->trn_type != 'R' AND $item->trn_type != 'I' )
                                                 <li> <a href="{{route('approve-iso',['id' => $item->id])}}" class="dropdown-item"> <i class='fas fa-check'></i> Approval</a></li>
                                                 <li><a href='{{route('delete-iso',['id' => $item->_id,'trn_id' => $item->trn_id,'doc_year' => $item->doc_year])}}' class="dropdown-item" data-toggle='tooltip' onclick="return confirm('All reference data will be deleted. \n Are you sure want to delete this data [{{$item->trn_id}}]?')"> <i class='fas fa-trash'></i> Delete</a></li>
                                             @endif
@@ -222,25 +222,29 @@ div.dataTables_wrapper div.dt-row{
                             </a></td>
                         
                                       
-                         <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
-                        <td>{{date('Y-m-d H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
+                         <td>{{date('d/m/Y H:i:s',strtotime(!empty($item->updated_at)?$item->updated_at:$item->ch_date))}}</td>
+                        <td>{{date('d/m/Y H:i:s',strtotime(!empty($item->created_at)?$item->created_at:$item->cr_date))}}</td>
                         <td>{{$item->remark}}</td>
                         <td>{{$item->trn_id}} - {{$item->doc_year}}</td>
-                         <?php
-                            if ( $item->ref_doc == '') {
-                                echo "<td></td>";
-                            }  else {
-                            ?>
+                     
                                 <td>
-                                    <a href="{{route('doc-iso.view',['id' => $item->_id])}}" 
+                                    
+                                 @if(!empty($item->last_ref_doc) AND !empty($item->last_doc_year))
+                                 <a href="{{route('doc-iso.view',['id' => IsoHelper::get_iso($item->last_ref_doc)->_id])}}" 
                                         target="_blank">
-                                        <?php echo $item->ref_doc."-".$item->ref_doc_year ?>
-                                    </a> 
+                                        <?php echo $item->last_ref_doc."-".$item->last_doc_year ?>
+                                      </a>
+                                        @else
+                                        @if(!empty($item->ref_doc) AND !empty($item->ref_doc))
+                                            <a href="{{route('doc-iso.view',['id' => IsoHelper::get_iso($item->ref_doc)->_id])}}" 
+                                            target="_blank">
+                                            <?php echo $item->ref_doc."-".$item->ref_doc_year ?>
+                                          </a>
+                                      @endif
+                                        @endif
+                                   
                                 </td>
-                        <?php    
-                            }
-
-                        ?> 
+                      
                         <td>{{strtotime($item->cert_date)}}</td>  
                       </tr>
                     @endforeach

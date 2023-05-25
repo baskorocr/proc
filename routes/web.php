@@ -16,11 +16,13 @@ Route::get('/', function () {
 })->name('login');
 Route::group(['middleware' => ['auth']], function () {
     Route::get('/logout',[AuthController::class,'logout'])->name('logout');
+    Route::get('/manifest_test_mail/{manifestId}', [App\Http\Controllers\ManifestController::class, 'manifest_test_mail'])->name('testMailer');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/security/changepwd', [App\Http\Controllers\ProfileController::class, 'changePwdLink'])->name('change.pwd.link');
     Route::get('/security/change-password', [App\Http\Controllers\ProfileController::class, 'changePwd'])->name('change.pwd');
     Route::get('/security/chpwd/logout', [App\Http\Controllers\ProfileController::class, 'passwordLogout'])->name('pwd.logout');
     Route::post('/security/do/change-password', [App\Http\Controllers\ProfileController::class, 'changePwdAct'])->name('change.pwd.act');
+    Route::get('/test_read', [App\Http\Controllers\PurchasingProcessController::class, 'test_read'])->name('testt');
 
     Route::prefix('doc-iso')->group(function(){
 
@@ -301,10 +303,13 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::prefix('purchasing-process')->group(function(){
+        Route::get('/testMail', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.uploadpo');
         Route::get('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'upload'])->name('purchasing.process.uploadpo');
         Route::get('/list-po', [App\Http\Controllers\PurchasingProcessController::class, 'index'])->name('purchasing.process.listpo');
+        Route::get('/send-mail-po', [App\Http\Controllers\PurchasingProcessController::class, 'send_mail'])->name('purchasing.process.send.mail');
         //Datatables
         Route::post('/datatables/get-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPo'])->name('datatables.purchasing.process.listpo');
+        Route::post('/datatables/send-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPoSend'])->name('datatables.purchasing.process.listposend');
 
         Route::get('/download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'download'])->name('purchasing.process.download.listpo');
         //Datatables
