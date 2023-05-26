@@ -566,7 +566,7 @@ class PurchasingProcessController extends Controller
             return @$data->last_change;
         }) 
         ->editColumn('sent', function($data){
-            return date('Y-m-d H:i:s',strtotime($data->sent));
+            return !empty($data->sent) ? date('Y-m-d H:i:s',strtotime($data->sent)):"-";
         })
         ->editColumn('po_amount', function($data){
            
