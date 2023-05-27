@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Po;
 use App\Models\User;
+use App\Models\MasterUser;
+use App\Models\Permission;
+use App\Models\Role;
 use App\Models\EmailGroup;
 use Mail;
 use App\Mail\PoMail;
@@ -17,22 +20,24 @@ class PoController extends Controller
 {
     public function sendPo(Request $request)
     {
-        $user = User::where('id_user', $request->id_user)->first();
+
+        $user = User::where('foreign_id', $request->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+       
         $msg_mail = '';
         $msg_data = '';
 
         $cekPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
-        
-        $dir1 = preg_grep('~^'. $request->po_num .'-.*\.pdf$~', scandir(Storage::disk('po_directory')->path("")));
-        $dir2 = preg_grep('~^'. $request->po_num .'-.*\.pdf$~', scandir(Storage::disk('po_qas_directory')->path("")));
+        // //Get Latest File
+        // $dir1 = preg_grep('~^'. $request->po_num .'-.*\.pdf$~', scandir(Storage::disk('po_directory')->path("")));
+        // $dir2 = preg_grep('~^'. $request->po_num .'-.*\.pdf$~', scandir(Storage::disk('po_qas_directory')->path("")));
 
-        $files = array_merge($dir1,$dir2);
-        $gf = [];
-        foreach($files as $key => $file)
-        {
-            $gf[] = $file;
-        }
-
+        // $files = array_merge($dir1,$dir2);
+        // $gf = [];
+        // foreach($files as $key => $file)
+        // {
+        //     $gf[] = $file;
+        // }
+        // rsort($gf);
         $po = new Po;
         
         if(count($cekPo) > 0) {
@@ -50,7 +55,10 @@ class PoController extends Controller
             $po->pgr = $request->purch_grp;
             $po->porg = $request->purch_org;
             $po->creator = $request->creator;
-            $po->file_nm = empty($gf[0]) ? "":$gf[0];
+            // NO_PO-TANGGAL APPROV-JAMMENITDETIK , contoh (5111010611-20230526-075945.pdf)
+            $pdf_nm = $request->po_num."-".date('Ymd',strtotime($request->aprvdt))."-".date('His',strtotime($request->aprvtm)).".pdf";
+            // $po->file_nm = empty($gf[0]) ? "":$gf[0];
+            $po->file_nm = $pdf_nm;
             // $po->file_nm = $request->file_name;
             $po->sent = $request->sent;
             $po->downloaded = $request->downloaded;
@@ -75,8 +83,8 @@ class PoController extends Controller
             $msg_data = 'PO send to eproc saved successfully.';
         }
         
-        if($user){
-            if($user->status_user === 'A'){
+        if(count($user) > 0){
+            
 
                 try {
                     $this->mailer_send($po, $user);
@@ -91,13 +99,7 @@ class PoController extends Controller
                     'msg_mail' => $msg_mail,
                     'data' => $po
                 ], 200);
-            } else {
-                return response()->json([
-                    'msg_data' => $msg_data,
-                    'msg_mail' => 'PO send to vendor failed. 1',
-                    //'data' => $po
-                ], 422);
-            }
+          
         } else {
             return response()->json([
                 'msg_data' => $msg_data,
@@ -151,10 +153,10 @@ class PoController extends Controller
     {
         //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
         $po = Po::where('po_num', $request->po_num)->first();
-        $user = User::where('id_user', $po->id_user)->first();
+        $user = User::where('foreign_id', $request->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
 
-        if($user){
-            if($user->status_user === 'A'){
+        if(count($user) > 0){
+           
 
                 //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
                 try {
@@ -171,13 +173,7 @@ class PoController extends Controller
                     'msg_mail' => $msg_mail,
                     'data' => $po
                 ], 200);
-            } else {
-                return response()->json([
-                    'msg_data' => $msg_data,
-                    'msg_mail' => 'PO send to vendor failed.',
-                    //'data' => $po
-                ], 422);
-            }
+           
         } else {
             return response()->json([
                 'msg_data' => $msg_data,
@@ -189,27 +185,89 @@ class PoController extends Controller
 
     private function mailer_send($po, $user)
     {
-        $nameGroupMail  = $this->split_creator($po->creator);
-        $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
 
-        if(!empty($emailgrp))
-        {
-           $emaillist = $emailgrp->mailgroup;
-            //TO USER
-            //TO Listed Group DEPT
-            $cc = [];
-            foreach ($emaillist as $e) {
-                if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
-                 $cc[] =$e->mail;
-                }
-            
+            $list_permission=[];
+            foreach($user as $u)
+            {   
+                $list_permission[]=$u->role_id;
             }
-            Mail::to($user->username)->cc($cc)->send(new PoMail($po, $user));
-            //set sent datetime
-            Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]); 
-        } else{
-            throw new Exception("Email Group ".$nameGroupMail." is not Found.");
-        }
+            $lperm = array_unique($list_permission);
+            $getMenu = Permission::where('name','Download PO')->first();
+            $role =  Role::whereIn('_id',$list_permission)->get();
+    
+            $allowed = [];
+            $sended = [];
+            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+            foreach($role as $r)
+            {
+                $permissions=[];
+                foreach($r->permissions as $p){
+                    $permissions[] = $p->permission_id; 
+                    
+                }
+                
+                if(in_array($getMenu->_id, $permissions))
+                {
+                    $allowed[] = $r->_id;
+                }
+    
+            }
+
+
+            //Ambil Data Vendor
+            $user =  MasterUser::whereIn('role_id',$allowed)->get();
+            $nameGroupMail  = $this->split_creator($po->creator);
+            $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
+             $cc = [];
+            if(!empty($emailgrp))
+            {
+               $emaillist = $emailgrp->mailgroup;
+                //TO USER
+                //TO Listed Group DEPT
+               
+                foreach ($emaillist as $e) {
+                    if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
+                     $cc[] =$e->mail;
+                    }
+                
+                }
+            } else{
+                throw new Exception('Email Group "'.$nameGroupMail.'"" is not registered in E-Proc.');
+            }
+
+            //Kirim Ke Akun Vendor
+            $user =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id', $po->id_vendor)->get();
+            foreach($user as $vendor_user){
+                if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+                  
+                        Mail::to($vendor_user->username)->cc($cc)->send(new PoMail($po, $vendor_user));
+                    
+                }
+            }
+            //Set field 'sent' untuk flag terkirim
+            PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+            // $nameGroupMail  = $this->split_creator($po->creator);
+            // $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
+
+            // if(!empty($emailgrp))
+            // {
+            //    $emaillist = $emailgrp->mailgroup;
+            //     //TO USER
+            //     //TO Listed Group DEPT
+            //     $cc = [];
+            //     foreach ($emaillist as $e) {
+            //         if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
+            //          $cc[] =$e->mail;
+            //         }
+                
+            //     }
+            //     Mail::to($user->username)->cc($cc)->send(new PoMail($po, $user));
+            //     //set sent datetime
+            //     Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]); 
+            // } else{
+            //     throw new Exception("Email Group ".$nameGroupMail." is not Found.");
+            // }
+            
         
     }
 
@@ -235,4 +293,11 @@ class PoController extends Controller
         }
        
     }
+
+private function reIndexArray( $arr, $startAt=0 )
+{
+    return ( 0 == $startAt )
+        ? array_values( array_filter($arr) )
+        : array_combine( array_filter(range( $startAt, count( $arr ) + ( $startAt - 1 ) ), array_values( $arr )) );
+}
 }
