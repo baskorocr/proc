@@ -55,9 +55,9 @@ class MonitoringDeliveryController extends Controller
                 } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
                     $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
-                $data = $mf->where('mf_type','MI')->get();
+                $data = $mf->get();
             }else{
-             // $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
+             // $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI','SO')->get();
 
              $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id);
 
