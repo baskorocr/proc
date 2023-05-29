@@ -27,21 +27,13 @@ class PoController extends Controller
         $msg_data = '';
 
         $cekPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
-        // //Get Latest File
-        // $dir1 = preg_grep('~^'. $request->po_num .'-.*\.pdf$~', scandir(Storage::disk('po_directory')->path("")));
-        // $dir2 = preg_grep('~^'. $request->po_num .'-.*\.pdf$~', scandir(Storage::disk('po_qas_directory')->path("")));
-
-        // $files = array_merge($dir1,$dir2);
-        // $gf = [];
-        // foreach($files as $key => $file)
-        // {
-        //     $gf[] = $file;
-        // }
-        // rsort($gf);
+        $resDuplicate = 0;
         $po = new Po;
         
         if(count($cekPo) > 0) {
             $msg_data = 'PO send to eproc failed, cannot insert duplicate data po with same revno.';
+            $msg_mail = 'PO send to vendor failed. because send po duplicate / already exist.';
+            $resDuplicate = 1;
         } else {
             $po->po_num = $request->po_num;
             $po->mf_type = $request->mf_type;
@@ -83,28 +75,34 @@ class PoController extends Controller
             $msg_data = 'PO send to eproc saved successfully.';
         }
         
-        if(count($user) > 0){
-            
-
-                try {
-                    $this->mailer_send($po, $user);
-                    // Mail::to($user->username)->send(new PoMail($po, $user));
-                    $msg_mail = 'PO send mailed to vendor successfully.';
-                } catch (Exception $e) {
-                    $msg_mail = $e->getMessage();
-                }
-
+        if($resDuplicate != 0) {
+            if(count($user) > 0){
+    
+                    try {
+                        $this->mailer_send($po, $user);
+                        // Mail::to($user->username)->send(new PoMail($po, $user));
+                        $msg_mail = 'PO send mailed to vendor successfully.';
+                    } catch (Exception $e) {
+                        $msg_mail = $e->getMessage();
+                    }
+    
+                    return response()->json([
+                        'msg_data' => $msg_data,
+                        'msg_mail' => $msg_mail,
+                        'data' => $po
+                    ], 200);
+              
+            } else {
                 return response()->json([
                     'msg_data' => $msg_data,
-                    'msg_mail' => $msg_mail,
-                    'data' => $po
-                ], 200);
-          
+                    'msg_mail' => 'PO send to vendor failed. 2',
+                        //'data' => $po
+                ], 422);
+            }
         } else {
             return response()->json([
                 'msg_data' => $msg_data,
-                'msg_mail' => 'PO send to vendor failed. 2',
-                    //'data' => $po
+                'msg_mail' => $msg_mail,
             ], 422);
         }
     }
