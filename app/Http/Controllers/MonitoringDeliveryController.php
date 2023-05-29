@@ -57,7 +57,7 @@ class MonitoringDeliveryController extends Controller
                 }
                 $data = $mf->get();
             }else{
-             // $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI','SO')->get();
+           
 
              $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id);
 
@@ -75,7 +75,7 @@ class MonitoringDeliveryController extends Controller
 
             }
        } else {
-              // dd($request->dt_end);
+             
            if(!empty($request->dt_start) && !empty($request->dt_end))
             { 
 
