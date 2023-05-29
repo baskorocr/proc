@@ -83,7 +83,7 @@ class ManifestController extends Controller
 
     public function manifest_test_mail($manifestId)
     {
-        $this->mailer_send($manifestId);
+        $this->mailer_send($manifestId, [1]);
     }
 
     public function sendManifest(Request $request)
@@ -269,7 +269,7 @@ class ManifestController extends Controller
                 }
             }
             //Set field 'sent' untuk flag terkirim
-            ManifestHeader::where('_id',$manifestHead)->orWhere('manifest',$manifestHead)->update(['sent' => date('Y-m-d H:i:s')]);
+            ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
         } else {
             return false;
         }
