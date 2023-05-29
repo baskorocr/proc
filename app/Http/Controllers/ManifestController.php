@@ -92,6 +92,7 @@ class ManifestController extends Controller
         $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
         $msg_mail = '';
         $msg_data = '';
+        $resDuplicate = 0;
 
         $cekManifest = ManifestHeader::where('manifest', $request->manifest)->get();
 
@@ -99,7 +100,8 @@ class ManifestController extends Controller
 
         if(count($cekManifest) > 0) {
             $msg_data = 'Manifest send to eproc failed, cannot insert duplicate data manifest.';
-
+            $msg_mail = 'Manifest send to vendor failed. because send manifest already exist';
+            $resDuplicate = 1;
         } else {
             $manifest->manifest = $request->manifest;
             $manifest->id_vendor = $request->id_vendor;
@@ -136,31 +138,38 @@ class ManifestController extends Controller
             $msg_data = 'Manifest send to eproc saved successfully.';
         }
 
-        if($vendor) {
-            if($vendor->status_vendor === 'A') {
-                try {
-                    $this->mailer_send($request->manifest, $cekManifest);
-                    $msg_mail = 'Manifest send mailed to vendor successfully.';
-                } catch (Exception $e) {
-                    $msg_mail = $e->getMessage();
+        if($resDuplicate != 1) {
+            if($vendor) {
+                if($vendor->status_vendor === 'A') {
+                    try {
+                        $this->mailer_send($request->manifest, $cekManifest);
+                        $msg_mail = 'Manifest send mailed to vendor successfully.';
+                    } catch (Exception $e) {
+                        $msg_mail = $e->getMessage();
+                    }
+    
+                    return response()->json([
+                        'msg_data' => $msg_data,
+                        'msg_mail' => $msg_mail,
+                        'data' => $manifest,
+                    ], 200);
+    
+                } else {
+                    return response()->json([
+                        'msg_data' => $msg_data,
+                        'msg_mail' => 'Manifest send to vendor failed.',
+                    ], 200);
                 }
-
-                return response()->json([
-                    'msg_data' => $msg_data,
-                    'msg_mail' => $msg_mail,
-                    'data' => $manifest,
-                ], 200);
-
             } else {
                 return response()->json([
                     'msg_data' => $msg_data,
                     'msg_mail' => 'Manifest send to vendor failed.',
-                ], 200);
+                ], 422);
             }
         } else {
             return response()->json([
                 'msg_data' => $msg_data,
-                'msg_mail' => 'Manifest send to vendor failed.',
+                'msg_mail' => $msg_mail,
             ], 422);
         }
         
