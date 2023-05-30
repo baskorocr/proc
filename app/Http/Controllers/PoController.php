@@ -235,14 +235,17 @@ class PoController extends Controller
             }
 
             //Kirim Ke Akun Vendor
-            $user =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id', $po->id_vendor)->get();
+            $mailVendorUser = [];
+            $user =  MasterUser::whereIn('role_id',$allowed)->where('status_user','A')->where('foreign_id', $po->id_vendor)->get();
             foreach($user as $vendor_user){
                 if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
-                  
-                        Mail::to($vendor_user->username)->cc($cc)->send(new PoMail($po, $vendor_user));
+                    
+                    $mailVendorUser[]=$vendor_user->username;
                     
                 }
             }
+            
+            Mail::to($mailVendorUser)->cc($cc)->send(new PoMail($po, $vendor_user));
             //Set field 'sent' untuk flag terkirim
             PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
             // $nameGroupMail  = $this->split_creator($po->creator);

@@ -10,10 +10,12 @@ use App\Models\MasterUser;
 use App\Models\IsoLog;
 use App\Models\Permission;
 use App\Models\MasterNotify;
+use App\Mail\UpcExpIsoRegMail;
 use App\Mail\IsoRegMail;
 use Illuminate\Support\Facades\File;
 use Mail;
 use Auth;
+use Carbon\Carbon;
 
 class RegisIsoDocController extends Controller
 {
@@ -26,6 +28,35 @@ class RegisIsoDocController extends Controller
         return view('doc_iso.master-notify.register-iso', $data);
     }
 
+    public function cron_check_iso_upcoming_expired()
+    {
+        $reg = RegisIsoDoc::whereNull('ref_doc')->orWhere('ref_doc','=','')->get();
+        $arr = [];
+        $notified = [];
+        foreach($reg as $r)
+        {
+         $mnot=MasterNotify::orderBy('notif_before','ASC')->get();
+         foreach($mnot as $not)
+         {
+            if(!in_array($r->_id,$notified))
+            {
+                 $exp_tm = strtotime(Carbon::now()->addDays(($not->notif_before - 1))->toDateTimeString());
+                 $exp_date = strtotime($r->exp_date);
+                 if($exp_tm >= $exp_date)
+                 {
+                    $arr[] = ['id_iso' => $r->_id,'type_notify' => $not->notif_id,'notif_before' => $not->notif_before];
+                    $this->mailer_send_expired($r->_id,$not->notif_before);
+                    $notified[]=$r->_id;
+                 }
+            }
+            
+         }
+        
+        }
+   
+
+        dd($arr);
+    }
     public function show(Request $request, $id)
     {
         $data['iso'] = RegisIsoDoc::findOrFail($id);
@@ -400,13 +431,74 @@ class RegisIsoDocController extends Controller
              $sended[] = $u->username;
         }
       }
+        // //OLD
+        // $vendor_user = MasterUser::where('foreign_id',$regis_iso_doc->id_vendor)->limit(1)->get();
+        // foreach($vendor_user as $vendor_user){
+        //         if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+        //             if(!in_array($vendor_user->username,$sended))
+        //             {
+        //                 Mail::to($vendor_user->username)->cc($cc)->send(new IsoRegMail($regis_iso_doc));
+        //             }
+        //         }
+        //     }
+
+        $emailVendor = [];
+        $vendor_user = MasterUser::where('foreign_id',$regis_iso_doc->id_vendor)->whereIn('role_id',$allowed)->get();
+        foreach($vendor_user as $vendor_user){
+                if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+                    $emailVendor[]=$vendor_user->username;
+                }
+            }
+            Mail::to($emailVendor)->cc($cc)->send(new IsoRegMail($regis_iso_doc));
+         // $nameGroupMail  = $this->split_creator($po->creator);
+
+        // $emaillist = EmailGroup::where('abrev',$nameGroupMail)->first()->mailgroup;
+        // //TO USER
+       
+        // //TO Listed Group DEPT
+        // foreach ($emaillist as $e) {
+        //      Mail::to($e->mail)->send(new PoMail($po, $user));
+        // }
+    }
+
+    private function mailer_send_expired($regis_iso_doc_id,$notify_before)
+    {
+        $regis_iso_doc = RegisIsoDoc::where('_id',$regis_iso_doc_id)->first();
+        // return view('mails.iso_reg_mail')->with(['regisiso' => $regis_iso_doc]);
+
+        $getMenu = Permission::where('name','Doc ISO Manage')->first();
+       $role =  Role::get();
+       // dd($role);
+        $allowed = [];
+        $sended = [];
+       foreach($role as $r)
+       {
+        $permissions=[];
+           foreach($r->permissions as $p){
+            $permissions[] = $p->permission_id; 
+                
+           }
+           if(in_array($getMenu->_id, $permissions))
+           {
+             $allowed[] = $r->_id;
+           }
+
+       }
+      $user =  MasterUser::whereIn('role_id',$allowed)->get();
+      foreach($user as $u)
+      {
+         if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
+             $cc[] =$u->username;
+             $sended[] = $u->username;
+        }
+      }
 
         $vendor_user = MasterUser::where('foreign_id',$regis_iso_doc->id_vendor)->limit(1)->get();
         foreach($vendor_user as $vendor_user){
                 if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
                     if(!in_array($vendor_user->username,$sended))
                     {
-                        Mail::to($vendor_user->username)->cc($cc)->send(new IsoRegMail($regis_iso_doc));
+                        Mail::to($vendor_user->username)->cc($cc)->send(new UpcExpIsoRegMail($regis_iso_doc,$notify_before));
                     }
                 }
             }

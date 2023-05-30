@@ -23,15 +23,15 @@
 
         <div class="card-header">
           Search Option 
-          {{-- <div class="filter  " style="margin-top:-30px;" align="right">
+          <div class="filter  " style="margin-top:-30px;" align="right">
                 <a class="btn btn-outline-secondary" href="#" data-bs-toggle="dropdown" aria-expanded="false">
                 <i class="bi bi-list"></i></a>
-                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style=""> --}}
-                  {{-- <li class="dropdown-header text-start"><h6>Filter</h6></li> --}}
-                {{--   <li><a class="dropdown-item" href="{{route('purchasing.process.send.mail')}}"><i class="fas fa-envelope"></i>Send Mail</a></li>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow" style=""> 
+                 {{-- <li class="dropdown-header text-start"><h6>Filter</h6></li>  --}}
+                 <li><a class="dropdown-item" href="{{route('purchasing.process.send.mail')}}"><i class="fas fa-envelope"></i>Send Mail</a></li>
                 </ul>
                 
-              </div> --}}
+              </div> 
 
         </div>
         <div class="card-body">
