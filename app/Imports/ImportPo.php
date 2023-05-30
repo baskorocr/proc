@@ -63,11 +63,15 @@ class ImportPo implements ToCollection, WithHeadingRow, WithStartRow
                         $list_po->plant = $row['plant'];
                         $list_po->id_vendor = $row['vendor'];
                         $list_po->doc_date = !empty(Carbon::parse($row['doc_date'])->format('Y-m-d')) ? Carbon::parse($row['doc_date'])->format('Y-m-d') : string ($row['doc_date']);
-                        $list_po->pgr = $row['pgr'];
+                        $list_po->pgr = strVal($row['pgr']);
                         $list_po->file_nm = empty($gf[0]) ? "":$gf[0];
                         $list_po->porg = $row['porg'];
                         $list_po->rel_state = $row['rel'];
+                        $list_po->rel_state = $row['rel'];
                         $list_po->creator = $row['creator'];
+                        $list_po->revno = "0";
+                        $list_po->revdt = "";
+                        $list_po->revtm = "";
                         //$list_po->created_by = !empty(auth()->user()->full_name) ? auth()->user()->full_name : 'user1';
                         $list_po->save();
             }

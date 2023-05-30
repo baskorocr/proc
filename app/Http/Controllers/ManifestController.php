@@ -258,16 +258,28 @@ class ManifestController extends Controller
             }
     
             //Kirim Ke Akun Vendor
-            $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
+            // $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
     
+            // foreach($vendor_user as $vendor_user){
+            //     if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+            //         if(!in_array($vendor_user->username,$sended))
+            //         {
+            //             Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
+            //         }
+            //     }
+            // }
+
+            $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->where('status_user','A')->whereIn('role_id',$allowed)->get();
+            $vendEmail = [];
             foreach($vendor_user as $vendor_user){
                 if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
-                    if(!in_array($vendor_user->username,$sended))
-                    {
-                        Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
-                    }
+                   
+                        $vendEmail[] = $vendor_user->username;
+                       
                 }
             }
+            // dd($allowed);
+             Mail::to($vendEmail)->cc($vendEmail)->send(new ManifestMail($manifestHead,$vendor));
             //Set field 'sent' untuk flag terkirim
             ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
         } else {
