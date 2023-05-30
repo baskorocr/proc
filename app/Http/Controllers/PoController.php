@@ -75,7 +75,7 @@ class PoController extends Controller
             $msg_data = 'PO send to eproc saved successfully.';
         }
         
-        if($resDuplicate != 0) {
+        if($resDuplicate <= 0) {
             if(count($user) > 0){
     
                     try {
@@ -95,7 +95,7 @@ class PoController extends Controller
             } else {
                 return response()->json([
                     'msg_data' => $msg_data,
-                    'msg_mail' => 'PO send to vendor failed. 2',
+                    'msg_mail' => 'PO send to vendor failed, user email not found.',
                         //'data' => $po
                 ], 422);
             }
