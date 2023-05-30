@@ -28,13 +28,13 @@ class PoController extends Controller
 
         $cekPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
         $resDuplicate = 0;
-        $po = new Po;
         
         if(count($cekPo) > 0) {
             $msg_data = 'PO send to eproc failed, cannot insert duplicate data po with same revno.';
             $msg_mail = 'PO send to vendor failed. because send po duplicate / already exist.';
             $resDuplicate = 1;
         } else {
+            $po = new Po;
             $po->po_num = $request->po_num;
             $po->mf_type = $request->mf_type;
             $po->comp_code = $request->comp_code;
@@ -77,20 +77,20 @@ class PoController extends Controller
         
         if($resDuplicate <= 0) {
             if(count($user) > 0){
-    
-                    try {
-                        $this->mailer_send($po, $user);
-                        // Mail::to($user->username)->send(new PoMail($po, $user));
-                        $msg_mail = 'PO send mailed to vendor successfully.';
-                    } catch (Exception $e) {
-                        $msg_mail = $e->getMessage();
-                    }
-    
-                    return response()->json([
-                        'msg_data' => $msg_data,
-                        'msg_mail' => $msg_mail,
-                        'data' => $po
-                    ], 200);
+                $dataPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
+                
+                try {
+                    $this->mailer_send($dataPo, $user);
+                    $msg_mail = 'PO send mailed to vendor successfully.';
+                } catch (Exception $e) {
+                    $msg_mail = $e->getMessage();
+                }
+
+                return response()->json([
+                    'msg_data' => $msg_data,
+                    'msg_mail' => $msg_mail,
+                    'data' => $dataPo
+                ], 200);
               
             } else {
                 return response()->json([
