@@ -277,6 +277,19 @@ class MonitoringDeliveryController extends Controller
                 
                 return @$data->material_desc;
             })
+
+            ->editColumn('qty', function ($data){
+                // $mf = ManifestHeader::where('manifest', $data->manifest)->first();
+                $tot_qty = $data->qty_pack;
+                $qty_in =  $data->qty_in;
+                if ($tot_qty == $qty_in) {
+                    $qty_stat = "<small><span class=\"badge bg-green\">" . $qty_in . "/" . $tot_qty . "</span></small>";
+                } else {
+                    $qty_stat = "<small><span class=\"badge bg-orange\">" . $qty_in . "/" . $tot_qty . "</span></small>";
+                }
+
+                return $qty_stat;
+            })
             ->editColumn('scan_stat', function ($data) {
 
                 if($data->stat == "P")
@@ -303,7 +316,7 @@ class MonitoringDeliveryController extends Controller
                 $kanban_in = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
                   if ($tot_kanban == $kanban_in) {
-                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                        $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     } else {
                         $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     }
@@ -312,8 +325,8 @@ class MonitoringDeliveryController extends Controller
             ->editColumn('kanban_stat', function ($data) {
                 $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                  $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
-                  if ($data->count('kanban') == $kanban_received) {
-                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                  if ($tot_kanban == $kanban_received) {
+                        $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     } else {
                         $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     }
@@ -333,7 +346,7 @@ class MonitoringDeliveryController extends Controller
                 // return ManifestDetail::where('manifest', $data->manifest)->sum('qty_pack');
                return $data->qty_pack;;
             })
-            ->rawColumns(['scan_stat','kanban_stat','active_stat','kanban_stat','receive_stat'])
+            ->rawColumns(['scan_stat','kanban_stat','qty','active_stat','kanban_stat','receive_stat'])
             ->make(true);
     }
 
