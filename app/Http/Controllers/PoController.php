@@ -26,10 +26,10 @@ class PoController extends Controller
         $msg_mail = '';
         $msg_data = '';
 
-        $cekPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
+        $cekPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->count();
         $resDuplicate = 0;
         
-        if(count($cekPo) > 0) {
+        if($cekPo > 0) {
             $msg_data = 'PO send to eproc failed, cannot insert duplicate data po with same revno.';
             $msg_mail = 'PO send to vendor failed. because send po duplicate / already exist.';
             $resDuplicate = 1;
@@ -57,7 +57,7 @@ class PoController extends Controller
             $po->accepted = $request->accepted;
             $po->id_user = $request->id_user;
             $po->last_change = $request->last_change;
-            $po->revno = $request->revno;
+            $po->revno = strval($request->revno);
             $po->revdt = $request->revdt;
             $po->revtm = $request->revtm;
             $po->rel_state = $request->rel_state;
@@ -77,7 +77,8 @@ class PoController extends Controller
         
         if($resDuplicate <= 0) {
             if(count($user) > 0){
-                $dataPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
+                // $dataPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
+                $dataPo = Po::where('_id', $po->_id)->first();
                 
                 try {
                     $this->mailer_send($dataPo, $user);
@@ -287,7 +288,7 @@ class PoController extends Controller
             return $get_name[0];
         } catch(\Exception $e)
         {
-            throw new Exception("Creator format is invalid.");
+            throw new Exception("Creator format is invalid. Accept : DPM-{ex: PUR03 or INVMGR}");
         }
        
     }

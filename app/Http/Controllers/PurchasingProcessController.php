@@ -49,7 +49,7 @@ class PurchasingProcessController extends Controller
                                             ->orWhereNull('sent');
                                     })->get();
         try{
-            \Mail::to('irfa@indihealth.com')->send(new \App\Mail\SendPOMail($vendor,$po));
+            \Mail::to('example@mail.com')->send(new \App\Mail\SendPOMail($vendor,$po));
 
         } catch(\Exception $e) {
 
