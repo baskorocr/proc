@@ -151,7 +151,7 @@ class PoController extends Controller
     public function resendEmailPo(Request $request)
     {
         //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
-        $po = Po::where('po_num', $request->po_num)->first();
+        $po = Po::where('po_num', $request->po_num)->where('revno',$request->revno)->first();
         $user = User::where('foreign_id', $request->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
 
         if(count($user) > 0){
