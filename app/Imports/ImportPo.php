@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithStartRow;
 use DB;
-use App\Models\PurchasingProcess;
+use App\Models\PurchasingProcessUpload;
 use Carbon\Carbon;
 use Storage;
 
@@ -58,7 +58,7 @@ class ImportPo implements ToCollection, WithHeadingRow, WithStartRow
                         rsort($gf);
             
                        
-                        $list_po = new PurchasingProcess;
+                        $list_po = new PurchasingProcessUpload;
                         $list_po->po_num = strVal($row['po_number']);
                         $list_po->plant = strVal($row['plant']);
                         $list_po->id_vendor = strVal($row['vendor']);
@@ -74,10 +74,10 @@ class ImportPo implements ToCollection, WithHeadingRow, WithStartRow
                         $list_po->aprvtm  = "";
                         $list_po->aprvdt = "";
                         $list_po->aprvdt = "";
-                        $list_po->last_change = "0000-00-00 00:00:00";
-                        $list_po->sent = "0000-00-00 00:00:00";
-                        $list_po->downloaded = "0000-00-00 00:00:00";
-                        $list_po->accepted = "0000-00-00 00:00:00";
+                        $list_po->last_change = strVal("0000-00-00 00:00:00");
+                        $list_po->sent = strVal("0000-00-00 00:00:00");
+                        $list_po->downloaded = strVal("0000-00-00 00:00:00");
+                        $list_po->accepted = strVal("0000-00-00 00:00:00");
                         //$list_po->created_by = !empty(auth()->user()->full_name) ? auth()->user()->full_name : 'user1';
                         $list_po->save();
             }

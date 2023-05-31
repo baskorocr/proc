@@ -1,6 +1,7 @@
 @extends('layouts.main')
 @section('title',"Send Mail PO")
 @section('content')
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.css">
 <style type="text/css">
   div.table-responsive > div.dataTables_wrapper > div.row
 {
@@ -76,8 +77,31 @@
 	@endsection
 	@section('javascript')
    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
-	<script>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sweetalert/1.1.3/sweetalert.min.js"></script>
+	<script>
+    $('[send-mail').click(function(){
+        let timerInterval
+        Swal.fire({
+          title: 'Sending Mail...',
+          html: 'Please wait...',
+          timer: 300000,
+          // timerProgressBar: true,
+          didOpen: () => {
+            Swal.showLoading()
+            timerInterval = setInterval(() => {
+             Swal.getTimerLeft()
+            }, 100)
+              window.location.href = "{{route('purchasing.process.batch-mail')}}";
+          },
+          willClose: () => {
+            clearInterval(timerInterval)
+          }
+        }).then((result) => {
+          
+        })
+      
+    })
       // $('#tb-list-po').DataTable().destroy();
        $.fn.dataTable.ext.errMode = 'none';
     var table = $('#tb-list-po').DataTable({autoWidth:false,

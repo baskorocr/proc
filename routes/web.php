@@ -27,6 +27,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::prefix('doc-iso')->group(function(){
 
         //Master Notify
+        Route::get('/cronjob/upcoming-iso-expired', [App\Http\Controllers\RegisIsoDocController::class, 'cron_check_iso_upcoming_expired'])->name('doc-iso.cron.iso-expired');
         Route::get('/master-notify', [App\Http\Controllers\MasterNotifyController::class, 'getMasterNotify'])->name('doc-iso.master-notify');
         Route::post('/add-notify', [App\Http\Controllers\MasterNotifyController::class, 'notifyAdd'])->name('api.doc-iso.create.notify');
        
@@ -303,7 +304,8 @@ Route::group(['middleware' => ['auth']], function () {
 
 
     Route::prefix('purchasing-process')->group(function(){
-        Route::get('/testMail', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.uploadpo');
+        Route::get('/batch-mail-send', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.batch-mail');
+        // Route::get('/testMail', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.uploadpo');
         Route::get('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'upload'])->name('purchasing.process.uploadpo');
         Route::get('/list-po', [App\Http\Controllers\PurchasingProcessController::class, 'index'])->name('purchasing.process.listpo');
         Route::get('/send-mail-po', [App\Http\Controllers\PurchasingProcessController::class, 'send_mail'])->name('purchasing.process.send.mail');
