@@ -43,19 +43,122 @@ class PurchasingProcessController extends Controller
 
     public function sendmail(Request $request)
     {
-        $vendor = Vendor::where('id_vendor',$request->id_vendor)->first();
-        $po = PurchasingProcess::where('id_vendor',$request->id_vendor)->where(function ($query) {
-                                        $query->where('sent','=','0000-00-00 00:00:00')
-                                            ->orWhereNull('sent');
-                                    })->get();
+        
         try{
-            \Mail::to('example@mail.com')->send(new \App\Mail\SendPOMail($vendor,$po));
+            $user = User::where('foreign_id', $request->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+            $vendor = Vendor::where('id_vendor',$request->id_vendor)->first();
+            $po = PurchasingProcess::where(function ($query) {
+                                            $query->where('sent','=','0000-00-00 00:00:00')
+                                                ->orWhereNull('sent');
+                                        })->get();
+
+
+
 
         } catch(\Exception $e) {
 
         }
     }
 
+    private function mailer_send($po, $user)
+    {
+
+        foreach($po as $po)
+        {
+            $dataPo = PurchasingProcess::where('id_vendor',$po->id_vendor)->where(function ($query) {
+                                            $query->where('sent','=','0000-00-00 00:00:00')
+                                                ->orWhereNull('sent');
+                                        })->get();
+
+
+        }
+            $list_permission=[];
+            foreach($user as $u)
+            {   
+                $list_permission[]=$u->role_id;
+            }
+            $lperm = array_unique($list_permission);
+            $getMenu = Permission::where('name','Download PO')->first();
+            $role =  Role::whereIn('_id',$list_permission)->get();
+    
+            $allowed = [];
+            $sended = [];
+            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+            foreach($role as $r)
+            {
+                $permissions=[];
+                foreach($r->permissions as $p){
+                    $permissions[] = $p->permission_id; 
+                    
+                }
+                
+                if(in_array($getMenu->_id, $permissions))
+                {
+                    $allowed[] = $r->_id;
+                }
+    
+            }
+
+
+            //Ambil Data Vendor
+            $user =  MasterUser::whereIn('role_id',$allowed)->get();
+            $nameGroupMail  = $this->split_creator($po->creator);
+            $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
+             $cc = [];
+            if(!empty($emailgrp))
+            {
+               $emaillist = $emailgrp->mailgroup;
+                //TO USER
+                //TO Listed Group DEPT
+               
+                foreach ($emaillist as $e) {
+                    if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
+                     $cc[] =$e->mail;
+                    }
+                
+                }
+            } else{
+                throw new Exception('Email Group "'.$nameGroupMail.'"" is not registered in E-Proc.');
+            }
+
+            //Kirim Ke Akun Vendor
+            $mailVendorUser = [];
+            $user =  MasterUser::whereIn('role_id',$allowed)->where('status_user','A')->where('foreign_id', $po->id_vendor)->get();
+            foreach($user as $vendor_user){
+                if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+                    
+                    $mailVendorUser[]=$vendor_user->username;
+                    
+                }
+            }
+            
+            Mail::to($mailVendorUser)->cc($cc)->send(new PoMailBatch($po, $vendor_user));
+            //Set field 'sent' untuk flag terkirim
+            PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+            // $nameGroupMail  = $this->split_creator($po->creator);
+            // $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
+
+            // if(!empty($emailgrp))
+            // {
+            //    $emaillist = $emailgrp->mailgroup;
+            //     //TO USER
+            //     //TO Listed Group DEPT
+            //     $cc = [];
+            //     foreach ($emaillist as $e) {
+            //         if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
+            //          $cc[] =$e->mail;
+            //         }
+                
+            //     }
+            //     Mail::to($user->username)->cc($cc)->send(new PoMail($po, $user));
+            //     //set sent datetime
+            //     Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]); 
+            // } else{
+            //     throw new Exception("Email Group ".$nameGroupMail." is not Found.");
+            // }
+            
+        
+    }
     public function send_mail()
     {
         $vendor = Vendor::all();
@@ -193,7 +296,7 @@ class PurchasingProcessController extends Controller
             } else{
                 $v="";
             }
-            $get = MasterUser::where('foreign_id', $data->id_vendor)->first();
+            $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
             if(@$get->status_user == "A")
             {
                 $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
@@ -352,7 +455,7 @@ class PurchasingProcessController extends Controller
             } else{
                 $v="";
             }
-            $get = MasterUser::where('foreign_id', $data->id_vendor)->first();
+            $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
             if(@$get->status_user == "A")
             {
                 $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
@@ -598,7 +701,7 @@ class PurchasingProcessController extends Controller
             } else{
                 $v="";
             }
-            $get = MasterUser::where('foreign_id', $data->id_vendor)->first();
+            $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
             if(@$get->status_user == "A")
             {
                 $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
