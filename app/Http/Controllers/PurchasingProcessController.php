@@ -7,8 +7,14 @@ use App\Models\PurchasingProcess;
 use Carbon\Carbon;
 use App\Models\Vendor;
 use App\Models\MasterUser;
+use App\Models\Permission;
+use App\Models\Role;
+use App\Models\User;
+use App\Models\EmailGroup;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ImportPo;
+use Mail;
+use App\Mail\PoMailBatch;
 use Storage;
 
 class PurchasingProcessController extends Controller
@@ -45,117 +51,126 @@ class PurchasingProcessController extends Controller
     {
         
         try{
-            $user = User::where('foreign_id', $request->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+          
             $vendor = Vendor::where('id_vendor',$request->id_vendor)->first();
             $po = PurchasingProcess::where(function ($query) {
                                             $query->where('sent','=','0000-00-00 00:00:00')
                                                 ->orWhereNull('sent');
                                         })->get();
+            if(count($po) == 0)
+            {
+                return redirect()->back()->with(['message_fail' => "Nothing to send."]);
+            }
 
+            if($this->mailer_send($po) > 0)
+            {
+                return redirect()->back()->with(['message_fail' => "Some PO email failed to send, email user vendor not found."]);
+            }
+
+            return redirect()->back()->with(['message_success' => "All PO emails have been sent."]);
 
 
 
         } catch(\Exception $e) {
-
+           return redirect()->back()->with(['message_fail' => $e->getMessage()]);
         }
     }
 
-    private function mailer_send($po, $user)
+    private function mailer_send($po)
     {
-
+        $vendor = [];
+        $creator = [];
+        $failed_send = 0;
         foreach($po as $po)
         {
-            $dataPo = PurchasingProcess::where('id_vendor',$po->id_vendor)->where(function ($query) {
-                                            $query->where('sent','=','0000-00-00 00:00:00')
-                                                ->orWhereNull('sent');
-                                        })->get();
+           
 
+            if(!in_array($po->id_vendor,$vendor) AND !in_array($po->creator,$creator))
+            {
+                    $vendor[] = $po->id_vendor;
+                    $creator[] = $po->creator;
+                 
+                    $dataPo = PurchasingProcess::where('id_vendor',$po->id_vendor)->where('creator',$po->creator)->where(function ($query) {
+                                                    $query->where('sent','=','0000-00-00 00:00:00')
+                                                        ->orWhereNull('sent');
+                                                })->get();
+                    $list_permission=[];
+                    $user = User::where('foreign_id',  $po->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+                    foreach($user as $u)
+                    {   
+                        $list_permission[]=$u->role_id;
+                    }
+                    $lperm = array_unique($list_permission);
+                    $getMenu = Permission::where('name','Download PO')->first();
+                    $role =  Role::whereIn('_id',$list_permission)->get();
+            
+                    $allowed = [];
+                    $sended = [];
+                    //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+                    foreach($role as $r)
+                    {
+                        $permissions=[];
+                        foreach($r->permissions as $p){
+                            $permissions[] = $p->permission_id; 
+                            
+                        }
+                        
+                        if(in_array($getMenu->_id, $permissions))
+                        {
+                            $allowed[] = $r->_id;
+                        }
+            
+                    }
+
+
+                    //Ambil Data Vendor
+                    $user =  MasterUser::whereIn('role_id',$allowed)->get();
+                    $nameGroupMail  = $this->split_creator($po->creator);
+                    $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
+                     $cc = [];
+                    if(!empty($emailgrp))
+                    {
+                       $emaillist = $emailgrp->mailgroup;
+                        //TO USER
+                        //TO Listed Group DEPT
+                       
+                        foreach ($emaillist as $e) {
+                            if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
+                             $cc[] =$e->mail;
+                            }
+                        
+                        }
+                    } else{
+                        throw new Exception('Email Group "'.$nameGroupMail.'"" is not registered in E-Proc.');
+                    }
+
+                    //Kirim Ke Akun Vendor
+                    $mailVendorUser = [];
+                    $user =  MasterUser::whereIn('role_id',$allowed)->where('status_user','A')->where('foreign_id', $po->id_vendor)->get();
+                    foreach($user as $vendor_user){
+                        if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+                            
+                            $mailVendorUser[]=$vendor_user->username;
+                            
+                        }
+                    }
+                    $userv = User::where('foreign_id', $po->id_vendor)->first();
+                    if(count($mailVendorUser) == 0)
+                    {
+                        $failed_send++;
+                    } else{
+                        // dd("A");
+                        Mail::to($mailVendorUser)->cc($cc)->send(new PoMailBatch($dataPo, $userv));
+
+                    }
+
+                    //Set field 'sent' untuk flag terkirim
+                   
+            }
+                     PurchasingProcess::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
 
         }
-            $list_permission=[];
-            foreach($user as $u)
-            {   
-                $list_permission[]=$u->role_id;
-            }
-            $lperm = array_unique($list_permission);
-            $getMenu = Permission::where('name','Download PO')->first();
-            $role =  Role::whereIn('_id',$list_permission)->get();
-    
-            $allowed = [];
-            $sended = [];
-            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
-            foreach($role as $r)
-            {
-                $permissions=[];
-                foreach($r->permissions as $p){
-                    $permissions[] = $p->permission_id; 
-                    
-                }
-                
-                if(in_array($getMenu->_id, $permissions))
-                {
-                    $allowed[] = $r->_id;
-                }
-    
-            }
-
-
-            //Ambil Data Vendor
-            $user =  MasterUser::whereIn('role_id',$allowed)->get();
-            $nameGroupMail  = $this->split_creator($po->creator);
-            $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
-             $cc = [];
-            if(!empty($emailgrp))
-            {
-               $emaillist = $emailgrp->mailgroup;
-                //TO USER
-                //TO Listed Group DEPT
-               
-                foreach ($emaillist as $e) {
-                    if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
-                     $cc[] =$e->mail;
-                    }
-                
-                }
-            } else{
-                throw new Exception('Email Group "'.$nameGroupMail.'"" is not registered in E-Proc.');
-            }
-
-            //Kirim Ke Akun Vendor
-            $mailVendorUser = [];
-            $user =  MasterUser::whereIn('role_id',$allowed)->where('status_user','A')->where('foreign_id', $po->id_vendor)->get();
-            foreach($user as $vendor_user){
-                if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
-                    
-                    $mailVendorUser[]=$vendor_user->username;
-                    
-                }
-            }
-            
-            Mail::to($mailVendorUser)->cc($cc)->send(new PoMailBatch($po, $vendor_user));
-            //Set field 'sent' untuk flag terkirim
-            PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
-            // $nameGroupMail  = $this->split_creator($po->creator);
-            // $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
-
-            // if(!empty($emailgrp))
-            // {
-            //    $emaillist = $emailgrp->mailgroup;
-            //     //TO USER
-            //     //TO Listed Group DEPT
-            //     $cc = [];
-            //     foreach ($emaillist as $e) {
-            //         if (filter_var($e->mail, FILTER_VALIDATE_EMAIL)) {
-            //          $cc[] =$e->mail;
-            //         }
-                
-            //     }
-            //     Mail::to($user->username)->cc($cc)->send(new PoMail($po, $user));
-            //     //set sent datetime
-            //     Po::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]); 
-            // } else{
-            //     throw new Exception("Email Group ".$nameGroupMail." is not Found.");
-            // }
+         return $failed_send;
             
         
     }
@@ -220,8 +235,8 @@ class PurchasingProcessController extends Controller
             return $rel_stat;
         })
         ->editColumn('mail_stat', function($data){
-          
-             if($data->sent != '0000-00-00 00:00:00' AND isset($data->sent) ){
+            
+             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00') AND isset($data->sent) ){
             $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                 data-toggle=tooltip' data-placement='left' title='Sent'>
                                 </i>
@@ -253,22 +268,28 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if($data->downloaded != '0000-00-00 00:00:00'  AND isset($data->downloaded)){
+             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')   AND isset($data->downloaded)){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
                           </small>";
-        } else {
-            $dwld_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
-                                    data-toggle=tooltip' data-placement='left' title='Not Downloaded'>
-                                 </i>
-                        </small>";
-           
-        }
-         return $dwld_stat;
+            } else {
+                $dwld_stat = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                        data-toggle=tooltip' data-placement='left' title='Not Downloaded'>
+                                     </i>
+                            </small>";
+               
+            }
+             return $dwld_stat;
         })
         ->editColumn('upload_date', function($data){
-            return @$data->last_change;
+            if(($data->last_change != '-0001-11-30 00:00:00' AND $data->last_change != '0000-00-00 00:00:00')   AND isset($data->last_change)){
+                $uploaddt = $data->last_change;
+            } else {
+                $uploaddt = "-";
+               
+            }
+         return $uploaddt;
         })
         ->editColumn('po_amount', function($data){
            
@@ -349,7 +370,7 @@ class PurchasingProcessController extends Controller
     public function getListPoSend(Request $request)
     {
        
-            $data = PurchasingProcess::where('id_vendor','!=','')->where(function ($query) {
+        $data = PurchasingProcess::where('id_vendor','!=','')->where(function ($query) {
                                         $query->where('sent','=','0000-00-00 00:00:00')
                                             ->orWhereNull('sent');
                                     })->get();
@@ -380,7 +401,7 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('mail_stat', function($data){
           
-             if($data->sent != '0000-00-00 00:00:00' AND isset($data->sent) ){
+             if($data->sent != '-0001-11-30 00:00:00'  AND isset($data->sent) ){
             $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                 data-toggle=tooltip' data-placement='left' title='Sent'>
                                 </i>
@@ -412,7 +433,7 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if($data->downloaded != '0000-00-00 00:00:00'  AND isset($data->downloaded)){
+             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')   AND isset($data->downloaded)){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
@@ -427,7 +448,13 @@ class PurchasingProcessController extends Controller
          return $dwld_stat;
         })
         ->editColumn('upload_date', function($data){
-            return @$data->last_change;
+            if(($data->last_change != '-0001-11-30 00:00:00' AND $data->last_change != '0000-00-00 00:00:00')   AND isset($data->last_change)){
+                $uploaddt = $data->last_change;
+            } else {
+                $uploaddt = "-";
+               
+            }
+         return $uploaddt;
         })
         ->editColumn('po_amount', function($data){
            
@@ -579,7 +606,7 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('mail_stat', function($data){
           
-             if($data->sent != '0000-00-00 00:00:00'  AND isset($data->sent)){
+             if($data->sent != '-0001-11-30 00:00:00'   AND isset($data->sent)){
             $mail_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                 data-toggle=tooltip' data-placement='left' title='Sent'>
                                 </i>
@@ -611,7 +638,7 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if($data->downloaded != '0000-00-00 00:00:00' AND isset($data->downloaded) ){
+             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')  AND isset($data->downloaded) ){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
@@ -666,8 +693,14 @@ class PurchasingProcessController extends Controller
          return $active;
         })
         ->editColumn('upload_date', function($data){
-            return @$data->last_change;
-        }) 
+            if(($data->last_change != '-0001-11-30 00:00:00' AND $data->last_change != '0000-00-00 00:00:00')   AND isset($data->last_change)){
+                $uploaddt = $data->last_change;
+            } else {
+                $uploaddt = "-";
+               
+            }
+         return $uploaddt;
+        })
         ->editColumn('sent', function($data){
             return !empty($data->sent) ? date('Y-m-d H:i:s',strtotime($data->sent)):"-";
         })
@@ -846,5 +879,36 @@ class PurchasingProcessController extends Controller
         //dd($file);
         //dd($request->all());
        
+    }
+
+
+    private function split_creator($creator)
+    {
+        try{
+             //PISAHKAN TEXT dan Spesial Karakter
+            $get_group = array_filter(preg_split('/(\w+)/', $creator, -1, PREG_SPLIT_DELIM_CAPTURE));
+            // Pisahkan numeric dan alpha
+            // Pisahkan numeric dan alpha
+            $res = [];
+            foreach($get_group as $key => $gg)
+            {
+                $res[] = $gg;
+            }
+            // dd($res);
+            $get_name = sscanf(isset($res[2]) ? $res[2]:$res[0], "%[A-Z]%d");
+            //Get PUR
+            return $get_name[0];
+        } catch(\Exception $e)
+        {
+            throw new Exception("Creator format is invalid. Accept : DPM-{ex: PUR03 or INVMGR}");
+        }
+       
+    }
+
+    private function reIndexArray( $arr, $startAt=0 )
+    {
+        return ( 0 == $startAt )
+            ? array_values( array_filter($arr) )
+            : array_combine( array_filter(range( $startAt, count( $arr ) + ( $startAt - 1 ) ), array_values( $arr )) );
     }
 }

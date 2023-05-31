@@ -296,10 +296,10 @@ class PoController extends Controller
        
     }
 
-private function reIndexArray( $arr, $startAt=0 )
-{
-    return ( 0 == $startAt )
-        ? array_values( array_filter($arr) )
-        : array_combine( array_filter(range( $startAt, count( $arr ) + ( $startAt - 1 ) ), array_values( $arr )) );
-}
+    private function reIndexArray( $arr, $startAt=0 )
+    {
+        return ( 0 == $startAt )
+            ? array_values( array_filter($arr) )
+            : array_combine( array_filter(range( $startAt, count( $arr ) + ( $startAt - 1 ) ), array_values( $arr )) );
+    }
 }
