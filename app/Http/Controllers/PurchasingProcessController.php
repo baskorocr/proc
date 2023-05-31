@@ -85,11 +85,11 @@ class PurchasingProcessController extends Controller
         {
            
 
+            $success = 0;
             if(!in_array($po->id_vendor,$vendor) AND !in_array($po->creator,$creator))
             {
                     $vendor[] = $po->id_vendor;
                     $creator[] = $po->creator;
-                 
                     $dataPo = PurchasingProcess::where('id_vendor',$po->id_vendor)->where('creator',$po->creator)->where(function ($query) {
                                                     $query->where('sent','=','0000-00-00 00:00:00')
                                                         ->orWhereNull('sent');
@@ -157,19 +157,30 @@ class PurchasingProcessController extends Controller
                     $userv = User::where('foreign_id', $po->id_vendor)->first();
                     if(count($mailVendorUser) == 0)
                     {
-                        $failed_send++;
+                        $success=0;
                     } else{
+                        $success=1;
                         // dd("A");
                         Mail::to($mailVendorUser)->cc($cc)->send(new PoMailBatch($dataPo, $userv));
+
 
                     }
 
                     //Set field 'sent' untuk flag terkirim
                    
             }
-                     PurchasingProcess::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+            ///Cek email
+            $cekMail =  MasterUser::where('status_user','A')->where('foreign_id', $po->id_vendor)->count();
+            if( $cekMail > 0)
+            {
+                
+                PurchasingProcess::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+            } else{
+                $failed_send+=1;
+            }
 
         }
+        // dd($failed_send);
          return $failed_send;
             
         
