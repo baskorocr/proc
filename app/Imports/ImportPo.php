@@ -71,6 +71,13 @@ class ImportPo implements ToCollection, WithHeadingRow, WithStartRow
                         $list_po->revno = "0";
                         $list_po->revdt = "";
                         $list_po->revtm = "";
+                        $list_po->aprvtm  = "";
+                        $list_po->aprvdt = "";
+                        $list_po->aprvdt = "";
+                        $list_po->last_change = "0000-00-00 00:00:00";
+                        $list_po->sent = "0000-00-00 00:00:00";
+                        $list_po->downloaded = "0000-00-00 00:00:00";
+                        $list_po->accepted = "0000-00-00 00:00:00";
                         //$list_po->created_by = !empty(auth()->user()->full_name) ? auth()->user()->full_name : 'user1';
                         $list_po->save();
             }
