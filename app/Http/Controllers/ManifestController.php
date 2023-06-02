@@ -20,12 +20,25 @@ class ManifestController extends Controller
         $manifest = ManifestHeader::with('manifestDetails')->where('manifest', $request->manifest)->first();
         $isExists = !empty($manifest) ? true : false ;
         
-        if (!empty($manifest)) {
+        if ($isExists) {
             $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
+            // change all! the old code is all wrong
+            $getManifestDetail = ManifestDetail::where('manifest', $manifest->manifest)->get();
+            $groupByMaterial = $getManifestDetail->groupBy('manterial');
+            $mapMaterial = $groupByMaterial->map(function($data){
+                return [
+                    'material' => $data->first()->material,
+                    'material_desc' => $data->first()->material_desc,
+                    'qty_scan' => $data->sum('qty_pack'),
+                    'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
+                    'qty_gr' => $data->sum('qty_in'),
+                    'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
+                    'kanban' => $data->count(),
+                    'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
+                ];
+            })->values();
+
             return response()->json([
-                'type' => 'success',
-                'isExists' => $isExists,
-                'message' => 'Success',
                 'data' => [
                     "_id" => $manifest->_id,
                     "manifest" => $manifest->manifest,
@@ -57,9 +70,9 @@ class ManifestController extends Controller
                     "phone_2" => $vendor->phone_2,
                     "vend_email" => $vendor->vend_email,
                     "status_vendor" => $vendor->status_vendor,
-                    "details" => $manifest->manifestDetails
+                    "details" => $mapMaterial
                 ]
-            ], 200);
+            ]);
     
         } else {
             return response()->json([
@@ -305,21 +318,57 @@ class ManifestController extends Controller
 
     public function checkKanban(Request $request)
     {   
-        $manifest = ManifestDetail::where('manifest', $request->manifest)->where('kanban', $request->kanban)->first();
+        $manifest_d = ManifestDetail::where('manifest', $request->manifest)->where('kanban', $request->kanban)->first();
         
-        $isExists = !empty($manifest) ? true : false ;
+        $isExists = !empty($manifest_d) ? true : false ;
 
-        if (!empty($manifest)) {
-            return response()->json([
-                'type' => 'success',
-                'isExists' => $isExists,
-                'data' => $manifest
-            ]);
+        \Log::info($request->all());
+        
+        if ($isExists) {
+
+            if ($manifest_d->qty_scan_outstanding > 0) {
+                return response()->json([
+                    'message' => 'Kanban already scanned!',
+                    'errors' => [
+                        'kanban' => [
+                            'Kanban already scanned!'
+                        ]
+                    ]
+                    ], 422);
+            } else {
+
+                $manifest_d->qty_scan_outstanding = $manifest_d->qty_pack;
+                $manifest_d->scan_by = $request->scan_by;
+                $manifest_d->save();
+
+                
+    
+                $manifest = ManifestHeader::with('manifestDetails')->where('manifest', $request->manifest)->first();
+                $getManifestDetail = ManifestDetail::where('manifest', $manifest->manifest)->get();
+                $groupByMaterial = $getManifestDetail->groupBy('manterial');
+                $mapMaterial = $groupByMaterial->map(function($data){
+                    return [
+                        'material' => $data->first()->material,
+                        'material_desc' => $data->first()->material_desc,
+                        'qty_scan' => $data->sum('qty_pack'),
+                        'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
+                        'qty_gr' => $data->sum('qty_in'),
+                        'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
+                        'kanban' => $data->count(),
+                        'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
+                    ];
+                })->values();
+    
+                return response()->json([
+                    'type' => 'success',
+                    'data' => $mapMaterial
+                ]);
+            }
+
     
         } else {
             return response()->json([
             'message' => 'Kanban Not Found',
-            'isExists' => $isExists,
             'errors' => [
                 'kanban' => [
                     'Kanban not found!'
@@ -347,8 +396,11 @@ class ManifestController extends Controller
 
                         $sum_qty_scan = $data->manifestDetails->sum('qty_pack');
                         $sum_qty_gr = $data->manifestDetails->sum('qty_in');
-                        $total = $sum_qty_scan - $sum_qty_gr;
+                        $total = $data->manifestDetails->count();
                         $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
+                        $last = $data->manifestDetails->sort(function ($a, $b) {
+                            return strtotime($a->updated_at) < strtotime($b->updated_at);
+                        });
 
                         return [
                             'manifest' => $data->manifest,
@@ -356,7 +408,9 @@ class ManifestController extends Controller
                             'delivery_date' => $data->delivery_date,
                             'po_number' => $data->po_num,
                             'vendor_id' => $data->id_vendor,
-                            'vendor_name' => $vendor->nm_vendor
+                            'vendor_name' => $vendor->nm_vendor,
+                            'last_scan' => $last->first()->updated_at,
+                            'scan_by' => $last->first()->scan_by
                         ];
                     });
 
@@ -372,6 +426,71 @@ class ManifestController extends Controller
             'data' => $manifest,
             'total' => $total
         ], 200);
+    }
+
+
+    // new send SAP manifest
+    public function sendManifestSap(Request $request)
+    {
+        
+        $manifest_detail = ManifestDetail::where('manifest', $request->manifest)
+                                    ->whereNotNull('qty_scan_outstanding')
+                                    ->get();
+
+        $username = 'wcs-abap';
+        $password = 'Wilmar12';
+
+        $data_parsed = $manifest_detail->map(function($req) {
+            return [
+                "MNNUM" => $req['manifest'],
+                "ITEM" => $req['item'],
+                "KBNNO" => $req['kanban'],
+                "SEQUN" => $req['seq_kanban'],
+                "GRDATE" => date('Y-m-d'),
+                "GRTIME" => date('Hms'),
+                "ENTRY_QNT" => $req['qty_scan_outstanding']
+            ];
+        });
+
+        $payload = json_encode(["IT_INPUT" => $data_parsed]);
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'http://erpdev-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=110');
+        curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain=erpqas-dp.dharmap.com;');
+        // curl_setopt($curl, CURLOPT_COOKIE, $get_header['cookie']);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            // 'X-CSRF-TOKEN: '.$get_header['csrf'],
+            'Content-Type: application/json',
+            'accept: application/json'
+        ));
+
+        curl_setopt($curl, CURLOPT_USERPWD, $username . ":" . $password);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $restPostDP = curl_exec($curl);
+
+        curl_close ($curl);
+
+        $jsonData = json_decode($restPostDP, true);
+        $result = $jsonData['return'];
+        $status = $result[0]['type'];
+        $message = $result[0]['message'];
+        
+
+        if ($status === 'E') {
+            return response()->json(['message' => $message], 422);
+        } else {
+
+            foreach ($manifest_detail as $detail) {
+                $manifest_d_update = ManifestDetail::find($detail->id);
+                $manifest_d_update->qty_pack = $detail->qty_scan_outstanding;
+                $manifest_d_update->save();
+            }
+
+            return response()->json(['message' => 'Data saved successfully!']);
+        }
+
     }
 
 }
