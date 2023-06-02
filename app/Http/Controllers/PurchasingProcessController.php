@@ -16,6 +16,7 @@ use App\Imports\ImportPo;
 use Mail;
 use App\Mail\PoMailBatch;
 use Storage;
+use Exception;
 
 class PurchasingProcessController extends Controller
 {
@@ -72,6 +73,7 @@ class PurchasingProcessController extends Controller
 
 
         } catch(\Exception $e) {
+            // dd($e);
            return redirect()->back()->with(['message_fail' => $e->getMessage()]);
         }
     }
@@ -261,21 +263,52 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
-           $filenm = $data->file_nm;
-            if ($filenm != "-" && $filenm != "" ) {
-            //activate
-            $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+           // $filenm = $data->file_nm;
+           //  if ($filenm != "-" && $filenm != "" ) {
+           //  //activate
+           //  $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+           //                          data-toggle='tooltip' data-placement='left' title='Exist'>
+           //                        </i>
+           //                </small>";
+           //  } else {
+           //      $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+           //                              data-toggle='tooltip' data-placement='left' title='Not exist'>
+           //                          </i>
+           //                     </small>";
+                
+           //  }
+           //   return $file_exist;
+
+            // return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+            if($data->file_nm=="-"  || empty($data->file_nm)){
+                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                   data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                  </i>
+                    </small>";
+
+            }
+           
+            $file = Storage::disk('po_directory')->path(""). $data->file_nm;
+            $file_qas = Storage::disk('po_qas_directory')->path(""). $data->file_nm;
+            $relativeName = basename($file);
+            if(file_exists($file))
+            {
+              return  "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle='tooltip' data-placement='left' title='Exist'>
                                   </i>
-                          </small>";
-            } else {
-                $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
-                                        data-toggle='tooltip' data-placement='left' title='Not exist'>
-                                    </i>
-                               </small>";
-                
+                        </small>";;
+            } elseif(file_exists($file_qas)){
+
+                 return  "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle='tooltip' data-placement='left' title='Exist'>
+                                  </i>
+                        </small>";;
+            }else{
+               return "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                   data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                  </i>
+                    </small>";
             }
-             return $file_exist;
 
         })
         ->editColumn('download_stat', function($data){
@@ -426,21 +459,52 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
-           $filenm = $data->file_nm;
-            if ($filenm != "-" && $filenm != "" ) {
-            //activate
-            $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+           // $filenm = $data->file_nm;
+           //  if ($filenm != "-" && $filenm != "" ) {
+           //  //activate
+           //  $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+           //                          data-toggle='tooltip' data-placement='left' title='Exist'>
+           //                        </i>
+           //                </small>";
+           //  } else {
+           //      $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+           //                              data-toggle='tooltip' data-placement='left' title='Not exist'>
+           //                          </i>
+           //                     </small>";
+                
+           //  }
+           //   return $file_exist;
+
+            // return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+            if($data->file_nm=="-"  || empty($data->file_nm)){
+                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                   data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                  </i>
+                    </small>";
+
+            }
+           
+            $file = Storage::disk('po_directory')->path(""). $data->file_nm;
+            $file_qas = Storage::disk('po_qas_directory')->path(""). $data->file_nm;
+            $relativeName = basename($file);
+            if(file_exists($file))
+            {
+              return  "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle='tooltip' data-placement='left' title='Exist'>
                                   </i>
-                          </small>";
-            } else {
-                $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
-                                        data-toggle='tooltip' data-placement='left' title='Not exist'>
-                                    </i>
-                               </small>";
-                
+                        </small>";;
+            } elseif(file_exists($file_qas)){
+
+                 return  "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle='tooltip' data-placement='left' title='Exist'>
+                                  </i>
+                        </small>";;
+            }else{
+               return "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                   data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                  </i>
+                    </small>";
             }
-             return $file_exist;
 
         })
         ->editColumn('download_stat', function($data){
@@ -631,21 +695,52 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
-           $filenm = $data->file_nm;
-            if ($filenm != "-" && $filenm != "" ) {
-            //activate
-            $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+           // $filenm = $data->file_nm;
+           //  if ($filenm != "-" && $filenm != "" ) {
+           //  //activate
+           //  $file_exist = "<small><i class='fa fa-check-circle' style='color: green;'
+           //                          data-toggle='tooltip' data-placement='left' title='Exist'>
+           //                        </i>
+           //                </small>";
+           //  } else {
+           //      $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
+           //                              data-toggle='tooltip' data-placement='left' title='Not exist'>
+           //                          </i>
+           //                     </small>";
+                
+           //  }
+           //   return $file_exist;
+
+            // return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+            if($data->file_nm=="-"  || empty($data->file_nm)){
+                 return "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                   data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                  </i>
+                    </small>";
+
+            }
+           
+            $file = Storage::disk('po_directory')->path(""). $data->file_nm;
+            $file_qas = Storage::disk('po_qas_directory')->path(""). $data->file_nm;
+            $relativeName = basename($file);
+            if(file_exists($file))
+            {
+              return  "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle='tooltip' data-placement='left' title='Exist'>
                                   </i>
-                          </small>";
-            } else {
-                $file_exist = "<small><i class='fa fa-exclamation-circle' style='color: red;'
-                                        data-toggle='tooltip' data-placement='left' title='Not exist'>
-                                    </i>
-                               </small>";
-                
+                        </small>";;
+            } elseif(file_exists($file_qas)){
+
+                 return  "<small><i class='fa fa-check-circle' style='color: green;'
+                                    data-toggle='tooltip' data-placement='left' title='Exist'>
+                                  </i>
+                        </small>";;
+            }else{
+               return "<small><i class='fa fa-exclamation-circle' style='color: red;'
+                                   data-toggle='tooltip' data-placement='left' title='Not exist'>
+                                  </i>
+                    </small>";
             }
-             return $file_exist;
 
         })
         ->editColumn('download_stat', function($data){
