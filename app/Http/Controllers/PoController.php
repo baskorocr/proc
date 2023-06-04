@@ -83,7 +83,10 @@ class PoController extends Controller
                 try {
                     $this->mailer_send($dataPo, $user);
                     $msg_mail = 'PO send mailed to vendor successfully.';
+                    //Set Sent Flag
+                     PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
                 } catch (Exception $e) {
+                    PO::where('_id',$po->id)->update(['sent' => "0000-00-00 00:00:00"]);
                     $msg_mail = $e->getMessage();
                 }
 
@@ -94,6 +97,7 @@ class PoController extends Controller
                 ], 200);
               
             } else {
+                PO::where('_id',$po->id)->update(['sent' => "0000-00-00 00:00:00"]);
                 return response()->json([
                     'msg_data' => $msg_data,
                     'msg_mail' => 'PO send to vendor failed, user email not found.',
@@ -247,7 +251,7 @@ class PoController extends Controller
             
             Mail::to($mailVendorUser)->cc($cc)->send(new PoMail($po, $vendor_user));
             //Set field 'sent' untuk flag terkirim
-            PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+           
             // $nameGroupMail  = $this->split_creator($po->creator);
             // $emailgrp = EmailGroup::where('abrev',$nameGroupMail)->first();
 
