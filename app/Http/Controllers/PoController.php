@@ -86,6 +86,7 @@ class PoController extends Controller
                     //Set Sent Flag
                      PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
                 } catch (Exception $e) {
+                    //set sent flag to 000-00-000 00:00:00:00 because failed to sent email
                     PO::where('_id',$po->id)->update(['sent' => "0000-00-00 00:00:00"]);
                     $msg_mail = $e->getMessage();
                 }
@@ -97,6 +98,7 @@ class PoController extends Controller
                 ], 200);
               
             } else {
+                //set sent flag to 000-00-000 00:00:00:00 because failed to sent email
                 PO::where('_id',$po->id)->update(['sent' => "0000-00-00 00:00:00"]);
                 return response()->json([
                     'msg_data' => $msg_data,
