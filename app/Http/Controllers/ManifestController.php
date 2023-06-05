@@ -484,7 +484,7 @@ class ManifestController extends Controller
 
             foreach ($manifest_detail as $detail) {
                 $manifest_d_update = ManifestDetail::find($detail->id);
-                $manifest_d_update->qty_pack = $detail->qty_scan_outstanding;
+                $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
                 $manifest_d_update->save();
             }
 
