@@ -311,8 +311,18 @@ class PurchasingProcessController extends Controller
             }
 
         })
+        
+        ->editColumn('sent', function($data){
+            if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')  AND isset($data->sent) ){
+                $sent = date('d.m.Y H:i:s',strtotime($data->sent));
+            } else {
+                $sent = "-";
+               
+            }
+         return $sent;
+        })
         ->editColumn('download_stat', function($data){
-             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')   AND isset($data->downloaded)){
+             if(($data->downloaded != '-0001-11-30 00:00:00' AND $data->downloaded != '0000-00-00 00:00:00')   AND isset($data->downloaded)){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
@@ -508,7 +518,7 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')   AND isset($data->downloaded)){
+             if(($data->downloaded != '-0001-11-30 00:00:00' AND $data->downloaded != '0000-00-00 00:00:00')   AND isset($data->downloaded)){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
@@ -744,7 +754,7 @@ class PurchasingProcessController extends Controller
 
         })
         ->editColumn('download_stat', function($data){
-             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')  AND isset($data->downloaded) ){
+             if(($data->downloaded != '-0001-11-30 00:00:00' AND $data->downloaded != '0000-00-00 00:00:00')  AND isset($data->downloaded) ){
             $dwld_stat = "<small><i class='fa fa-check-circle' style='color: green;'
                                     data-toggle=tooltip' data-placement='left' title='Downloaded'>
                                 </i>
@@ -757,6 +767,16 @@ class PurchasingProcessController extends Controller
            
         }
          return $dwld_stat;
+        }) 
+
+        ->editColumn('sent', function($data){
+            if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')  AND isset($data->sent) ){
+                $sent = date('d.m.Y H:i:s',strtotime($data->sent));
+            } else {
+                $sent = "-";
+               
+            }
+         return $sent;
         })
         ->editColumn('active', function($data){
            
@@ -807,8 +827,14 @@ class PurchasingProcessController extends Controller
             }
          return $uploaddt;
         })
-        ->editColumn('sent', function($data){
-            return !empty($data->sent) ? date('Y-m-d H:i:s',strtotime($data->sent)):"-";
+       ->editColumn('sent', function($data){
+            if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')  AND isset($data->sent) ){
+                $sent = date('d.m.Y H:i:s',strtotime($data->sent));
+            } else {
+                $sent = "-";
+               
+            }
+         return $sent;
         })
         ->editColumn('po_amount', function($data){
            
