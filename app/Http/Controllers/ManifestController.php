@@ -394,9 +394,9 @@ class ManifestController extends Controller
                     ->get()
                     ->map(function($data){
 
-                        $sum_qty_scan = $data->manifestDetails->sum('qty_pack');
-                        $sum_qty_gr = $data->manifestDetails->sum('qty_in');
-                        $total = $data->manifestDetails->count();
+                        $sum_qty_scan = $data->manifestDetails->sum('qty_scan_outstanding');
+                        $sum_qty_gr = $data->manifestDetails->sum('qty_gr_outstanding');
+                        $total = $data->manifestDetails->where('qty_scan_outstanding', '>', 0)->count();
                         $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
                         $last = $data->manifestDetails->sort(function ($a, $b) {
                             return strtotime($a->updated_at) < strtotime($b->updated_at);
@@ -474,22 +474,49 @@ class ManifestController extends Controller
 
         $jsonData = json_decode($restPostDP, true);
         $result = $jsonData['return'];
-        $status = $result[0]['type'];
-        $message = $result[0]['message'];
+        $it_input = $jsonData['it_input'];
+        
+        $merge = [];
+
+        foreach ($result as $index => $data_result) {
+            $matdoc = !empty($data_result['matdoc']) ? $data_result['matdoc'] : '-';
+            $merge[] = [
+                "mnnum" => $it_input[$index]['mnnum'],
+                "item" => $it_input[$index]['item'],
+                "kbnno" => $it_input[$index]['kbnno'],
+                "sequn" => $it_input[$index]['sequn'],
+                "grdate" => $it_input[$index]['grdate'],
+                "grtime" => $it_input[$index]['grtime'],
+                "entry_qnt" => $it_input[$index]['entry_qnt'],
+                "mnnum" => $data_result['mnnum'],
+                "matdoc" => $matdoc,
+                "type" => $data_result['type'],
+                "id" => $data_result['id'],
+                "number" => $data_result['number'],
+                "message" => $data_result['message'],
+            ];
+        }
+
+        \Log::info($merge);
+
+        // $status = $result[0]['type'];
+        // $message = $result[0]['message'];
+        
+        // if ($status === 'E') {
+        //     return response()->json(['message' => $message], 422);
+        // } else {
         
 
-        if ($status === 'E') {
-            return response()->json(['message' => $message], 422);
-        } else {
-
-            foreach ($manifest_detail as $detail) {
-                $manifest_d_update = ManifestDetail::find($detail->id);
-                $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
-                $manifest_d_update->save();
+            foreach ($manifest_detail as $index => $detail) {
+                if ($result[$index] && $result[$index]['type'] === 'S') {
+                    $manifest_d_update = ManifestDetail::find($detail->id);
+                    $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
+                    $manifest_d_update->save();
+                }
             }
 
-            return response()->json(['message' => 'Data saved successfully!']);
-        }
+            return response()->json(['result' => $merge]);
+        // }
 
     }
 
