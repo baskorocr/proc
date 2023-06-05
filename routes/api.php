@@ -33,6 +33,7 @@ Route::post('/vendor', 'VendorController@store');
 Route::post('/vendor/{id_vendor}', 'VendorController@update');
 Route::post('/send-po', 'PoController@sendPo');
 Route::post('/resend-mail-po', 'PoController@resendEmailPo');
+Route::post('/send-manifest-sap', 'ManifestController@sendManifestSap');
 
 Route::group(['middleware' => ['auth:api']], function () {
 
