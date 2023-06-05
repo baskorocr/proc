@@ -174,8 +174,7 @@ class PurchasingProcessController extends Controller
             ///Cek email
             $cekMail =  MasterUser::where('status_user','A')->where('foreign_id', $po->id_vendor)->count();
             if( $cekMail > 0)
-            {
-                
+            {        
                 PurchasingProcess::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
             } else{
                 $failed_send+=1;
@@ -640,7 +639,7 @@ class PurchasingProcessController extends Controller
 
 
             //Ambil Data Vendor
-            $dtuser =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id', $po->id_vendor)->first();
+            $dtuser =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id', $data->id_vendor)->first();
 
             if(!empty($dtuser->username)){
                 $v = @$dtuser->username;
