@@ -314,9 +314,9 @@ class PurchasingProcessController extends Controller
         
         ->editColumn('sent', function($data){
             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')  AND isset($data->sent) ){
-                $sent = date('d.m.Y H:i:s',strtotime($data->sent));
+                $sent = date('Y-m-d H:i:s',strtotime($data->sent));
             } else {
-                $sent = "-";
+                $sent = "0000-00-00 00:00:00";
                
             }
          return $sent;
@@ -365,20 +365,67 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('nm_vendor', function($data){
             return @$data->vendors->nm_vendor;
-        })->editColumn('vend_email', function($data){
-            if(!empty($data->vendors)){
-                $v = @$data->vendors->vend_email;
-            } else{
-                $v="";
+        })
+        ->editColumn('vend_email', function($data){
+
+            $user = User::where('foreign_id', $data->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+             $list_permission=[];
+            foreach($user as $u)
+            {   
+                $list_permission[]=$u->role_id;
             }
-            $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
-            if(@$get->status_user == "A")
+            $lperm = array_unique($list_permission);
+            $getMenu = Permission::where('name','Download PO')->first();
+            $role =  Role::whereIn('_id',$list_permission)->get();
+    
+            $allowed = [];
+            $sended = [];
+            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+            foreach($role as $r)
+            {
+                $permissions=[];
+                foreach($r->permissions as $p){
+                    $permissions[] = $p->permission_id; 
+                    
+                }
+                
+                if(in_array($getMenu->_id, $permissions))
+                {
+                    $allowed[] = $r->_id;
+                }
+    
+            }
+
+
+            //Ambil Data Vendor
+            $dtuser =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id', $data->id_vendor)->first();
+
+            if(!empty($dtuser->username)){
+                $v = @$dtuser->username;
+            } else{
+                $v=@$data->vendors->vend_email;
+            }
+            if(@$dtuser->status_user == "A")
             {
                 $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
             } else{
                 $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
             }
             return $v.($v!=""?$s:"");
+
+            // if(!empty($data->vendors)){
+            //     $v = @$data->vendors->vend_email;
+            // } else{
+            //     $v=@$data->vendors->vend_email;
+            // }
+            // $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
+            // if(@$get->status_user == "A")
+            // {
+            //     $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
+            // } else{
+            //     $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
+            // }
+            // return $v.($v!=""?$s:"");
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
@@ -562,19 +609,65 @@ class PurchasingProcessController extends Controller
         ->editColumn('nm_vendor', function($data){
             return @$data->vendors->nm_vendor;
         })->editColumn('vend_email', function($data){
-            if(!empty($data->vendors)){
-                $v = @$data->vendors->vend_email;
-            } else{
-                $v="";
+
+            $user = User::where('foreign_id', $data->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+             $list_permission=[];
+            foreach($user as $u)
+            {   
+                $list_permission[]=$u->role_id;
             }
-            $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
-            if(@$get->status_user == "A")
+            $lperm = array_unique($list_permission);
+            $getMenu = Permission::where('name','Download PO')->first();
+            $role =  Role::whereIn('_id',$list_permission)->get();
+    
+            $allowed = [];
+            $sended = [];
+            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+            foreach($role as $r)
+            {
+                $permissions=[];
+                foreach($r->permissions as $p){
+                    $permissions[] = $p->permission_id; 
+                    
+                }
+                
+                if(in_array($getMenu->_id, $permissions))
+                {
+                    $allowed[] = $r->_id;
+                }
+    
+            }
+
+
+            //Ambil Data Vendor
+            $dtuser =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id', $po->id_vendor)->first();
+
+            if(!empty($dtuser->username)){
+                $v = @$dtuser->username;
+            } else{
+                $v=@$data->vendors->vend_email;
+            }
+            if(@$dtuser->status_user == "A")
             {
                 $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
             } else{
                 $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
             }
             return $v.($v!=""?$s:"");
+
+            // if(!empty($data->vendors)){
+            //     $v = @$data->vendors->vend_email;
+            // } else{
+            //     $v=@$data->vendors->vend_email;
+            // }
+            // $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
+            // if(@$get->status_user == "A")
+            // {
+            //     $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
+            // } else{
+            //     $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
+            // }
+            // return $v.($v!=""?$s:"");
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
@@ -771,9 +864,9 @@ class PurchasingProcessController extends Controller
 
         ->editColumn('sent', function($data){
             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')  AND isset($data->sent) ){
-                $sent = date('d.m.Y H:i:s',strtotime($data->sent));
+                $sent = date('Y-m-d H:i:s',strtotime($data->sent));
             } else {
-                $sent = "-";
+                $sent = "0000-00-00 00:00:00";
                
             }
          return $sent;
@@ -829,9 +922,9 @@ class PurchasingProcessController extends Controller
         })
        ->editColumn('sent', function($data){
             if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00')  AND isset($data->sent) ){
-                $sent = date('d.m.Y H:i:s',strtotime($data->sent));
+                $sent = date('Y-m-d H:i:s',strtotime($data->sent));
             } else {
-                $sent = "-";
+                $sent = "0000-00-00 00:00:00";
                
             }
          return $sent;
@@ -860,20 +953,66 @@ class PurchasingProcessController extends Controller
         ->editColumn('nm_vendor', function($data){
             return @$data->vendors->nm_vendor;
         })
-        ->editColumn('vend_email', function($data){
-            if(!empty($data->vendors)){
-                $v = @$data->vendors->vend_email;
-            } else{
-                $v="";
+       ->editColumn('vend_email', function($data){
+
+            $user = User::where('foreign_id', $data->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+             $list_permission=[];
+            foreach($user as $u)
+            {   
+                $list_permission[]=$u->role_id;
             }
-            $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
-            if(@$get->status_user == "A")
+            $lperm = array_unique($list_permission);
+            $getMenu = Permission::where('name','Download PO')->first();
+            $role =  Role::whereIn('_id',$list_permission)->get();
+    
+            $allowed = [];
+            $sended = [];
+            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+            foreach($role as $r)
             {
-                $s = " <i title='Pengguna Aktif' class='fas fa-check-circle text-success'></i> ";
+                $permissions=[];
+                foreach($r->permissions as $p){
+                    $permissions[] = $p->permission_id; 
+                    
+                }
+                
+                if(in_array($getMenu->_id, $permissions))
+                {
+                    $allowed[] = $r->_id;
+                }
+    
+            }
+
+
+            //Ambil Data Vendor
+            $dtuser =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id', $data->id_vendor)->first();
+
+            if(!empty($dtuser->username)){
+                $v = @$dtuser->username;
             } else{
-                $s=" <i title='Pengguna Non-aktif' class='fas fa-exclamation-circle text-warning'></i> ";
+                $v=@$data->vendors->vend_email;
+            }
+            if(@$dtuser->status_user == "A")
+            {
+                $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
+            } else{
+                $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
             }
             return $v.($v!=""?$s:"");
+
+            // if(!empty($data->vendors)){
+            //     $v = @$data->vendors->vend_email;
+            // } else{
+            //     $v=@$data->vendors->vend_email;
+            // }
+            // $get = MasterUser::Where('username',@$data->vendors->vend_email)->first();
+            // if(@$get->status_user == "A")
+            // {
+            //     $s = " <i title='User Active' class='fas fa-check-circle text-success'></i> ";
+            // } else{
+            //     $s=" <i title='User Not active' class='fas fa-exclamation-circle text-warning'></i> ";
+            // }
+            // return $v.($v!=""?$s:"");
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));

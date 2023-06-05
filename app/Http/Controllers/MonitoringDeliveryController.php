@@ -206,11 +206,15 @@ class MonitoringDeliveryController extends Controller
             ->editColumn('kanban_stat', function ($data) {
                 $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                  $tot_kanban = $data->manifestDetails->count('kanban');
+                 if(!empty($data->qty_scan_outstanding)){
                   if ($data->manifestDetails->count('kanban') == $kanban_received) {
                         $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     } else {
                         $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     }
+                } else{
+                      $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . 0 . "/" . $tot_kanban . "</span></small>";
+                }
                 return $receive_stat;
             })
             ->editColumn('active_stat', function ($data) {
@@ -313,22 +317,32 @@ class MonitoringDeliveryController extends Controller
                 return $scan_stat;
             })
              ->editColumn('receive_stat', function ($data) {
-                $kanban_in = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+                $rec_kanban = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
-                  if ($tot_kanban == $kanban_in) {
-                        $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
-                    } else {
-                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
-                    }
-                return $receive_stat;
-            })
-            ->editColumn('kanban_stat', function ($data) {
-                $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
-                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
+                if ($rec_kanban >= 1) {
+                    $kanban_received = $rec_kanban;
+                } else {
+                    $kanban_received = "0";
+                }
                   if ($tot_kanban == $kanban_received) {
                         $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     } else {
                         $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                    }
+                return $receive_stat;
+            })
+            ->editColumn('kanban_stat', function ($data) {
+                $k_in = ManifestDetail::where('manifest', $data->manifest)->where('scan_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
+                if ($k_in >= 1) {
+                    $kanban_in = $k_in;
+                } else {
+                    $kanban_in = "0";
+                }
+                  if ($tot_kanban == $kanban_in) {
+                        $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                    } else {
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                     }
                 return $receive_stat;
             })
@@ -396,24 +410,38 @@ class MonitoringDeliveryController extends Controller
                 }
                 return $scan_stat;
             })
-             ->editColumn('receive_stat', function ($data) {
-                $kanban_in = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+            ->editColumn('receive_stat', function ($data) {
+                $rec_kanban = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                 $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
-                  if ($tot_kanban == $kanban_in) {
-                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                if ($rec_kanban >= 1) {
+                    $kanban_received = $rec_kanban;
+                } else {
+                    $kanban_received = "0";
+                }
+                  if ($tot_kanban == $kanban_received) {
+                        $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     } else {
-                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     }
                 return $receive_stat;
             })
             ->editColumn('kanban_stat', function ($data) {
-                $kanban_received = ManifestDetail::where('manifest', $data->manifest)->where('issued_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
+                $k_in = ManifestDetail::where('manifest', $data->manifest)->where('scan_date','<>','0000-00-00')->groupBy('manifest')->count('issued_date');
                  $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
-                  if ($data->count('kanban') == $kanban_received) {
-                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                if(!empty($data->qty_scan_outstanding)){
+                    if ($k_in >= 1) {
+                        $kanban_in = $k_in;
                     } else {
-                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                        $kanban_in = "0";
                     }
+                      if ($tot_kanban == $kanban_in) {
+                            $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                        } else {
+                            $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                        }
+                } else{
+                    $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . 0 . "/" . $tot_kanban . "</span></small>";
+                }
                 return $receive_stat;
             })
              ->editColumn('active_stat', function ($data) {
