@@ -45,12 +45,13 @@ class RegisIsoDocController extends Controller
                  if($exp_tm >= $exp_date)
                  {
                     $arr[] = ['id_iso' => $r->_id,'type_notify' => $not->notif_id,'notif_before' => $not->notif_before];
-                    $this->mailer_send_expired($r->_id,$not->notif_before);
+                    // $this->mailer_send_expired($r->_id,$not->notif_before);
                     $notified[]=$r->_id;
                  }
             }
             
          }
+         dd($arr);
         
         }
    
