@@ -3272,7 +3272,6 @@ return array(
     'MongoDB\\GridFS\\CollectionWrapper' => $vendorDir . '/mongodb/mongodb/src/GridFS/CollectionWrapper.php',
     'MongoDB\\GridFS\\Exception\\CorruptFileException' => $vendorDir . '/mongodb/mongodb/src/GridFS/Exception/CorruptFileException.php',
     'MongoDB\\GridFS\\Exception\\FileNotFoundException' => $vendorDir . '/mongodb/mongodb/src/GridFS/Exception/FileNotFoundException.php',
-    'MongoDB\\GridFS\\Exception\\StreamException' => $vendorDir . '/mongodb/mongodb/src/GridFS/Exception/StreamException.php',
     'MongoDB\\GridFS\\ReadableStream' => $vendorDir . '/mongodb/mongodb/src/GridFS/ReadableStream.php',
     'MongoDB\\GridFS\\StreamWrapper' => $vendorDir . '/mongodb/mongodb/src/GridFS/StreamWrapper.php',
     'MongoDB\\GridFS\\WritableStream' => $vendorDir . '/mongodb/mongodb/src/GridFS/WritableStream.php',

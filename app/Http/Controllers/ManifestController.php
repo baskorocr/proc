@@ -124,6 +124,8 @@ class ManifestController extends Controller
             $manifest->file_nm = $request->file_nm;
             $manifest->mf_type = $request->mf_type;
             $manifest->release_date = $request->release_date;
+            $manifest->stat = "W";
+            $manifest->active = "O";
             $manifest->save();
             
             foreach ($request->details as $detail){

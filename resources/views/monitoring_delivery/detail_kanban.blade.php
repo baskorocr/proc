@@ -86,8 +86,8 @@
         name: 'receive_stat'
         },
         {
-        data: 'kanban_stat',
-        name: 'kanban_stat'
+        data: 'active_stat',
+        name: 'active_stat'
         },
         ]
         });

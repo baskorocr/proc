@@ -419,9 +419,9 @@ class MonitoringDeliveryController extends Controller
                     $kanban_received = "0";
                 }
                   if ($tot_kanban == $kanban_received) {
-                        $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                          $receive_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
                     } else {
-                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                         $receive_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
                     }
                 return $receive_stat;
             })

@@ -602,9 +602,9 @@
             'dev_requirement' => true,
         ),
         'mongodb/mongodb' => array(
-            'pretty_version' => '1.8.0',
-            'version' => '1.8.0.0',
-            'reference' => '953dbc19443aa9314c44b7217a16873347e6840d',
+            'pretty_version' => '1.7.2',
+            'version' => '1.7.2.0',
+            'reference' => '38b685191c047a57275d6ccd2ea5c50f23638485',
             'type' => 'library',
             'install_path' => __DIR__ . '/../mongodb/mongodb',
             'aliases' => array(),
@@ -880,8 +880,8 @@
         'psr/log-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '1.0.0 || 2.0.0 || 3.0.0',
-                1 => '1.0|2.0',
+                0 => '1.0|2.0',
+                1 => '1.0.0 || 2.0.0 || 3.0.0',
             ),
         ),
         'psr/simple-cache' => array(
