@@ -220,7 +220,12 @@ class PurchasingProcessController extends Controller
                    $q->whereIn('id_vendor',[$request->vendor_select]);
                 }
             }
-            $data = $q->where('id_vendor','!=','')->get();
+            if(auth()->user()->is_vendor)
+            {
+               $data = $q->where('id_vendor','=',auth()->user()->foreign_id)->get();
+            } else{
+                $data = $q->where('id_vendor','!=','')->get();
+            }
 
         }
        
@@ -755,7 +760,12 @@ class PurchasingProcessController extends Controller
                    $q->whereIn('id_vendor',[$request->vendor_select]);
                 }
             }
-            $data = $q->where('id_vendor','!=','')->get();
+            if(auth()->user()->is_vendor)
+            {
+               $data = $q->where('id_vendor','=',auth()->user()->foreign_id)->get();
+            } else{
+                $data = $q->where('id_vendor','!=','')->get();
+            }
 
         } else{
             $data = [];
