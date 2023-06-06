@@ -435,6 +435,7 @@ class ManifestController extends Controller
         
         $manifest_detail = ManifestDetail::where('manifest', $request->manifest)
                                     ->whereNotNull('qty_scan_outstanding')
+                                    ->whereNull('qty_gr_outstanding')
                                     ->get();
 
         $username = 'DPM-EINVC';
@@ -496,8 +497,6 @@ class ManifestController extends Controller
                 "message" => $data_result['message'],
             ];
         }
-
-        \Log::info($merge);
 
         // $status = $result[0]['type'];
         // $message = $result[0]['message'];
