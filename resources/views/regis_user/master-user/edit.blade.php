@@ -29,11 +29,14 @@
 									@if($user->is_vendor)	
 									<div class="form-group">
 										<label>Select Vendor 	</label>
-										<select name="id_vendor" id="vid" class="form-control select">
+										{{-- <select name="id_vendor" id="vid" class="form-control select">
 											@foreach($vendor as $v)
 												<option  value="{{$v->id_vendor}}" >{{$v->nm_vendor}}</option>
 											@endforeach
-										</select>
+										</select> --}}
+										 <br>
+										 <input type="text" class="form-control" disabled id="vendor_nm" name="vendor_nm" value="{{$user->vendor->nm_vendor}}">
+										 <input type="hidden"name="id_vendor" value="{{$user->foreign_id}}">
 									</div>
 									@endif
 									<div class="form-group">
