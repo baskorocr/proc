@@ -390,24 +390,30 @@ class MonitoringDeliveryController extends Controller
             })
             ->editColumn('scan_stat', function ($data) {
 
-                if($data->stat == "P")
-                {
-                    $stat = ManifestDetail::where('manifest', $data->manifest);
-                     if ($stat->sum('qty_pack') == $stat->sum('qty_in')) {
-                        $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
-                    } else {
-                        $scan_stat = "<small><span class=\"badge bg-primary\">On Progress</span></small>";
-                    }
-                } elseif($data->stat == "H")
-                {
+                // if($data->stat == "P")
+                // {
+                //     $stat = ManifestDetail::where('manifest', $data->manifest);
+                //      if ($stat->sum('qty_pack') == $stat->sum('qty_in')) {
+                //         $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
+                //     } else {
+                //         $scan_stat = "<small><span class=\"badge bg-primary\">On Progress</span></small>";
+                //     }
+                // } elseif($data->stat == "H")
+                // {
 
-                 $scan_stat = "<small><span class=\"badge bg-danger\">Outstanding</span></small>";
+                //  $scan_stat = "<small><span class=\"badge bg-danger\">Outstanding</span></small>";
 
-                }elseif ($data->stat  == "D"){
+                // }elseif ($data->stat  == "D"){
+                //     $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
+                // } else {
+                //     $scan_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
+                // }
+
+                 if($data->arrival_date != '0000-00-00'){
                     $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
-                } else {
+                 } else {
                     $scan_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
-                }
+                 }
                 return $scan_stat;
             })
             ->editColumn('receive_stat', function ($data) {
