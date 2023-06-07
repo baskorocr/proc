@@ -339,7 +339,7 @@ class ManifestController extends Controller
             //Set field 'sent' untuk flag terkirim
             ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
              $log = [];
-             $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." sended to ".json_encode($vendEmail)." | cc". json_encode($cc);
+             $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." sended to ".json_encode($vendEmail)." | cc ". json_encode($cc);
              \Log::info($log);
 
         } else {
