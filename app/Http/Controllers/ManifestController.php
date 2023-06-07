@@ -34,6 +34,10 @@ class ManifestController extends Controller
          try{
              ManifestHeader::where('manifest', $request->manifest)->update(['stat' => $request->stat,'active' => $request->active]);
              $data = ManifestHeader::where('manifest', $request->manifest)->first();
+             $log = [];
+             $log['message'] = "Manifest ".$request->manifest." set to stat ".$request->stat." and active ". $request->active;
+             $log['request'] = $request->all();
+             \Log::info($log);
              return response()->json([
                     'type' => 'success',
                     'message' => 'Manifest data updated!',
@@ -331,9 +335,12 @@ class ManifestController extends Controller
                 }
             }
             // dd($allowed);
-             Mail::to($vendEmail)->cc($vendEmail)->send(new ManifestMail($manifestHead,$vendor));
+             Mail::to($vendEmail)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
             //Set field 'sent' untuk flag terkirim
             ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
+             $log = [];
+             $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." sended to ".json_encode($vendEmail)." | cc". json_encode($cc);
+             \Log::info($log);
 
         } else {
 
