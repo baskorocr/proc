@@ -479,7 +479,7 @@ class MonitoringDeliveryController extends Controller
                 return $receive_stat;
             })
              ->editColumn('active_stat', function ($data) {
-               if ($data->active == 'O') {
+               if ($data->active == 'A') {
                      $active_stat = "<small><span class=\"badge bg-warning text-dark\">Open</span></small>";
                 } else {
                     $active_stat = "<small><span class=\"badge bg-success\">Closed</span></small>";

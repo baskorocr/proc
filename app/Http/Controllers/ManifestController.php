@@ -559,14 +559,16 @@ class ManifestController extends Controller
         // } else {
         
 
-            foreach ($manifest_detail as $index => $detail) {
+           foreach ($manifest_detail as $index => $detail) {
                 if ($result[$index] && $result[$index]['type'] === 'S') {
                     $manifest_d_update = ManifestDetail::find($detail->id);
+                    $manifest_d_update->issued_date = $result[$index]['grdate'];
+                    $manifest_d_update->issued_time = $result[$index]['grtime'];
+                    $manifest_d_update->issued_by = $result[$index]['id'];
                     $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
                     $manifest_d_update->save();
-                }
+              }
             }
-
             return response()->json(['result' => $merge]);
         // }
 
