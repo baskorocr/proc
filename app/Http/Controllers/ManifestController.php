@@ -387,7 +387,7 @@ class ManifestController extends Controller
             } else {
                 $check_qty_pack = ManifestDetail::where('manifest', $request->manifest)->sum('qty_pack');
                 $check_qty_in = ManifestDetail::where('manifest', $request->manifest)->sum('qty_in');
-                if($check_qty_in > $check_qty_pack)
+                if($check_qty_in == $check_qty_pack)
                 {
                     ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "D"]);
                 }
