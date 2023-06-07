@@ -366,6 +366,7 @@ class ManifestController extends Controller
 
     public function checkKanban(Request $request)
     {   
+
         $manifest_d = ManifestDetail::where('manifest', $request->manifest)->where('kanban', $request->kanban)->first();
         
         $isExists = !empty($manifest_d) ? true : false ;
@@ -384,6 +385,12 @@ class ManifestController extends Controller
                     ]
                     ], 422);
             } else {
+                $check_qty_pack = ManifestDetail::where('manifest', $request->manifest)->sum('qty_pack');
+                $check_qty_in = ManifestDetail::where('manifest', $request->manifest)->sum('qty_in');
+                if($check_qty_in > $check_qty_pack)
+                {
+                    ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "D"]);
+                }
 
                 $manifest_d->qty_scan_outstanding = $manifest_d->qty_pack;
                 $manifest_d->qty_in = $manifest_d->qty_pack;
