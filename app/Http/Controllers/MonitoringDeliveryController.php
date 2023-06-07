@@ -208,15 +208,13 @@ class MonitoringDeliveryController extends Controller
             ->editColumn('kanban_stat', function ($data) {
                 $kanban_received = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
                  $tot_kanban = $data->manifestDetails->count('kanban');
-                 if(!empty($data->qty_scan_outstanding)){
+                
                   if ($data->manifestDetails->count('kanban') == $kanban_received) {
                         $kanban_in = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     } else {
                         $kanban_in = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                     }
-                } else{
-                      $kanban_in = "<small><span class=\"badge bg-warning text-dark\">" . 0 . "/" . $tot_kanban . "</span></small>";
-                }
+               
                 return $kanban_in;
             })
             ->editColumn('active_stat', function ($data) {
