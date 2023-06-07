@@ -11,10 +11,47 @@ use App\Models\MasterUser;
 use Carbon\Carbon;
 use App\Models\Vendor;
 use Mail;
+use App\Models\User;
 use App\Mail\ManifestMail;
 
 class ManifestController extends Controller
 {
+
+    public function setStatus(Request $request)
+    {
+         $cek_manifest = ManifestHeader::where('manifest', $request->manifest)->count();
+         // dd($request->manifest);
+         if( $cek_manifest == 0)
+         {
+             return response()->json([
+                'type' => 'error',
+                'isExists' => false,
+                'message' => 'Manifest not found!',
+                'data' => null
+            ], 422);
+         } 
+
+         try{
+             ManifestHeader::where('manifest', $request->manifest)->update(['stat' => $request->stat,'active' => $request->active]);
+             $data = ManifestHeader::where('manifest', $request->manifest)->first();
+             return response()->json([
+                    'type' => 'success',
+                    'message' => 'Manifest data updated!',
+                    'data' =>  $data
+                ], 200);
+         } catch(\Exception $e)
+         {
+             return response()->json([
+                    'type' => 'error',
+                    'isExists' => false,
+                    'message' => 'Manifest failed to updated!',
+                    'data' => null,
+                    'err_msg' => $e->getMessage()
+                ], 422);
+         }
+        
+         
+    }
     public function manifestHeader(Request $request)
     {   
         $manifest = ManifestHeader::with('manifestDetails')->where('manifest', $request->manifest)->first();
@@ -96,13 +133,15 @@ class ManifestController extends Controller
 
     public function manifest_test_mail($manifestId)
     {
-        $this->mailer_send($manifestId, [1]);
+        $cekManifest = ManifestHeader::where('manifest', $manifestId)->get();
+        $this->mailer_send($manifestId, $cekManifest);
     }
 
     public function sendManifest(Request $request)
     {
         // $cekManifest = ManifestHeader::where('manifest', $request->manifest)->first();
-        $vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
+        $vendor = User::where('foreign_id', $request->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+        
         $msg_mail = '';
         $msg_data = '';
         $resDuplicate = 0;
@@ -136,15 +175,15 @@ class ManifestController extends Controller
                 $manifest_detail->manifest = $request->manifest;
                 $manifest_detail->material = $detail['material'];
                 $manifest_detail->material_desc = $detail['material_desc'];
-                $manifest_detail->qty_pack = $detail['qty_pack'];
-                $manifest_detail->qty_in = $detail['qty_in'];
-                $manifest_detail->arrival_date = Carbon::parse($detail['arrival_date']);
-                $manifest_detail->arrival_time = Carbon::parse($detail['arrival_time']);
-                $manifest_detail->scan_date = Carbon::parse($detail['scan_date']);
-                $manifest_detail->scan_time = Carbon::parse($detail['scan_time']);
+                $manifest_detail->qty_pack = intval($detail['qty_pack']);
+                $manifest_detail->qty_in = intval($detail['qty_in']);
+                $manifest_detail->arrival_date = empty($detail['arrival_date']) ? null:$detail['arrival_date'];
+                $manifest_detail->arrival_time = empty($detail['arrival_time']) ? null:$detail['arrival_time'];
+                $manifest_detail->scan_date = empty($detail['scan_date']) ? null:$detail['scan_date'];
+                $manifest_detail->scan_time = empty($detail['scan_time']) ? null:$detail['scan_time'];
                 $manifest_detail->scan_by = $detail['scan_by'];
-                $manifest_detail->issued_date = Carbon::parse($detail['issued_date']);
-                $manifest_detail->issued_time = Carbon::parse($detail['issued_time']);
+                $manifest_detail->issued_date = empty($detail['issued_date']) ? null:$detail['issued_date'];
+                $manifest_detail->issued_time = empty($detail['issued_time']) ? null:$detail['issued_time'];
                 $manifest_detail->issued_by = $detail['issued_by'];
                 $manifest_detail->active = $detail['active'];
                 $manifest_detail->save();
@@ -154,10 +193,12 @@ class ManifestController extends Controller
         }
 
         if($resDuplicate != 1) {
-            if($vendor) {
-                if($vendor->status_vendor === 'A') {
+           
+                if(count($vendor) > 0){ 
                     try {
-                        $this->mailer_send($request->manifest, $cekManifest);
+                        $cek_data = ManifestHeader::where('manifest', $request->manifest)->get();
+
+                        $this->mailer_send($request->manifest, $cek_data);
                         $msg_mail = 'Manifest send mailed to vendor successfully.';
                     } catch (Exception $e) {
                         $msg_mail = $e->getMessage();
@@ -175,12 +216,7 @@ class ManifestController extends Controller
                         'msg_mail' => 'Manifest send to vendor failed.',
                     ], 200);
                 }
-            } else {
-                return response()->json([
-                    'msg_data' => $msg_data,
-                    'msg_mail' => 'Manifest send to vendor failed.',
-                ], 422);
-            }
+            
         } else {
             return response()->json([
                 'msg_data' => $msg_data,
@@ -234,6 +270,7 @@ class ManifestController extends Controller
 
     private function mailer_send($manifest, $cekManifest)
     {
+        // dd(count($cekManifest));
         if(count($cekManifest) > 0) {
             $manifestHead = ManifestHeader::where('manifest', $manifest)->first();
     
@@ -297,7 +334,9 @@ class ManifestController extends Controller
              Mail::to($vendEmail)->cc($vendEmail)->send(new ManifestMail($manifestHead,$vendor));
             //Set field 'sent' untuk flag terkirim
             ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
+
         } else {
+
             return false;
         }
         
@@ -340,6 +379,11 @@ class ManifestController extends Controller
             } else {
 
                 $manifest_d->qty_scan_outstanding = $manifest_d->qty_pack;
+                $manifest_d->qty_in = $manifest_d->qty_pack;
+                $manifest_d->arrival_date = Carbon::parse(date('Y-m-d '.'00:00:00'));
+                $manifest_d->arrival_time = Carbon::parse(date('H:i:s'));
+                $manifest_d->scan_date = Carbon::parse(date('Y-m-d '.'00:00:00'));
+                $manifest_d->scan_time = Carbon::parse(date('H:i:s'));
                 $manifest_d->scan_by = $request->scan_by;
                 $manifest_d->save();
 
@@ -354,7 +398,7 @@ class ManifestController extends Controller
                         'material_desc' => $data->first()->material_desc,
                         'qty_scan' => $data->sum('qty_pack'),
                         'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
-                        'qty_gr' => $data->sum('qty_in'),
+                        'qty_gr' => $data->sum('qty_pack'),
                         'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
                         'kanban' => $data->count(),
                         'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),

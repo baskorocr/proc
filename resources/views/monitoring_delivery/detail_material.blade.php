@@ -34,7 +34,67 @@
                                         
                                     </thead>
                                     <tbody>
-                                        
+                    <?php $grouping = []; ?>
+                    @foreach($detail_material as $dm)
+                     @if(!in_array(@$dm->material,$grouping))
+                        <?php 
+                             $k_in = \App\Models\ManifestDetail::where('manifest', $dm->manifest)->whereNotNull('scan_date')->count('scan_date');
+                             $tot_kanban = \App\Models\ManifestDetail::where('manifest',$dm->manifest)->count('kanban');
+                            if ($k_in >= 1) {
+                                $kanban_in = $k_in;
+                            } else {
+                                $kanban_in = "0";
+                            }
+                            if ($tot_kanban == $kanban_in) {
+                                $kanban_stat = "<small><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                            } else {
+                                $kanban_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                            }
+
+                            $rec_kanban = \App\Models\ManifestDetail::where('manifest', $dm->manifest)->whereNotNull('issued_date')->count('issued_date');
+                            if ($rec_kanban >= 1) {
+                                $kanban_received = $rec_kanban;
+                            } else {
+                                $kanban_received = "0";
+                            }
+                              if ($tot_kanban == $kanban_received) {
+                                    $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                                } else {
+                                    $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                                }
+                           
+                                $qty_tot =  \App\Models\ManifestDetail::where('manifest', $dm->manifest)->where('material',$dm->material)->sum('qty_pack');
+                                $tot_qty_in =  \App\Models\ManifestDetail::where('manifest', $dm->manifest)->where('material',$dm->material)->sum('qty_in');
+                                $tot_qty = $qty_tot;
+                                if ($tot_qty_in >= 1) {
+                                    $qty_in = $tot_qty_in;
+                                } else {
+                                    $qty_in = "0";
+                                }
+
+                                if ($tot_qty == $qty_in) {
+                                    $qty_stat = "<small><span class=\"badge bg-success\">" . $qty_in . "/" . $qty_tot  . "</span></small>";
+                                } else {
+                                    $qty_stat = "<small><span class=\"badge bg-warning\">" . $qty_in . "/" . $qty_tot  . "</span></small>";
+                                }
+                              
+                        ?>
+                                            <tr>
+                                                <td>{{$dm->manifest}}</td>
+                                                <td>{{date('Y-m-d',strtotime(@$dm->manifestHeaders->delivery_date))}}</td>
+                                                <td>{{@$dm->manifestHeaders->po_num}}</td>
+                                                <td>{{@$dm->manifestHeaders->vendors->nm_vendor}}</td>
+                                                <td>{{$dm->item}}</td>
+                                                <td>{{@$dm->material}}</td>
+                                                <td>{{@$dm->material_desc}}</td>
+                                                <td>PCE</td>
+                                                <td>{!!$qty_stat!!}</td>
+                                                <td>{!!$kanban_stat!!}</td>
+                                                <td>{!!$receive_stat!!}</td>
+                                            </tr>
+                                            <?php $grouping[] = @$dm->material;?>
+                                            @endif
+                                        @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -47,6 +107,9 @@
     @endsection
     @section('javascript')
     <script>
+         $('#detail-material').DataTable({});
+    </script>
+{{--     <script>
     $('#detail-material').DataTable({
     "order": [[ 1, "DESC" ]],
     processing: true,
@@ -101,5 +164,5 @@
     ]
     });
     
-    </script>
+    </script> --}}
     @endsection
