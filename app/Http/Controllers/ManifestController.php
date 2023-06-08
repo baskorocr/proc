@@ -72,7 +72,7 @@ class ManifestController extends Controller
                     'material_desc' => $data->first()->material_desc,
                     'qty_scan' => $data->sum('qty_pack'),
                     'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
-                    'qty_gr' => $data->sum('qty_in'),
+                    'qty_gr' => $data->sum('qty_pack'),
                     'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
                     'kanban' => $data->count(),
                     'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
@@ -462,7 +462,7 @@ class ManifestController extends Controller
                         $total = $data->manifestDetails->where('qty_scan_outstanding', '>', 0)->count();
                         $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
                         $last = $data->manifestDetails->sort(function ($a, $b) {
-                            return strtotime($a->updated_at) < strtotime($b->updated_at);
+                            return strtotime($a->scan_time) < strtotime($b->scan_time);
                         });
 
                         return [
@@ -472,7 +472,7 @@ class ManifestController extends Controller
                             'po_number' => $data->po_num,
                             'vendor_id' => $data->id_vendor,
                             'vendor_name' => $vendor->nm_vendor,
-                            'last_scan' => $last->first()->updated_at,
+                            'last_scan' => $last->first()->scan_time,
                             'scan_by' => $last->first()->scan_by
                         ];
                     });
