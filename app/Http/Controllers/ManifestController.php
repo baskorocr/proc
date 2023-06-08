@@ -495,11 +495,28 @@ class ManifestController extends Controller
     // new send SAP manifest
     public function sendManifestSap(Request $request)
     {
+
         
         $manifest_detail = ManifestDetail::where('manifest', $request->manifest)
-                                    ->whereNotNull('qty_scan_outstanding')
-                                    ->whereNull('qty_gr_outstanding')
                                     ->get();
+
+        foreach($manifest_detail as $md)
+        {
+              ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "H"]);
+                    $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
+                    $total_gr = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('issued_date')->count('issued_date');
+                    $total_scan = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('scan_date')->count('scan_date');
+
+                    if(!empty($md->arrival_date) && !empty($md->issued_date))
+                    if(($total_gr == $total_kanban) && ($total_scan == $total_kanban))
+                    {
+                        ManifestHeader::where('manifest', $request->manifest)->update(['active' => "C"]);
+                        ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "D"]);
+                    }
+        }
+      
+
+        return 1;
 
         $username = 'DPM-EINVC';
         $password = 'Einvoice01';
