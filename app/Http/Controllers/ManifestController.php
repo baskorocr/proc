@@ -77,7 +77,7 @@ class ManifestController extends Controller
                 //Check Date
                 $now = strtotime(date('Y-m-d'));
                 $expired_date = strtotime(Carbon::parse($manifest->delivery_date)->addDays($days));
-            
+
                 if($now > $expired_date)
                 {
                     return response()->json([
@@ -497,7 +497,7 @@ class ManifestController extends Controller
 
                         $sum_qty_scan = $data->manifestDetails->sum('qty_scan_outstanding');
                         $sum_qty_gr = $data->manifestDetails->sum('qty_gr_outstanding');
-                        $total = $data->manifestDetails->where('qty_scan_outstanding', '>', 0)->count();
+                        $total = $data->manifestDetails->count('kanban');
                         $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
                         $last = $data->manifestDetails->sort(function ($a, $b) {
                             return strtotime($a->updated_at) < strtotime($b->updated_at);
@@ -610,8 +610,8 @@ class ManifestController extends Controller
            foreach ($manifest_detail as $index => $detail) {
                 if ($result[$index] && $result[$index]['type'] === 'S') {
                     $manifest_d_update = ManifestDetail::find($detail->id);
-                    $manifest_d_update->issued_date = $result[$index]['grdate'];
-                    $manifest_d_update->issued_time = $result[$index]['grtime'];
+                    $manifest_d_update->issued_date = Carbon::parse($result[$index]['grdate']);
+                    $manifest_d_update->issued_time = Carbon::parse($result[$index]['grtime']);
                     $manifest_d_update->issued_by = $result[$index]['id'];
                     $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
                     $manifest_d_update->save();
