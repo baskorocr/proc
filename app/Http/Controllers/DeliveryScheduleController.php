@@ -96,7 +96,7 @@ class DeliveryScheduleController extends Controller
             return redirect()->back()->with(['message_fail' => 'PO Directory filesystem driver has not been set in  application, please contact the IT team.']);
         } catch(\Exception $e)
         {
-            return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton or directory not been mount on server, please contact IT Team']);
+            return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton or directory not been mount on server or config temp directory is read only, please contact IT Team']);
         }
 
       
