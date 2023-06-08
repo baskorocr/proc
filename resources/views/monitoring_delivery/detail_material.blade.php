@@ -38,8 +38,8 @@
                     @foreach($detail_material as $dm)
                      @if(!in_array(@$dm->material,$grouping))
                         <?php 
-                             $k_in = \App\Models\ManifestDetail::where('manifest', $dm->manifest)->whereNotNull('scan_date')->count('scan_date');
-                             $tot_kanban = \App\Models\ManifestDetail::where('manifest',$dm->manifest)->count('kanban');
+                             $k_in = \App\Models\ManifestDetail::where('manifest', $dm->manifest)->where('material',$dm->material)->whereNotNull('scan_date')->count('scan_date');
+                             $tot_kanban = \App\Models\ManifestDetail::where('manifest',$dm->manifest)->where('material',$dm->material)->count('kanban');
                             if ($k_in >= 1) {
                                 $kanban_in = $k_in;
                             } else {
@@ -51,7 +51,7 @@
                                 $kanban_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
                             }
 
-                            $rec_kanban = \App\Models\ManifestDetail::where('manifest', $dm->manifest)->whereNotNull('issued_date')->count('issued_date');
+                            $rec_kanban = \App\Models\ManifestDetail::where('manifest', $dm->manifest)->where('material',$dm->material)->whereNotNull('issued_date')->count('issued_date');
                             if ($rec_kanban >= 1) {
                                 $kanban_received = $rec_kanban;
                             } else {
