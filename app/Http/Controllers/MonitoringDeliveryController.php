@@ -445,14 +445,8 @@ class MonitoringDeliveryController extends Controller
                 return $scan_stat;
             })
             ->editColumn('receive_stat', function ($data) {
-                $rec_kanban = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
-                $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
-                if ($rec_kanban >= 1) {
-                    $kanban_received = $rec_kanban;
-                } else {
-                    $kanban_received = "0";
-                }
-                  if ($tot_kanban == $kanban_received) {
+               
+                  if (!empty($data->issued_date)) {
                           $receive_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
                     } else {
                          $receive_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
@@ -460,7 +454,7 @@ class MonitoringDeliveryController extends Controller
                 return $receive_stat;
             })
             ->editColumn('kanban_stat', function ($data) {
-                $k_in = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('issued_date');
+                $k_in = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
                  $tot_kanban = ManifestDetail::where('manifest',$data->manifest)->count('kanban');
                 if(!empty($data->qty_scan_outstanding)){
                     if ($k_in >= 1) {

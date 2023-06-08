@@ -387,9 +387,12 @@ class ManifestController extends Controller
             } else {
                 $check_qty_pack = ManifestDetail::where('manifest', $request->manifest)->sum('qty_pack');
                 $check_qty_in = ManifestDetail::where('manifest', $request->manifest)->sum('qty_in');
+                
                 if($check_qty_in == $check_qty_pack)
                 {
                     ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "D"]);
+                } else{
+                    ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "P"]);
                 }
 
                 $manifest_d->qty_scan_outstanding = $manifest_d->qty_pack;
@@ -574,7 +577,18 @@ class ManifestController extends Controller
                     $manifest_d_update->issued_by = $result[$index]['id'];
                     $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
                     $manifest_d_update->save();
-              }
+                    
+                    ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "H"]);
+                    $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
+                    $total_gr = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('issued_date')->count('issued_date');
+                    $total_scan = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('scan_date')->count('scan_date');
+
+                    if(($total_gr == $total_kanban) && ($total_scan == $total_kanban))
+                    {
+                        ManifestHeader::where('manifest', $request->manifest)->update(['active' => "C"]);
+                        ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "D"]);
+                    }
+                }
             }
             return response()->json(['result' => $merge]);
         // }
