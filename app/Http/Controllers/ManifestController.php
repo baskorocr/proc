@@ -65,14 +65,14 @@ class ManifestController extends Controller
             $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
             // change all! the old code is all wrong
             $getManifestDetail = ManifestDetail::where('manifest', $manifest->manifest)->get();
-            $groupByMaterial = $getManifestDetail->groupBy('manterial');
+            $groupByMaterial = $getManifestDetail->groupBy('material');
             $mapMaterial = $groupByMaterial->map(function($data){
                 return [
                     'material' => $data->first()->material,
                     'material_desc' => $data->first()->material_desc,
                     'qty_scan' => $data->sum('qty_pack'),
                     'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
-                    'qty_gr' => $data->sum('qty_in'),
+                    'qty_gr' => $data->sum('qty_pack'),
                     'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
                     'kanban' => $data->count(),
                     'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
