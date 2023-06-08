@@ -612,7 +612,7 @@ class ManifestController extends Controller
                     $manifest_d_update = ManifestDetail::find($detail->id);
                     $manifest_d_update->issued_date = Carbon::parse(date('Y-m-d '.'00:00:00'));
                     $manifest_d_update->issued_time = Carbon::parse(date('H:i:s'));
-                    $manifest_d_update->issued_by = $request->issued_by;
+                    $manifest_d_update->issued_by = empty($request->scan_by) ? '-' : $request->scan_by;
                     $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
                     $manifest_d_update->save();
                     
