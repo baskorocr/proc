@@ -92,7 +92,7 @@ class ManifestController extends Controller
                         $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
                         // change all! the old code is all wrong
                         $getManifestDetail = ManifestDetail::where('manifest', $manifest->manifest)->get();
-                        $groupByMaterial = $getManifestDetail->groupBy('manterial');
+                        $groupByMaterial = $getManifestDetail->groupBy('material');
                         $mapMaterial = $groupByMaterial->map(function($data){
                             return [
                                 'material' => $data->first()->material,
@@ -632,7 +632,7 @@ class ManifestController extends Controller
                     {
                         ManifestHeader::where('manifest', $request->manifest)->update(['active' => "C",'stat' => "D"]);
                     }
-                    
+
                 }
             }
             return response()->json(['result' => $merge]);
