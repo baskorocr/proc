@@ -621,7 +621,7 @@ class ManifestController extends Controller
                     $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
                     $total_gr = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('issued_date')->count('issued_date');
                     $total_scan = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('scan_date')->count('scan_date');
-
+                    //Ambil data lagi, karena get data sebelumnnya belum ada issued date
                     $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->first();
                     if(!empty($getData->arrival_date) && !empty($getData->issued_date))
                     {
