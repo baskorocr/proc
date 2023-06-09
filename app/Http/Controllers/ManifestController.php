@@ -99,7 +99,7 @@ class ManifestController extends Controller
                                 'material_desc' => $data->first()->material_desc,
                                 'qty_scan' => $data->sum('qty_pack'),
                                 'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
-                                'qty_gr' => $data->sum('qty_in'),
+                                'qty_gr' => $data->sum('qty_pack'),
                                 'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
                                 'kanban' => $data->count(),
                                 'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
@@ -607,13 +607,16 @@ class ManifestController extends Controller
         // } else {
         
 
-           foreach ($manifest_detail as $index => $detail) {
-                if ($result[$index] && $result[$index]['type'] === 'S') {
-                    $manifest_d_update = ManifestDetail::find($detail->id);
+           foreach ($result as $index => $detail) {
+                $detailObj = (object) $detail;
+                if ($detailObj->type === 'S') {
+
+                    $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->first();
+                    $manifest_d_update = ManifestDetail::where('kanban', $detailObj->kbnno);
                     $manifest_d_update->issued_date = Carbon::parse(date('Y-m-d '.'00:00:00'));
                     $manifest_d_update->issued_time = Carbon::parse(date('H:i:s'));
-                    $manifest_d_update->issued_by = $request->issued;
-                    $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
+                    $manifest_d_update->issued_by = empty($request->scan_by) ? "-":$request->scan_by;
+                    $manifest_d_update->qty_gr_outstanding = $getData->qty_scan_outstanding;
                     $manifest_d_update->save();
                     
                     ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "H"]);
@@ -621,14 +624,15 @@ class ManifestController extends Controller
                     $total_gr = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('issued_date')->count('issued_date');
                     $total_scan = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('scan_date')->count('scan_date');
 
-                    if(!empty($detail->arrival_date) && !empty($detail->issued_date))
+                    if(!empty($getData->arrival_date) && !empty($getData->issued_date))
                     {
-                        ManifestDetail::where('kanban',$detail->kanban)->update(['active' => 'N']);
+                        ManifestDetail::where('kanban',$getData->kanban)->update(['active' => 'N']);
                     }
                     if(($total_gr == $total_kanban) && ($total_scan == $total_kanban))
                     {
                         ManifestHeader::where('manifest', $request->manifest)->update(['active' => "C",'stat' => "D"]);
                     }
+                    
                 }
             }
             return response()->json(['result' => $merge]);
