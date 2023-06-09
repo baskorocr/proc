@@ -576,7 +576,7 @@ class ManifestController extends Controller
         $jsonData = json_decode($restPostDP, true);
         $result = $jsonData['return'];
         $it_input = $jsonData['it_input'];
-        
+        // dd($result);
         $merge = [];
 
         foreach ($result as $index => $data_result) {
@@ -604,8 +604,6 @@ class ManifestController extends Controller
         // if ($status === 'E') {
         //     return response()->json(['message' => $message], 422);
         // } else {
-        
-
            foreach ($result as $index => $detail) {
                 $detailObj = (object) $detail;
                 if ($detailObj->type === 'S') {
@@ -624,6 +622,7 @@ class ManifestController extends Controller
                     $total_gr = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('issued_date')->count('issued_date');
                     $total_scan = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('scan_date')->count('scan_date');
 
+                    $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->first();
                     if(!empty($getData->arrival_date) && !empty($getData->issued_date))
                     {
                         ManifestDetail::where('kanban',$getData->kanban)->update(['active' => 'N']);
