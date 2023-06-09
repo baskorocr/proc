@@ -499,7 +499,7 @@ class ManifestController extends Controller
                         $total = $data->manifestDetails->count('kanban');
                         $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
                         $last = $data->manifestDetails->sort(function ($a, $b) {
-                            return strtotime($a->updated_at) < strtotime($b->updated_at);
+                            return strtotime($a->scan_date) < strtotime($b->scan_date);
                         });
 
                         return [
@@ -509,7 +509,7 @@ class ManifestController extends Controller
                             'po_number' => $data->po_num,
                             'vendor_id' => $data->id_vendor,
                             'vendor_name' => $vendor->nm_vendor,
-                            'last_scan' => $last->first()->updated_at,
+                            'last_scan' => $last->first()->scan_date,
                             'scan_by' => $last->first()->scan_by
                         ];
                     });
