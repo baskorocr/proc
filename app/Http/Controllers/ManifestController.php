@@ -611,7 +611,7 @@ class ManifestController extends Controller
                 $detailObj = (object) $detail;
                 if ($detailObj->type === 'S') {
 
-                    $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->update();
+                    $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->first();
                     $manifest_d_update = [];
                     $manifest_d_update['issued_date'] = Carbon::parse(date('Y-m-d '.'00:00:00'));
                     $manifest_d_update['issued_time'] = Carbon::parse(date('H:i:s'));
