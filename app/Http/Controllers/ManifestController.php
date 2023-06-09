@@ -611,13 +611,14 @@ class ManifestController extends Controller
                 $detailObj = (object) $detail;
                 if ($detailObj->type === 'S') {
 
-                    $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->first();
-                    $manifest_d_update = ManifestDetail::where('kanban', $detailObj->kbnno);
-                    $manifest_d_update->issued_date = Carbon::parse(date('Y-m-d '.'00:00:00'));
-                    $manifest_d_update->issued_time = Carbon::parse(date('H:i:s'));
-                    $manifest_d_update->issued_by = empty($request->scan_by) ? "-":$request->scan_by;
-                    $manifest_d_update->qty_gr_outstanding = $getData->qty_scan_outstanding;
-                    $manifest_d_update->save();
+                    $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->update();
+                    $manifest_d_update = [];
+                    $manifest_d_update['issued_date'] = Carbon::parse(date('Y-m-d '.'00:00:00'));
+                    $manifest_d_update['issued_time'] = Carbon::parse(date('H:i:s'));
+                    $manifest_d_update['issued_by'] = empty($request->scan_by) ? "-":$request->scan_by;
+                    $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
+                    ManifestDetail::where('kanban', $detailObj->kbnno)->update($manifest_d_update);
+            
                     
                     ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "H"]);
                     $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
