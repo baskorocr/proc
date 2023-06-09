@@ -616,7 +616,7 @@ class ManifestController extends Controller
                     $manifest_d_update->qty_gr_outstanding = $detail->qty_scan_outstanding;
                     $manifest_d_update->save();
                     
-                    ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "H"]);
+                    
                     $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
                     $total_gr = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('issued_date')->count('issued_date');
                     $total_scan = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('scan_date')->count('scan_date');
@@ -628,6 +628,8 @@ class ManifestController extends Controller
                     if(($total_gr == $total_kanban) && ($total_scan == $total_kanban))
                     {
                         ManifestHeader::where('manifest', $request->manifest)->update(['active' => "C",'stat' => "D"]);
+                    } else{
+                        ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "H"]);
                     }
                 }
             }
