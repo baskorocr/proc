@@ -494,9 +494,8 @@ class ManifestController extends Controller
                     ->skip((int)$skip)
                     ->get()
                     ->map(function($data){
-
-                        $sum_qty_scan = $data->manifestDetails->sum('qty_scan_outstanding');
-                        $sum_qty_gr = $data->manifestDetails->sum('qty_gr_outstanding');
+                        $sum_qty_scan = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->count('issued_date');
+                        $sum_qty_gr = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->count('scan_date');
                         $total = $data->manifestDetails->count('kanban');
                         $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
                         $last = $data->manifestDetails->sort(function ($a, $b) {
