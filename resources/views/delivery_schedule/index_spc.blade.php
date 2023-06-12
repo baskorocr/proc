@@ -102,7 +102,7 @@
 										<th style="min-width: 16px"><i class="fa fa-envelope"></i></th>
 										<th style="min-width: 16px"><i class="fa fa-file"></i></th>
 										<th style="min-width: 16px"><i class="fa fa-download"></i></th>
-										<th style="min-width: 16px"><i class="fa fa-clock-o"></i></th>
+										<th style="min-width: 16px"><i class="fa fa-clock"></i></th>
 										<th style="min-width: 106px">File Name</th>
 										
 									</thead>
@@ -125,7 +125,7 @@
 										<th><i class="fa fa-envelope"></i></th>
 										<th><i class="fa fa-file"></i></th>
 										<th><i class="fa fa-download"></i></th>
-										<th><i class="fa fa-clock-o"></i></th>
+										<th><i class="fa fa-clock"></i></th>
 										<th>File Name</th>
 										
 									</thead>
