@@ -124,10 +124,10 @@
 										<th>Vendor</th>
 										<th>Vendor Name</th>
 										<th>Email</th>
-										<th><i class="bi bi-envelope"></i></th>
-										<th><i class="bi bi-file-earmark"></i></th>
-										<th><i class="bi bi-download"></i></th>
-										<th><i class="bi bi-clock"></i></th>
+										<th style="min-width: 16px"><i class="fa fa-envelope"></i></th>
+										<th style="min-width: 16px"><i class="fa fa-file"></i></th>
+										<th style="min-width: 16px"><i class="fa fa-download"></i></th>
+										<th style="min-width: 16px"><i class="fa fa-clock"></i></th>
 										<th>File Name</th>
 										
 									</thead>

@@ -404,7 +404,7 @@ class ManifestController extends Controller
 
     public function checkKanban(Request $request)
     {   
-
+        date_default_timezone_set('Asia/Jakarta');
         $manifest_d = ManifestDetail::where('manifest', $request->manifest)->where('kanban', $request->kanban)->first();
         
         $isExists = !empty($manifest_d) ? true : false ;
@@ -435,10 +435,10 @@ class ManifestController extends Controller
 
                 $manifest_d->qty_scan_outstanding = $manifest_d->qty_pack;
                 $manifest_d->qty_in = $manifest_d->qty_pack;
-                $manifest_d->arrival_date = Carbon::parse(date('Y-m-d '.'00:00:00'));
-                $manifest_d->arrival_time = Carbon::parse(date('H:i:s'));
-                $manifest_d->scan_date = Carbon::parse(date('Y-m-d '.'00:00:00'));
-                $manifest_d->scan_time = Carbon::parse(date('H:i:s'));
+                $manifest_d->arrival_date = date('Y-m-d 00:00:00');
+                $manifest_d->arrival_time = date('H:i:s');
+                $manifest_d->scan_date = date('Y-m-d 00:00:00');
+                $manifest_d->scan_time = date('H:i:s');
                 $manifest_d->scan_by = $request->scan_by;
                 $manifest_d->save();
 
@@ -486,38 +486,51 @@ class ManifestController extends Controller
                         if(!empty($request->keyword)){
                             $where->where('manifest', 'like', '%'.$request->keyword.'%');
                         }
+
+                       $where->where('active','O');
+                       $where->where('stat','!=','D');
                     })
                     ->when(!empty($request->sort), function($query) use ($request){
                         $query->orderBy($request->sort, $request->order == 'ascend' ? 'asc' : 'desc');
                     })
                     ->take((int)$request->perpage)
                     ->skip((int)$skip)
+                    ->orderBy('created_at','DESC')
                     ->get()
                     ->map(function($data){
-                        $sum_qty_scan = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->count('issued_date');
-                        $sum_qty_gr = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->count('scan_date');
-                        $total = $data->manifestDetails->count('kanban');
-                        $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
-                        $last = $data->manifestDetails->sort(function ($a, $b) {
-                            return strtotime($a->scan_date) < strtotime($b->scan_date);
-                        });
+                        // dd($data->manifestDetails);
+                      
+                            $sum_qty_scan = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->count('issued_date');
+                            $sum_qty_gr = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->count('scan_date');
+                            $total = $data->manifestDetails->count('kanban');
+                            $vendor = Vendor::where('id_vendor', $data->id_vendor)->first();
+                            $last = $data->manifestDetails->sort(function ($a, $b) {
+                                return strtotime($a->scan_date) < strtotime($b->scan_date);
+                            });
 
-                        return [
-                            'manifest' => $data->manifest,
-                            'qty_sgt' => "[$sum_qty_scan][$sum_qty_gr][$total]",
-                            'delivery_date' => $data->delivery_date,
-                            'po_number' => $data->po_num,
-                            'vendor_id' => $data->id_vendor,
-                            'vendor_name' => $vendor->nm_vendor,
-                            'last_scan' => $last->first()->scan_date,
-                            'scan_by' => $last->first()->scan_by
-                        ];
+                            return [
+                                'manifest' => $data->manifest,
+                                'qty_sgt' => "[$sum_qty_scan][$sum_qty_gr][$total]",
+                                'delivery_date' => $data->delivery_date,
+                                'po_number' => $data->po_num,
+                                'vendor_id' => $data->id_vendor,
+                                'vendor_name' => $vendor->nm_vendor,
+                                'last_scan' => $last->first()->scan_time,
+                                'scan_by' => $last->first()->scan_by,
+                                'created_at' => $data->created_at
+                            ];  
+                        
+                        
                     });
 
         $total = ManifestHeader::where(function($where) use ($request){
             if(!empty($request->keyword)){
                 $where->where('manifest', 'like', '%'.$request->keyword.'%');
             }
+
+            $where->where('active','O');
+            $where->where('stat','!=','D');
+                
         })
         ->count();
 

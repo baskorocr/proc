@@ -107,7 +107,7 @@
     @endsection
     @section('javascript')
     <script>
-         $('#detail-material').DataTable({});
+         $('#detail-material').DataTable({order: [[4, 'asc']]});
     </script>
 {{--     <script>
     $('#detail-material').DataTable({
