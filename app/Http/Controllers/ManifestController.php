@@ -340,7 +340,7 @@ class ManifestController extends Controller
     
             //Ambil Data Vendor
             $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
-            $user =  MasterUser::whereIn('role_id',$allowed)->get();
+            $user =  MasterUser::whereIn('role_id',$allowed)->where('status_user','A')->get();
             $cc=[];
             //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
             foreach($user as $u)

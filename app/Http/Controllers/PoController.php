@@ -224,7 +224,7 @@ class PoController extends Controller
              $cc = [];
             if(!empty($emailgrp))
             {
-               $emaillist = $emailgrp->mailgroup;
+               $emaillist = $emailgrp->mailgroup->where('active','A');
                 //TO USER
                 //TO Listed Group DEPT
                
