@@ -8,6 +8,7 @@ use App\Models\Vendor;
 use Config;
 use Storage;
 use MongoDB\BSON\UTCDateTime;
+use Carbon\Carbon;
 
 class DeliveryScheduleController extends Controller
 {
@@ -326,6 +327,16 @@ class DeliveryScheduleController extends Controller
                 return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
                  return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
+
+                // $expired = strtotime(Carbon::parse($data->delivery_date)->addDays(90));
+                // $now = strtotime(now());
+
+                // if($now > $expired)
+                // {
+                //     return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
+                // } 
+                //     return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
+
             
             })
             ->rawColumns(['download_check','mail_stat','vendor_email','downloaded','file_stat','active'])
@@ -480,6 +491,15 @@ class DeliveryScheduleController extends Controller
                  return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
                  return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
+
+                // $expired = strtotime(Carbon::parse($data->delivery_date)->addDays(90));
+                // $now = strtotime(now());
+
+                // if($now > $expired)
+                // {
+                //     return "<small><i class='fas fa-exclamation-circle' style='color: red;'></i></small>";
+                // } 
+                //     return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
             
             })
             ->rawColumns(['download_check','vendor_email','mail_stat','downloaded','file_stat','active'])

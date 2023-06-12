@@ -43,7 +43,7 @@
 										<label>Name User </label>
 										<input type="text" class="form-control" id="nm_user" name="nm_user" value="<?php echo $user->nm_user ?>" placeholder="ex.  Hidrian Oma Suharman" required>
 									</div>
-									@if(!$user->is_vendor)
+									{{-- @if(!$user->is_vendor) --}}
 									<div class="form-group">
 										<label>Tipe User</label>
 										<select name="id_tipe_user" class="form-control select">
@@ -52,7 +52,7 @@
 											@endforeach
 										</select>
 									</div>
-									@endif
+									{{-- @endif --}}
 									<div class="form-group">
 										<label>Username For Login </label>
 										<input @if($user->is_vendor) type="email" @else type="text" @endif class="form-control" id="username" placeholder="Username for login" name="username" value="<?php echo $user->username; ?>" required>
