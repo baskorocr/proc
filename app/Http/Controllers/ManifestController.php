@@ -405,6 +405,8 @@ class ManifestController extends Controller
     public function checkKanban(Request $request)
     {   
         date_default_timezone_set('Asia/Jakarta');
+        $nowDate = date('Y-m-d 00:00:00');
+        $nowTime = date('H:i:s');
         $manifest_d = ManifestDetail::where('manifest', $request->manifest)->where('kanban', $request->kanban)->first();
         
         $isExists = !empty($manifest_d) ? true : false ;
@@ -435,10 +437,10 @@ class ManifestController extends Controller
 
                 $manifest_d->qty_scan_outstanding = $manifest_d->qty_pack;
                 $manifest_d->qty_in = $manifest_d->qty_pack;
-                $manifest_d->arrival_date = date('Y-m-d 00:00:00');
-                $manifest_d->arrival_time = date('H:i:s');
-                $manifest_d->scan_date = date('Y-m-d 00:00:00');
-                $manifest_d->scan_time = date('H:i:s');
+                $manifest_d->arrival_date = $nowDate;
+                $manifest_d->arrival_time = $nowTime;
+                $manifest_d->scan_date = $nowDate;
+                $manifest_d->scan_time = $nowTime;
                 $manifest_d->scan_by = $request->scan_by;
                 $manifest_d->save();
 

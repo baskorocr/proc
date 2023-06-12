@@ -321,7 +321,7 @@ class DeliveryScheduleController extends Controller
             
             }) 
              ->addColumn('active', function ($data) {
-               if($data->active == "O")
+               if($data->active == "O" OR $data->active == "C")
                {
                 return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
@@ -475,7 +475,7 @@ class DeliveryScheduleController extends Controller
             
             }) 
              ->addColumn('active', function ($data) {
-               if($data->active == "O")
+               if($data->active == "O" OR $data->active == "C")
                {
                  return "<small><i class='fas fa-check-circle' style='color: green;'></i></small>";
                } 
