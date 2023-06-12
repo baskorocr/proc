@@ -66,7 +66,7 @@ div.table-responsive > div.dataTables_wrapper > div.row
                             } else {
                                 $kanban_received = "0";
                             }
-                              if ($tot_kanban != $kanban_received) {
+                              if ($tot_kanban == $kanban_received) {
                                     $receive_stat = "<small><span class=\"badge bg-green\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
                                 } else {
                                     $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
