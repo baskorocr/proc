@@ -204,6 +204,9 @@ class PurchasingProcessController extends Controller
 
                 if (!empty($request->date_from) && !empty($request->date_to)) {
                     return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
+                }elseif(!empty($request->date_from) && empty($request->date_to))
+                {
+                    return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_from.' 23:59:59')]);
                 }
 
                 if (!empty($vendor_list)) {
@@ -736,7 +739,7 @@ class PurchasingProcessController extends Controller
     {
          if($request->search)
         {
-             $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+            $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
             $q = PurchasingProcess::where(function($query) use ($request,$vendor_list){
                 if (!empty($request->po_num)) {
                    return $query->where('po_num', 'like', "%" . $request->po_num . "%");
@@ -744,6 +747,9 @@ class PurchasingProcessController extends Controller
 
                 if (!empty($request->date_from) && !empty($request->date_to)) {
                     return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
+                }elseif(!empty($request->date_from) && empty($request->date_to))
+                {
+                    return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_from.' 23:59:59')]);
                 }
 
                 if (!empty($vendor_list)) {
