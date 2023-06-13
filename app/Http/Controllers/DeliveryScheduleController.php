@@ -8,6 +8,7 @@ use App\Models\Vendor;
 use Config;
 use Storage;
 use MongoDB\BSON\UTCDateTime;
+use Log;
 
 class DeliveryScheduleController extends Controller
 {
@@ -51,51 +52,70 @@ class DeliveryScheduleController extends Controller
             
             {
                
-                foreach ($request->download_doc as $k){
-                    $filenm = explode("#", $k);
+
+                foreach($request->id_mf as $mf)
+                {
+                    // $filenm = explode("#", $k);
                       // dd($filenm);
-                    // dd(scandir("D:/MI_TEST/MI/"));
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = Storage::disk('mf_directory')->path("").$filenm[0];
-                    $file_qas = Storage::disk('mf_qas_directory')->path("").$filenm[0];
+                    $file = Storage::disk('mf_directory')->path("").$mf.".pdf";
+                    $file_qas = Storage::disk('mf_qas_directory')->path("").$mf.".pdf";
                     $relativeName = basename($file);
+                    // dd($mf.".pdf")
                     // dd(file_get_contents( $file));
                     if(file_exists($file))
                     {
-                        $zip->addFile($file, "01 Manifest/".$filenm[0]);
+                        $zip->addFile($file, "01 Manifest/".$mf.".pdf");
                     } else{
-                         $zip->addFile($file_qas, "01 Manifest/".$filenm[0]);
+                         $zip->addFile($file_qas, "01 Manifest/".$mf.".pdf");
                     }
 
-                    $file = Storage::disk('mf_kanban_directory')->path("").$filenm[1];
-                    $file_qas = Storage::disk('mf_qas_kanban_directory')->path("").$filenm[1];
+                    $file = Storage::disk('mf_kanban_directory')->path("").$mf."-kanban.pdf";
+                    $file_qas = Storage::disk('mf_qas_kanban_directory')->path("").$mf."-kanban.pdf";
                     $relativeName = basename($file);
-
+                    // dd("02 Kanban/".$mf."-kanban.pdf");
                     if(file_exists($file))
                     {
-                        $zip->addFile($file, "02 Kanban/".$filenm[1]);
+                        $zip->addFile($file, "02 Kanban/".$mf."-kanban.pdf");
                     } else{
-                         $zip->addFile($file_qas, "02 Kanban/".$filenm[1]);
-                    }
-                }
-                $zip->close();
-                  ///SET DOWNLOAD FLAG
-                foreach($request->id_mf as $mf)
-                {
+                         $zip->addFile($file_qas,"02 Kanban/".$mf."-kanban.pdf");
+                    }    
+
                      ManifestHeader::where('manifest',$mf)->update(['downloaded' => date('Y-m-d H:i:s')]);
                 }
-                ///DOWNLOADING
-                  return response()->download(storage_path('temp_zip/MI-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
+               
+                $zip->close();
+                $log = [];
+                $log['message'] = "Manifest Downloaded | ip: ".$request->ip()." | user: ".auth()->user()->id_user." (".auth()->user()->username.")";
+                $log['selected_manifest'] = json_encode($request->id_mf);
+                Log::info($log);
+
+                return response()->download(storage_path('temp_zip/MI-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         }  catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         {
+            $log = [];
+            $log['message'] = "Manifest failed to Download | ip: ".$request->ip()." | user: ".auth()->user()->id_user." (".auth()->user()->username.")";
+            $log['selected_manifest'] = json_encode($request->id_mf);
+            $log['err'] = $e->getMessage();
+            Log::error($e->getMessage());
             // return $e;
             return redirect()->back()->with(['message_fail' => 'File Not Found.']);
         } catch(\InvalidArgumentException $e)
         {
+            $log = [];
+            $log['message'] = "Manifest failed to Download | ip: ".$request->ip()." | user: ".auth()->user()->id_user." (".auth()->user()->username.")";
+            $log['selected_manifest'] = json_encode($request->id_mf);
+            $log['err'] = $e->getMessage();
+            Log::error($e->getMessage());
             return redirect()->back()->with(['message_fail' => 'PO Directory filesystem driver has not been set in  application, please contact the IT team.']);
         } catch(\Exception $e)
         {
+            $log = [];
+            $log['message'] = "Manifest failed to Download | ip: ".$request->ip()." | user: ".auth()->user()->id_user." (".auth()->user()->username.")";
+            $log['selected_manifest'] = json_encode($request->id_mf);
+            $log['err'] = $e->getMessage();
+            Log::error($e->getMessage());
             return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton or directory not been mount on server or config temp directory is read only, please contact IT Team']);
         }
 
@@ -123,50 +143,67 @@ class DeliveryScheduleController extends Controller
             
             {
                 
-                foreach ($request->download_doc as $k){
-                    $filenm = explode("#", $k);
+                foreach($request->id_mf as $mf)
+                {
+                    // $filenm = explode("#", $k);
                       // dd($filenm);
                  // "D:\\\\MANIFEST\\".$mf_type."\\PRD-".$mf_type."\\"
-                    $file = Storage::disk('so_directory')->path("").$filenm[0];
-                    $file_qas = Storage::disk('so_qas_directory')->path("").$filenm[0];
+                    $file = Storage::disk('so_directory')->path("").$mf.".pdf";
+                    $file_qas = Storage::disk('so_qas_directory')->path("").$mf.".pdf";
                     $relativeName = basename($file);
-                    // dd($filenm[0])
+                    // dd($mf.".pdf")
                     // dd(file_get_contents( $file));
                     if(file_exists($file))
                     {
-                        $zip->addFile($file, "01 Manifest/".$filenm[0]);
+                        $zip->addFile($file, "01 Manifest/".$mf.".pdf");
                     } else{
-                         $zip->addFile($file_qas, "01 Manifest/".$filenm[0]);
+                         $zip->addFile($file_qas, "01 Manifest/".$mf.".pdf");
                     }
 
-                    $file = Storage::disk('so_kanban_directory')->path("").$filenm[1];
-                    $file_qas = Storage::disk('so_qas_kanban_directory')->path("").$filenm[1];
+                    $file = Storage::disk('so_kanban_directory')->path("").$mf."-kanban.pdf";
+                    $file_qas = Storage::disk('so_qas_kanban_directory')->path("").$mf."-kanban.pdf";
                     $relativeName = basename($file);
+                    // dd("02 Kanban/".$mf."-kanban.pdf");
                     if(file_exists($file))
                     {
-                        $zip->addFile($file, "02 Kanban/".$filenm[1]);
+                        $zip->addFile($file, "02 Kanban/".$mf."-kanban.pdf");
                     } else{
-                         $zip->addFile($file_qas,"02 Kanban/". $filenm[1]);
+                         $zip->addFile($file_qas,"02 Kanban/".$mf."-kanban.pdf");
                     }    
+
+                     ManifestHeader::where('manifest',$mf)->update(['downloaded' => date('Y-m-d H:i:s')]);
                 }
                 $zip->close();
-                ///SET DOWNLOAD FLAG
-                foreach($request->id_mf as $mf)
-                {
-                    ManifestHeader::where('manifest',$mf)->update(['downloaded' => date('Y-m-d H:i:s')]);
-                }
-                ///DOWNLOADING
-                  return response()->download(storage_path('temp_zip/SO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
+                $log = [];
+                $log['message'] = "Manifest Downloaded | ip: ".$request->ip()." | user: ".auth()->user()->id_user." (".auth()->user()->username.")";
+                $log['selected_manifest'] = json_encode($request->id_mf);
+                Log::info($log);
+
+                return response()->download(storage_path('temp_zip/SO-'.$zipnm.'.tmp'), $fileName)->deleteFileAfterSend(true);
             }
         }  catch(\Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException $e)
         {
-            // return $e;
+            $log = [];
+            $log['message'] = "Manifest failed to Download | ip: ".$request->ip()." | user: ".auth()->user()->id_user." (".auth()->user()->username.")";
+            $log['selected_manifest'] = json_encode($request->id_mf);
+            $log['err'] = $e->getMessage();
+            Log::error($e->getMessage());
             return redirect()->back()->with(['message_fail' => 'File Not Found.']);
         } catch(\InvalidArgumentException $e)
         {
+            $log = [];
+            $log['message'] = "Manifest failed to Download | ip: ".$request->ip()." | user: ".auth()->user()->id_user." (".auth()->user()->username.")";
+            $log['selected_manifest'] = json_encode($request->id_mf);
+            $log['err'] = $e->getMessage();
+            Log::error($e->getMessage());
             return redirect()->back()->with(['message_fail' => 'PO Directory filesystem driver has not been set in  application, please contact the IT team.']);
         } catch(\Exception $e)
         {
+            $log = [];
+            $log['message'] = "Manifest failed to Download | ip: ".$request->ip()." | user: ".auth()->user()->id_user." (".auth()->user()->username.")";
+            $log['selected_manifest'] = json_encode($request->id_mf);
+            $log['err'] = $e->getMessage();
+            Log::error($e->getMessage());
             return redirect()->back()->with(['message_fail' => 'File Not Found, maybe PO Directory in filesystem config not been set in applicaton or directory not been mount on server, please contact IT Team']);
         }
 
