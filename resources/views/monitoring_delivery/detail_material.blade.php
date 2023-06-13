@@ -1,6 +1,15 @@
 @extends('layouts.main')
 @section('title',"Detail Material ".$manifest)
 @section('content')
+<style type="text/css">
+div.table-responsive > div.dataTables_wrapper > div.row
+{
+    overflow:auto !important;
+}
+/*div.dataTables_wrapper div.dt-row{
+    min-height:50vh;
+}*/
+</style>
 <main id="main" class="main">
     <div class="pagetitle">
        <h1>Detail Material <br> <small class="text-muted">{{$manifest}}</small></h1>
@@ -73,9 +82,9 @@
                                 }
 
                                 if ($tot_qty == $qty_in) {
-                                    $qty_stat = "<small><span class=\"badge bg-success\">" . $qty_in . "/" . $qty_tot  . "</span></small>";
+                                    $qty_stat = "<small><span class=\"badge bg-green\">" . $qty_in . "/" . $qty_tot  . "</span></small>";
                                 } else {
-                                    $qty_stat = "<small><span class=\"badge bg-warning\">" . $qty_in . "/" . $qty_tot  . "</span></small>";
+                                    $qty_stat = "<small><span class=\"badge bg-warning text-dark\">" . $qty_in . "/" . $qty_tot  . "</span></small>";
                                 }
                               
                         ?>
