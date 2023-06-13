@@ -450,7 +450,7 @@ class RegisIsoDocController extends Controller
                     $emailVendor[]=$vendor_user->username;
                 }
             }
-            Mail::to($emailVendor)->cc($cc)->send(new IsoRegMail($regis_iso_doc));
+            Mail::to($emailVendor)->cc($cc)->bcc(env('BCC_MAIL'))->send(new IsoRegMail($regis_iso_doc));
          // $nameGroupMail  = $this->split_creator($po->creator);
 
         // $emaillist = EmailGroup::where('abrev',$nameGroupMail)->first()->mailgroup;

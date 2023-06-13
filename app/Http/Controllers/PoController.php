@@ -249,7 +249,7 @@ class PoController extends Controller
                 }
             }
             
-            Mail::to($mailVendorUser)->cc($cc)->send(new PoMail($po, $vendor_user));
+            Mail::to($mailVendorUser)->cc($cc)->bcc(env('BCC_MAIL'))->send(new PoMail($po, $vendor_user));
             //Set field 'sent' untuk flag terkirim
            
             // $nameGroupMail  = $this->split_creator($po->creator);

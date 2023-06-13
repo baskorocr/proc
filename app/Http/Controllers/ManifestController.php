@@ -175,6 +175,7 @@ class ManifestController extends Controller
 
     public function manifest_test_mail($manifestId)
     {
+        
         $cekManifest = ManifestHeader::where('manifest', $manifestId)->get();
         $this->mailer_send($manifestId, $cekManifest);
     }
@@ -373,7 +374,7 @@ class ManifestController extends Controller
                 }
             }
             // dd($allowed);
-             Mail::to($vendEmail)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
+             Mail::to($vendEmail)->cc($cc)->bcc(env('BCC_MAIL'))->send(new ManifestMail($manifestHead,$vendor));
             //Set field 'sent' untuk flag terkirim
             ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
              $log = [];
