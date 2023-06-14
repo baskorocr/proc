@@ -57,109 +57,118 @@ class ManifestController extends Controller
         
          
     }
+
     public function manifestHeader(Request $request)
     {   
         $manifest = ManifestHeader::with('manifestDetails')->where('manifest', $request->manifest)->first();
         $isExists = !empty($manifest) ? true : false ;
         
-        if ($isExists) {
-            $cek_po = Po::where('po_num',$manifest->po_num)->count();
-            //Check Valid PO number
-            if($cek_po > 0)
-            {
-                //Check Type Manifest for days setter
-                $days = 0;
-                if($manifest->mf_type == "SO"){
-                    $days = 1;
-                } elseif($manifest->mf_type == "MI"){
-                    $days = 30;
-                }
-                //Check Date
-                $now = strtotime(date('Y-m-d'));
-                $expired_date = strtotime(Carbon::parse($manifest->delivery_date)->addDays($days));
-
-                if($now > $expired_date)
-                {
-                    return response()->json([
-                        'type' => 'error',
-                        'isExists' => false,
-                        'message' => 'Invalid delivery date!',
-                        'data' => null
-                    ], 422);
-
-                } else{
-
-                        $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
-                        // change all! the old code is all wrong
-                        $getManifestDetail = ManifestDetail::where('manifest', $manifest->manifest)->get();
-                        $groupByMaterial = $getManifestDetail->groupBy('material');
-                        $mapMaterial = $groupByMaterial->map(function($data){
-                            return [
-                                'material' => $data->first()->material,
-                                'material_desc' => $data->first()->material_desc,
-                                'qty_scan' => $data->sum('qty_pack'),
-                                'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
-                                'qty_gr' => $data->sum('qty_pack'),
-                                'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
-                                'kanban' => $data->count(),
-                                'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
-                            ];
-                        })->values();
-
-                        return response()->json([
-                            'data' => [
-                                "_id" => $manifest->_id,
-                                "manifest" => $manifest->manifest,
-                                "mf_type" => $manifest->mf_type,
-                                "release_date" => $manifest->release_date,
-                                "id_vendor" => $manifest->id_vendor,
-                                "delivery_date" => $manifest->delivery_date,
-                                "delivery_time" => $manifest->delivery_time,
-                                "po_num" => $manifest->po_num,
-                                "sent" => $manifest->sent,
-                                "downloaded" => $manifest->downloaded,
-                                "file_nm" => $manifest->file_nm,
-                                "stat" => $manifest->stat,
-                                "active" => $manifest->active,
-                                "purch_org" => $vendor->purch_org,
-                                "nm_vendor" => $vendor->nm_vendor,
-                                "allias" => $vendor->allias,
-                                "street" => $vendor->street,
-                                "district" => $vendor->district,
-                                "postal_code" => $vendor->postal_code,
-                                "city" => $vendor->city,
-                                "country" => $vendor->country,
-                                "region" => $vendor->region,
-                                "phone_1" => $vendor->phone_1,
-                                "vat_reg" => $vendor->vat_reg,
-                                "order_curr" => $vendor->order_curr,
-                                "pay_term" => $vendor->pay_term,
-                                "sales_person" => $vendor->sales_person,
-                                "phone_2" => $vendor->phone_2,
-                                "vend_email" => $vendor->vend_email,
-                                "status_vendor" => $vendor->status_vendor,
-                                "details" => $mapMaterial
-                            ]
-                        ]);
-                }
-
-            } else {
-                    return response()->json([
-                        'type' => 'error',
-                        'isExists' => false,
-                        'message' => 'Manifest has not valid PO!',
-                        'data' => null
-                    ], 422);
-            }
-           
-    
-        } else {
+        if($manifest->active === 'C') {
             return response()->json([
                 'type' => 'error',
-                'isExists' => $isExists,
-                'message' => 'Please check manifest number!',
+                'message' => 'Manifest has been closed',
                 'data' => null
             ], 422);
+        } else {
+            if ($isExists) {
+                $cek_po = Po::where('po_num',$manifest->po_num)->count();
+                //Check Valid PO number
+                if($cek_po > 0)
+                {
+                    //Check Type Manifest for days setter
+                    $days = 0;
+                    if($manifest->mf_type == "SO"){
+                        $days = 1;
+                    } elseif($manifest->mf_type == "MI"){
+                        $days = 30;
+                    }
+                    //Check Date
+                    $now = strtotime(date('Y-m-d'));
+                    $expired_date = strtotime(Carbon::parse($manifest->delivery_date)->addDays($days));
+    
+                    if($now > $expired_date)
+                    {
+                        return response()->json([
+                            'type' => 'error',
+                            'isExists' => false,
+                            'message' => 'Invalid delivery date!',
+                            'data' => null
+                        ], 422);
+    
+                    } else{
+    
+                            $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
+                            // change all! the old code is all wrong
+                            $getManifestDetail = ManifestDetail::where('manifest', $manifest->manifest)->get();
+                            $groupByMaterial = $getManifestDetail->groupBy('material');
+                            $mapMaterial = $groupByMaterial->map(function($data){
+                                return [
+                                    'material' => $data->first()->material,
+                                    'material_desc' => $data->first()->material_desc,
+                                    'qty_scan' => $data->sum('qty_pack'),
+                                    'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
+                                    'qty_gr' => $data->sum('qty_pack'),
+                                    'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
+                                    'kanban' => $data->count(),
+                                    'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
+                                ];
+                            })->values();
+    
+                            return response()->json([
+                                'data' => [
+                                    "_id" => $manifest->_id,
+                                    "manifest" => $manifest->manifest,
+                                    "mf_type" => $manifest->mf_type,
+                                    "release_date" => $manifest->release_date,
+                                    "id_vendor" => $manifest->id_vendor,
+                                    "delivery_date" => $manifest->delivery_date,
+                                    "delivery_time" => $manifest->delivery_time,
+                                    "po_num" => $manifest->po_num,
+                                    "sent" => $manifest->sent,
+                                    "downloaded" => $manifest->downloaded,
+                                    "file_nm" => $manifest->file_nm,
+                                    "stat" => $manifest->stat,
+                                    "active" => $manifest->active,
+                                    "purch_org" => $vendor->purch_org,
+                                    "nm_vendor" => $vendor->nm_vendor,
+                                    "allias" => $vendor->allias,
+                                    "street" => $vendor->street,
+                                    "district" => $vendor->district,
+                                    "postal_code" => $vendor->postal_code,
+                                    "city" => $vendor->city,
+                                    "country" => $vendor->country,
+                                    "region" => $vendor->region,
+                                    "phone_1" => $vendor->phone_1,
+                                    "vat_reg" => $vendor->vat_reg,
+                                    "order_curr" => $vendor->order_curr,
+                                    "pay_term" => $vendor->pay_term,
+                                    "sales_person" => $vendor->sales_person,
+                                    "phone_2" => $vendor->phone_2,
+                                    "vend_email" => $vendor->vend_email,
+                                    "status_vendor" => $vendor->status_vendor,
+                                    "details" => $mapMaterial
+                                ]
+                            ]);
+                    }
+    
+                } else {
+                        return response()->json([
+                            'type' => 'error',
+                            'isExists' => false,
+                            'message' => 'Manifest has not valid PO!',
+                            'data' => null
+                        ], 422);
+                }
+               
+        
+            } else {
+                return response()->json([
+                    'type' => 'error',
+                    'isExists' => $isExists,
+                    'message' => 'Please check manifest number!',
+                    'data' => null
+                ], 422);
+            }
         }
     }
 
@@ -240,9 +249,15 @@ class ManifestController extends Controller
                 if(count($vendor) > 0){ 
                     try {
                         $cek_data = ManifestHeader::where('manifest', $request->manifest)->get();
-
-                        $this->mailer_send($request->manifest, $cek_data);
-                        $msg_mail = 'Manifest send mailed to vendor successfully.';
+                        $sendMail = $this->mailer_send($request->manifest, $cek_data);
+                        if($sendMail){
+                            $msg_mail = 'Manifest send mailed to vendor successfully.';
+                        } else {
+                            return response()->json([
+                                'msg_data' => 'Manifest send to eproc failed',
+                                'msg_mail' => 'Manifest send to mailed failed, user vendor not found or role system not activation.',
+                            ], 422);
+                        }
                     } catch (Exception $e) {
                         $msg_mail = $e->getMessage();
                     }
@@ -373,13 +388,25 @@ class ManifestController extends Controller
                        
                 }
             }
-            // dd($allowed);
-             Mail::to($vendEmail)->cc($cc)->bcc(env('BCC_MAIL'))->send(new ManifestMail($manifestHead,$vendor));
-            //Set field 'sent' untuk flag terkirim
-            ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
-             $log = [];
-             $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." sended to ".json_encode($vendEmail)." | cc ". json_encode($cc);
-             \Log::info($log);
+
+            // var_dump($vendEmail);
+            if(empty($vendEmail)) {
+                $id = $manifestHead->_id;
+
+                ManifestHeader::find($id)->delete();
+                ManifestDetail::where('manifest', $manifest)->delete();
+
+                return false;
+            } else {
+                Mail::to($vendEmail)->cc($cc)->bcc(env('BCC_MAIL'))->send(new ManifestMail($manifestHead,$vendor));
+                ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
+                
+                $log = [];
+                $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." sended to ".json_encode($vendEmail)." | cc ". json_encode($cc);
+                \Log::info($log);
+
+                return true;
+            }
 
         } else {
 

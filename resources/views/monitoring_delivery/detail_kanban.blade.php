@@ -45,7 +45,7 @@
         @section('javascript')
         <script>
         $('#detail-kanban').DataTable({
-        "order": [[ 1, "DESC" ]],
+        "order": [[ 0, "ASC" ]],
         processing: true,
         serverSide: true,
         autoWidth:false,
