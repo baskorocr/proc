@@ -29,18 +29,21 @@
 									@if($user->is_vendor)	
 									<div class="form-group">
 										<label>Select Vendor 	</label>
-										<select name="id_vendor" id="vid" class="form-control select">
+										{{-- <select name="id_vendor" id="vid" class="form-control select">
 											@foreach($vendor as $v)
 												<option  value="{{$v->id_vendor}}" >{{$v->nm_vendor}}</option>
 											@endforeach
-										</select>
+										</select> --}}
+										 <br>
+										 <input type="text" class="form-control" disabled id="vendor_nm" name="vendor_nm" value="{{$user->vendor->nm_vendor}}">
+										 <input type="hidden"name="id_vendor" value="{{$user->foreign_id}}">
 									</div>
 									@endif
 									<div class="form-group">
 										<label>Name User </label>
 										<input type="text" class="form-control" id="nm_user" name="nm_user" value="<?php echo $user->nm_user ?>" placeholder="ex.  Hidrian Oma Suharman" required>
 									</div>
-									@if(!$user->is_vendor)
+									{{-- @if(!$user->is_vendor) --}}
 									<div class="form-group">
 										<label>Tipe User</label>
 										<select name="id_tipe_user" class="form-control select">
@@ -49,7 +52,7 @@
 											@endforeach
 										</select>
 									</div>
-									@endif
+									{{-- @endif --}}
 									<div class="form-group">
 										<label>Username For Login </label>
 										<input @if($user->is_vendor) type="email" @else type="text" @endif class="form-control" id="username" placeholder="Username for login" name="username" value="<?php echo $user->username; ?>" required>

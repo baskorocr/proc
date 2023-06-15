@@ -72,19 +72,28 @@ class PoController extends Controller
             $po->stat = $request->stat;
             $po->save();
         
-            $msg_data = 'PO send to eproc saved successfully.';
+            $msg_data = 'PO send to eproc saved successfully....';
         }
         
         if($resDuplicate <= 0) {
-            if(count($user) > 0){
+            if(count($user) > 0) {
                 // $dataPo = Po::where('po_num', $request->po_num)->where('revno', $request->revno)->get();
                 $dataPo = Po::where('_id', $po->_id)->first();
                 
                 try {
-                    $this->mailer_send($dataPo, $user);
-                    $msg_mail = 'PO send mailed to vendor successfully.';
-                    //Set Sent Flag
-                     PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+                    $sendMail = $this->mailer_send($dataPo, $user);
+                    
+                    if($sendMail){
+                        $msg_mail = 'PO send mailed to vendor successfully.';
+                        //Set Sent Flag
+                         PO::where('_id',$po->id)->update(['sent' => date('Y-m-d H:i:s')]);
+                    } else {
+                        return response()->json([
+                            'msg_data' => 'PO send to eproc failed',
+                            'msg_mail' => 'PO send to mailed failed, user vendor not found or role system not activation.',
+                        ], 422);
+                    }
+                    
                 } catch (Exception $e) {
                     //set sent flag to 000-00-000 00:00:00:00 because failed to sent email
                     PO::where('_id',$po->id)->update(['sent' => "0000-00-00 00:00:00"]);
@@ -161,8 +170,6 @@ class PoController extends Controller
         $user = User::where('foreign_id', $request->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
 
         if(count($user) > 0){
-           
-
                 //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));
                 try {
                     $this->mailer_send($po, $user);
@@ -190,7 +197,6 @@ class PoController extends Controller
 
     private function mailer_send($po, $user)
     {
-
             $list_permission=[];
             foreach($user as $u)
             {   
@@ -226,7 +232,7 @@ class PoController extends Controller
              $cc = [];
             if(!empty($emailgrp))
             {
-               $emaillist = $emailgrp->mailgroup;
+               $emaillist = $emailgrp->mailgroup->where('active','A');
                 //TO USER
                 //TO Listed Group DEPT
                
@@ -250,8 +256,19 @@ class PoController extends Controller
                     
                 }
             }
+
+            // var_dump($vendEmail);
+            if(empty($mailVendorUser)) {
+                $id = $po->_id;
+                Po::find($id)->delete();
+                
+                return false;
+            } else {
+                Mail::to($mailVendorUser)->cc($cc)->bcc(env('BCC_MAIL'))->send(new PoMail($po, $vendor_user));
+                // ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
+                return true;
+            }
             
-            Mail::to($mailVendorUser)->cc($cc)->send(new PoMail($po, $vendor_user));
             //Set field 'sent' untuk flag terkirim
            
             // $nameGroupMail  = $this->split_creator($po->creator);

@@ -99,7 +99,7 @@ table.dataTable.table-striped > tbody > tr.odd.selected {
           <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
             <li class="dropdown-header">
               <h6>{{Session::get('nm_user')}}</h6>
-              <span>{{Session::get('role')}}</span><br>
+              <span>{{empty(auth()->user()->roles) ? "-":auth()->user()->roles->name}}</span><br>
               <span>{{Request::ip()}}</span>
             </li>
             <li>

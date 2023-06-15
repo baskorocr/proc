@@ -45,12 +45,13 @@ class RegisIsoDocController extends Controller
                  if($exp_tm >= $exp_date)
                  {
                     $arr[] = ['id_iso' => $r->_id,'type_notify' => $not->notif_id,'notif_before' => $not->notif_before];
-                    $this->mailer_send_expired($r->_id,$not->notif_before);
+                    // $this->mailer_send_expired($r->_id,$not->notif_before);
                     $notified[]=$r->_id;
                  }
             }
             
          }
+         dd($arr);
         
         }
    
@@ -449,7 +450,7 @@ class RegisIsoDocController extends Controller
                     $emailVendor[]=$vendor_user->username;
                 }
             }
-            Mail::to($emailVendor)->cc($cc)->send(new IsoRegMail($regis_iso_doc));
+            Mail::to($emailVendor)->cc($cc)->bcc(env('BCC_MAIL'))->send(new IsoRegMail($regis_iso_doc));
          // $nameGroupMail  = $this->split_creator($po->creator);
 
         // $emaillist = EmailGroup::where('abrev',$nameGroupMail)->first()->mailgroup;

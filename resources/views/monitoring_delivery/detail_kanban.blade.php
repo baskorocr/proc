@@ -45,7 +45,7 @@
         @section('javascript')
         <script>
         $('#detail-kanban').DataTable({
-        "order": [[ 1, "DESC" ]],
+        "order": [[ 0, "ASC" ]],
         processing: true,
         serverSide: true,
         autoWidth:false,
@@ -86,8 +86,8 @@
         name: 'receive_stat'
         },
         {
-        data: 'kanban_stat',
-        name: 'kanban_stat'
+        data: 'active_stat',
+        name: 'active_stat'
         },
         ]
         });

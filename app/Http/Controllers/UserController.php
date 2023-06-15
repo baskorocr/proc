@@ -172,7 +172,7 @@ class UserController extends Controller
 
     public function check(Request $request)
     {   
-        $user = User::where('username', $request->username)->first();
+        $user = MasterPDAUser::where('username', $request->username)->first();
         $isExists = !empty($user) ? true : false ;
 
         if (!empty($user)) {
@@ -183,7 +183,7 @@ class UserController extends Controller
                         "id" => $user->id,
                         "username"=> $user->username,
                         "pin"=> $user->pin,
-                        "full_name"=> $user->nm_user,
+                        "full_name"=> $user->full_name,
                         "user_stat"=> $user->status_user
                 ]
             ]);
