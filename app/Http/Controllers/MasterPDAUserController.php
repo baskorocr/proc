@@ -109,6 +109,12 @@ class MasterPDAUserController extends Controller
                 return redirect()->back()->with(['message_fail' => 'PIN Confirmation is Invalid']);
              }
         }
+        $validUserPDA = MasterPDAUser::where('username', $request->username)->count();
+
+        if($validUserPDA > 0) {
+            return redirect()->back()->with(['message_fail' => 'Data PDA user cannot duplicate.!']);
+        }
+
         $master_pdauser = new MasterPDAUser;
         $master_pdauser->id = $request->id;
         $master_pdauser->username = $request->username;
@@ -118,7 +124,7 @@ class MasterPDAUserController extends Controller
         $master_pdauser->created_by = auth()->user()->id_user;
         $master_pdauser->save();
 
-         return redirect()->back()->with(['message_success' => 'Data created has been successfully']);
+        return redirect()->back()->with(['message_success' => 'Data created has been successfully']);
        
     }
 
