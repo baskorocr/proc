@@ -248,7 +248,11 @@ class DeliveryScheduleController extends Controller
              // $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
 
              $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI');
-
+            if(!empty($request->dt_start) && empty($request->date_to))
+             {
+                
+                $mf->whereBetween('delivery_date', [Carbon::parse($request->dt_start.' 00:00:00'), Carbon::parse($request->dt_start.' 23:59:59')]);
+             }
               if(count($manifest) > 0)
                 {
                     $mf->whereIn('manifest', $manifest);
@@ -293,8 +297,13 @@ class DeliveryScheduleController extends Controller
             }else{
 
 
-             $mf =  ManifestHeader::where('mf_type','MI');
 
+             $mf =  ManifestHeader::where('mf_type','MI');
+            if(!empty($request->dt_start) && empty($request->date_to))
+             {
+                
+                $mf->whereBetween('delivery_date', [Carbon::parse($request->dt_start.' 00:00:00'), Carbon::parse($request->dt_start.' 23:59:59')]);
+             }
               if(count($manifest) > 0)
                 {
                     $mf->whereIn('manifest', $manifest);
@@ -414,7 +423,11 @@ class DeliveryScheduleController extends Controller
             }else{
               
              $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','SO');
-
+             if(!empty($request->dt_start) && empty($request->date_to))
+             {
+                
+                $mf->whereBetween('delivery_date', [Carbon::parse($request->dt_start.' 00:00:00'), Carbon::parse($request->dt_start.' 23:59:59')]);
+             }
               if(count($manifest) > 0)
                 {
                     $mf->whereIn('manifest', $manifest);
@@ -459,7 +472,11 @@ class DeliveryScheduleController extends Controller
             }else{
                
              $mf =   ManifestHeader::where('mf_type','SO');
-
+             if(!empty($request->dt_start) && empty($request->date_to))
+             {
+                
+                $mf->whereBetween('delivery_date', [Carbon::parse($request->dt_start.' 00:00:00'), Carbon::parse($request->dt_start.' 23:59:59')]);
+             }
               if(count($manifest) > 0)
                 {
                     $mf->whereIn('manifest', $manifest);
