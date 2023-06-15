@@ -183,7 +183,7 @@ class UserController extends Controller
                         "id" => $user->id,
                         "username"=> $user->username,
                         "pin"=> $user->pin,
-                        "full_name"=> $user->nm_user,
+                        "full_name"=> $user->full_name,
                         "user_stat"=> $user->status_user
                 ]
             ]);

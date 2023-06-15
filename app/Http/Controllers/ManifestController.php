@@ -63,14 +63,15 @@ class ManifestController extends Controller
         $manifest = ManifestHeader::with('manifestDetails')->where('manifest', $request->manifest)->first();
         $isExists = !empty($manifest) ? true : false ;
         
-        if($manifest->active === 'C') {
-            return response()->json([
-                'type' => 'error',
-                'message' => 'Manifest has been closed',
-                'data' => null
-            ], 422);
-        } else {
-            if ($isExists) {
+        
+        if ($isExists) {
+            if($manifest->active === 'C') {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Manifest has been closed',
+                    'data' => null
+                ], 422);
+            } else {
                 $cek_po = Po::where('po_num',$manifest->po_num)->count();
                 //Check Valid PO number
                 if($cek_po > 0)
@@ -170,16 +171,14 @@ class ManifestController extends Controller
                             'data' => null
                         ], 422);
                 }
-               
-        
-            } else {
-                return response()->json([
-                    'type' => 'error',
-                    'isExists' => $isExists,
-                    'message' => 'Please check manifest number!',
-                    'data' => null
-                ], 422);
             }
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'isExists' => $isExists,
+                'message' => 'Please check manifest number!',
+                'data' => null
+            ], 422);
         }
     }
 
@@ -666,7 +665,7 @@ class ManifestController extends Controller
                     $manifest_d_update = [];
                     $manifest_d_update['issued_date'] = date('Y-m-d '.'00:00:00');
                     $manifest_d_update['issued_time'] = date('H:i:s');
-                    $manifest_d_update['issued_by'] = empty($request->scan_by) ? "-":$request->scan_by;
+                    $manifest_d_update['issued_by'] = empty($request->issued_by) ? "-":$request->issued_by;
                     $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
                     ManifestDetail::where('kanban', $detailObj->kbnno)->update($manifest_d_update);
             
