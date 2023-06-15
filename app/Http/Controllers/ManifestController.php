@@ -84,72 +84,82 @@ class ManifestController extends Controller
                     }
                     //Check Date
                     $now = strtotime(date('Y-m-d'));
+                    $dateNow = date('Y-m-d');
                     $expired_date = strtotime(Carbon::parse($manifest->delivery_date)->addDays($days));
-    
-                    if($now > $expired_date)
-                    {
+                    
+                    if($now >= strtotime(Carbon::parse($manifest->delivery_date))) {
+                        if($now > $expired_date)
+                        {
+                            return response()->json([
+                                'type' => 'error',
+                                'isExists' => false,
+                                'message' => 'Invalid delivery date!',
+                                'data' => null
+                            ], 422);
+        
+                        } else{
+        
+                                $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
+                                // change all! the old code is all wrong
+                                $getManifestDetail = ManifestDetail::where('manifest', $manifest->manifest)->get();
+                                $groupByMaterial = $getManifestDetail->groupBy('material');
+                                $mapMaterial = $groupByMaterial->map(function($data){
+                                    return [
+                                        'material' => $data->first()->material,
+                                        'material_desc' => $data->first()->material_desc,
+                                        'qty_scan' => $data->sum('qty_pack'),
+                                        'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
+                                        'qty_gr' => $data->sum('qty_pack'),
+                                        'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
+                                        'kanban' => $data->count(),
+                                        'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
+                                    ];
+                                })->values();
+        
+                                return response()->json([
+                                    'data' => [
+                                        "_id" => $manifest->_id,
+                                        "manifest" => $manifest->manifest,
+                                        "mf_type" => $manifest->mf_type,
+                                        "release_date" => $manifest->release_date,
+                                        "id_vendor" => $manifest->id_vendor,
+                                        "delivery_date" => $manifest->delivery_date,
+                                        "delivery_time" => $manifest->delivery_time,
+                                        "po_num" => $manifest->po_num,
+                                        "sent" => $manifest->sent,
+                                        "downloaded" => $manifest->downloaded,
+                                        "file_nm" => $manifest->file_nm,
+                                        "stat" => $manifest->stat,
+                                        "active" => $manifest->active,
+                                        "purch_org" => $vendor->purch_org,
+                                        "nm_vendor" => $vendor->nm_vendor,
+                                        "allias" => $vendor->allias,
+                                        "street" => $vendor->street,
+                                        "district" => $vendor->district,
+                                        "postal_code" => $vendor->postal_code,
+                                        "city" => $vendor->city,
+                                        "country" => $vendor->country,
+                                        "region" => $vendor->region,
+                                        "phone_1" => $vendor->phone_1,
+                                        "vat_reg" => $vendor->vat_reg,
+                                        "order_curr" => $vendor->order_curr,
+                                        "pay_term" => $vendor->pay_term,
+                                        "sales_person" => $vendor->sales_person,
+                                        "phone_2" => $vendor->phone_2,
+                                        "vend_email" => $vendor->vend_email,
+                                        "status_vendor" => $vendor->status_vendor,
+                                        "details" => $mapMaterial,
+                                        'status_scanned' => $getManifestDetail->sum('qty_in') == $getManifestDetail->sum('qty_pack') ? 'S' : 'O'
+                                    ]
+                                ]);
+                        }
+                    } else {
                         return response()->json([
                             'type' => 'error',
                             'isExists' => false,
                             'message' => 'Invalid delivery date!',
                             'data' => null
                         ], 422);
-    
-                    } else{
-    
-                            $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
-                            // change all! the old code is all wrong
-                            $getManifestDetail = ManifestDetail::where('manifest', $manifest->manifest)->get();
-                            $groupByMaterial = $getManifestDetail->groupBy('material');
-                            $mapMaterial = $groupByMaterial->map(function($data){
-                                return [
-                                    'material' => $data->first()->material,
-                                    'material_desc' => $data->first()->material_desc,
-                                    'qty_scan' => $data->sum('qty_pack'),
-                                    'qty_scan_outstanding' => $data->sum('qty_scan_outstanding'),
-                                    'qty_gr' => $data->sum('qty_pack'),
-                                    'qty_gr_outstanding' => $data->sum('qty_gr_outstanding'),
-                                    'kanban' => $data->count(),
-                                    'kanban_outstanding' => $data->where('qty_scan_outstanding', '>', 0)->count(),
-                                ];
-                            })->values();
-    
-                            return response()->json([
-                                'data' => [
-                                    "_id" => $manifest->_id,
-                                    "manifest" => $manifest->manifest,
-                                    "mf_type" => $manifest->mf_type,
-                                    "release_date" => $manifest->release_date,
-                                    "id_vendor" => $manifest->id_vendor,
-                                    "delivery_date" => $manifest->delivery_date,
-                                    "delivery_time" => $manifest->delivery_time,
-                                    "po_num" => $manifest->po_num,
-                                    "sent" => $manifest->sent,
-                                    "downloaded" => $manifest->downloaded,
-                                    "file_nm" => $manifest->file_nm,
-                                    "stat" => $manifest->stat,
-                                    "active" => $manifest->active,
-                                    "purch_org" => $vendor->purch_org,
-                                    "nm_vendor" => $vendor->nm_vendor,
-                                    "allias" => $vendor->allias,
-                                    "street" => $vendor->street,
-                                    "district" => $vendor->district,
-                                    "postal_code" => $vendor->postal_code,
-                                    "city" => $vendor->city,
-                                    "country" => $vendor->country,
-                                    "region" => $vendor->region,
-                                    "phone_1" => $vendor->phone_1,
-                                    "vat_reg" => $vendor->vat_reg,
-                                    "order_curr" => $vendor->order_curr,
-                                    "pay_term" => $vendor->pay_term,
-                                    "sales_person" => $vendor->sales_person,
-                                    "phone_2" => $vendor->phone_2,
-                                    "vend_email" => $vendor->vend_email,
-                                    "status_vendor" => $vendor->status_vendor,
-                                    "details" => $mapMaterial,
-                                    'status_scanned' => $getManifestDetail->sum('qty_in') == $getManifestDetail->sum('qty_pack') ? 'S' : 'O'
-                                ]
-                            ]);
                     }
     
                 } else {
