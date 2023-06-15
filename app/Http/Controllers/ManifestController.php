@@ -146,7 +146,8 @@ class ManifestController extends Controller
                                     "phone_2" => $vendor->phone_2,
                                     "vend_email" => $vendor->vend_email,
                                     "status_vendor" => $vendor->status_vendor,
-                                    "details" => $mapMaterial
+                                    "details" => $mapMaterial,
+                                    'status_scanned' => $getManifestDetail->sum('qty_in') == $getManifestDetail->sum('qty_pack') ? 'S' : 'O'
                                 ]
                             ]);
                     }
