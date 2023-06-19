@@ -98,7 +98,7 @@ class ManifestController extends Controller
                                 'data' => null
                             ], 422);
         
-                        } else{
+                        } else {
         
                                 $vendor = Vendor::where('id_vendor', $manifest->id_vendor)->first();
                                 // change all! the old code is all wrong
@@ -294,6 +294,125 @@ class ManifestController extends Controller
         
     }
 
+    public function sendManifestMultiple(Request $request)
+    {
+        // $cekManifest = ManifestHeader::where('manifest', $request->manifest)->first();
+        $vendor = User::where('foreign_id', $request['id_vendor'])->where('is_vendor',true)->where('status_user','A')->get();
+        
+        $msg_mail = '';
+        $msg_data = '';
+        $resDuplicate = 0;
+        $collectData = [];
+        $resultData = [];
+        $errCode = 0;
+        
+        foreach ($request->data as $value) {
+            $cekManifest = ManifestHeader::where('manifest', $value['manifest'])->get();
+            $manifest = new ManifestHeader;
+            
+            if(count($cekManifest) > 0) {
+                $msg_data = 'Manifest '. $value['manifest'] .' send to eproc failed, cannot insert duplicate data manifest.';
+                $msg_mail = 'Manifest '. $value['manifest'] .' send to vendor failed. because send manifest already exist';
+                $resDuplicate = 1;
+                $errCode = 422;
+            } else {
+                $manifest->manifest = $value['manifest'];
+                $manifest->id_vendor = $value['id_vendor'];
+                $manifest->delivery_time = $value['delivery_time'];
+                $manifest->delivery_date = $value['delivery_date'];
+                $manifest->po_num = $value['po_num'];
+                $manifest->file_nm = $value['file_nm'];
+                $manifest->mf_type = $value['mf_type'];
+                $manifest->release_date = $value['release_date'];
+                $manifest->stat = "W";
+                $manifest->active = "O";
+                $manifest->save();
+                
+                foreach ($value['details'] as $detail){
+                    // echo $detail['kanban'];
+                    $manifest_detail = new ManifestDetail;
+                    $manifest_detail->kanban = $detail['kanban'];
+                    $manifest_detail->seq_kanban = $detail['seq_kanban'];
+                    $manifest_detail->item = $detail['item'];
+                    $manifest_detail->manifest = $value['manifest'];
+                    $manifest_detail->material = $detail['material'];
+                    $manifest_detail->material_desc = $detail['material_desc'];
+                    $manifest_detail->qty_pack = intval($detail['qty_pack']);
+                    $manifest_detail->qty_in = intval($detail['qty_in']);
+                    $manifest_detail->arrival_date = empty($detail['arrival_date']) ? null:$detail['arrival_date'];
+                    $manifest_detail->arrival_time = empty($detail['arrival_time']) ? null:$detail['arrival_time'];
+                    $manifest_detail->scan_date = empty($detail['scan_date']) ? null:$detail['scan_date'];
+                    $manifest_detail->scan_time = empty($detail['scan_time']) ? null:$detail['scan_time'];
+                    $manifest_detail->scan_by = $detail['scan_by'];
+                    $manifest_detail->issued_date = empty($detail['issued_date']) ? null:$detail['issued_date'];
+                    $manifest_detail->issued_time = empty($detail['issued_time']) ? null:$detail['issued_time'];
+                    $manifest_detail->issued_by = $detail['issued_by'];
+                    $manifest_detail->active = $detail['active'];
+                    $manifest_detail->save();
+                }
+    
+                $msg_data = 'Manifest '. $value['manifest'] .' send to eproc saved successfully.';
+            }
+
+            if($resDuplicate != 1) {
+                    if(count($vendor) > 0){ 
+                        try {
+                            $cek_data = ManifestHeader::where('manifest', $value['manifest'])->get();
+                            $sendMail = $this->mailer_send($value['manifest'], $cek_data);
+
+                            if($sendMail){
+                                $msg_mail = 'Manifest '. $value['manifest'] .' send mailed to vendor successfully.';
+                                $errCode = 200;
+
+                            } else {
+                                $msg_data = 'Manifest '. $value['manifest'] .' send to eproc failed';
+                                $msg_mail = 'Manifest '. $value['manifest'] .' send to mailed failed, user vendor not found or role system not activation.';
+                                $errCode = 422;
+                            }
+                        } catch (Exception $e) {
+                            $msg_mail = $e->getMessage();
+                            $errCode = 200;
+                        }
+                        
+                        $collectData[] = [
+                            "msg_data" => $msg_data,
+                            "msg_mail" => $msg_mail,
+                        ];
+        
+                    } else {
+                        $collectData[] = [
+                            "msg_data" => $msg_data,
+                            "msg_mail" => 'Manifest '. $value['manifest'] .' send to vendor failed.',
+                        ];
+                        $errCode = 200;
+                    }
+                
+            } else {
+                $collectData[] = [
+                    "msg_data" => $msg_data,
+                    "msg_mail" => $msg_mail,
+                ];
+                $errCode = 422;
+            }
+        }
+
+        $resultData = $collectData;
+
+        if($errCode == 200) {
+            return response()->json([
+                'type' => 'success',
+                'result' => $resultData,
+            ], $errCode);
+        } else {
+            return response()->json([
+                'type' => 'error',
+                'result' => $resultData,
+            ], $errCode);
+        }
+
+        
+    }
+
     public function resendEmailManifest(Request $request)
     {
         //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
@@ -408,6 +527,7 @@ class ManifestController extends Controller
 
                 return false;
             } else {
+                // Mail::to($vendEmail)->send(new ManifestMail($manifestHead,$vendor));
                 Mail::to($vendEmail)->cc($cc)->bcc(env('BCC_MAIL'))->send(new ManifestMail($manifestHead,$vendor));
                 ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
                 

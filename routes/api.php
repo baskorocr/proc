@@ -26,12 +26,14 @@ Route::get('manifest', 'ManifestController@manifestHeader');
 Route::get('manifest/{manifest}', 'ManifestController@manifestDetail');
 Route::get('check-kanban', 'ManifestController@checkKanban');
 Route::post('/send-manifest', 'ManifestController@sendManifest');
+Route::post('/send-manifest-multiple', 'ManifestController@sendManifestMultiple');
 Route::post('/resend-mail-manifest', 'ManifestController@resendEmailManifest');
 Route::post('/set-manifest-status', 'ManifestController@setStatus');
 Route::post('/manifest/close', 'ManifestController@closeManifest');
 Route::post('/vendor', 'VendorController@store');
 Route::post('/vendor/{id_vendor}', 'VendorController@update');
 Route::post('/send-po', 'PoController@sendPo');
+Route::post('/send-po-multiple', 'PoController@sendPoMultiple');
 Route::post('/resend-mail-po', 'PoController@resendEmailPo');
 Route::post('/send-manifest-sap', 'ManifestController@sendManifestSap');
 
