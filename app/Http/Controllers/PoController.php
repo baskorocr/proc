@@ -48,7 +48,14 @@ class PoController extends Controller
             $po->porg = $request->purch_org;
             $po->creator = $request->creator;
             // NO_PO-TANGGAL APPROV-JAMMENITDETIK , contoh (5111010611-20230526-075945.pdf)
-            $pdf_nm = $request->po_num."-".date('Ymd',strtotime($request->aprvdt))."-".date('His',strtotime($request->aprvtm)).".pdf";
+            if($request->revno != 0)
+            {
+                $pdf_nm = $request->po_num."-".date('Ymd',strtotime($request->revdt))."-".date('His',strtotime($request->revtm)).".pdf";
+
+            } else{
+                $pdf_nm = $request->po_num."-".date('Ymd',strtotime($request->aprvdt))."-".date('His',strtotime($request->aprvtm)).".pdf";
+            }
+           
             // $po->file_nm = empty($gf[0]) ? "":$gf[0];
             $po->file_nm = $pdf_nm;
             // $po->file_nm = $request->file_name;

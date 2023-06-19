@@ -270,6 +270,12 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
+            if($data->revno != 0)
+            {
+                $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
+            } else{
+                 $pdf_nm = $data->file_nm;
+            }
            // $filenm = $data->file_nm;
            //  if ($filenm != "-" && $filenm != "" ) {
            //  //activate
@@ -295,8 +301,8 @@ class PurchasingProcessController extends Controller
 
             }
            
-            $file = Storage::disk('po_directory')->path(""). $data->file_nm;
-            $file_qas = Storage::disk('po_qas_directory')->path(""). $data->file_nm;
+            $file = Storage::disk('po_directory')->path(""). $pdf_nm;
+            $file_qas = Storage::disk('po_qas_directory')->path(""). $pdf_nm;
             $relativeName = basename($file);
             if(file_exists($file))
             {
@@ -1031,24 +1037,44 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('doc_date', function ($data) {                    
             return date('d.m.Y',strtotime($data->doc_date));
+        })
+        ->editColumn('file_nm',function($data)
+        {
+            if($data->revno != 0)
+            {
+                $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
+            } else{
+                 $pdf_nm = $data->file_nm;
+            }
+           
+            return $pdf_nm;
         }) 
         ->addColumn('download_check', function ($data) {
              // return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+               if($data->revno != 0)
+                {
+                    $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
+                } else{
+                     $pdf_nm = $data->file_nm;
+                }
+                
+
             if($data->file_nm=="-"  || empty($data->file_nm)){
-                 return '<input type="checkbox" data-filenm="'.@$data->file_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled  style="cursor: not-allowed;" value="'.@$data->po_num.'">';
+
+                return '<input type="checkbox" data-filenm="'.@$pdf_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled  style="cursor: not-allowed;" value="'.@$data->po_num.'">';
 
             }
-            $file = Storage::disk('po_directory')->path(""). $data->file_nm;
-            $file_qas = Storage::disk('po_qas_directory')->path(""). $data->file_nm;
+            $file = Storage::disk('po_directory')->path(""). $pdf_nm;
+            $file_qas = Storage::disk('po_qas_directory')->path(""). $pdf_nm;
             $relativeName = basename($file);
             if(file_exists($file))
             {
-              return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+              return '<input type="checkbox" data-filenm="'.$pdf_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
             } elseif(file_exists($file_qas)){
 
-                 return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+                 return '<input type="checkbox" data-filenm="'.$pdf_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
             }else{
-               return '<input type="checkbox" data-filenm="'.@$data->file_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled style="cursor: not-allowed;"  value="'.@$data->po_num.'">';
+               return '<input type="checkbox" data-filenm="'.@$pdf_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled style="cursor: not-allowed;"  value="'.@$data->po_num.'">';
             }
            
             

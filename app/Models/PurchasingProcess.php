@@ -17,7 +17,7 @@ class PurchasingProcess extends Model
 
     protected $fillable = ['po_num','revno','plant','id_vendor','nm_vendor','vend_email','doc_date','pgr','curr','file_nm'];
 
-    public $dates = ['doc_date','downloaded','last_change','sent'];
+    public $dates = ['doc_date','downloaded','last_change','sent','aprvdt','aprvtm','revdt','revtm'];
 
     public function vendors()
     {
