@@ -254,6 +254,18 @@ class PurchasingProcessController extends Controller
       
             return $rel_stat;
         })
+        ->editColumn('file_nm',function($data)
+        {
+            // if($data->revno != 0)
+            // {
+            //     $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
+            // } else{
+            //      $pdf_nm = $data->file_nm;
+            // }
+           
+            // return $pdf_nm;
+            return $data->file_nm;
+        }) 
         ->editColumn('mail_stat', function($data){
             
              if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00') AND isset($data->sent) ){
@@ -270,12 +282,12 @@ class PurchasingProcessController extends Controller
         return $mail_stat;
         })
         ->editColumn('file_exist', function($data){
-            if($data->revno != 0)
-            {
-                $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
-            } else{
+            // if($data->revno != 0)
+            // {
+            //     $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
+            // } else{
                  $pdf_nm = $data->file_nm;
-            }
+            // }
            // $filenm = $data->file_nm;
            //  if ($filenm != "-" && $filenm != "" ) {
            //  //activate
@@ -1040,23 +1052,24 @@ class PurchasingProcessController extends Controller
         })
         ->editColumn('file_nm',function($data)
         {
-            if($data->revno != 0)
-            {
-                $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
-            } else{
-                 $pdf_nm = $data->file_nm;
-            }
+            // if($data->revno != 0)
+            // {
+            //     $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
+            // } else{
+            //      $pdf_nm = $data->file_nm;
+            // }
            
-            return $pdf_nm;
+            // return $pdf_nm;
+            return $data->file_nm;
         }) 
         ->addColumn('download_check', function ($data) {
              // return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
-               if($data->revno != 0)
-                {
-                    $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
-                } else{
+               // if($data->revno != 0)
+               //  {
+               //      $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
+               //  } else{
                      $pdf_nm = $data->file_nm;
-                }
+                // }
                 
 
             if($data->file_nm=="-"  || empty($data->file_nm)){
