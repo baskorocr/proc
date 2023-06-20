@@ -254,6 +254,17 @@ class PurchasingProcessController extends Controller
       
             return $rel_stat;
         })
+        ->editColumn('file_nm',function($data)
+        {
+            if($data->revno != 0)
+            {
+                $pdf_nm = $data->po_num."-".date('Ymd',strtotime($data->revdt))."-".date('His',strtotime($data->revtm)).".pdf";
+            } else{
+                 $pdf_nm = $data->file_nm;
+            }
+           
+            return $pdf_nm;
+        }) 
         ->editColumn('mail_stat', function($data){
             
              if(($data->sent != '-0001-11-30 00:00:00' AND $data->sent != '0000-00-00 00:00:00') AND isset($data->sent) ){
