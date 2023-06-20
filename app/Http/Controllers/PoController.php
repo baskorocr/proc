@@ -183,6 +183,12 @@ class PoController extends Controller
             $po->save();
         
             $msg_data = 'PO send to eproc saved successfully....';
+            $log = [];
+            $log['single'] = true;
+            $log['ip'] = $request->ip();
+            $log['request'] = $request->all();
+            \Log::info($log);
+            
         }
         
         if($resDuplicate <= 0) {
@@ -267,12 +273,12 @@ class PoController extends Controller
                 $po->porg = $value['purch_org'];
                 $po->creator = $value['creator'];
                 // NO_PO-TANGGAL APPROV-JAMMENITDETIK , contoh (5111010611-20230526-075945.pdf)
-                if($request->revno != 0)
+                if($value['revno'] != 0)
                 {
-                    $pdf_nm = $request->po_num."-".date('Ymd',strtotime($request->revdt))."-".date('His',strtotime($request->revtm)).".pdf";
+                    $pdf_nm = $value['po_num']."-".date('Ymd',strtotime($value['revdt']))."-".date('His',strtotime($value['revtm'])).".pdf";
 
                 } else{
-                    $pdf_nm = $request->po_num."-".date('Ymd',strtotime($request->aprvdt))."-".date('His',strtotime($request->aprvtm)).".pdf";
+                    $pdf_nm = $value['po_num']."-".date('Ymd',strtotime($value['aprvdt']))."-".date('His',strtotime($value['aprvtm'])).".pdf";
                 }
                 
                 $po->file_nm = $pdf_nm;
