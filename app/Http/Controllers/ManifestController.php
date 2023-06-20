@@ -297,7 +297,6 @@ class ManifestController extends Controller
     public function sendManifestMultiple(Request $request)
     {
         // $cekManifest = ManifestHeader::where('manifest', $request->manifest)->first();
-        $vendor = User::where('foreign_id', $request['id_vendor'])->where('is_vendor',true)->where('status_user','A')->get();
         
         $msg_mail = '';
         $msg_data = '';
@@ -307,6 +306,7 @@ class ManifestController extends Controller
         $errCode = 0;
         
         foreach ($request->data as $value) {
+            $vendor = User::where('foreign_id', $value['id_vendor'])->where('is_vendor',true)->where('status_user','A')->get();
             $cekManifest = ManifestHeader::where('manifest', $value['manifest'])->get();
             $manifest = new ManifestHeader;
             
