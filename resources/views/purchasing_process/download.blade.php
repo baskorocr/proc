@@ -113,7 +113,8 @@
 							</div> -->
 
 							<div class="table-responsive mt-3">
-                <button class="btn btn-secondary btn-sm mb-2" select-all><i class="fas fa-check"></i> Select All</button>
+                <button class="btn btn-secondary btn-sm mb-2" disabled select-all><i class="fas fa-check-square"></i> Select-All</button>
+                <button class="btn btn-secondary btn-sm mb-2" style="display: none;" deselect-all><i class="far fa-square"></i> Deselect-All</button>
 								<table  class="table table-bordered table-striped nowrap table-sm" id="tb-download-list-po">
 									<thead>
                     <th>
@@ -184,12 +185,54 @@
 	@section('javascript')
    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 	<script>
+      var data = [];
     $('[select-all]').click(function(){
-       $('input:checkbox').trigger('click')
+      var route = '{{route('purchasing.process.selectAll')}}';
+      axios.post(route, {
+          _token: '{{csrf_token()}}',
+        })
+        .then(function (response) {
+        $.each(response.data.po, function (key, value) {
+          var dtval = value._id;
+          var flnm = value.file_nm;
+          
+          if(value.selected)
+          {
+            if($("#fl"+dtval).length == 0) {
+              data.push(dtval);
+              $(".cl-"+dtval).addClass('selected');
+              $('#download-list-checked').append('<input type="hidden" id="fl'+dtval+'" name="download_doc[]" value="'+flnm+'" /> <input type="hidden" id="po'+dtval+'" name="id_po[]" value="'+dtval+'" />');
+              $('.checked-'+value._id).prop('checked',true);
+              $(".cl-"+value._id).addClass('selected');
+            } else{
+              // console.log(dtval+' is Exists.');
+            }
+          }
+          
+         
+          
+
+        });
+        $('[deselect-all]').show();
+        $('[select-all]').hide();
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+             // $('input:checkbox:checked').trigger('click')
       //  $('input:checkbox').prop('checked', true);
       //  $('input:checkbox').each(function(i, obj) {
       //     console.log();
       // });
+    })
+
+    $('[deselect-all]').click(function(){
+      data =[]
+      $('.checked').prop('checked', false);
+      $(".selected").removeClass('selected');
+      $('[deselect-all]').hide();
+      $('[select-all]').show();
+      $('#download-list-checked').empty();
     })
    
 		function addVendor()
@@ -255,7 +298,7 @@
     }
     return this;
 };
-      var data = [];
+    
 		  function selectedDwn(id)
 		  {
         var val = $(id).val();
@@ -307,6 +350,7 @@
     }
        ).DataTable();
       function search() {
+        $('[select-all]').prop('disabled',false);
         $('#download-list-checked').empty();
          $('#tb-download-list-po').DataTable().destroy();
         var table = $('#tb-download-list-po').DataTable({ autoWidth:false,
