@@ -307,6 +307,8 @@ Route::group(['middleware' => ['auth']], function () {
         Route::get('/batch-mail-send', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.batch-mail');
         // Route::get('/testMail', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.uploadpo');
         Route::get('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'upload'])->name('purchasing.process.uploadpo');
+
+        Route::post('/select-all-po', [App\Http\Controllers\PurchasingProcessController::class, 'selectAll'])->name('purchasing.process.selectAll');
         Route::get('/list-po', [App\Http\Controllers\PurchasingProcessController::class, 'index'])->name('purchasing.process.listpo');
         Route::get('/send-mail-po', [App\Http\Controllers\PurchasingProcessController::class, 'send_mail'])->name('purchasing.process.send.mail');
         //Datatables

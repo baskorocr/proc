@@ -15,6 +15,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ImportPo;
 use Mail;
 use App\Mail\PoMailBatch;
+use App\Http\Resources\PurchasingProcessSelectResource;
 use Storage;
 use Exception;
 
@@ -39,6 +40,13 @@ class PurchasingProcessController extends Controller
     public function upload()
     {
         return view('purchasing_process/upload');
+    }
+
+    public function selectAll()
+    {
+        $po = PurchasingProcessSelectResource::collection(PurchasingProcess::select('_id','po_num','file_nm')->get());
+
+        return response()->json(['po' => $po],200);
     }
 
     public function index()
@@ -1074,7 +1082,7 @@ class PurchasingProcessController extends Controller
 
             if($data->file_nm=="-"  || empty($data->file_nm)){
 
-                return '<input type="checkbox" data-filenm="'.@$pdf_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled  style="cursor: not-allowed;" value="'.@$data->po_num.'">';
+                return '<input type="checkbox" data-filenm="'.@$pdf_nm.'" data-mgid="'.@$data->_id.'"  class="checked checked-'.$data->_id.'" id="'.@$data->_id.'" onclick=""  name="disabled" disabled  style="cursor: not-allowed;" value="'.@$data->po_num.'">';
 
             }
             $file = Storage::disk('po_directory')->path(""). $pdf_nm;
@@ -1082,12 +1090,12 @@ class PurchasingProcessController extends Controller
             $relativeName = basename($file);
             if(file_exists($file))
             {
-              return '<input type="checkbox" data-filenm="'.$pdf_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+              return '<input type="checkbox" data-filenm="'.$pdf_nm.'" data-mgid="'.$data->_id.'"  class="checked checked-'.$data->_id.'" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
             } elseif(file_exists($file_qas)){
 
-                 return '<input type="checkbox" data-filenm="'.$pdf_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
+                 return '<input type="checkbox" data-filenm="'.$pdf_nm.'" data-mgid="'.$data->_id.'"  class="checked checked-'.$data->_id.'" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
             }else{
-               return '<input type="checkbox" data-filenm="'.@$pdf_nm.'" data-mgid="'.@$data->_id.'"  class="checked" id="'.@$data->_id.'" onclick=""  name="disabled" disabled style="cursor: not-allowed;"  value="'.@$data->po_num.'">';
+               return '<input type="checkbox" data-filenm="'.@$pdf_nm.'" data-mgid="'.@$data->_id.'"  class="checked checked-'.$data->_id.'" id="'.@$data->_id.'" onclick=""  name="disabled" disabled style="cursor: not-allowed;"  value="'.@$data->po_num.'">';
             }
            
             
