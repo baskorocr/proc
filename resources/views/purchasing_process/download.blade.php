@@ -307,6 +307,7 @@
     }
        ).DataTable();
       function search() {
+        $('#download-list-checked').empty();
          $('#tb-download-list-po').DataTable().destroy();
         var table = $('#tb-download-list-po').DataTable({ autoWidth:false,
         "order": [[ 1, "DESC" ]],
