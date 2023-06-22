@@ -61,7 +61,7 @@
                                         @if(count($p->children) > 0)
                                         <div  style="margin-left:40px; display: none;" class="edit" id="show-{{$p->_id}}">
                                             @foreach($p->children as $c)
-                                             <input class="form-check-input" {{in_array($c->_id, $arrPermisssion)?"checked":null}} type="checkbox"  name="permissions[]" value="{{$c->_id}}" id="child-{{$c->_id}}" > <label class="form-check-label" for="child-{{$c->_id}}">{{$c->name}}</label><br>
+                                             <input class="form-check-input chk-{{$p->_id}}" {{in_array($c->_id, $arrPermisssion)?"checked":null}} type="checkbox"  name="permissions[]" value="{{$c->_id}}" id="child-{{$c->_id}}" > <label class="form-check-label" for="child-{{$c->_id}}">{{$c->name}}</label><br>
                                              @endforeach
                                         </div>
                                         @endif
@@ -102,6 +102,8 @@
                     $(detail).slideDown();
                 } else{
                      var detail = $(this).data('detail')
+                     var chk = $(this).val();
+                     $('.chk-'+chk).prop('checked',false)
                     $(detail).slideUp();
                 }
             })
