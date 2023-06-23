@@ -5,7 +5,8 @@ use App\Http\Controllers\AuthController;
 
 
 Route::get('/test-f', function(){
-    UserLogging::trace(auth()->user()->id_user,\Request::ip(),now(),"F","in","TEST");
+    // UserLogging::trace(auth()->user()->id_user,\Request::ip(),now(),"F","in","TEST");
+    return view('auth/lockscreen');
 })->name('c');
 Route::get('/', function () {
     if(Auth::check())
@@ -15,7 +16,16 @@ Route::get('/', function () {
     return view('eproc.login');
 })->name('login');
 Route::group(['middleware' => ['auth']], function () {
+     
     Route::get('/logout',[AuthController::class,'logout'])->name('logout');
+      Route::get('/lockscreen', function(){
+            // UserLogging::trace(auth()->user()->id_user,\Request::ip(),now(),"F","in","TEST");
+            return view('auth/lockscreen');
+    })->name('lockscreen');
+    Route::post('/unlockScreen',[AuthController::class,'unlockScreen'])->name('unlockScreen');
+});
+Route::group(['middleware' => ['auth','lockscreen']], function () {
+ 
     Route::get('/manifest_test_mail/{manifestId}', [App\Http\Controllers\ManifestController::class, 'manifest_test_mail'])->name('testMailer');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::get('/security/changepwd', [App\Http\Controllers\ProfileController::class, 'changePwdLink'])->name('change.pwd.link');

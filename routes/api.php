@@ -36,6 +36,7 @@ Route::post('/send-po', 'PoController@sendPo');
 Route::post('/send-po-multiple', 'PoController@sendPoMultiple');
 Route::post('/resend-mail-po', 'PoController@resendEmailPo');
 Route::post('/send-manifest-sap', 'ManifestController@sendManifestSap');
+Route::post('/pooling/set-idle', 'AuthController@set_idle')->name('idle_set');
 
 Route::group(['middleware' => ['auth:api']], function () {
 
