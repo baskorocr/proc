@@ -268,7 +268,47 @@ table.dataTable.table-striped > tbody > tr.odd.selected {
     });
     </script>
 @endif
+<script>
+   var idleTime = 0;
+    $(document).ready(function () {
+        // Jika iddle tambah 1 tiap menit
+        var idleInterval = setInterval(timerIncrement, 60000); // 1 minute
 
+        // Ubah jadi nol jika ada pergerakan
+        $(this).mousemove(function (e) {
+            idleTime = 0;
+            // console.log("CANCEL")
+        });
+        $(this).keypress(function (e) {
+            idleTime = 0;
+            // console.log(idleTime)
+        });
+    });
+
+    function timerIncrement() {
+        idleTime = idleTime + 1;
+        if (idleTime >= {{env('MAX_IDLE_TIME',30)}}) { // 30 minutes
+          idle_check();
+        }
+    }
+
+
+  function idle_check()
+  {
+       axios.post('{{route('idle_set')}}', {
+          _token: '{{csrf_token()}}',
+          redirect_lockscreen: '{{url()->full()}}'
+        })
+        .then(function (response) {
+          console.log(response);
+          location.reload();
+        })
+        .catch(function (error) {
+          // console.log(error);
+        }); 
+  }
+  
+</script>
   @yield('javascript')
 </body>
 

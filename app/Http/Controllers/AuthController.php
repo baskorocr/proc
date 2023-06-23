@@ -12,9 +12,40 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Cache;
 
 class AuthController extends Controller
 {
+    public function set_idle(Request $request)
+    {
+        if(\Auth::check())
+        {
+            Cache::forget('active_'.auth()->user()->_id);
+            Cache::forever('redirect_lockscreen_'.auth()->user()->_id, $request->redirect_lockscreen);
+            return response()->json(['status' => true,'message'=>'Set To Idle'],200);
+        }
+
+        return response()->json(['status' => false,'message'=>'Unauthenticated.'],403);
+    }
+
+    public function unlockScreen(Request $request)
+    {
+        $user = User::where('username', $request->username)->first();
+        if (Hash::check($request->password, $user->password)){
+            Cache::forever('active_'.auth()->user()->_id,true); //30 Jam default
+            if(Cache::has('redirect_lockscreen_'.auth()->user()->_id))
+            {
+                $redirect = Cache::get('redirect_lockscreen_'.auth()->user()->_id);
+                Cache::forget('redirect_lockscreen_'.auth()->user()->_id);
+            }else{
+                $redirect = '/';
+            }
+            return redirect($redirect);
+        } else{
+            return redirect()->back()->with(['message_fail' => "Password is incorrect."]);
+        }
+
+    }
     public function login(Request $request)
     {
 
@@ -116,7 +147,9 @@ class AuthController extends Controller
                 session(['status_user' =>  $user->status_user]);
                 session(['username' =>  $user->username]);
                 session(['permissions' =>  $permission_allowed->toArray()]);
-                
+                // dd(auth()->user()->_id);
+                Cache::forever('active_'.auth()->user()->_id,true);
+
                 UserLogging::trace($user->id_user,$request->ip(),now(),"S","in",$user->username);
 
                 return response()->json([
