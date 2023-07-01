@@ -202,6 +202,7 @@ class PurchasingProcessController extends Controller
 
     public function getListPo(Request $request)
     {
+        ini_set('max_execution_time', 600);
         if($request->search == true)
         {
              $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
@@ -771,6 +772,7 @@ class PurchasingProcessController extends Controller
 
     public function getDownloadListPo(Request $request)
     {
+        ini_set('max_execution_time', 600);
          if($request->search)
         {
 

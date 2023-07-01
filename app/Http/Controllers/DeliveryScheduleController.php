@@ -215,6 +215,7 @@ class DeliveryScheduleController extends Controller
 
     public function getDeliveryMf(Request $request)
     {
+        ini_set('max_execution_time', 600);
          $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
 
         $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
@@ -401,6 +402,7 @@ class DeliveryScheduleController extends Controller
 
     public function getDeliverySPC(Request $request)
     {
+        ini_set('max_execution_time', 600);
          $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
 
         $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
