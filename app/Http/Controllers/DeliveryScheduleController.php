@@ -215,6 +215,7 @@ class DeliveryScheduleController extends Controller
 
     public function getDeliveryMf(Request $request)
     {
+        ini_set('max_execution_time', 600);
          $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
 
         $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
@@ -248,6 +249,11 @@ class DeliveryScheduleController extends Controller
              // $data = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI')->get();
 
              $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','MI');
+            if(empty($request->dt_start) && empty($request->date_to))
+             {
+                
+                $mf->whereBetween('delivery_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+             }
             if(!empty($request->dt_start) && empty($request->date_to))
              {
                 
@@ -299,6 +305,11 @@ class DeliveryScheduleController extends Controller
 
 
              $mf =  ManifestHeader::where('mf_type','MI');
+              if(empty($request->dt_start) && empty($request->date_to))
+                 {
+                    
+                    $mf->whereBetween('delivery_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                 }
             if(!empty($request->dt_start) && empty($request->date_to))
              {
                 
@@ -391,6 +402,7 @@ class DeliveryScheduleController extends Controller
 
     public function getDeliverySPC(Request $request)
     {
+        ini_set('max_execution_time', 600);
          $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
 
         $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
@@ -423,6 +435,11 @@ class DeliveryScheduleController extends Controller
             }else{
               
              $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->where('mf_type','SO');
+             if(empty($request->dt_start) && empty($request->date_to))
+                 {
+                    
+                    $mf->whereBetween('delivery_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                 }
              if(!empty($request->dt_start) && empty($request->date_to))
              {
                 
@@ -472,6 +489,11 @@ class DeliveryScheduleController extends Controller
             }else{
                
              $mf =   ManifestHeader::where('mf_type','SO');
+             if(empty($request->dt_start) && empty($request->date_to))
+                 {
+                    
+                    $mf->whereBetween('delivery_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                 }
              if(!empty($request->dt_start) && empty($request->date_to))
              {
                 

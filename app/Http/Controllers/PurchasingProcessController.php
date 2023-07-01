@@ -202,11 +202,17 @@ class PurchasingProcessController extends Controller
 
     public function getListPo(Request $request)
     {
+        ini_set('max_execution_time', 600);
         if($request->search == true)
         {
              $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
              $ponum = array_filter(preg_split('/\r\n|\r|\n/',$request->po_num));
             $q = PurchasingProcess::where(function($query) use ($request,$vendor_list,$ponum){
+                if(empty($request->date_from) && empty($request->date_to))
+                 {
+                    
+                   return $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                 }
                 if (!empty($request->po_num)) {
                    return $query->whereIn('po_num', $ponum);
                 }
@@ -217,6 +223,8 @@ class PurchasingProcessController extends Controller
                 {
                     return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_from.' 23:59:59')]);
                 }
+
+
 
                 if (!empty($vendor_list)) {
                     return $query->whereIn('id_vendor', $vendor_list);
@@ -764,12 +772,18 @@ class PurchasingProcessController extends Controller
 
     public function getDownloadListPo(Request $request)
     {
+        ini_set('max_execution_time', 600);
          if($request->search)
         {
 
             $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
             $ponum = array_filter(preg_split('/\r\n|\r|\n/',$request->po_num));
             $q = PurchasingProcess::where(function($query) use ($request,$vendor_list,$ponum){
+                 if(empty($request->date_from) && empty($request->date_to))
+                 {
+                    
+                   return $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                 }
                 if (!empty($request->po_num)) {
                    return $query->whereIn('po_num', $ponum);
                 }

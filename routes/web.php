@@ -6,7 +6,7 @@ use App\Http\Controllers\AuthController;
 
 Route::get('/test-f', function(){
     // UserLogging::trace(auth()->user()->id_user,\Request::ip(),now(),"F","in","TEST");
-    return view('auth/lockscreen');
+    return date("Y-m-t");;
 })->name('c');
 Route::get('/', function () {
     if(Auth::check())
