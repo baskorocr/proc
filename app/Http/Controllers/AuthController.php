@@ -49,6 +49,21 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $usermd5 = User::where('username', $request->username)->first();
+        if(empty($usermd5))
+        {
+            return response()->json([
+                        'type' => 'error',
+                        'message' =>'Please check username or password!'
+                    ], 422);
+        }
+            if(empty($usermd5->role_id))
+            {
+                 return response()->json([
+                        'type' => 'error',
+                        'message' =>'This account does not have access yet, please contact administrator.'
+                    ], 422);
+            }
+
          if (Hash::needsRehash($usermd5->password))
          {
              if($usermd5->password ==  md5($request->password))
