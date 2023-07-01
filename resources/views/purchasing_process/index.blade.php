@@ -57,10 +57,10 @@
                   <div class="row">
                     <div class="col-md-6">
                       from
-                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
+                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} else{ echo date('Y-m-01');} ?>"/>
                     </div>
                     <div class="col-md-6"> to
-                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
+                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;}else{ echo date('Y-m-t');} ?>"/></div>
                     </div>
                     
                     <div class="col-12">
