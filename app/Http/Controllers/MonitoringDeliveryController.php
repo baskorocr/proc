@@ -33,7 +33,7 @@ class MonitoringDeliveryController extends Controller
        $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
 
         $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
-       if(auth()->user()->role == 'vendor')
+       if(auth()->user()->is_vendor)
        {
             if(!empty($request->dt_start) && !empty($request->dt_end))
             {
@@ -63,6 +63,11 @@ class MonitoringDeliveryController extends Controller
            
 
              $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id);
+             if(empty($request->dt_start) && empty($request->date_to))
+             {
+                
+                $mf->whereBetween('delivery_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+             }
              if(!empty($request->dt_start) && empty($request->date_to))
              {
                 
@@ -103,6 +108,8 @@ class MonitoringDeliveryController extends Controller
                 {
                     $mf->whereIn('manifest', $manifest);
                 }
+
+
                 if ((count($vendor_list)>0)) {
                     $mf->whereIn('id_vendor', $vendor_list);
                 } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
@@ -112,6 +119,11 @@ class MonitoringDeliveryController extends Controller
             }else{
 
                 $mf =  ManifestHeader::where('mf_type','like','%');
+                if(empty($request->dt_start) && empty($request->date_to))
+                 {
+                    
+                    $mf->whereBetween('delivery_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                 }
                 if(!empty($request->dt_start) && empty($request->date_to))
                  {
                     
