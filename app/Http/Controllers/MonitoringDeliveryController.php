@@ -29,6 +29,7 @@ class MonitoringDeliveryController extends Controller
 
     public function getDelivery(Request $request)
     {
+       ini_set('max_execution_time', 350);
        $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
 
         $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
