@@ -48,12 +48,23 @@ class AuthController extends Controller
     }
     public function login(Request $request)
     {
+        $usermd5 = User::where('username', $request->username)->first();
+         if (Hash::needsRehash($usermd5->password))
+         {
+             if($usermd5->password ==  md5($request->password))
+             {
+                User::where('username', $request->username)->update(['password' => Hash::make($request->password)]);
+             }
+         }
 
+        $usermd5 = null;
         $credentials = $request->validate([
             'username' => 'required',
             'password' => 'required|min:6'
         ]);
-    
+        
+         
+
         if (Auth::attempt($credentials)) {
             $token = Str::random(25);
             $user = User::where('username', $request->username)->first();
