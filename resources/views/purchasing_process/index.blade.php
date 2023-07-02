@@ -225,7 +225,7 @@
        $('#tb-list-po').DataTable().destroy();
        $.fn.dataTable.ext.errMode = 'none';
     var table = $('#tb-list-po').DataTable({autoWidth:false,
-    "order": [[ 1, "DESC" ]],
+    "order": [[ 4, "DESC" ]],
     processing: true,
     serverSide: true,
     autoWidth:false,

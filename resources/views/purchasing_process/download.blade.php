@@ -354,7 +354,7 @@
         $('#download-list-checked').empty();
          $('#tb-download-list-po').DataTable().destroy();
         var table = $('#tb-download-list-po').DataTable({ autoWidth:false,
-        "order": [[ 1, "DESC" ]],
+        "order": [[ 11, "DESC" ]],
         processing: true,
         serverSide: true,
         autoWidth:false,

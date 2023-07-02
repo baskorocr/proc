@@ -126,6 +126,8 @@ Route::group(['middleware' => ['auth','lockscreen']], function () {
         Route::get('/datatables/get-email-list-group', [App\Http\Controllers\EmailListGroupController::class, 'getDataEmailListGroup'])->name('datatables.regis-user.email.list-group');
 
          //Master User
+
+        Route::get('/master-user/export-users', [App\Http\Controllers\MasterUserController::class, 'export'])->name('regis-user.export');
         Route::get('/master-user', [App\Http\Controllers\MasterUserController::class, 'getMasterUser'])->name('regis-user.master-user');
         Route::get('/master-user/add-user', [App\Http\Controllers\MasterUserController::class, 'create'])->name('api.regis-user.create.user');
         Route::get('/master-user/add-user-vendor', [App\Http\Controllers\MasterUserController::class, 'createVendor'])->name('api.regis-user.create.usrvendor');
@@ -144,6 +146,8 @@ Route::group(['middleware' => ['auth','lockscreen']], function () {
 
         //Master Vendor
         Route::get('/master-vendor', [App\Http\Controllers\MasterVendorController::class, 'getMasterVendor'])->name('regis-user.master-vendor');
+
+        Route::get('/master-user/export-vendors', [App\Http\Controllers\MasterVendorController::class, 'export'])->name('regis-user.vendor.export');
         Route::post('/add-vendor', [App\Http\Controllers\MasterVendorController::class, 'store'])->name('api.regis-user.create.vendor');
         Route::get('/upload-vendor', [App\Http\Controllers\MasterVendorController::class, 'upload'])->name('regis-user.upload.vendor');
        Route::post('/upload-vendor', [App\Http\Controllers\MasterVendorController::class, 'upload_vendor'])->name('regis-user.upload.vendor-act');

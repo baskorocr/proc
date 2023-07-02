@@ -11,6 +11,7 @@ use Maatwebsite\Excel\Facades\Excel;
 use App\Models\TypeUser;
 use Cache;
 use App\Imports\ImportVendorEmail;
+use App\Exports\UserExport;
 
 class MasterUserController extends Controller
 {
@@ -23,6 +24,12 @@ class MasterUserController extends Controller
         $type = TypeUser::get();
         $roles = Role::get();
         return view('regis_user/master-user/edit')->with(['user' => $data,'accessgrp'=>$accessgrp,'roles'=>$roles,'vendor' =>  $vendor,'type'=>$type]);
+    } 
+
+    public function export(Request $request)
+    {
+          return \Excel::download(new UserExport, 'EXPORT-EPROC-DHARMA-POLIMETAL-'.date('Ymd')."-USER".'.xlsx');
+       
     }   
 
     public function create()
