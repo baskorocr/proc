@@ -22,6 +22,11 @@ class AuthController extends Controller
         {
             Cache::forget('active_'.auth()->user()->_id);
             Cache::forever('redirect_lockscreen_'.auth()->user()->_id, $request->redirect_lockscreen);
+            $log = [];
+            $log['status'] = "lockscr";
+            $log['user'] = auth()->user()->_id;
+            $log['time'] = date("Y-m-d H:i:s");
+            \Log::info($log);
             return response()->json(['status' => true,'message'=>'Set To Idle'],200);
         }
 
@@ -40,6 +45,11 @@ class AuthController extends Controller
             }else{
                 $redirect = '/';
             }
+            $log = [];
+            $log['status'] = "unlockscr";
+            $log['user'] = auth()->user()->_id;
+            $log['time'] = date("Y-m-d H:i:s");
+            \Log::info($log);
             return redirect($redirect);
         } else{
             return redirect()->back()->with(['message_fail' => "Password is incorrect."]);

@@ -485,7 +485,7 @@ class ManifestController extends Controller
     
             //Ambil Data Vendor
             $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
-            $user =  MasterUser::whereIn('role_id',$allowed)->where('status_user','A')->get();
+            $user =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id',$manifestHead->id_vendor)->where('status_user','A')->get();
             $cc=[];
             //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
             foreach($user as $u)
@@ -532,7 +532,7 @@ class ManifestController extends Controller
                 ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
                 
                 $log = [];
-                $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." sended to ".json_encode($vendEmail)." | cc ". json_encode($cc);
+                $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." has been sended to ".json_encode($vendEmail)." | cc ". json_encode($cc)." | bcc : ".env('BCC_MAIL',"BCC is not set in .env");
                 \Log::info($log);
 
                 return true;

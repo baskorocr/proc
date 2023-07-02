@@ -513,6 +513,10 @@ class PoController extends Controller
                 // Mail::to($mailVendorUser)->send(new PoMail($po, $vendor_user));
                 Mail::to($mailVendorUser)->cc($cc)->bcc(env('BCC_MAIL'))->send(new PoMail($po, $vendor_user));
                 // ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
+                $log = [];
+                $log['message'] = "[EMAIL-SYSTEM] Purchasing Order ".$po->po_num." has been sended to ".json_encode($mailVendorUser)." | cc ". json_encode($cc)." |  bcc : ".env('BCC_MAIL',"BCC is not set in .env");
+                \Log::info($log);
+
                 return true;
             }
             

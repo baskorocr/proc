@@ -19,6 +19,8 @@ Route::group(['middleware' => ['auth']], function () {
      
     Route::get('/logout',[AuthController::class,'logout'])->name('logout');
       Route::get('/lockscreen', function(){
+            \Cache::forget('active_'.auth()->user()->_id);
+            session()->regenerate();  
             // UserLogging::trace(auth()->user()->id_user,\Request::ip(),now(),"F","in","TEST");
             return view('auth/lockscreen');
     })->name('lockscreen');

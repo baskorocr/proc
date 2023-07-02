@@ -14,7 +14,8 @@ class UserLogging {
 							'datetime_log' => $datetime,
 							'attempt' => $attempt,
 							'activity' => $activity,
-							'info' => $info
+							'info' => $info,
+							'user_agent' => !empty($_SERVER['HTTP_USER_AGENT'])?$_SERVER['HTTP_USER_AGENT']:null,
 						]);
 
 		return $res;
