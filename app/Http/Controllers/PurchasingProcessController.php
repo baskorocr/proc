@@ -42,9 +42,51 @@ class PurchasingProcessController extends Controller
         return view('purchasing_process/upload');
     }
 
-    public function selectAll()
+    public function selectAll(Request $request)
     {
-        $po = PurchasingProcessSelectResource::collection(PurchasingProcess::select('_id','po_num','file_nm')->get());
+        ini_set('max_execution_time', 600);
+        $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+        $ponum = array_filter(preg_split('/\r\n|\r|\n/',$request->po_num));
+        $q = PurchasingProcess::select('_id','po_num','file_nm')->where(function($query) use ($request,$vendor_list,$ponum){
+        if(empty($request->date_from) && empty($request->date_to))
+         {
+            
+           return $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+         }
+        if (!empty($request->po_num)) {
+           return $query->whereIn('po_num', $ponum);
+        }
+
+        if (!empty($request->date_from) && !empty($request->date_to)) {
+            return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
+        }elseif(!empty($request->date_from) && empty($request->date_to))
+        {
+            return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_from.' 23:59:59')]);
+        }
+
+
+
+        if (!empty($vendor_list)) {
+            return $query->whereIn('id_vendor', $vendor_list);
+        }
+        });
+        // AND $request->vendor_select != "Choose Vendor"
+
+        if((count($vendor_list)>0) || ($request->vendor_select != "Choose Vendor"))
+        {
+        if ((count($vendor_list)>0)) {
+            $q->whereIn('id_vendor', $vendor_list);
+        } elseif((count($vendor_list)==0)){
+           $q->whereIn('id_vendor',[$request->vendor_select]);
+        }
+        }
+        if(auth()->user()->is_vendor)
+        {
+        $data = $q->where('id_vendor','=',auth()->user()->foreign_id)->get();
+        } else{
+        $data = $q->where('id_vendor','!=','')->get();
+        }
+        $po = PurchasingProcessSelectResource::collection($data);
 
         return response()->json(['po' => $po],200);
     }

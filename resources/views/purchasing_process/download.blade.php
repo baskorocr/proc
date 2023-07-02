@@ -46,22 +46,22 @@
                  <div class="row">
                     <div class="col-md-6">
                       from
-                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
+                      <input type="text" enable-search name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
                     </div>
                     <div class="col-md-6"> to
-                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
+                      <input type="text" enable-search name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
                     </div>
                     
                     <div class="col-12">
                       <label>Purchase Order</label>
-                      <textarea class="form-control" rows="3" name="po_sel" id="po_textarea"  placeholder="5111000xxx"><?php if (isset($_POST['submit-find'])) { echo $list_po; } ?></textarea>
+                      <textarea class="form-control"  enable-search rows="3" name="po_sel" id="po_textarea"  placeholder="5111000xxx"><?php if (isset($_POST['submit-find'])) { echo $list_po; } ?></textarea>
                        <a href="javascript:void(0);" onclick="$('#po_textarea').val('');">Clear</a>
                     </div>
                   </div>
                 </div>
                 <div class="col-lg-5">
                   <div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
-                    <button type="submit" name="submit-find" class="btn btn-primary btn-block" style="min-width: 100%;" onclick="search()">
+                    <button type="submit" disabled id="enable-search-btn" name="submit-find" class="btn btn-primary btn-block" style="min-width: 100%;" onclick="search()">
                     <i class="fa fa-search"></i> Search
                     </button>
                   </div>
@@ -73,7 +73,7 @@
                   <div class="col-sm-10">
                     <div class="row">
                       <div class="col-10">
-                        <select class="form-select select2" name='vendor_select' id="select_vendor" aria-label="Default select example">
+                        <select enable-search class="form-select select2" name='vendor_select' id="select_vendor" aria-label="Default select example">
                           <option selected>Choose Vendor</option>
                           @foreach($list_vendor as $vendor)
                           <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
@@ -84,7 +84,7 @@
                         <button id="add_vendor" class="btn btn-primary btn-sm" onclick="addVendor()" style="margin-left:-22px;min-width: 100%;" ><i class="fas fa-plus"></i></button>
                       </div>
                     </div>
-                    <textarea class="form-control" rows="3" name="vendor_list" id="vendor_list"  placeholder="1000xxx"></textarea>
+                    <textarea class="form-control"  enable-search rows="3" name="vendor_list" id="vendor_list"  placeholder="1000xxx"></textarea>
                     <a href="javascript:void(0);" onclick="$('#vendor_list').val('');">Clear</a>
                   </div>
                 </div>
@@ -113,7 +113,7 @@
 							</div> -->
 
 							<div class="table-responsive mt-3">
-                <button class="btn btn-secondary btn-sm mb-2" disabled select-all><i class="fas fa-check-square"></i> Select-All</button>
+                <button class="btn btn-secondary btn-sm mb-2" disabled select-all><i id="select-all-spinner" class="fas fa-check-square"></i> Select-All</button>
                 <button class="btn btn-secondary btn-sm mb-2" style="display: none;" deselect-all><i class="far fa-square"></i> Deselect-All</button>
 								<table  class="table table-bordered table-striped nowrap table-sm" id="tb-download-list-po">
 									<thead>
@@ -185,13 +185,34 @@
 	@section('javascript')
    <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 	<script>
+     $('[enable-search]').on('keyup change', function(e) {
+          $('#enable-search-btn').prop('disabled',false)
+      });
+
+     $(document).ready(function(){
+      
+       $('#enable-search-btn').prop('disabled',true)
+      })
+    
       var data = [];
     $('[select-all]').click(function(){
+      var select = $(this);
+      $('#select-all-spinner').removeClass('fa-check-square')
+      $('#select-all-spinner').addClass('fa-spin fa-spinner')
+      select.prop('disabled',true)
       var route = '{{route('purchasing.process.selectAll')}}';
       axios.post(route, {
           _token: '{{csrf_token()}}',
+          po_num : $('#po_textarea').val(),
+          date_from : $('#date_from').val(),
+          date_to : $('#date_to').val(),
+          id_vendor : $('#select_vendor').val().toString(),
+          vendor_list : $('#vendor_list').val(),
+          vendor_select : $('#select_vendor').val()
         })
         .then(function (response) {
+         var total = response.data.po.length;
+         var select_count = 0;
         $.each(response.data.po, function (key, value) {
           var dtval = value._id;
           var flnm = value.file_nm;
@@ -200,6 +221,7 @@
           {
             if($("#fl"+dtval).length == 0) {
               data.push(dtval);
+              select_count+=1;
               $(".cl-"+dtval).addClass('selected');
               $('#download-list-checked').append('<input type="hidden" id="fl'+dtval+'" name="download_doc[]" value="'+flnm+'" /> <input type="hidden" id="po'+dtval+'" name="id_po[]" value="'+dtval+'" />');
               $('.checked-'+value._id).prop('checked',true);
@@ -213,11 +235,23 @@
           
 
         });
-        $('[deselect-all]').show();
-        $('[select-all]').hide();
+        if(select_count > 0)
+        {   
+          select.prop('disabled',false)
+          $('#select-all-spinner').addClass('fa-check-square')
+          $('#select-all-spinner').removeClass('fa-spin fa-spinner')
+          $('[deselect-all]').show();
+          $('[select-all]').hide();
+        } else{
+          select.prop('disabled',false)
+          $('#select-all-spinner').addClass('fa-check-square')
+          $('#select-all-spinner').removeClass('fa-spin fa-spinner')
+        }
         })
         .catch(function (error) {
-          console.log(error);
+          $('#select-all-spinner').addClass('fa-check-square')
+          $('#select-all-spinner').removeClass('fa-spin fa-spinner')
+          // console.log(error);
         });
              // $('input:checkbox:checked').trigger('click')
       //  $('input:checkbox').prop('checked', true);
