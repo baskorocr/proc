@@ -208,11 +208,10 @@ class PurchasingProcessController extends Controller
              $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
              $ponum = array_filter(preg_split('/\r\n|\r|\n/',$request->po_num));
             $q = PurchasingProcess::where(function($query) use ($request,$vendor_list,$ponum){
-             
-                if(empty($request->date_from) && empty($request->date_to) && (empty($request->po_num)) && ((count($vendor_list)==0)) &&  $request->vendor_select == "Choose Vendor")
+                if(empty($request->date_from) && empty($request->date_to))
                  {
                     
-                    $mf->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                   return $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
                  }
                 if (!empty($request->po_num)) {
                    return $query->whereIn('po_num', $ponum);
@@ -323,7 +322,7 @@ class PurchasingProcessController extends Controller
            //   return $file_exist;
 
             // return '<input type="checkbox" data-filenm="'.$data->file_nm.'" data-mgid="'.$data->_id.'"  class="checked" id="'.$data->_id.'" onclick="selectedDwn(\'#'.$data->_id.'\')"  name="downloadchk[]" value="'.$data->po_num.'">';
-            if($data->file_nm=="-"  || empty($data->file_nm)){
+            if($data->file_nm == "-"  || empty($data->file_nm)){
                  return "<small><i class='fa fa-exclamation-circle' style='color: red;'
                                    data-toggle='tooltip' data-placement='left' title='Not exist'>
                                   </i>
@@ -780,10 +779,10 @@ class PurchasingProcessController extends Controller
             $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
             $ponum = array_filter(preg_split('/\r\n|\r|\n/',$request->po_num));
             $q = PurchasingProcess::where(function($query) use ($request,$vendor_list,$ponum){
-                 if(empty($request->date_from) && empty($request->date_to) && (empty($request->po_num)) && ((count($vendor_list)==0)) &&  $request->vendor_select == "Choose Vendor")
+                 if(empty($request->date_from) && empty($request->date_to))
                  {
                     
-                    $mf->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                   return $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
                  }
                 if (!empty($request->po_num)) {
                    return $query->whereIn('po_num', $ponum);
