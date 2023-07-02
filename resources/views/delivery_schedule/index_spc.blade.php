@@ -38,22 +38,22 @@
 											<div class="row">
 												<div class="col-md-6">
 													from
-													<input type="text" name="start" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('start'))?"":Request::get('start')}}"/>
+													<input enable-search type="text" name="start" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('start'))?"":Request::get('start')}}"/>
 												</div>
 												<div class="col-md-6"> to
-													<input type="text" name="end" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('end'))?"":Request::get('end')}}"/></div>
+													<input enable-search type="text" name="end" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('end'))?"":Request::get('end')}}"/></div>
 												</div>
 												
 												<div class="col-12">
 													<label>Manifest Number</label>
-													<textarea class="form-control" rows="3" name="manifest" id="po_textarea"   placeholder="SO{{date('y')}}00xxx">{{Request::get('manifest')}}</textarea>
+													<textarea enable-search class="form-control" rows="3" name="manifest" id="po_textarea"   placeholder="SO{{date('y')}}00xxx">{{Request::get('manifest')}}</textarea>
 													<a href="javascript:void(0);" onclick="$('#po_textarea').val('');">Clear</a>
 												</div>
 											</div>
 										</div>
 										<div class="col-lg-5">
 											<div class="input-group col-sm-3" style="margin-top: 10px; margin-bottom: 5px">
-												<button type="submit" name="submit-find" value="1" class="btn btn-primary btn-block" style="min-width: 100%;">
+												<button disabled id="enable-search-btn"  type="submit" name="submit-find" value="1" class="btn btn-primary btn-block" style="min-width: 100%;">
 												<i class="fa fa-search"></i> Search
 												</button>
 											</div>
@@ -65,7 +65,7 @@
 											<div class="col-sm-10">
 												<div class="row">
 													<div class="col-10">
-														<select name="vendor_select" class="form-select select2" id="select_vendor" aria-label="Default select example">
+														<select enable-search name="vendor_select" class="form-select select2" id="select_vendor" aria-label="Default select example">
 															<option value="" >Choose Vendor</option>
 															@foreach($list_vendor as $vendor)
 															<option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
@@ -76,7 +76,7 @@
 														<button id="add_vendor" type="button" class="btn btn-primary btn-sm" onclick="addVendor()" style="margin-left:-22px;min-width: 100%;" ><i class="fas fa-plus"></i></button>
 													</div>
 												</div>
-												<textarea class="form-control" rows="3" name="vendor_list" id="vendor_list"  placeholder="1000xxx">{{Request::get('vendor_list')}}</textarea>
+												<textarea enable-search class="form-control" rows="3" name="vendor_list" id="vendor_list"  placeholder="1000xxx">{{Request::get('vendor_list')}}</textarea>
 												<a href="javascript:void(0);" onclick="$('#vendor_list').val('');">Clear</a>
 											</div>
 										</div>
@@ -165,10 +165,13 @@
 	@section('javascript')
 	<script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 	<script>
-
-    	$(document).ready(function(){
-			$('#select_vendor').val('{{Request::get('vendor_select')}}').trigger('change');
-	})
+	$('[enable-search]').on('keyup change', function(e) {
+          $('#enable-search-btn').prop('disabled',false)
+      });
+		$(document).ready(function(){
+					$('#select_vendor').val('{{Request::get('vendor_select')}}').trigger('change');
+					 $('#enable-search-btn').prop('disabled',true)
+			})
   function addVendor()
      {
       const textarea = document.getElementById('vendor_list');
