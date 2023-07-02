@@ -46,10 +46,10 @@
                  <div class="row">
                     <div class="col-md-6">
                       from
-                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;}else{ echo date('Y-m-01');} ?>"/>
+                      <input type="text" name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
                     </div>
                     <div class="col-md-6"> to
-                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;}else{ echo date('Y-m-t');} ?>"/></div>
+                      <input type="text" name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
                     </div>
                     
                     <div class="col-12">
@@ -354,7 +354,7 @@
         $('#download-list-checked').empty();
          $('#tb-download-list-po').DataTable().destroy();
         var table = $('#tb-download-list-po').DataTable({ autoWidth:false,
-        "order": [[ 1, "DESC" ]],
+        "order": [[ 11, "DESC" ]],
         processing: true,
         serverSide: true,
         autoWidth:false,

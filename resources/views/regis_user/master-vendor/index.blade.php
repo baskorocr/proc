@@ -77,9 +77,18 @@
     	$.fn.dataTable.ext.errMode = 'none';
       $('#master-vendor').DataTable({ autoWidth:false, dom: 'Bfrtip', scrollX: true,
       	buttons: [
-              'excel'
+               {
+								      // extend: 'excelHtml5',
+								      text: 'Excel',
+								       action: function ( e, dt, node, config ) {
+						                window.location = "{{route('regis-user.vendor.export')}}";
+						            }
+														       
+								          
+								    },
             ],
-        "order": [[ 1, "DESC" ]],
+      	
+        "order": [[ 1, "ASC" ]],
         processing: true,
         serverSide: true,
         autoWidth:false,

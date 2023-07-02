@@ -7,6 +7,7 @@ use App\Models\MasterVendor;
 use Numbering;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Imports\ImportVendor;
+use App\Exports\VendorExport;
 
 class MasterVendorController extends Controller
 {
@@ -22,7 +23,12 @@ class MasterVendorController extends Controller
         $data = MasterVendor::all();
         return view('regis_user/master-vendor/index')->with(['vendor' => $data]);
     }
-
+ 
+     public function export(Request $request)
+    {
+          return \Excel::download(new VendorExport,'EXPORT-EPROC-DHARMA-POLIMETAL-'.date('Ymd')."-VENDOR".'.xlsx');
+       
+    }   
     public function upload()
     {
         // $data = MasterVendor::all();

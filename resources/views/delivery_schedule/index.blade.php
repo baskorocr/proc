@@ -38,10 +38,10 @@
 											<div class="row">
 												<div class="col-md-6">
 													from
-													<input type="text" name="start" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('start'))?date('Y-m-01'):Request::get('start')}}"/>
+													<input type="text" name="start" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('start'))?"":Request::get('start')}}"/>
 												</div>
 												<div class="col-md-6"> to
-													<input type="text" name="end" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('end'))?date('Y-m-t'):Request::get('end')}}"/></div>
+													<input type="text" name="end" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('end'))?"":Request::get('end')}}"/></div>
 												</div>
 												
 												<div class="col-12">

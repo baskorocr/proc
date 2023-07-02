@@ -61,13 +61,13 @@ return [
         |
         */
         'properties'             => [
-            'creator'        => '',
+            'creator'        => 'eProcurement Dharma Polimetal',
             'lastModifiedBy' => '',
             'title'          => '',
             'description'    => '',
             'subject'        => '',
             'keywords'       => '',
-            'category'       => '',
+            'category'       => 'export',
             'manager'        => '',
             'company'        => '',
         ],

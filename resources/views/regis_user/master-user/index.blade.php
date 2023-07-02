@@ -29,6 +29,7 @@
 								</ul>
 							</div>
 							<div class="table-responsive mt-3">
+							
 								<table  class="table table-bordered table-striped table-sm" id="master-user">
 									<thead>
 										<th># <i style="margin-left:10px" class="ml-3 fa fa-list"></i></th>
@@ -61,16 +62,37 @@
 
     <script>
     	$(document).ready(function() {
+    	
     	// $('#select-access').select2({    dropdownParent: $('.modal')});
     	$('#tipe_user').select2({    dropdownParent: $('#create-user'),width:"100%"});
     	$('#accs_user').select2({    dropdownParent: $('#create-user'),width:"100%"});
     	$('#accs_vendor').select2({    dropdownParent: $('#create-user-vendor'),width:"100%"});
     	$('#id_vendor').select2({    dropdownParent: $('#create-user-vendor'),width:"100%"});
     });
+    	
       $('#master-user').DataTable({  dom: 'Bfrtip',
             buttons: [
-                'copy', 'excel'
-            ],
+            				'copy',
+								    {
+								      // extend: 'excelHtml5',
+								      text: 'Excel',
+								       action: function ( e, dt, node, config ) {
+						                window.location = "{{route('regis-user.export')}}";
+						            }
+														       
+								          
+								    },
+ 											
+								  ],
+            "columns": [
+					   { "searchable": false },
+					   { "searchable": true },
+					   { "searchable": false},
+					   { "searchable": true },
+					   { "searchable": false },
+					   { "searchable": false },
+					   { "searchable": false }
+					  ],
         "order": [[ 1, "DESC" ]],
         processing: true,
         serverSide: true,
@@ -106,7 +128,10 @@
 		  } 
         ]
       });
+$('#master-user').on('draw.dt',   function () {
 
+    		$('.dt-buttons .btn-group .flex-wrap').append('	<a href="{{route('regis-user.export')}}" class="btn btn-secondary buttons-excel buttons-html5">Excel</a>')
+    	});
 	  function deleteProject(url,id)
 		{
 			Swal.fire({
