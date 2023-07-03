@@ -83,7 +83,7 @@ class MonitoringDeliveryController extends Controller
                     $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
 
-             $data = $mf->get();
+             $data = $mf->limit(10)->get();
 
             }
        } else {
@@ -115,7 +115,7 @@ class MonitoringDeliveryController extends Controller
                 } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
                     $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
-                $data = $mf->get();
+                $data = $mf->limit(10)->get();
             }else{
 
                 $mf =  ManifestHeader::where('mf_type','like','%');
@@ -139,7 +139,7 @@ class MonitoringDeliveryController extends Controller
                     $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
 
-             $data = $mf->get();
+             $data = $mf->limit(10)->get();
 
             }
        }
@@ -162,12 +162,12 @@ class MonitoringDeliveryController extends Controller
                 return $data->id_vendor;
             })
             ->addColumn('in_kanban', function ($data) {
-                
-                return ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
+                return 0;
+                // return ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
             })
             ->addColumn('recieved_kanban', function ($data) {
-                
-                return ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
+                return 0;
+                // return ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
             })
             ->editColumn('sent', function ($data) {
                 
@@ -205,38 +205,41 @@ class MonitoringDeliveryController extends Controller
                 return @$data->vendors->nm_vendor;
             })
             ->editColumn('material', function ($data) {
-                $md = $data->manifestDetails()->first();
-                return @$md->material;
+                return 0;
+                // $md = $data->manifestDetails()->first();
+                // return @$md->material;
             })
             ->editColumn('material_desc', function ($data) {
-                
-                return @$data->manifestDetails()->first()->material_desc;
+                return 0;
+                // return @$data->manifestDetails()->first()->material_desc;
             })
             ->editColumn('qty_tot', function ($data) {
-                
-                return $data->manifestDetails->sum('qty_pack');
+                return 0;
+                // return $data->manifestDetails->sum('qty_pack');
             })
             ->editColumn('receive_stat', function ($data) {
-                $kanban_in = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
-                $tot_kanban = $data->manifestDetails->count('kanban');
-                  if ($tot_kanban == $kanban_in) {
-                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
-                    } else {
-                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
-                    }
-                return $receive_stat;
+                // $kanban_in = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
+                // $tot_kanban = $data->manifestDetails->count('kanban');
+                //   if ($tot_kanban == $kanban_in) {
+                //         $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                //     } else {
+                //         $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                //     }
+                // return $receive_stat;
+                return 0;
             })
             ->editColumn('kanban_stat', function ($data) {
-                $kanban_received = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
-                 $tot_kanban = $data->manifestDetails->count('kanban');
+                // $kanban_received = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
+                //  $tot_kanban = $data->manifestDetails->count('kanban');
                 
-                  if ( $tot_kanban == $kanban_received) {
-                        $kanban_in = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
-                    } else {
-                        $kanban_in = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
-                    }
+                //   if ( $tot_kanban == $kanban_received) {
+                //         $kanban_in = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                //     } else {
+                //         $kanban_in = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                //     }
                
-                return $kanban_in;
+                // return $kanban_in;
+                return 0;
             })
             ->editColumn('active_stat', function ($data) {
                if ($data->active == 'O') {

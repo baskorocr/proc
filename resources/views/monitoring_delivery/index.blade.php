@@ -176,6 +176,7 @@ $('#monitoring-delivery-dummy').DataTable();
     "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
     },
     ajax: "{!! route('api.monitoring.delivery.datatables',['dt_start' => Request::get('start'),'dt_end' => Request::get('end'),'manifest' => Request::get('manifest'),'vendor_list' => Request::get('vendor_list'),'vendor_select' => Request::get('vendor_select')])!!}",
+    "deferRender": true,
     columns: [
     {
     data: 'manifest',

@@ -28,7 +28,7 @@ $(document).ready(function () {
 					$('.div_notif').show();
 					if(xhr.statusText=="Unprocessable Content")
 					{
-						$('#label_notif').html("<i class=\"fa fa-warning\"> </i> "+xhr.responseJSON.message+"");
+						$('#label_notif').html("<i class=\"fa fa-warning\"> </i> "+xhr.responseJSON.errors.password+"");
 					}
 					else{
 						$('#label_notif').html('<i class="fa fa-warning"></i> Please check username or password!');
