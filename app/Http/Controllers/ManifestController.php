@@ -88,7 +88,7 @@ class ManifestController extends Controller
                     $dateNow = date('Y-m-d');
                     $expired_date = strtotime(Carbon::parse($manifest->delivery_date)->addDays($days));
                     
-                    if($now >= strtotime(Carbon::parse($manifest->delivery_date))) {
+                    if($now <= strtotime(Carbon::parse($manifest->delivery_date))) {
                         if($now > $expired_date)
                         {
                             return response()->json([
