@@ -10,10 +10,124 @@ use Carbon\Carbon;
 
 class MonitoringDeliveryController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        ini_set('max_execution_time', 600);
         $vendor = Vendor::all();
-        return view('monitoring_delivery/index')->with(['list_vendor' => $vendor]);
+        $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+        $tot_per_page = 10;
+        $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
+       if(auth()->user()->is_vendor)
+       {
+            if(!empty($request->dt_start) && !empty($request->dt_end))
+            {
+                $sYear = date("Y",strtotime($request->dt_start));
+                $sMonth = date("m",strtotime($request->dt_start));
+                $sDay = date("d",strtotime($request->dt_start));
+
+                $eYear = date("Y",strtotime($request->dt_end));
+                $eMonth = date("m",strtotime($request->dt_end));
+                $eDay = date("d",strtotime($request->dt_end));
+                 $mf = ManifestHeader::where('id_vendor', auth()->user()->foreign_id)->whereBetween(
+                             'delivery_date', array(
+                                 \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
+                                  \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
+                             ));
+                if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                 if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+                $data =$mf->orderBy('delivery_date','DESC')->paginate($tot_per_page);
+            }else{
+           
+
+             $mf =   ManifestHeader::where('id_vendor', auth()->user()->foreign_id);
+             if(empty($request->dt_start) && empty($request->date_to) && (count($manifest) == 0) && ((count($vendor_list)==0)) &&  $request->vendor_select == null)
+                 {
+                    
+                    $mf->whereBetween('delivery_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                 }
+             if(!empty($request->dt_start) && empty($request->date_to))
+             {
+                
+                $mf->whereBetween('delivery_date', [Carbon::parse($request->dt_start.' 00:00:00'), Carbon::parse($request->dt_start.' 23:59:59')]);
+             }
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data =$mf->orderBy('delivery_date','DESC')->paginate($tot_per_page);
+
+            }
+       } else {
+             
+           if(!empty($request->dt_start) && !empty($request->dt_end))
+            { 
+
+                $sYear = date("Y",strtotime($request->dt_start));
+                $sMonth = date("m",strtotime($request->dt_start));
+                $sDay = date("d",strtotime($request->dt_start));
+
+                $eYear = date("Y",strtotime($request->dt_end));
+                $eMonth = date("m",strtotime($request->dt_end));
+                $eDay = date("d",strtotime($request->dt_end));
+
+                 $mf = ManifestHeader::whereBetween(
+                         'delivery_date', array(
+                             \Carbon\Carbon::createFromDate($sYear, $sMonth, $sDay),
+                              \Carbon\Carbon::createFromDate($eYear, $eMonth, $eDay)
+                         ));
+               if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+
+
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+                $data =$mf->orderBy('delivery_date','DESC')->paginate($tot_per_page);
+            }else{
+
+                $mf =  ManifestHeader::where('mf_type','like','%');
+                if(empty($request->dt_start) && empty($request->date_to) && (count($manifest) == 0) && ((count($vendor_list)==0)) &&  $request->vendor_select == null)
+                 {
+                    
+                    $mf->whereBetween('delivery_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                 }
+                if(!empty($request->dt_start) && empty($request->date_to))
+                 {
+                    
+                    $mf->whereBetween('delivery_date', [Carbon::parse($request->dt_start.' 00:00:00'), Carbon::parse($request->dt_start.' 23:59:59')]);
+                 }
+              if(count($manifest) > 0)
+                {
+                    $mf->whereIn('manifest', $manifest);
+                }
+                if ((count($vendor_list)>0)) {
+                    $mf->whereIn('id_vendor', $vendor_list);
+                } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
+                    $mf->whereIn('id_vendor',[$request->vendor_select]);
+                }
+
+             $data = $mf->orderBy('delivery_date','DESC')->paginate($tot_per_page);
+
+            }
+       }
+        return view('monitoring_delivery/index')->with(['list_vendor' => $vendor,'datas' => $data ]);
     }
     
     public function detail_material($manifest = null)
@@ -83,7 +197,7 @@ class MonitoringDeliveryController extends Controller
                     $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
 
-             $data = $mf->limit(10)->get();
+             $data = $mf->get();
 
             }
        } else {
@@ -115,7 +229,7 @@ class MonitoringDeliveryController extends Controller
                 } elseif((count($vendor_list)==0) AND $request->vendor_select != null){
                     $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
-                $data = $mf->limit(10)->get();
+                $data = $mf->get();
             }else{
 
                 $mf =  ManifestHeader::where('mf_type','like','%');
@@ -139,7 +253,7 @@ class MonitoringDeliveryController extends Controller
                     $mf->whereIn('id_vendor',[$request->vendor_select]);
                 }
 
-             $data = $mf->limit(10)->get();
+             $data = $mf->get();
 
             }
        }
@@ -162,12 +276,12 @@ class MonitoringDeliveryController extends Controller
                 return $data->id_vendor;
             })
             ->addColumn('in_kanban', function ($data) {
-                return 0;
-                // return ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
+                // return 0;
+                return ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
             })
             ->addColumn('recieved_kanban', function ($data) {
-                return 0;
-                // return ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
+                // return 0;
+                return ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
             })
             ->editColumn('sent', function ($data) {
                 
@@ -205,41 +319,41 @@ class MonitoringDeliveryController extends Controller
                 return @$data->vendors->nm_vendor;
             })
             ->editColumn('material', function ($data) {
-                return 0;
-                // $md = $data->manifestDetails()->first();
-                // return @$md->material;
+                // return 0;
+                $md = $data->manifestDetails()->first();
+                return @$md->material;
             })
             ->editColumn('material_desc', function ($data) {
-                return 0;
-                // return @$data->manifestDetails()->first()->material_desc;
+                // return 0;
+                return @$data->manifestDetails()->first()->material_desc;
             })
             ->editColumn('qty_tot', function ($data) {
-                return 0;
-                // return $data->manifestDetails->sum('qty_pack');
+                // return 0;
+                return $data->manifestDetails->sum('qty_pack');
             })
             ->editColumn('receive_stat', function ($data) {
-                // $kanban_in = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
-                // $tot_kanban = $data->manifestDetails->count('kanban');
-                //   if ($tot_kanban == $kanban_in) {
-                //         $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
-                //     } else {
-                //         $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
-                //     }
-                // return $receive_stat;
-                return 0;
+                $kanban_in = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
+                $tot_kanban = $data->manifestDetails->count('kanban');
+                  if ($tot_kanban == $kanban_in) {
+                        $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                    } else {
+                        $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                    }
+                return $receive_stat;
+                // return 0;
             })
             ->editColumn('kanban_stat', function ($data) {
-                // $kanban_received = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
-                //  $tot_kanban = $data->manifestDetails->count('kanban');
+                $kanban_received = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
+                 $tot_kanban = $data->manifestDetails->count('kanban');
                 
-                //   if ( $tot_kanban == $kanban_received) {
-                //         $kanban_in = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
-                //     } else {
-                //         $kanban_in = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
-                //     }
+                  if ( $tot_kanban == $kanban_received) {
+                        $kanban_in = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                    } else {
+                        $kanban_in = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                    }
                
-                // return $kanban_in;
-                return 0;
+                return $kanban_in;
+                // return 0;
             })
             ->editColumn('active_stat', function ($data) {
                if ($data->active == 'O') {
