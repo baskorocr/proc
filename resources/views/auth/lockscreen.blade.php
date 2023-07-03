@@ -4,16 +4,23 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<!-- CSRF Token -->
+		  <meta content="e-Procurement Dharma Polimetal" name="description">
+ 		 <meta content="eproc,Dharma Polimetal,eprocurement" name="keywords">
 		<meta name="csrf-token" content="{{ csrf_token() }}">
 		{{-- <title>{{ config('app.name', 'eProc Dharma Polimetal') }}</title --}}
-		<title>eProc Dharma Polimetal | Lockscreen</title>
-		{{--    <!-- Scripts -->
+		<title>Lockscreen | eProc Dharma Polimetal</title>
+
+		<link rel="icon" type="image/x-icon" href="{{ asset('img/favicon3.png') }}" />
+	    <link rel="SHORTCUT ICON" href="{{ asset('img/favicon3.png') }}" />
+	    <link rel="icon" href="{{ asset('img/favicon.ico') }}" type="image/ico" />
+		   <!-- Scripts -->
 		<!--script src="{{ asset('js/app.js') }}" defer></script-->
 		<!-- Fonts -->
-		<!--link rel="dns-prefetch" href="//fonts.gstatic.com">
-		<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet"-->
+		<link rel="dns-prefetch" href="//fonts.gstatic.com">
+		<link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+		<link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
 		<!-- Styles -->
-		<!--link href="{{ asset('css/app.css') }}" rel="stylesheet"--> --}}
+		<!--link href="{{ asset('css/app.css') }}" rel="stylesheet"-->
 		
 		<!--===============================================================================================-->
 		<link rel="stylesheet" type="text/css" href="{{ asset('assets/login/vendor/bootstrap/css/bootstrap.min.css') }}">

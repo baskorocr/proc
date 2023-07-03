@@ -3,13 +3,14 @@
 @section('content')
 <link href="https://unpkg.com/gijgo@1.9.14/css/gijgo.min.css" rel="stylesheet" type="text/css" />
 <style type="text/css">
-    div.table-responsive > div.dataTables_wrapper > div.row
+/*    div.table-responsive > div.dataTables_wrapper > div.row
 {
     overflow:auto !important;
-}
+}*/
 div.dataTables_wrapper div.dt-row{
     min-height:100px;
 }
+.pagination{ float: right; margin-top: 10px; } 
 </style>
 <main id="main" class="main">
     <div class="pagetitle">
@@ -40,10 +41,10 @@ div.dataTables_wrapper div.dt-row{
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     from
-                                                    <input type="text" name="start" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('start'))?"":Request::get('start')}}"/>
+                                                    <input type="text" name="dt_start" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('dt_start'))?"":Request::get('dt_start')}}"/>
                                                 </div>
                                                 <div class="col-md-6"> to
-                                                    <input type="text" name="end" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('end'))?"":Request::get('end')}}"/></div>
+                                                    <input type="text" name="dt_end" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('dt_end'))?"":Request::get('dt_end')}}"/></div>
                                                 </div>
                                                 
                                                 <div class="col-12">
@@ -93,7 +94,7 @@ div.dataTables_wrapper div.dt-row{
                         <div class="card-body">
                             <div class="table-responsive mt-3">
                                 @if((!empty(Request::get('start')) && !empty(Request::get('end'))) || !empty(Request::get('vendor_select')) || !empty(Request::get('manifest')) || Request::get('submit-find'))
-                                <table  class="table table-bordered table-striped table-sm" id="monitoring-delivery">
+                               {{--  <table  class="table table-bordered table-striped table-sm" id="monitoring-delivery">
                                     <thead>
                                         <th>Manifest</th>
                                         <th>Delivery Date</th>
@@ -109,11 +110,101 @@ div.dataTables_wrapper div.dt-row{
                                     <tbody>
                                         
                                     </tbody>
+                                </table> --}}
+
+                                 <table  class="table table-bordered table-striped table-sm" id="monitoring-delivery-new" >
+                                    <thead>
+                                        <th>Manifest </th>
+                                        <th>Delivery Date </th>
+                                        <th>PO Number </th>
+                                        <th>Vendor Name </th>
+                                        <th>Total Kanban </th>
+                                        <th>Scan Stat </th>
+                                        <th>GR Stat </th>
+                                        <th>MF Stat </th>
+                                        <th><i class="fa fa-list"></i></th>
+                                        
+                                    </thead>
+                                    <tbody>
+                                     @foreach($datas as $data)   
+                                     <?php 
+                                      $md = $data->manifestDetails()->first();
+                                        if($data->stat == "P")
+                                        {
+                                            if ($data->manifestDetails->sum('qty_pack') == $data->manifestDetails->sum('qty_in')) {
+                                            $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
+                                            } else {
+                                            $scan_stat = "<small><span class=\"badge bg-primary\">On Progress</span></small>";
+                                            }
+                                        } elseif($data->stat == "H")
+                                        {
+
+                                             $scan_stat = "<small><span class=\"badge bg-danger\">Outstanding</span></small>";
+
+                                        }elseif ($data->stat  == "D"){
+                                            $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
+                                        } else {
+                                            $scan_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
+                                        }
+
+
+                                        $kanban_in = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('issued_date')->groupBy('manifest')->count('issued_date');
+                                        $tot_kanban = $data->manifestDetails->count('kanban');
+                                        if ($tot_kanban == $kanban_in) {
+                                            $receive_stat = "<small><span class=\"badge bg-success\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                                        } else {
+                                            $receive_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                                        }
+
+
+                                        $kanban_received = ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
+                                        $tot_kanban = $data->manifestDetails->count('kanban');
+
+                                        if ( $tot_kanban == $kanban_received) {
+                                            $kanban_in = "<small><span class=\"badge bg-success\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                                        } else {
+                                            $kanban_in = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_received . "/" . $tot_kanban . "</span></small>";
+                                        }
+
+
+                                        if ($data->active == 'O') {
+                                            $active_stat = "<small><span class=\"badge bg-warning text-dark\">Open</span></small>";
+                                        } else {
+                                            $active_stat = "<small><span class=\"badge bg-success\">Closed</span></small>";
+                                        }
+
+
+                                    ?>
+                                    <tr>
+                                    <td>{{$data->manifest}}</td>
+                                    <td>{{$data->delivery_date}}</td>
+                                    <td>{{$data->po_num}}</td>
+                                    <td>{{@$data->vendors->nm_vendor}}</td>
+                                    <td>{!!$kanban_in!!}</td>
+                                    <td>{!!$scan_stat!!}</td>
+                                    <td>{!!$receive_stat!!}</td>
+                                    <td>{!!$active_stat!!}</td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic example">
+                                            <a href="{{@route('monitoring.delivery.detail.material',['manifest' => @$data->manifest])}}" title="Detail Material {{@$data->manifest}}" class="btn btn-success" target="_blank"><i class="fas fa-sitemap"></i></a>
+                                                
+                                             <a href="{{@route('monitoring.delivery.detail.kanban',['manifest' =>@$data->manifest])}}" title="Detail Kanban {{@$data->manifest}}" class="btn btn-primary" target="_blank"><i class="fas fa-file"></i></a>
+                                        </div>
+                                    </td>
+                                    </tr>
+                                     @endforeach
+                                    </tbody>
                                 </table>
+                                <div class="row justify-content-end"> 
+                                    <div class="col-md-6"></div>
+                                    <div class="col-md-6 float-end">{{$datas->appends(Request::input())->links()}}</div>
+
+                                </div>
+
                                 @else
                                   <table  class="table table-bordered table-striped table-sm" id="monitoring-delivery-dummy">
                                     <thead>
-                                        <th>Manifest</th>
+                                        <th>Manifest </th>
                                         <th>Delivery Date</th>
                                         <th>PO Number</th>
                                         <th>Vendor Name</th>
@@ -167,7 +258,10 @@ $(document).ready(function(){
       @if((empty(Request::get('start')) && empty(Request::get('end'))) || empty(Request::get('vendor_select')) || empty(Request::get('manifest')) || empty(Request::get('submit-find')))
 $('#monitoring-delivery-dummy').DataTable();
 @endif
-    $('#monitoring-delivery').DataTable({
+$('#monitoring-delivery-new').DataTable({"bPaginate": false,  "bInfo" : false,   "searching": false, "order": [[ 1, "DESC" ]],});
+
+
+   {{-- $('#monitoring-delivery').DataTable({
     "order": [[ 1, "DESC" ]],
     processing: true,
     serverSide: true,
@@ -176,6 +270,7 @@ $('#monitoring-delivery-dummy').DataTable();
     "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
     },
     ajax: "{!! route('api.monitoring.delivery.datatables',['dt_start' => Request::get('start'),'dt_end' => Request::get('end'),'manifest' => Request::get('manifest'),'vendor_list' => Request::get('vendor_list'),'vendor_select' => Request::get('vendor_select')])!!}",
+    "deferRender": true,
     columns: [
     {
     data: 'manifest',
@@ -211,7 +306,7 @@ $('#monitoring-delivery-dummy').DataTable();
     name: 'button'
     },
     ]
-    });
+    });--}}
     
     </script>
     @endsection

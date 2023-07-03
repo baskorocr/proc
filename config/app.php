@@ -238,6 +238,7 @@ return [
         'AutoNumber'=>Alfa6661\AutoNumber\AutoNumberServiceProvider::class,
         'IsoHelper'=>App\Helpers\IsoHelper::class,
         'UserLogging'=>App\Helpers\UserLogging::class,
+        'ManifestDetail'=>App\Models\ManifestDetail::class,
 
     ],
 

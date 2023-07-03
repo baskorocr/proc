@@ -27,7 +27,8 @@ class AuthController extends Controller
             $log['user'] = auth()->user()->_id;
             $log['time'] = date("Y-m-d H:i:s");
             \Log::info($log);
-            return response()->json(['status' => true,'message'=>'Set To Idle'],200);
+
+            return response()->json(['status' => true,'message'=>'Set To Idle.'],200);
         }
 
         return response()->json(['status' => false,'message'=>'Unauthenticated.'],403);
@@ -36,6 +37,18 @@ class AuthController extends Controller
     public function unlockScreen(Request $request)
     {
         $user = User::where('username', $request->username)->first();
+        if(empty($user))
+        {
+            $log = [];
+            $log['status'] = "unlockscr-failed";
+            $log['user'] = auth()->user()->_id;
+            $log['time'] = date("Y-m-d H:i:s");
+            $log['reason'] ="User is empty";
+            $log['params'] = json_encode(['username' => $request,'password' => empty($request->password) ? "NO":"YES",'ip_address' => $request->ip()]);
+            \Log::info($log);
+
+            return redirect()->back()->with(['message_fail' => "User is invalid, please refresh this page."]);
+        }
         if (Hash::check($request->password, $user->password)){
             Cache::forever('active_'.auth()->user()->_id,true); //30 Jam default
             if(Cache::has('redirect_lockscreen_'.auth()->user()->_id))
@@ -56,8 +69,10 @@ class AuthController extends Controller
         }
 
     }
+    
     public function login(Request $request)
     {
+        session()->regenerate(); 
         $usermd5 = User::where('username', $request->username)->first();
         if(empty($usermd5))
         {
@@ -85,7 +100,9 @@ class AuthController extends Controller
         $usermd5 = null;
         $credentials = $request->validate([
             'username' => 'required',
-            'password' => 'required|min:6'
+            'password' => 'required'
+        ], [
+        'password.min' => 'Password of at least 6 characters.'
         ]);
         
          

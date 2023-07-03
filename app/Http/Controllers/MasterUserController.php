@@ -238,7 +238,7 @@ class MasterUserController extends Controller
       
         $master_user = MasterUser::find($request->id);
         // $role = Role::where('_id',$request->role)->first();
-        $master_user->id_user = \Numbering::generateAuto(new \App\Models\MasterUser(),"id_user", 5, 1, 1, "");
+        // $master_user->id_user = \Numbering::generateAuto(new \App\Models\MasterUser(),"id_user", 5, 1, 1, "");
         $master_user->nm_user = $request->nm_user;
         $master_user->id_tipe_user = $request->id_tipe_user;
         $master_user->status_user = $request->status_user;
