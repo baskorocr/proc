@@ -177,6 +177,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        Jenssegers\Agent\AgentServiceProvider::class,
+
 
     ],
 
@@ -239,6 +241,7 @@ return [
         'IsoHelper'=>App\Helpers\IsoHelper::class,
         'UserLogging'=>App\Helpers\UserLogging::class,
         'ManifestDetail'=>App\Models\ManifestDetail::class,
+        'Agent' => Jenssegers\Agent\Facades\Agent::class,
 
     ],
 

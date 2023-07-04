@@ -17,7 +17,7 @@ class UserLogRecord extends Model
 	
 	// protected $primaryKey = 'id_menu';
 
-	protected $fillable = ['id_user','ip_address','datetime_log','attempt','activity','info','user_agent'];
+	protected $fillable = ['id_user','platform_type','device','platform','browser','ip_address','datetime_log','attempt','activity','info','user_agent'];
 
 	public $dates = ['datetime_log'];
 
