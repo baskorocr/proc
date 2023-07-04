@@ -245,43 +245,52 @@ class PurchasingProcessController extends Controller
     public function getListPo(Request $request)
     {
         ini_set('max_execution_time', 600);
-        if($request->search == true)
-        {
+        // if($request->search == true)
+        // {
              $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
              $ponum = array_filter(preg_split('/\r\n|\r|\n/',$request->po_num));
             $q = PurchasingProcess::where(function($query) use ($request,$vendor_list,$ponum){
-                if(empty($request->date_from) && empty($request->date_to))
+                 if(empty($request->date_from) && empty($request->date_to) && empty($vendor_list) && ($request->vendor_select == "Choose Vendor") && empty($request->po_num))
                  {
-                    
-                   return $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                   
+                    $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
                  }
-                if (!empty($request->po_num)) {
-                   return $query->whereIn('po_num', $ponum);
-                }
+              
 
                 if (!empty($request->date_from) && !empty($request->date_to)) {
-                    return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
+                  
+                     $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
                 }elseif(!empty($request->date_from) && empty($request->date_to))
                 {
-                    return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_from.' 23:59:59')]);
+                   
+                     $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_from.' 23:59:59')]);
                 }
 
 
 
                 if (!empty($vendor_list)) {
-                    return $query->whereIn('id_vendor', $vendor_list);
+                   
+                     $query->whereIn('id_vendor', $vendor_list);
                 }
+
+                return $query;
             });
              // AND $request->vendor_select != "Choose Vendor"
 
-            if((count($vendor_list)>0) || ($request->vendor_select != "Choose Vendor"))
+            if((count($vendor_list)>0) || ($request->vendor_select != ""))
             {
               if ((count($vendor_list)>0)) {
+              
                     $q->whereIn('id_vendor', $vendor_list);
-                } elseif((count($vendor_list)==0)){
+                } elseif((count($vendor_list)==0) && ($request->vendor_select != "")){
+                 
                    $q->whereIn('id_vendor',[$request->vendor_select]);
                 }
             }
+              if (!empty($request->po_num)) {
+
+                    $q->whereIn('po_num', $ponum);
+                }
             if(auth()->user()->is_vendor)
             {
                $data = $q->where('id_vendor','=',auth()->user()->foreign_id)->get();
@@ -289,7 +298,7 @@ class PurchasingProcessController extends Controller
                 $data = $q->where('id_vendor','!=','')->get();
             }
 
-        }
+        // }
        
         return \DataTables::of($data)
         ->editColumn('number', function($data){
@@ -818,40 +827,51 @@ class PurchasingProcessController extends Controller
          if($request->search)
         {
 
-            $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
-            $ponum = array_filter(preg_split('/\r\n|\r|\n/',$request->po_num));
+           
+             $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
+             $ponum = array_filter(preg_split('/\r\n|\r|\n/',$request->po_num));
             $q = PurchasingProcess::where(function($query) use ($request,$vendor_list,$ponum){
-                 if(empty($request->date_from) && empty($request->date_to))
+                 if(empty($request->date_from) && empty($request->date_to) && empty($vendor_list) && ($request->vendor_select == "Choose Vendor") && empty($request->po_num))
                  {
-                    
-                   return $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
+                   
+                    $query->whereBetween('doc_date', [Carbon::parse(date('Y-m-01').' 00:00:00'), Carbon::parse(date('Y-m-t').' 23:59:59')]);
                  }
-                if (!empty($request->po_num)) {
-                   return $query->whereIn('po_num', $ponum);
-                }
-
+              
 
                 if (!empty($request->date_from) && !empty($request->date_to)) {
-                    return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
+                  
+                     $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_to.' 23:59:59')]);
                 }elseif(!empty($request->date_from) && empty($request->date_to))
                 {
-                    return $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_from.' 23:59:59')]);
+                   
+                     $query->whereBetween('doc_date', [Carbon::parse($request->date_from.' 00:00:00'), Carbon::parse($request->date_from.' 23:59:59')]);
                 }
 
+
+
                 if (!empty($vendor_list)) {
-                    return $query->whereIn('id_vendor', $vendor_list);
+                   
+                     $query->whereIn('id_vendor', $vendor_list);
                 }
+
+                return $query;
             });
              // AND $request->vendor_select != "Choose Vendor"
 
-            if((count($vendor_list)>0) || ($request->vendor_select != "Choose Vendor"))
+            if((count($vendor_list)>0) || ($request->vendor_select != ""))
             {
               if ((count($vendor_list)>0)) {
+              
                     $q->whereIn('id_vendor', $vendor_list);
-                } elseif((count($vendor_list)==0)){
+                } elseif((count($vendor_list)==0) && ($request->vendor_select != "")){
+                 
                    $q->whereIn('id_vendor',[$request->vendor_select]);
                 }
             }
+              if (!empty($request->po_num)) {
+
+                    $q->whereIn('po_num', $ponum);
+                }
             if(auth()->user()->is_vendor)
             {
                $data = $q->where('id_vendor','=',auth()->user()->foreign_id)->get();
