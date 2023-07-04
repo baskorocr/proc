@@ -13,7 +13,7 @@
                 @csrf
 					<div class="login-logo" style="margin-top: -8%;" >
 						<br>
-						<center><img src="../assets/login/images/logo1.png" style="width: 80px; margin-top: 10%;"></center>
+						<center><img src="{{asset('assets/login/images/logo1.png')}}" style="font-family: Montserrat-Bold; width: 80px; margin-top: 10%;"></center>
 					</div>
                     <br>
                     <center><b style="color: #000; font-size: 20px;">eProcurement</b></center>

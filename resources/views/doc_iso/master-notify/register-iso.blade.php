@@ -32,12 +32,18 @@
                 <div class="row mb-3">
                   <label  style="font-size:15px" for="inputText" class="col-sm-2 col-form-label">Vendor</label>
                   <div class="col-sm-10">
+                     
+                    @if(auth()->user()->is_vendor)
+                      <b>{{ auth()->user()->foreign_id }} - {{ auth()->user()->vendor->nm_vendor }}</b>
+                      <input type="hidden" name="id_vendor" value="{{ auth()->user()->foreign_id }}">
+                    @else
                     <select name="id_vendor" id="id_vendor" required class="form-select" aria-label="Default select example">
                       <option selected disabled>Select Vendor</option>
                       @foreach($vendor as $item)
                       <option value="{{ $item->id_vendor }}">{{ $item->nm_vendor }}</option>
                       @endforeach
                     </select>
+                    @endif
                   </div>
                 </div>
 

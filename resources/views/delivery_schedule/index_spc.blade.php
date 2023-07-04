@@ -31,7 +31,7 @@
 							<div class="row">
 								<div class="col-lg-6">
 									<div class="">
-										<label>Manifest Date</label>
+										<label>Delivery Date</label>
 										
 										<div class="" style="width: 400px;">
 											<!-- <i class="fa fa-calendar"></i> -->
@@ -60,26 +60,52 @@
 										</div>
 									</div>
 									<div class="col-lg-5">
-										<div>
-											<label class="col-sm-5 col-form-label">Vendor</label>
-											<div class="col-sm-10">
-												<div class="row">
-													<div class="col-10">
-														<select enable-search name="vendor_select" class="form-select select2" id="select_vendor" aria-label="Default select example">
-															<option value="" >Choose Vendor</option>
-															@foreach($list_vendor as $vendor)
-															<option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
-															@endforeach
-														</select>
-													</div>
-													<div class="col-2">
-														<button id="add_vendor" type="button" class="btn btn-primary btn-sm" onclick="addVendor()" style="margin-left:-22px;min-width: 100%;" ><i class="fas fa-plus"></i></button>
-													</div>
-												</div>
-												<textarea enable-search class="form-control" rows="3" name="vendor_list" id="vendor_list"  placeholder="1000xxx">{{Request::get('vendor_list')}}</textarea>
-												<a href="javascript:void(0);" onclick="$('#vendor_list').val('');">Clear</a>
-											</div>
-										</div>
+ 									@if(auth()->user()->is_vendor)
+                                        <div>
+                                            <label class="col-sm-5 col-form-label">Vendor</label>
+                                            <div class="col-sm-10">
+                                                <div class="row">
+                                                    <div class="col-12">
+                                                       
+                                                        <select name="vendor" disabled class="form-select select2" id="select_vendor_usr" aria-label="Default select example">
+                                                            
+                                                            <option selected value="{{ auth()->user()->foreign_id }}">
+                                                                {{ auth()->user()->foreign_id }} - {{ auth()->user()->vendor->nm_vendor }}
+                                                            </option>
+                                               
+                                                        </select>
+                                                      
+                                                    </div>
+                                                   
+                                                </div>
+                                                <textarea class="form-control" disabled rows="3" name="vend" id="vend"  placeholder="1000xxx">{{ auth()->user()->foreign_id }}</textarea>
+                                                {{-- <a href="javascript:void(0);" onclick="$('#vendor_list').val('');">Clear</a> --}}
+                                            </div>
+                                        </div>
+                                        @else
+                                        <div>
+                                            <label class="col-sm-5 col-form-label">Vendor</label>
+                                            <div class="col-sm-10">
+                                                <div class="row">
+                                                    <div class="col-10">
+                                                       
+                                                        <select name="vendor_select" class="form-select select2" id="select_vendor" aria-label="Default select example">
+                                                            <option value="" >Choose Vendor</option>
+                                                            @foreach($list_vendor as $vendor)
+                                                            <option value="{{ $vendor->id_vendor }}">{{ $vendor->id_vendor }} - {{ $vendor->nm_vendor }}</option>
+                                                            @endforeach
+                                                        </select>
+                                                      
+                                                    </div>
+                                                    <div class="col-2">
+                                                        <button id="add_vendor" type="button" class="btn btn-primary btn-sm" onclick="addVendor()" style="margin-left:-22px;min-width: 100%;" ><i class="fas fa-plus"></i></button>
+                                                    </div>
+                                                </div>
+                                                <textarea class="form-control" rows="3" name="vendor_list" id="vendor_list"  placeholder="1000xxx">{{Request::get('vendor_list')}}</textarea>
+                                                <a href="javascript:void(0);" onclick="$('#vendor_list').val('');">Clear</a>
+                                            </div>
+                                        </div>
+                                        @endif
 										<br>
 									</div>
 								</div>

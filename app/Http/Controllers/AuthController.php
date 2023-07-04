@@ -22,11 +22,11 @@ class AuthController extends Controller
         {
             Cache::forget('active_'.auth()->user()->_id);
             Cache::forever('redirect_lockscreen_'.auth()->user()->_id, $request->redirect_lockscreen);
-            $log = [];
-            $log['status'] = "lockscr";
-            $log['user'] = auth()->user()->_id;
-            $log['time'] = date("Y-m-d H:i:s");
-            \Log::info($log);
+            // $log = [];
+            // $log['status'] = "lockscr";
+            // $log['user'] = auth()->user()->_id;
+            // $log['time'] = date("Y-m-d H:i:s");
+            // \Log::info($log);
 
             return response()->json(['status' => true,'message'=>'Set To Idle.'],200);
         }
@@ -44,8 +44,8 @@ class AuthController extends Controller
             $log['user'] = auth()->user()->_id;
             $log['time'] = date("Y-m-d H:i:s");
             $log['reason'] ="User is empty";
-            $log['params'] = json_encode(['username' => $request,'password' => empty($request->password) ? "NO":"YES",'ip_address' => $request->ip()]);
-            \Log::info($log);
+            $log['params'] = json_encode(['csrf_token' => $request->_token,'username' => $request->username,'password' => empty($request->password) ? "NO":"YES",'ip_address' => $request->ip()]);
+            \Log::warning($log);
 
             return redirect()->back()->with(['message_fail' => "User is invalid, please refresh this page."]);
         }
@@ -58,11 +58,11 @@ class AuthController extends Controller
             }else{
                 $redirect = '/';
             }
-            $log = [];
-            $log['status'] = "unlockscr";
-            $log['user'] = auth()->user()->_id;
-            $log['time'] = date("Y-m-d H:i:s");
-            \Log::info($log);
+            // $log = [];
+            // $log['status'] = "unlockscr";
+            // $log['user'] = auth()->user()->_id;
+            // $log['time'] = date("Y-m-d H:i:s");
+            // \Log::info($log);
             return redirect($redirect);
         } else{
             return redirect()->back()->with(['message_fail' => "Password is incorrect."]);
@@ -79,7 +79,7 @@ class AuthController extends Controller
             return response()->json([
                         'type' => 'error',
                         'message' =>'Please check username or password!'
-                    ], 422);
+                    ], 200);
         }
             if(empty($usermd5->role_id))
             {
@@ -126,7 +126,7 @@ class AuthController extends Controller
                 return response()->json([
                     'type' => 'error',
                     'message' => 'Please check username or password!'
-                ], 422);
+                ], 200);
 
             } else {
 

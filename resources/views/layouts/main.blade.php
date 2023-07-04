@@ -23,6 +23,7 @@
     </style>
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link rel="dns-prefetch" href="//cdn.jsdelivr.net">
+    <link rel="dns-prefetch" href="//unpkg.com">
     <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
     <link href="{{ URL::asset('assets/template/vendor/bootstrap/css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ URL::asset('assets/template/vendor/bootstrap-icons/bootstrap-icons.css') }}" rel="stylesheet">
