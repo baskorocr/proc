@@ -272,9 +272,12 @@
     item.po_num = $('#po_textarea').val();
     item.date_from = $('#date_from').val();
     item.date_to = $('#date_to').val();
-    item.id_vendor = $('#select_vendor').val().toString();
-    item.vendor_list = $('#vendor_list').val();
+    @if(!auth()->user()->is_vendor)
+     item.id_vendor = $('#select_vendor').val().toString();
+     item.vendor_list = $('#vendor_list').val();
      item.vendor_select = $('#select_vendor').val();
+    @endif
+
      item.search = true;
     },
     url: "{{ route('datatables.purchasing.process.listpo')}}"
