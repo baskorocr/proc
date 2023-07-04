@@ -46,10 +46,10 @@
                  <div class="row">
                     <div class="col-md-6">
                       from
-                      <input type="text" enable-search name="date_from" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
+                      <input type="text" enable-search name="date_from" id="date_from" placeholder="YYYY-MM-DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_from;} ?>"/>
                     </div>
                     <div class="col-md-6"> to
-                      <input type="text" enable-search name="date_to" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
+                      <input type="text" enable-search name="date_to" id="date_to" placeholder="YYYY-MM-DD" class="datepicker form-control" value = "<?php if (isset($_POST['submit-find'])) {echo $date_to;} ?>"/></div>
                     </div>
                     
                     <div class="col-12">

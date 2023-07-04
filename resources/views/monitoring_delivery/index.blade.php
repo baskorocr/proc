@@ -41,10 +41,10 @@ div.dataTables_wrapper div.dt-row{
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     from
-                                                    <input type="text" name="dt_start" id="date_from" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('dt_start'))?"":Request::get('dt_start')}}"/>
+                                                    <input type="text" name="dt_start" id="date_from" placeholder="YYYY-MM-DD" class="datepicker form-control" value = "{{empty(Request::get('dt_start'))?"":Request::get('dt_start')}}"/>
                                                 </div>
                                                 <div class="col-md-6"> to
-                                                    <input type="text" name="dt_end" id="date_to" placeholder="YYYY/MM/DD" class="datepicker form-control" value = "{{empty(Request::get('dt_end'))?"":Request::get('dt_end')}}"/></div>
+                                                    <input type="text" name="dt_end" id="date_to" placeholder="YYYY-MM-DD" class="datepicker form-control" value = "{{empty(Request::get('dt_end'))?"":Request::get('dt_end')}}"/></div>
                                                 </div>
                                                 
                                                 <div class="col-12">
