@@ -15,7 +15,7 @@ class MonitoringDeliveryController extends Controller
         ini_set('max_execution_time', 600);
         $vendor = Vendor::all();
         $vendor_list =array_filter(preg_split('/\r\n|\r|\n/',$request->vendor_list));
-        $tot_per_page = 10;
+        $tot_per_page = empty($request->paginate) ? 10:$request->paginate;
         $manifest = array_filter(preg_split('/\r\n|\r|\n/',$request->manifest));
        if(auth()->user()->is_vendor)
        {

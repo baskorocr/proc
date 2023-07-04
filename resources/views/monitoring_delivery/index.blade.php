@@ -137,7 +137,27 @@ div.dataTables_wrapper div.dt-row{
                                         
                                     </tbody>
                                 </table> --}}
-
+                                <div class="dataTables_wrapper dt-bootstrap5 no-footer">
+                                    <div class="row">
+                                        <div class="col-sm-12 col-md-6">
+                                            <div class="dataTables_length" id="tb-list-po_length">
+                                                <label>Show
+                                                    <select name="tb-list-po_length" set-pagination aria-controls="tb-list-po" class="form-select form-select-sm">
+                                                        <option value="10" {{Request::get('paginate') == 10 ? 'selected':null}}>10</option>
+                                                        <option value="25" {{Request::get('paginate') == 25 ? 'selected':null}}>25</option>
+                                                        <option value="50" {{Request::get('paginate') == 50 ? 'selected':null}}>50</option>
+                                                        <option value="100" {{Request::get('paginate') == 100 ? 'selected':null}}>100</option></select> entries</label>
+                                                    </div>
+                                                </div>
+                                              {{--   <div class="col-sm-12 col-md-6">
+                                                    <div id="tb-list-po_filter" class="dataTables_filter">
+                                                        <label>Search:
+                                                            <input type="search" class="form-control form-control-sm" placeholder="" aria-controls="tb-list-po">
+                                                        </label>
+                                                    </div>
+                                                </div> --}}
+                                            </div>
+                                        </div>
                                  <table  class="table table-bordered table-striped table-sm" id="monitoring-delivery-new" >
                                     <thead>
                                         <th>Manifest </th>
@@ -259,6 +279,35 @@ div.dataTables_wrapper div.dt-row{
     <script src="https://unpkg.com/gijgo@1.9.14/js/gijgo.min.js" type="text/javascript"></script>
 
     <script>
+        $('[set-pagination]').change(function(e){
+             if(window.location.href.indexOf("?") ) {
+                    var url = document.location.href+"&paginate="+$(this).val();
+                }else{
+                    var url = document.location.href+"?paginate="+$(this).val();
+                }
+            let timerInterval
+            Swal.fire({
+                allowOutsideClick: false,
+              title: 'Transaction Progress',
+              html: 'Please wait...',
+              timer: 3000000,
+              // timerProgressBar: true,
+              didOpen: () => {
+                Swal.showLoading()
+                const b = Swal.getHtmlContainer().querySelector('b')
+                timerInterval = setInterval(() => {
+                  b.textContent = Swal.getTimerLeft()
+                }, 100)
+              },
+              willClose: () => {
+                clearInterval(timerInterval)
+              }
+            }).then((result) => {
+              
+            })
+             window.location = url;
+          
+        })
         $('.select2').select2();
 $(document).ready(function(){
             $('#select_vendor').val('{{Request::get('vendor_select')}}').trigger('change');

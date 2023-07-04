@@ -80,7 +80,7 @@
 					
 					
 					<!-- User name -->
-					<div class="lockscreen-name" style="margin-left: 25px; margin-top: 30px;">{{auth()->user()->nm_user}}</div>
+					<div class="lockscreen-name" style="margin-left: 25px; margin-top: 30px;">{{Str::limit(auth()->user()->nm_user,20)}}</div>
 					<!-- START LOCK SCREEN ITEM -->
 					<div class="lockscreen-item ">
 						<!-- lockscreen image -->
