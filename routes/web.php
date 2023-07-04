@@ -2,16 +2,46 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Models\Permission;
 
 
 Route::get('/test-f', function(){
-    // UserLogging::trace(auth()->user()->id_user,\Request::ip(),now(),"F","in","TEST");
+  $r = Permission::where('parent_id',@auth()->user()->roles->permissions[0]['permission_id'])->orderBy('_id','ASC')->get();
+  $data = [];
+  foreach(@auth()->user()->roles->permissions as $f)
+  {
+    $data[]=$f['permission_id'];
+  }
+
+  foreach ($r as $role) {
+    if(in_array($role->_id, $data))
+    {
+      $redirect = $role->url;
+      break;
+    }
+  }
+              
+   dd( $redirect);
     return date("Y-m-t");;
 })->name('c');
 Route::get('/', function () {
     if(Auth::check())
     {
-        return redirect('dashboard');
+        $r = Permission::where('parent_id',@auth()->user()->roles->permissions[0]['permission_id'])->orderBy('_id','ASC')->get();
+          $data = [];
+          foreach(@auth()->user()->roles->permissions as $f)
+          {
+            $data[]=$f['permission_id'];
+          }
+
+          foreach ($r as $role) {
+            if(in_array($role->_id, $data))
+            {
+              $redirect = $role->url;
+              break;
+            }
+          }
+        return redirect($redirect);
     }
     return view('eproc.login');
 })->name('login');

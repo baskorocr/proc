@@ -204,12 +204,34 @@ class AuthController extends Controller
                 Cache::forever('active_'.auth()->user()->_id,true);
 
                 UserLogging::trace($user->id_user,$request->ip(),now(),"S","in",$user->username);
+                if(auth()->user()->is_vendor)
+                {
+                    $r = Permission::where('parent_id',@auth()->user()->roles->permissions[0]['permission_id'])->orderBy('_id','ASC')->get();
+                    $data = [];
+                    foreach(@auth()->user()->roles->permissions as $f)
+                    {
+                        $data[]=$f['permission_id'];
+                    }
 
+                    foreach ($r as $role) {
+                        if(in_array($role->_id, $data))
+                        {
+                            $redirect = $role->url;
+                            break;
+                        }
+                    }
+                } else
+                {
+                    $redirect = 'dashboard';
+                }
+                
+                             
                 return response()->json([
                     'type' => 'success',
                     'message' => 'Login successfully!',
                     'token' => $token,
                     'data' => $user,
+                    'redirect' => $redirect,
                     'permissions' => $permission_allowed->toArray()
                 ], 200);
             }
