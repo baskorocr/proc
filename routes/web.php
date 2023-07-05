@@ -3,26 +3,13 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Models\Permission;
-
-
+use Illuminate\Support\Facades\Cache;
+use App\Helpers\IsoHelper;
+use Illuminate\Support\Facades\RateLimiter;
 Route::get('/test-f', function(){
-  $r = Permission::where('parent_id',@auth()->user()->roles->permissions[0]['permission_id'])->orderBy('_id','ASC')->get();
-  $data = [];
-  foreach(@auth()->user()->roles->permissions as $f)
-  {
-    $data[]=$f['permission_id'];
-  }
+  IsoHelper::AntriBang();
 
-  foreach ($r as $role) {
-    if(in_array($role->_id, $data))
-    {
-      $redirect = $role->url;
-      break;
-    }
-  }
-              
-   dd( $redirect);
-    return date("Y-m-t");;
+  return "AA";
 })->name('c');
 Route::get('/', function () {
     if(Auth::check())

@@ -32,7 +32,67 @@
                                         
                                     </thead>
                                     <tbody>
-                                        
+            <?php
+             $data = \App\Models\ManifestDetail::where('manifest',$manifest)->orderBy('delivery_date','DESC')->get();
+             ?>
+             @foreach($data as $data)
+             <?php
+             if(!empty($data->arrival_date))
+                {
+                    $arrival_date =   date('D, d.m.Y',strtotime($data->arrival_date))." ". date('H:i',strtotime($data->arrival_time));
+                } else {
+                    $arrival_date="-";
+                }
+
+                 if($data->arrival_date != null){
+                    $scan_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
+                 } else {
+                    $scan_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
+                 }
+
+                if (!empty($data->issued_date)) {
+                      $receive_stat = "<small><span class=\"badge bg-success\">Done</span></small>";
+                } else {
+                     $receive_stat = "<small><span class=\"badge bg-warning text-dark\">Waiting</span></small>";
+                }
+
+                //  $k_in = \App\Models\ManifestDetail::where('manifest', $data->manifest)->whereNotNull('scan_date')->groupBy('manifest')->count('scan_date');
+                //  $tot_kanban = \App\Models\ManifestDetail::where('manifest',$data->manifest)->count('kanban');
+                // if(!empty($data->qty_scan_outstanding)){
+                //     if ($k_in >= 1) {
+                //         $kanban_in = $k_in;
+                //     } else {
+                //         $kanban_in = "0";
+                //     }
+                //       if ($tot_kanban == $kanban_in) {
+                //             $kanban_stat = "<small><span class=\"badge bg-green\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                //         } else {
+                //             $kanban_stat = "<small><span class=\"badge bg-warning text-dark\">" . $kanban_in . "/" . $tot_kanban . "</span></small>";
+                //         }
+                // } else{
+                //     $kanban_stat = "<small><span class=\"badge bg-warning text-dark\">" . 0 . "/" . $tot_kanban . "</span></small>";
+                // }
+
+                 if ($data->active == 'A') {
+                     $active_stat = "<small><span class=\"badge bg-warning text-dark\">Open</span></small>";
+                } else {
+                    $active_stat = "<small><span class=\"badge bg-success\">Closed</span></small>";
+                }
+             ?>
+
+                                         <tr>
+                                            <td>{{$data->kanban}}</td>
+                                            <td>{{ $arrival_date }}</td>
+                                            <td>{{@$data->material}}</td>
+                                            <td>{{@$data->material_desc}}</td>
+                                            <td>{{"PCE"}}</td>
+                                            <td>{{$data->qty_pack}}</td>
+                                            <td>{!!$scan_stat!!}</td>
+                                            <td>{!!$receive_stat!!}</td>
+                                            <td>{!!$active_stat!!}</td>
+                                        </tr>
+
+            @endforeach
                                     </tbody>
                                 </table>
                             </div>
@@ -44,53 +104,7 @@
         @endsection
         @section('javascript')
         <script>
-        $('#detail-kanban').DataTable({
-        "order": [[ 0, "ASC" ]],
-        processing: true,
-        serverSide: true,
-        autoWidth:false,
-        "language": {
-        "processing": "<i class='fa fa-spinner fa-spin fa-1x'></i> Sedang mengambil data..."
-        },
-        ajax: "{{ route('api.monitoring.delivery.detail.kanban.datatables',['manifest' => $manifest])}}",
-        columns: [
-        {
-        data: 'kanban',
-        name: 'kanban'
-        },{
-        data: 'arrival_date_time',
-        name: 'arrival_date_time'
-        },
-        {
-        data: 'material',
-        name: 'material'
-        },
-        {
-        data: 'material_desc',
-        name: 'material_desc'
-        },
-        {
-        data: 'uom',
-        name: 'uom'
-        },
-        {
-        data: 'qty',
-        name: 'qty'
-        },
-        {
-        data: 'scan_stat',
-        name: 'scan_stat'
-        },
-        {
-        data: 'receive_stat',
-        name: 'receive_stat'
-        },
-        {
-        data: 'active_stat',
-        name: 'active_stat'
-        },
-        ]
-        });
+        $('#detail-kanban').DataTable({ "order": [[ 0, "ASC" ]],});
         
         </script>
         @endsection

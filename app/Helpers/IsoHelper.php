@@ -7,8 +7,25 @@ use App\Models\RegisIsoDoc;
 use App\Models\NumberRange;
 use DB;
 
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Cache;
+
 class IsoHelper {
 
+	function AntriBang()
+	{
+		if(Cache::get('antri') != Request::ip())
+		  {
+		    Cache::forget('antri');
+		    Cache::put('antri',Request::ip());
+		    sleep(2);
+		  }
+		  if(!Cache::has('antri'))
+		  {
+		    Cache::put('antri',Request::ip());
+		  }
+
+	}
 	function get_transaction_type_id($trn_id){
 
 		$tr = Transaction::where('trn_id',$trn_id)->get();
