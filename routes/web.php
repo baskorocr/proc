@@ -7,8 +7,22 @@ use Illuminate\Support\Facades\Cache;
 use App\Helpers\IsoHelper;
 use Illuminate\Support\Facades\RateLimiter;
 Route::get('/test-f', function(){
-  IsoHelper::AntriBang();
+  
+    $permissions = [];
+    $dd = auth()->user()->roles->permissions;
+    // dd(Permission::where('url',request()->path())->count());
+    foreach($dd as $d)
+    {
+        $permissions[]=$d['permission_id'];
+    }
+      $r = Permission::whereIn('_id',$permissions)->orderBy('_id','ASC')->get();
+      $urlList = [];
+    foreach($r as $p)
+    {
+        $urlList[] = url($p->url);
+    }
 
+    dd(request()->url(),$urlList,in_array(request()->url(),$urlList));
   return "AA";
 })->name('c');
 Route::get('/', function () {
@@ -43,7 +57,7 @@ Route::group(['middleware' => ['auth']], function () {
     })->name('lockscreen');
     Route::post('/unlockScreen',[AuthController::class,'unlockScreen'])->name('unlockScreen');
 });
-Route::group(['middleware' => ['auth','lockscreen']], function () {
+Route::group(['middleware' => ['auth','route_protect','lockscreen']], function () {
  
     Route::get('/manifest_test_mail/{manifestId}', [App\Http\Controllers\ManifestController::class, 'manifest_test_mail'])->name('testMailer');
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
