@@ -16,7 +16,7 @@
 						<center><img src="{{asset('assets/login/images/logo1.png')}}" style="font-family: Montserrat-Bold; width: 80px; margin-top: 10%;"></center>
 					</div>
                     <br>
-                    <center><b style="color: #000; font-size: 20px;">eProcurement</b></center>
+                    <center><b style="color: #000; font-size: 20px;">{{env('APP_NAME')}}</b></center>
                     <br>
 					<div class="callout callout-danger alert-dismissable div_notif" style="display:none">
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
