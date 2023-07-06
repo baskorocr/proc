@@ -12,12 +12,13 @@ $(document).ready(function () {
 				cache: false,
 				processData: false,
 				success : function(data) {
+					console.log(data);
 					if(data.type==="success"){
 						location.href=base_url+"/"+data.redirect;	
 					}else{
                   	 	$('.div_notif').show();
 						$('#label_notif').html('<i class="fa fa-warning"> '+data.message+'</i>');
-						$('#label_notif').html('<i class="fa fa-warning"> Please check username or password!</i>');
+						// $('#label_notif').html('<i class="fa fa-warning"> Please check username or password!</i>');
 						$("#username").val("");
 						$("#password").val("");
 						// $("#username").attr("placeholder", "Username");

@@ -98,6 +98,15 @@ class AuthController extends Controller
          }
 
         $usermd5 = null;
+        $cekBlockUser = User::where('username', $request->username)->where('status_user','N')->count();
+        if($cekBlockUser > 0)
+        {
+              return response()->json([
+                        'type' => 'error',
+                        'message' =>'This account has been disabled, please contact administrator.'
+                    ], 200);
+        }
+        
         $credentials = $request->validate([
             'username' => 'required',
             'password' => 'required'
