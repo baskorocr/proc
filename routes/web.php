@@ -6,25 +6,25 @@ use App\Models\Permission;
 use Illuminate\Support\Facades\Cache;
 use App\Helpers\IsoHelper;
 use Illuminate\Support\Facades\RateLimiter;
-Route::get('/test-f', function(){
+// Route::get('/test-f', function(){
   
-    $permissions = [];
-    $dd = auth()->user()->roles->permissions;
-    // dd(Permission::where('url',request()->path())->count());
-    foreach($dd as $d)
-    {
-        $permissions[]=$d['permission_id'];
-    }
-      $r = Permission::whereIn('_id',$permissions)->orderBy('_id','ASC')->get();
-      $urlList = [];
-    foreach($r as $p)
-    {
-        $urlList[] = url($p->url);
-    }
+//     $permissions = [];
+//     $dd = auth()->user()->roles->permissions;
+//     // dd(Permission::where('url',request()->path())->count());
+//     foreach($dd as $d)
+//     {
+//         $permissions[]=$d['permission_id'];
+//     }
+//       $r = Permission::whereIn('_id',$permissions)->orderBy('_id','ASC')->get();
+//       $urlList = [];
+//     foreach($r as $p)
+//     {
+//         $urlList[] = url($p->url);
+//     }
 
-    dd(request()->url(),$urlList,in_array(request()->url(),$urlList));
-  return "AA";
-})->name('c');
+//     dd(request()->url(),$urlList,in_array(request()->url(),$urlList));
+//   return "AA";
+// })->name('c');
 Route::get('/', function () {
     if(Auth::check())
     {
