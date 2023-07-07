@@ -223,7 +223,7 @@ div.dataTables_wrapper div.dt-row{
                                     ?>
                                     <tr>
                                     <td>{{$data->manifest}}</td>
-                                    <td>{{$data->delivery_date}}</td>
+                                    <td>{{date('Y-m-d',strtotime($data->delivery_date))}}</td>
                                     <td>{{$data->po_num}}</td>
                                     <td>{{@$data->vendors->nm_vendor}}</td>
                                     <td>{!!$kanban_in!!}</td>
