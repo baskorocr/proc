@@ -70,13 +70,14 @@ class PurchasingProcessController extends Controller
             return $query->whereIn('id_vendor', $vendor_list);
         }
         });
+
         // AND $request->vendor_select != "Choose Vendor"
 
         if((count($vendor_list)>0) || ($request->vendor_select != "Choose Vendor"))
         {
-        if ((count($vendor_list)>0)) {
+        if ((count($vendor_list)>0)) { 
             $q->whereIn('id_vendor', $vendor_list);
-        } elseif((count($vendor_list)==0)){
+        } elseif((count($vendor_list)==0) && ($request->vendor_select != "")){
            $q->whereIn('id_vendor',[$request->vendor_select]);
         }
         }
@@ -84,6 +85,7 @@ class PurchasingProcessController extends Controller
         {
         $data = $q->where('id_vendor','=',auth()->user()->foreign_id)->get();
         } else{
+
         $data = $q->where('id_vendor','!=','')->get();
         }
         $po = PurchasingProcessSelectResource::collection($data);
