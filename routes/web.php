@@ -5,26 +5,38 @@ use App\Http\Controllers\AuthController;
 use App\Models\Permission;
 use Illuminate\Support\Facades\Cache;
 use App\Helpers\IsoHelper;
+use App\Helpers\Logger;
 use Illuminate\Support\Facades\RateLimiter;
-// Route::get('/test-f', function(){
-  
-//     $permissions = [];
-//     $dd = auth()->user()->roles->permissions;
-//     // dd(Permission::where('url',request()->path())->count());
-//     foreach($dd as $d)
-//     {
-//         $permissions[]=$d['permission_id'];
-//     }
-//       $r = Permission::whereIn('_id',$permissions)->orderBy('_id','ASC')->get();
-//       $urlList = [];
-//     foreach($r as $p)
-//     {
-//         $urlList[] = url($p->url);
-//     }
+Route::get('/test-f', function(){
+  $logger = new Logger();
+    $logger->menu = "SEND-MANIFEST-TO-SAP";
+    $logger->code = "SAP-MF-S-01";
+    $logger->step = "01";
+    $logger->function = "sendManifestSap";
+    $logger->controller = "ManifestController";
+    $logger->company_code = auth()->user()->foreign_id;
+    $logger->action_by = auth()->user()->nm_user;
+    $logger->user_id = auth()->user()->_id;
+    $logger->status_code = 200;
+    $logger->status = "success";
+    $logger->messages = "Start Get Detail Manifest";
+    $logger->trace();
 
-//     dd(request()->url(),$urlList,in_array(request()->url(),$urlList));
-//   return "AA";
-// })->name('c');
+    sleep(3);
+    $logger = new Logger();
+    $logger->menu = "SEND-MANIFEST-TO-SAP";
+    $logger->code = "SAP-MF-S-01";
+    $logger->step = "01";
+    $logger->function = "sendManifestSap";
+    $logger->controller = "ManifestController";
+    $logger->company_code = auth()->user()->foreign_id;
+    $logger->action_by = auth()->user()->nm_user;
+    $logger->user_id = auth()->user()->_id;
+    $logger->status_code = 200;
+    $logger->status = "success";
+    $logger->messages = "Start Get Detail Manifest";
+    $logger->trace();
+})->name('c');
 Route::get('/', function () {
     if(Auth::check())
     {

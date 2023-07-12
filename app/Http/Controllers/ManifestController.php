@@ -14,6 +14,7 @@ use App\Models\Vendor;
 use Mail;
 use App\Models\User;
 use App\Mail\ManifestMail;
+use App\Helpers\Logger;
 
 class ManifestController extends Controller
 {
@@ -705,7 +706,20 @@ class ManifestController extends Controller
     // new send SAP manifest
     public function sendManifestSap(Request $request)
     {
-        
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "01";
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        // $logger->company_code = auth()->user()->foreign_id;
+        // $logger->action_by = auth()->user()->nm_user;
+        // $logger->user_id = auth()->user()->_id;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "Start Get Detail Manifest";
+        $logger->trace();
+
         $manifest_detail = ManifestDetail::where('manifest', $request->manifest)
                                     ->whereNotNull('qty_scan_outstanding')
                                     ->whereNull('qty_gr_outstanding')
@@ -725,8 +739,36 @@ class ManifestController extends Controller
                 "ENTRY_QNT" => $req['qty_scan_outstanding']
             ];
         });
+     
 
         $payload = json_encode(["IT_INPUT" => $data_parsed]);
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "01";
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        // $logger->company_code = auth()->user()->foreign_id;
+        // $logger->action_by = auth()->user()->nm_user;
+        // $logger->user_id = auth()->user()->_id;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "END Get Detail Manifest";
+        $logger->trace();
+
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "02";
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        // $logger->company_code = auth()->user()->foreign_id;
+        // $logger->action_by = auth()->user()->nm_user;
+        // $logger->user_id = auth()->user()->_id;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "Start Send Data To SAP";
+        $logger->trace();
 
         $curl = curl_init();
         // curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
@@ -751,6 +793,34 @@ class ManifestController extends Controller
         $result = $jsonData['return'];
         $it_input = $jsonData['it_input'];
         // dd($result);
+
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "02";
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        // $logger->company_code = auth()->user()->foreign_id;
+        // $logger->action_by = auth()->user()->nm_user;
+        // $logger->user_id = auth()->user()->_id;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "End Send Data To SAP";
+        $logger->trace();
+
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "03";
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        // $logger->company_code = auth()->user()->foreign_id;
+        // $logger->action_by = auth()->user()->nm_user;
+        // $logger->user_id = auth()->user()->_id;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "Merge Result";
+        $logger->trace();
         $merge = [];
 
         foreach ($result as $index => $data_result) {
@@ -771,13 +841,38 @@ class ManifestController extends Controller
                 "message" => $data_result['message'],
             ];
         }
-
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "03";
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        // $logger->company_code = auth()->user()->foreign_id;
+        // $logger->action_by = auth()->user()->nm_user;
+        // $logger->user_id = auth()->user()->_id;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "End Merge Result";
+        $logger->trace();
         // $status = $result[0]['type'];
         // $message = $result[0]['message'];
         
         // if ($status === 'E') {
         //     return response()->json(['message' => $message], 422);
         // } else {
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "04";
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        // $logger->company_code = auth()->user()->foreign_id;
+        // $logger->action_by = auth()->user()->nm_user;
+        // $logger->user_id = auth()->user()->_id;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "Start Render data For Mobile";
+        $logger->trace();
            foreach ($result as $index => $detail) {
                 $detailObj = (object) $detail;
                 if ($detailObj->type === 'S') {
@@ -790,11 +885,13 @@ class ManifestController extends Controller
                     $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
                     ManifestDetail::where('kanban', $detailObj->kbnno)->update($manifest_d_update);
             
-                    
-                    ManifestHeader::where('manifest', $request->manifest)->update(['stat' => "H"]);
+                    $headerM = ManifestHeader::where('manifest', $request->manifest);
+                    $detailM = ManifestDetail::where('manifest', $request->manifest);
+                    $headerM->update(['stat' => "H"]);
+
                     $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
-                    $total_gr = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('issued_date')->count('issued_date');
-                    $total_scan = ManifestDetail::where('manifest', $request->manifest)->whereNotNull('scan_date')->count('scan_date');
+                    $total_gr = $detailM->whereNotNull('issued_date')->count('issued_date');
+                    $total_scan = $detailM->whereNotNull('scan_date')->count('scan_date');
                     //Ambil data lagi, karena get data sebelumnnya belum ada issued date
                     $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->first();
                     if(!empty($getData->arrival_date) && !empty($getData->issued_date))
@@ -803,12 +900,26 @@ class ManifestController extends Controller
                     }
                     if(($total_gr == $total_kanban) && ($total_scan == $total_kanban))
                     {
-                        ManifestHeader::where('manifest', $request->manifest)->update(['active' => "C",'stat' => "D"]);
+                         $headerM->update(['active' => "C",'stat' => "D"]);
                     }
 
                 }
             }
-            return response()->json(['result' => $merge]);
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "04";
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        // $logger->company_code = auth()->user()->foreign_id;
+        // $logger->action_by = auth()->user()->nm_user;
+        // $logger->user_id = auth()->user()->_id;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "End Render data For Mobile";
+        $logger->trace();
+
+        return response()->json(['result' => $merge]);
         // }
 
     }
