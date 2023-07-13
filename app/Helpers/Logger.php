@@ -11,12 +11,11 @@ class Logger {
 	public $step;
 	public $function;
 	public $controller;
-	public $company_code;
 	public $action_by;
-	public $user_id;
 	public $status_code;
 	public $messages;
 	public $status;
+	public $result;
 	public $start_transaction;
 
 	function trace(){
@@ -47,14 +46,13 @@ class Logger {
 		$transaction->messages = $this->messages;
 		$transaction->function = $this->function;
 		$transaction->controller = $this->controller;
-		$transaction->company_code = $this->company_code;
 		$transaction->action_by = $this->action_by;
-		$transaction->user_id = $this->user_id;
 		$transaction->status_code = $this->status_code;
 		$transaction->memory_usage = $this->get_mem();
 		$transaction->memory_byte = $this->get_byte();
 		$transaction->status = $this->status;
-		$transaction->start_transaction = date('Y-m-d H:i:s');
+		$transaction->result = $this->result;
+		$transaction->time = date('Y-m-d H:i:s');
 		$transaction->platform = $browser;
 		$transaction->browser = $platver;
 		$transaction->ip = request()->ip();

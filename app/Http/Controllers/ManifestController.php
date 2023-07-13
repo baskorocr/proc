@@ -709,12 +709,10 @@ class ManifestController extends Controller
         $logger = new Logger();
         $logger->menu = "SEND-MANIFEST-TO-SAP";
         $logger->code = "SAP-MF-S-01";
-        $logger->step = "01";
+        $logger->step = "1-S";
         $logger->function = "sendManifestSap";
         $logger->controller = "ManifestController";
-        // $logger->company_code = auth()->user()->foreign_id;
-        // $logger->action_by = auth()->user()->nm_user;
-        // $logger->user_id = auth()->user()->_id;
+        $logger->action_by = empty($request->issued_by) ? "-":$request->issued_by;
         $logger->status_code = 200;
         $logger->status = "success";
         $logger->messages = "Start Get Detail Manifest";
@@ -742,32 +740,16 @@ class ManifestController extends Controller
      
 
         $payload = json_encode(["IT_INPUT" => $data_parsed]);
-        $logger = new Logger();
-        $logger->menu = "SEND-MANIFEST-TO-SAP";
-        $logger->code = "SAP-MF-S-01";
-        $logger->step = "01";
-        $logger->function = "sendManifestSap";
-        $logger->controller = "ManifestController";
-        // $logger->company_code = auth()->user()->foreign_id;
-        // $logger->action_by = auth()->user()->nm_user;
-        // $logger->user_id = auth()->user()->_id;
-        $logger->status_code = 200;
-        $logger->status = "success";
-        $logger->messages = "END Get Detail Manifest";
-        $logger->trace();
 
-        $logger = new Logger();
-        $logger->menu = "SEND-MANIFEST-TO-SAP";
-        $logger->code = "SAP-MF-S-01";
-        $logger->step = "02";
-        $logger->function = "sendManifestSap";
-        $logger->controller = "ManifestController";
-        // $logger->company_code = auth()->user()->foreign_id;
-        // $logger->action_by = auth()->user()->nm_user;
-        // $logger->user_id = auth()->user()->_id;
-        $logger->status_code = 200;
-        $logger->status = "success";
+        $logger->step = "1-E";
+        $logger->messages = "END Get Detail Manifest";
+        $logger->trace(); // END 
+
+
+
+        $logger->step = "2-S"; // START
         $logger->messages = "Start Send Data To SAP";
+        $logger->result = $payload;
         $logger->trace();
 
         $curl = curl_init();
@@ -794,33 +776,18 @@ class ManifestController extends Controller
         $it_input = $jsonData['it_input'];
         // dd($result);
 
-        $logger = new Logger();
-        $logger->menu = "SEND-MANIFEST-TO-SAP";
-        $logger->code = "SAP-MF-S-01";
-        $logger->step = "02";
-        $logger->function = "sendManifestSap";
-        $logger->controller = "ManifestController";
-        // $logger->company_code = auth()->user()->foreign_id;
-        // $logger->action_by = auth()->user()->nm_user;
-        // $logger->user_id = auth()->user()->_id;
-        $logger->status_code = 200;
+        $logger->step = "2-E";
         $logger->status = "success";
         $logger->messages = "End Send Data To SAP";
-        $logger->trace();
+        $logger->result = '-';
+        $logger->trace(); // END
 
-        $logger = new Logger();
-        $logger->menu = "SEND-MANIFEST-TO-SAP";
-        $logger->code = "SAP-MF-S-01";
-        $logger->step = "03";
-        $logger->function = "sendManifestSap";
-        $logger->controller = "ManifestController";
-        // $logger->company_code = auth()->user()->foreign_id;
-        // $logger->action_by = auth()->user()->nm_user;
-        // $logger->user_id = auth()->user()->_id;
-        $logger->status_code = 200;
+        $logger->step = "3-S"; // START
         $logger->status = "success";
         $logger->messages = "Merge Result";
+        $logger->result = $result;
         $logger->trace();
+
         $merge = [];
 
         foreach ($result as $index => $data_result) {
@@ -841,38 +808,23 @@ class ManifestController extends Controller
                 "message" => $data_result['message'],
             ];
         }
-        $logger = new Logger();
-        $logger->menu = "SEND-MANIFEST-TO-SAP";
-        $logger->code = "SAP-MF-S-01";
-        $logger->step = "03";
-        $logger->function = "sendManifestSap";
-        $logger->controller = "ManifestController";
-        // $logger->company_code = auth()->user()->foreign_id;
-        // $logger->action_by = auth()->user()->nm_user;
-        // $logger->user_id = auth()->user()->_id;
-        $logger->status_code = 200;
+
+        $logger->step = "3-E";
         $logger->status = "success";
         $logger->messages = "End Merge Result";
-        $logger->trace();
+        $logger->result = '-';
+        $logger->trace(); // END
         // $status = $result[0]['type'];
         // $message = $result[0]['message'];
         
         // if ($status === 'E') {
         //     return response()->json(['message' => $message], 422);
         // } else {
-        $logger = new Logger();
-        $logger->menu = "SEND-MANIFEST-TO-SAP";
-        $logger->code = "SAP-MF-S-01";
-        $logger->step = "04";
-        $logger->function = "sendManifestSap";
-        $logger->controller = "ManifestController";
-        // $logger->company_code = auth()->user()->foreign_id;
-        // $logger->action_by = auth()->user()->nm_user;
-        // $logger->user_id = auth()->user()->_id;
-        $logger->status_code = 200;
+        $logger->step = "4-S";
         $logger->status = "success";
         $logger->messages = "Start Render data For Mobile";
-        $logger->trace();
+        $logger->trace(); // START
+
            foreach ($result as $index => $detail) {
                 $detailObj = (object) $detail;
                 if ($detailObj->type === 'S') {
@@ -905,16 +857,7 @@ class ManifestController extends Controller
 
                 }
             }
-        $logger = new Logger();
-        $logger->menu = "SEND-MANIFEST-TO-SAP";
-        $logger->code = "SAP-MF-S-01";
-        $logger->step = "04";
-        $logger->function = "sendManifestSap";
-        $logger->controller = "ManifestController";
-        // $logger->company_code = auth()->user()->foreign_id;
-        // $logger->action_by = auth()->user()->nm_user;
-        // $logger->user_id = auth()->user()->_id;
-        $logger->status_code = 200;
+        $logger->step = "4-E";
         $logger->status = "success";
         $logger->messages = "End Render data For Mobile";
         $logger->trace();
