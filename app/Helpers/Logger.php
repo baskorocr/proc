@@ -13,6 +13,7 @@ class Logger {
 	public $controller;
 	public $action_by;
 	public $status_code;
+	public $manifest;
 	public $messages;
 	public $status;
 	public $result;
@@ -44,6 +45,7 @@ class Logger {
 		$transaction->code = $this->code;
 		$transaction->step = $this->step;
 		$transaction->messages = $this->messages;
+		$transaction->manifest = $this->manifest;
 		$transaction->function = $this->function;
 		$transaction->controller = $this->controller;
 		$transaction->action_by = $this->action_by;

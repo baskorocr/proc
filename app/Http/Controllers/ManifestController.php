@@ -710,6 +710,7 @@ class ManifestController extends Controller
         $logger->menu = "SEND-MANIFEST-TO-SAP";
         $logger->code = "SAP-MF-S-01";
         $logger->step = "1-S";
+        $logger->manifest = $request->manifest;
         $logger->function = "sendManifestSap";
         $logger->controller = "ManifestController";
         $logger->action_by = empty($request->issued_by) ? "-":$request->issued_by;
@@ -824,42 +825,64 @@ class ManifestController extends Controller
         $logger->status = "success";
         $logger->messages = "Start Render data For Mobile";
         $logger->trace(); // START
-
+        $kanban_list = [];
+        $headerM = ManifestHeader::where('manifest', $request->manifest);
+        $detailM = ManifestDetail::where('manifest', $request->manifest);
+        $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
+        $set = 0;
            foreach ($result as $index => $detail) {
                 $detailObj = (object) $detail;
                 if ($detailObj->type === 'S') {
+                    if($set == 0)
+                    {
+                        $headerM->update(['stat' => "H"]);
+                    }
+                    $set = 1;
+                    $mfget = ManifestDetail::where('kanban', $detailObj->kbnno);
+                    $getData =  $mfget->first();
 
-                    $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->first();
                     $manifest_d_update = [];
                     $manifest_d_update['issued_date'] = date('Y-m-d '.'00:00:00');
                     $manifest_d_update['issued_time'] = date('H:i:s');
                     $manifest_d_update['issued_by'] = empty($request->issued_by) ? "-":$request->issued_by;
                     $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
-                    ManifestDetail::where('kanban', $detailObj->kbnno)->update($manifest_d_update);
-            
-                    $headerM = ManifestHeader::where('manifest', $request->manifest);
-                    $detailM = ManifestDetail::where('manifest', $request->manifest);
-                    $headerM->update(['stat' => "H"]);
+                    $mfget->update($manifest_d_update);
 
-                    $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
-                    $total_gr = $detailM->whereNotNull('issued_date')->count('issued_date');
-                    $total_scan = $detailM->whereNotNull('scan_date')->count('scan_date');
-                    //Ambil data lagi, karena get data sebelumnnya belum ada issued date
-                    $getData = ManifestDetail::where('kanban', $detailObj->kbnno)->first();
+                    $getData =  $mfget->first();
                     if(!empty($getData->arrival_date) && !empty($getData->issued_date))
                     {
-                        ManifestDetail::where('kanban',$getData->kanban)->update(['active' => 'N']);
+                        $kanban_list[] = $getData->kanban;
                     }
-                    if(($total_gr == $total_kanban) && ($total_scan == $total_kanban))
-                    {
-                         $headerM->update(['active' => "C",'stat' => "D"]);
-                    }
+                    
 
                 }
             }
         $logger->step = "4-E";
         $logger->status = "success";
         $logger->messages = "End Render data For Mobile";
+        $logger->trace();
+
+        $logger->step = "5-S";
+        $logger->status = "success";
+        $logger->messages = "Start Update Status Manifest";
+        $logger->trace();
+
+       
+        $total_gr = $detailM->whereNotNull('issued_date')->count('issued_date');
+        $total_scan = $detailM->whereNotNull('scan_date')->count('scan_date');
+
+        if(($total_gr == $total_kanban) && ($total_scan == $total_kanban))
+        {
+             $headerM->update(['active' => "C",'stat' => "D"]);
+        }
+        if(!empty($kanban_list))
+        {
+            ManifestDetail::whereIn('kanban',[$kanban_list])->update(['active' => 'N']);
+        }
+
+        $logger->step = "5-E";
+        $logger->status = "success";
+        $logger->messages = "End Update Status Manifest";
         $logger->trace();
 
         return response()->json(['result' => $merge]);
