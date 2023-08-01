@@ -63,8 +63,7 @@ class ManifestController extends Controller
     {   
         $manifest = ManifestHeader::with('manifestDetails')->where('manifest', $request->manifest)->first();
         $isExists = !empty($manifest) ? true : false ;
-        
-        
+
         if ($isExists) {
             if($manifest->active === 'C') {
                 return response()->json([
@@ -89,8 +88,19 @@ class ManifestController extends Controller
                     $dateNow = date('Y-m-d');
                     $expired_date = strtotime(Carbon::parse($manifest->delivery_date)->addDays($days));
                     
-                    if($now <= strtotime(Carbon::parse($manifest->delivery_date))) {
-                        if($now > $expired_date)
+                        //         > manifest bisa di scan jika tanggal delivery & tgl berjalan 
+                        //     - MI H+ 30
+                        //     - SO H+ 1
+
+                        // - MI10000231 tgl delivery 02-08-2023
+                        //     - bisa di scan jika tanggal skr sama dengan H+ 30
+                        //     - 2023-08-02 s/d 2023-08-31
+
+                        // - scan manifest bisa di lakukan jika >= tgl delivery >= H+ 30
+                    // dd("$now >= strtotime(Carbon::parse($manifest->delivery_date))");
+                    if($now >= strtotime(Carbon::parse($manifest->delivery_date))) {
+
+                        if($now >= $expired_date)
                         {
                             return response()->json([
                                 'type' => 'error',
@@ -837,7 +847,8 @@ class ManifestController extends Controller
                     {
                         $headerM->update(['stat' => "H"]);
                     }
-                    $set = 1;
+                    $set = 1; //supaya update stat H sekali aja
+                    
                     $mfget = ManifestDetail::where('kanban', $detailObj->kbnno);
                     $getData =  $mfget->first();
 
