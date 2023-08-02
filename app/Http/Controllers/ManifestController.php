@@ -84,9 +84,11 @@ class ManifestController extends Controller
                         $days = 30;
                     }
                     //Check Date
+                    $parseStr = date('Y-m-d 23:59:59',strtotime($manifest->delivery_date));
                     $now = strtotime(date('Y-m-d'));
                     $dateNow = date('Y-m-d');
-                    $expired_date = strtotime(Carbon::parse($manifest->delivery_date)->addDays($days));
+                    $expired_date = strtotime(Carbon::parse($parseStr)->addDays($days));
+                    // $phpTime = strtotime(Carbon::parse($manifest->delivery_date)->addDays($days));
                     
                         //         > manifest bisa di scan jika tanggal delivery & tgl berjalan 
                         //     - MI H+ 30
@@ -764,8 +766,8 @@ class ManifestController extends Controller
         $logger->trace();
 
         $curl = curl_init();
-        // curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
-        curl_setopt($curl, CURLOPT_URL, 'http://erpprd-app1.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
+        curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
+        // curl_setopt($curl, CURLOPT_URL, 'http://erpprd-app1.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
         curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain=erpprd-app1.dharmap.com;');
         // curl_setopt($curl, CURLOPT_COOKIE, $get_header['cookie']);
         curl_setopt($curl, CURLOPT_POST, 1);
