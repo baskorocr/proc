@@ -766,9 +766,10 @@ class ManifestController extends Controller
         $logger->trace();
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
+        curl_setopt($curl, CURLOPT_URL, env('SAP_ENDPOINT'));
+        // curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
         // curl_setopt($curl, CURLOPT_URL, 'http://erpprd-app1.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
-        curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain=erpprd-app1.dharmap.com;');
+        curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain='.env('SAP_COOKIE_DOMAIN').';');
         // curl_setopt($curl, CURLOPT_COOKIE, $get_header['cookie']);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
