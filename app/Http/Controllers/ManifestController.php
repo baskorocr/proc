@@ -7,6 +7,7 @@ use App\Models\ManifestHeader;
 use App\Models\ManifestDetail;
 use App\Models\Permission;
 use App\Models\Po;
+use App\Models\SendManifestSapHistory;
 use App\Models\Role;
 use App\Models\MasterUser;
 use Carbon\Carbon;
@@ -714,6 +715,7 @@ class ManifestController extends Controller
         ], 200);
     }
 
+   
 
     // new send SAP manifest
     public function sendManifestSap(Request $request)
@@ -766,10 +768,9 @@ class ManifestController extends Controller
         $logger->trace();
 
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, env('SAP_ENDPOINT'));
-        // curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
+        curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
         // curl_setopt($curl, CURLOPT_URL, 'http://erpprd-app1.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
-        curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain='.env('SAP_COOKIE_DOMAIN').';');
+        curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain=erpqas-dp.dharmap.com;');
         // curl_setopt($curl, CURLOPT_COOKIE, $get_header['cookie']);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
@@ -788,7 +789,248 @@ class ManifestController extends Controller
         $jsonData = json_decode($restPostDP, true);
         $result = $jsonData['return'];
         $it_input = $jsonData['it_input'];
-        // dd($result);
+        // dd($jsonData);
+
+        $logger->step = "2-E";
+        $logger->status = "success";
+        $logger->messages = "End Send Data To SAP";
+        $logger->result = '-';
+        $logger->trace(); // END
+
+        $logger->step = "3-S"; // START
+        $logger->status = "success";
+        $logger->messages = "Merge Result";
+        $logger->result = $result;
+        $logger->trace();
+
+        $merge = [];
+     
+        if(count($it_input) > 0)
+        {
+
+            $matdoc = !empty($result[0]['matdoc']) ? $result[0]['matdoc'] : '-';
+            $merge[] = [
+                "mnnum" => $it_input[0]['mnnum'],
+                "item" => $it_input[0]['item'],
+                "kbnno" => $it_input[0]['kbnno'],
+                "sequn" => $it_input[0]['sequn'],
+                "grdate" => $it_input[0]['grdate'],
+                "grtime" => $it_input[0]['grtime'],
+                "entry_qnt" => $it_input[0]['entry_qnt'],
+                "mnnum" => $result[0]['mnnum'],
+                "matdoc" => $matdoc,
+                "type" => $result[0]['type'],
+                "id" => $result[0]['id'],
+                "number" => $result[0]['number'],
+                "message" => $result[0]['message'],
+            ];
+        }
+  
+
+        $logger->step = "3-E";
+        $logger->status = "success";
+        $logger->messages = "End Merge Result";
+        $logger->result = '-';
+        $logger->trace(); // END
+
+        
+        // $status = $result[0]['type'];
+        // $message = $result[0]['message'];
+        
+        // if ($status === 'E') {
+        //     return response()->json(['message' => $message], 422);
+        // } else {
+        // COLLECTIING KANBAN
+        if(count($result) > 0)
+        {
+            if($result[0]['type'] != 'E')
+           {
+
+            foreach ($result as $index => $detail) {
+                
+
+                $kanbanNo = $detail['kbnno'];
+                $manifestNo = $request->manifest;
+                $user = empty($request->issued_by) ? "-":$request->issued_by;
+
+                SendManifestSapHistory::create(['manifest' => $manifestNo,'kanban_no' => $kanbanNo,'created_by' => $user,'is_processed' => null]);
+
+
+             } 
+           } else{
+             return response()->json(['message' => $result[0]['message']], 422);
+           }
+        }
+      
+
+       
+
+        return response()->json(['result' => $merge]);
+        // }
+
+    }
+
+    public function sendManifestSapUpdate(Request $request)
+    {
+            $logger = new Logger();
+            $logger->step = "4-S";
+            $logger->status = "success";
+            $logger->messages = "Start Render data For Mobile";
+            $logger->trace(); // START
+            $kanban_list = [];
+            $headerM = ManifestHeader::where('manifest', $request->manifest);
+            $detailM = ManifestDetail::where('manifest', $request->manifest);
+            $total_kanban =  ManifestDetail::where('manifest',$request->manifest)->count('kanban');
+            $result =  SendManifestSapHistory::where('manifest',$request->manifest)->whereNull('is_processed')->get();
+            // dd($result);
+            if(count($result) <= 0)
+            {
+                 return response()->json([
+                                            'type' => 'error',
+                                            'message' => 'This manifest has been processed!',
+                                            'data' => null
+                                            ], 422);
+            }
+            $set = 0;
+               foreach ($result as  $detail) {
+                    $detailObj =  $detail;
+                  
+                        if($set == 0)
+                        {
+                            $headerM->update(['stat' => "H"]);
+                        }
+                        $set = 1; //supaya update stat H sekali aja
+                        
+                        $mfget = ManifestDetail::where('kanban', $detailObj->kanban_no);
+                        $getData =  $mfget->first();
+
+                        $manifest_d_update = [];
+                        $manifest_d_update['issued_date'] = date('Y-m-d '.'00:00:00');
+                        $manifest_d_update['issued_time'] = date('H:i:s');
+                        $manifest_d_update['issued_by'] = empty($request->issued_by) ? "-":$request->issued_by;
+                        $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
+                        $mfget->update($manifest_d_update);
+
+                        $getData =  $mfget->first();
+                        if(!empty($getData->arrival_date) && !empty($getData->issued_date))
+                        {
+                            $kanban_list[] = $getData->kanban;
+                        }
+                        
+
+                    
+                }
+                // dd($kanban_list);
+            $logger->step = "4-E";
+            $logger->status = "success";
+            $logger->messages = "End Render data For Mobile";
+            $logger->trace();
+
+            $logger->step = "5-S";
+            $logger->status = "success";
+            $logger->messages = "Start Update Status Manifest";
+            $logger->trace();
+
+           
+            $total_gr = $detailM->whereNotNull('issued_date')->count('issued_date');
+            $total_scan = $detailM->whereNotNull('scan_date')->count('scan_date');
+
+            if(($total_gr == $total_kanban) && ($total_scan == $total_kanban))
+            {
+                 $headerM->update(['active' => "C",'stat' => "D"]);
+            }
+            if(!empty($kanban_list))
+            {
+              
+               ManifestDetail::where('manifest', $request->manifest)->update(['active' => 'N']);
+               SendManifestSapHistory::where('manifest', $request->manifest)->update(['is_processed' => date('Y-m-d H:i:s')]);
+            }
+
+            $logger->step = "5-E";
+            $logger->status = "success";
+            $logger->messages = "End Update Status Manifest";
+            $logger->trace();
+
+            $res['manifest'] = $request->manifest;
+            $res['kanbans'] = $kanban_list;
+            
+            return response()->json(['result' => $res,'messages' => "Update Manifest Successfully."]);
+
+    }
+
+    // new send SAP manifest
+    public function sendManifestSapOLD(Request $request)
+    {
+        $logger = new Logger();
+        $logger->menu = "SEND-MANIFEST-TO-SAP";
+        $logger->code = "SAP-MF-S-01";
+        $logger->step = "1-S";
+        $logger->manifest = $request->manifest;
+        $logger->function = "sendManifestSap";
+        $logger->controller = "ManifestController";
+        $logger->action_by = empty($request->issued_by) ? "-":$request->issued_by;
+        $logger->status_code = 200;
+        $logger->status = "success";
+        $logger->messages = "Start Get Detail Manifest";
+        $logger->trace();
+
+        $manifest_detail = ManifestDetail::where('manifest', $request->manifest)
+                                    ->whereNotNull('qty_scan_outstanding')
+                                    ->whereNull('qty_gr_outstanding')
+                                    ->get();
+
+        $username = 'DPM-EINVC';
+        $password = 'Einvoice01';
+
+        $data_parsed = $manifest_detail->map(function($req) {
+            return [
+                "MNNUM" => $req['manifest'],
+                "ITEM" => $req['item'],
+                "KBNNO" => $req['kanban'],
+                "SEQUN" => $req['seq_kanban'],
+                "GRDATE" => date('Y-m-d'),
+                "GRTIME" => date('Hms'),
+                "ENTRY_QNT" => $req['qty_scan_outstanding']
+            ];
+        });
+     
+
+        $payload = json_encode(["IT_INPUT" => $data_parsed]);
+
+        $logger->step = "1-E";
+        $logger->messages = "END Get Detail Manifest";
+        $logger->trace(); // END 
+
+
+
+        $logger->step = "2-S"; // START
+        $logger->messages = "Start Send Data To SAP";
+        $logger->result = $payload;
+        $logger->trace();
+
+        $curl = curl_init();
+        curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
+        // curl_setopt($curl, CURLOPT_URL, 'http://erpprd-app1.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
+        curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain=erpprd-app1.dharmap.com;');
+        // curl_setopt($curl, CURLOPT_COOKIE, $get_header['cookie']);
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, array(
+            // 'X-CSRF-TOKEN: '.$get_header['csrf'],
+            'Content-Type: application/json',
+            'accept: application/json'
+        ));
+
+        curl_setopt($curl, CURLOPT_USERPWD, $username . ":" . $password);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        $restPostDP = curl_exec($curl);
+
+        curl_close ($curl);
+
+        $jsonData = json_decode($restPostDP, true);
+        $result = $jsonData['return'];
+        $it_input = $jsonData['it_input'];
+        // dd($jsonData);
 
         $logger->step = "2-E";
         $logger->status = "success";
