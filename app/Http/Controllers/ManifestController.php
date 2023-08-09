@@ -871,7 +871,8 @@ class ManifestController extends Controller
     }
 
     public function sendManifestSapUpdate(Request $request)
-    {
+    {   
+            // var_dump($request);
             $logger = new Logger();
             $logger->step = "4-S";
             $logger->status = "success";
@@ -885,42 +886,44 @@ class ManifestController extends Controller
             // dd($result);
             if(count($result) <= 0)
             {
-                 return response()->json([
-                                            'type' => 'error',
-                                            'message' => 'This manifest has been processed!',
-                                            'data' => null
-                                            ], 422);
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'This manifest has been processed!',
+                    'data' => null,
+                    'manifest' => $request->manifest
+                ], 422);
             }
+
             $set = 0;
-               foreach ($result as  $detail) {
-                    $detailObj =  $detail;
-                  
-                        if($set == 0)
-                        {
-                            $headerM->update(['stat' => "H"]);
-                        }
-                        $set = 1; //supaya update stat H sekali aja
-                        
-                        $mfget = ManifestDetail::where('kanban', $detailObj->kanban_no);
-                        $getData =  $mfget->first();
+            foreach ($result as  $detail) {
+                $detailObj =  $detail;
 
-                        $manifest_d_update = [];
-                        $manifest_d_update['issued_date'] = date('Y-m-d '.'00:00:00');
-                        $manifest_d_update['issued_time'] = date('H:i:s');
-                        $manifest_d_update['issued_by'] = empty($request->issued_by) ? "-":$request->issued_by;
-                        $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
-                        $mfget->update($manifest_d_update);
-
-                        $getData =  $mfget->first();
-                        if(!empty($getData->arrival_date) && !empty($getData->issued_date))
-                        {
-                            $kanban_list[] = $getData->kanban;
-                        }
-                        
-
+                    if($set == 0)
+                    {
+                        $headerM->update(['stat' => "H"]);
+                    }
+                    $set = 1; //supaya update stat H sekali aja
                     
-                }
-                // dd($kanban_list);
+                    $mfget = ManifestDetail::where('kanban', $detailObj->kanban_no);
+                    $getData =  $mfget->first();
+
+                    $manifest_d_update = [];
+                    $manifest_d_update['issued_date'] = date('Y-m-d '.'00:00:00');
+                    $manifest_d_update['issued_time'] = date('H:i:s');
+                    $manifest_d_update['issued_by'] = empty($request->issued_by) ? "-":$request->issued_by;
+                    $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
+                    $mfget->update($manifest_d_update);
+
+                    $getData =  $mfget->first();
+                    if(!empty($getData->arrival_date) && !empty($getData->issued_date))
+                    {
+                        $kanban_list[] = $getData->kanban;
+                    }
+                    
+
+                
+            }
+            // dd(count($kanban_list));
             $logger->step = "4-E";
             $logger->status = "success";
             $logger->messages = "End Render data For Mobile";
@@ -939,11 +942,13 @@ class ManifestController extends Controller
             {
                  $headerM->update(['active' => "C",'stat' => "D"]);
             }
+
             if(!empty($kanban_list))
             {
-              
-               ManifestDetail::where('manifest', $request->manifest)->update(['active' => 'N']);
-               SendManifestSapHistory::where('manifest', $request->manifest)->update(['is_processed' => date('Y-m-d H:i:s')]);
+                for ($i=0; $i < count($kanban_list) ; $i++) { 
+                    ManifestDetail::where('kanban', $kanban_list[$i])->update(['active' => 'N']);
+                    SendManifestSapHistory::where('kanban_no', $kanban_list[$i])->update(['is_processed' => date('Y-m-d H:i:s')]);
+                }
             }
 
             $logger->step = "5-E";
