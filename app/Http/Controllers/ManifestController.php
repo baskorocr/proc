@@ -866,7 +866,7 @@ class ManifestController extends Controller
         // COLLECTIING KANBAN
         if(count($result) > 0)
         {
-            if($result[0]['type'] != 'E')
+            if($result[0]['type'] === 'S')
            {
 
                 foreach ($result as $index => $detail) {
@@ -920,7 +920,7 @@ class ManifestController extends Controller
             $set = 0;
             foreach ($result as  $detail) {
                 $detailObj =  $detail;
-
+                dd($detailObj);
                     if($set == 0)
                     {
                         $headerM->update(['stat' => "H"]);
