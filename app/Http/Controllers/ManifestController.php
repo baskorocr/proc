@@ -872,7 +872,7 @@ class ManifestController extends Controller
                 foreach ($result as $index => $detail) {
                 
 
-                    $kanbanNo = $detail['kbnno'];
+                    $kanbanNo = $it_input[$index]['kbnno'];
                     $manifestNo = $request->manifest;
                     $user = empty($request->issued_by) ? "-":$request->issued_by;
 
@@ -881,14 +881,14 @@ class ManifestController extends Controller
 
                 } 
            } else{
-             return response()->json(['message' => $result[0]['message'], 'result'=> $merge], 422);
+             return response()->json(['message' => $result[0]['message'], 'result'=> $result], 422);
            }
         }
       
 
        
 
-        return response()->json(['result' => $merge]);
+        return response()->json(['result' => $merge, 'data-result' => $result, 'data-input' => $it_input]);
         // }
 
     }
