@@ -920,8 +920,8 @@ class ManifestController extends Controller
             $set = 0;
             foreach ($result as  $detail) {
                 $detailObj =  $detail;
-                dd($detailObj);
-                    if($set == 0)
+
+                if($set == 0)
                     {
                         $headerM->update(['stat' => "H"]);
                     }
