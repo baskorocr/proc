@@ -807,23 +807,46 @@ class ManifestController extends Controller
      
         if(count($it_input) > 0)
         {
-
-            $matdoc = !empty($result[0]['matdoc']) ? $result[0]['matdoc'] : '-';
-            $merge[] = [
-                "mnnum" => $it_input[0]['mnnum'],
-                "item" => $it_input[0]['item'],
-                "kbnno" => $it_input[0]['kbnno'],
-                "sequn" => $it_input[0]['sequn'],
-                "grdate" => $it_input[0]['grdate'],
-                "grtime" => $it_input[0]['grtime'],
-                "entry_qnt" => $it_input[0]['entry_qnt'],
-                "mnnum" => $result[0]['mnnum'],
-                "matdoc" => $matdoc,
-                "type" => $result[0]['type'],
-                "id" => $result[0]['id'],
-                "number" => $result[0]['number'],
-                "message" => $result[0]['message'],
-            ];
+            // if($result[0]['type'] != 'E') {
+            //     $matdoc = !empty($result[0]['matdoc']) ? $result[0]['matdoc'] : '-';
+            //     $merge[] = [
+            //         "mnnum" => $it_input[0]['mnnum'],
+            //         "material" => $result[0]['material'],
+            //         "item" => $it_input[0]['item'],
+            //         "kbnno" => $it_input[0]['kbnno'],
+            //         "sequn" => $it_input[0]['sequn'],
+            //         "grdate" => $it_input[0]['grdate'],
+            //         "grtime" => $it_input[0]['grtime'],
+            //         "entry_qnt" => $it_input[0]['entry_qnt'],
+            //         "mnnum" => $result[0]['mnnum'],
+            //         "matdoc" => $matdoc,
+            //         "type" => $result[0]['type'],
+            //         "id" => $result[0]['id'],
+            //         "number" => $result[0]['number'],
+            //         "message" => $result[0]['message'],
+            //     ];
+            // } else {
+            // }
+            foreach ($result as $index => $data_result) {
+                $matdoc = !empty($data_result['matdoc']) ? $data_result['matdoc'] : '-';
+                // if
+                $merge[] = [
+                    "mnnum" => $it_input[$index]['mnnum'],
+                    "material" => $data_result['material'],
+                    "item" => $it_input[$index]['item'],
+                    "kbnno" => $it_input[$index]['kbnno'],
+                    "sequn" => $it_input[$index]['sequn'],
+                    "grdate" => $it_input[$index]['grdate'],
+                    "grtime" => $it_input[$index]['grtime'],
+                    "entry_qnt" => $it_input[$index]['entry_qnt'],
+                    "mnnum" => $data_result['mnnum'],
+                    "matdoc" => $matdoc,
+                    "type" => $data_result['type'],
+                    "id" => $data_result['id'],
+                    "number" => $data_result['number'],
+                    "message" => $data_result['message'],
+                ];
+            }
         }
   
 
@@ -846,19 +869,19 @@ class ManifestController extends Controller
             if($result[0]['type'] != 'E')
            {
 
-            foreach ($result as $index => $detail) {
+                foreach ($result as $index => $detail) {
                 
 
-                $kanbanNo = $detail['kbnno'];
-                $manifestNo = $request->manifest;
-                $user = empty($request->issued_by) ? "-":$request->issued_by;
+                    $kanbanNo = $detail['kbnno'];
+                    $manifestNo = $request->manifest;
+                    $user = empty($request->issued_by) ? "-":$request->issued_by;
 
-                SendManifestSapHistory::create(['manifest' => $manifestNo,'kanban_no' => $kanbanNo,'created_by' => $user,'is_processed' => null]);
+                    SendManifestSapHistory::create(['manifest' => $manifestNo,'kanban_no' => $kanbanNo,'created_by' => $user,'is_processed' => null]);
 
 
-             } 
+                } 
            } else{
-             return response()->json(['message' => $result[0]['message']], 422);
+             return response()->json(['message' => $result[0]['message'], 'result'=> $merge], 422);
            }
         }
       
