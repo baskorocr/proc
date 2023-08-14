@@ -807,23 +807,46 @@ class ManifestController extends Controller
      
         if(count($it_input) > 0)
         {
-
-            $matdoc = !empty($result[0]['matdoc']) ? $result[0]['matdoc'] : '-';
-            $merge[] = [
-                "mnnum" => $it_input[0]['mnnum'],
-                "item" => $it_input[0]['item'],
-                "kbnno" => $it_input[0]['kbnno'],
-                "sequn" => $it_input[0]['sequn'],
-                "grdate" => $it_input[0]['grdate'],
-                "grtime" => $it_input[0]['grtime'],
-                "entry_qnt" => $it_input[0]['entry_qnt'],
-                "mnnum" => $result[0]['mnnum'],
-                "matdoc" => $matdoc,
-                "type" => $result[0]['type'],
-                "id" => $result[0]['id'],
-                "number" => $result[0]['number'],
-                "message" => $result[0]['message'],
-            ];
+            // if($result[0]['type'] != 'E') {
+            //     $matdoc = !empty($result[0]['matdoc']) ? $result[0]['matdoc'] : '-';
+            //     $merge[] = [
+            //         "mnnum" => $it_input[0]['mnnum'],
+            //         "material" => $result[0]['material'],
+            //         "item" => $it_input[0]['item'],
+            //         "kbnno" => $it_input[0]['kbnno'],
+            //         "sequn" => $it_input[0]['sequn'],
+            //         "grdate" => $it_input[0]['grdate'],
+            //         "grtime" => $it_input[0]['grtime'],
+            //         "entry_qnt" => $it_input[0]['entry_qnt'],
+            //         "mnnum" => $result[0]['mnnum'],
+            //         "matdoc" => $matdoc,
+            //         "type" => $result[0]['type'],
+            //         "id" => $result[0]['id'],
+            //         "number" => $result[0]['number'],
+            //         "message" => $result[0]['message'],
+            //     ];
+            // } else {
+            // }
+            foreach ($result as $index => $data_result) {
+                $matdoc = !empty($data_result['matdoc']) ? $data_result['matdoc'] : '-';
+                // if
+                $merge[] = [
+                    "mnnum" => $it_input[$index]['mnnum'],
+                    "material" => $data_result['material'],
+                    "item" => $it_input[$index]['item'],
+                    "kbnno" => $it_input[$index]['kbnno'],
+                    "sequn" => $it_input[$index]['sequn'],
+                    "grdate" => $it_input[$index]['grdate'],
+                    "grtime" => $it_input[$index]['grtime'],
+                    "entry_qnt" => $it_input[$index]['entry_qnt'],
+                    "mnnum" => $data_result['mnnum'],
+                    "matdoc" => $matdoc,
+                    "type" => $data_result['type'],
+                    "id" => $data_result['id'],
+                    "number" => $data_result['number'],
+                    "message" => $data_result['message'],
+                ];
+            }
         }
   
 
@@ -843,35 +866,36 @@ class ManifestController extends Controller
         // COLLECTIING KANBAN
         if(count($result) > 0)
         {
-            if($result[0]['type'] != 'E')
+            if($result[0]['type'] === 'S')
            {
 
-            foreach ($result as $index => $detail) {
+                foreach ($result as $index => $detail) {
                 
 
-                $kanbanNo = $detail['kbnno'];
-                $manifestNo = $request->manifest;
-                $user = empty($request->issued_by) ? "-":$request->issued_by;
+                    $kanbanNo = $it_input[$index]['kbnno'];
+                    $manifestNo = $request->manifest;
+                    $user = empty($request->issued_by) ? "-":$request->issued_by;
 
-                SendManifestSapHistory::create(['manifest' => $manifestNo,'kanban_no' => $kanbanNo,'created_by' => $user,'is_processed' => null]);
+                    SendManifestSapHistory::create(['manifest' => $manifestNo,'kanban_no' => $kanbanNo,'created_by' => $user,'is_processed' => null]);
 
 
-             } 
+                } 
            } else{
-             return response()->json(['message' => $result[0]['message']], 422);
+             return response()->json(['message' => $result[0]['message'], 'result'=> $result], 422);
            }
         }
       
 
        
 
-        return response()->json(['result' => $merge]);
+        return response()->json(['result' => $merge, 'data-result' => $result, 'data-input' => $it_input]);
         // }
 
     }
 
     public function sendManifestSapUpdate(Request $request)
-    {
+    {   
+            // var_dump($request);
             $logger = new Logger();
             $logger->step = "4-S";
             $logger->status = "success";
@@ -885,42 +909,44 @@ class ManifestController extends Controller
             // dd($result);
             if(count($result) <= 0)
             {
-                 return response()->json([
-                                            'type' => 'error',
-                                            'message' => 'This manifest has been processed!',
-                                            'data' => null
-                                            ], 422);
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'This manifest has been processed!',
+                    'data' => null,
+                    'manifest' => $request->manifest
+                ], 422);
             }
+
             $set = 0;
-               foreach ($result as  $detail) {
-                    $detailObj =  $detail;
-                  
-                        if($set == 0)
-                        {
-                            $headerM->update(['stat' => "H"]);
-                        }
-                        $set = 1; //supaya update stat H sekali aja
-                        
-                        $mfget = ManifestDetail::where('kanban', $detailObj->kanban_no);
-                        $getData =  $mfget->first();
+            foreach ($result as  $detail) {
+                $detailObj =  $detail;
 
-                        $manifest_d_update = [];
-                        $manifest_d_update['issued_date'] = date('Y-m-d '.'00:00:00');
-                        $manifest_d_update['issued_time'] = date('H:i:s');
-                        $manifest_d_update['issued_by'] = empty($request->issued_by) ? "-":$request->issued_by;
-                        $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
-                        $mfget->update($manifest_d_update);
-
-                        $getData =  $mfget->first();
-                        if(!empty($getData->arrival_date) && !empty($getData->issued_date))
-                        {
-                            $kanban_list[] = $getData->kanban;
-                        }
-                        
-
+                if($set == 0)
+                    {
+                        $headerM->update(['stat' => "H"]);
+                    }
+                    $set = 1; //supaya update stat H sekali aja
                     
-                }
-                // dd($kanban_list);
+                    $mfget = ManifestDetail::where('kanban', $detailObj->kanban_no);
+                    $getData =  $mfget->first();
+
+                    $manifest_d_update = [];
+                    $manifest_d_update['issued_date'] = date('Y-m-d '.'00:00:00');
+                    $manifest_d_update['issued_time'] = date('H:i:s');
+                    $manifest_d_update['issued_by'] = empty($request->issued_by) ? "-":$request->issued_by;
+                    $manifest_d_update['qty_gr_outstanding'] = $getData->qty_scan_outstanding;
+                    $mfget->update($manifest_d_update);
+
+                    $getData =  $mfget->first();
+                    if(!empty($getData->arrival_date) && !empty($getData->issued_date))
+                    {
+                        $kanban_list[] = $getData->kanban;
+                    }
+                    
+
+                
+            }
+            // dd(count($kanban_list));
             $logger->step = "4-E";
             $logger->status = "success";
             $logger->messages = "End Render data For Mobile";
@@ -939,11 +965,13 @@ class ManifestController extends Controller
             {
                  $headerM->update(['active' => "C",'stat' => "D"]);
             }
+
             if(!empty($kanban_list))
             {
-              
-               ManifestDetail::where('manifest', $request->manifest)->update(['active' => 'N']);
-               SendManifestSapHistory::where('manifest', $request->manifest)->update(['is_processed' => date('Y-m-d H:i:s')]);
+                for ($i=0; $i < count($kanban_list) ; $i++) { 
+                    ManifestDetail::where('kanban', $kanban_list[$i])->update(['active' => 'N']);
+                    SendManifestSapHistory::where('kanban_no', $kanban_list[$i])->update(['is_processed' => date('Y-m-d H:i:s')]);
+                }
             }
 
             $logger->step = "5-E";
