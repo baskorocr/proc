@@ -471,91 +471,91 @@ class ManifestController extends Controller
 
     private function mailer_send($manifest, $cekManifest)
     {
-        // dd(count($cekManifest));
-        if(count($cekManifest) > 0) {
-            $manifestHead = ManifestHeader::where('manifest', $manifest)->first();
+        // // dd(count($cekManifest));
+        // if(count($cekManifest) > 0) {
+        //     $manifestHead = ManifestHeader::where('manifest', $manifest)->first();
     
-            //Ambil Permission dengan nama Delivery Schedule
-            $getMenu = Permission::where('name','Delivery Schedule')->first();
-            $role =  Role::get();
+        //     //Ambil Permission dengan nama Delivery Schedule
+        //     $getMenu = Permission::where('name','Delivery Schedule')->first();
+        //     $role =  Role::get();
     
-            $allowed = [];
-            $sended = [];
-            //Proses Pencarian Role mana saja yang diizinkan mengakses permission
-            foreach($role as $r)
-            {
-                $permissions=[];
-                foreach($r->permissions as $p){
-                    $permissions[] = $p->permission_id; 
+        //     $allowed = [];
+        //     $sended = [];
+        //     //Proses Pencarian Role mana saja yang diizinkan mengakses permission
+        //     foreach($role as $r)
+        //     {
+        //         $permissions=[];
+        //         foreach($r->permissions as $p){
+        //             $permissions[] = $p->permission_id; 
                     
-                }
+        //         }
                 
-                if(in_array($getMenu->_id, $permissions))
-                {
-                    $allowed[] = $r->_id;
-                }
+        //         if(in_array($getMenu->_id, $permissions))
+        //         {
+        //             $allowed[] = $r->_id;
+        //         }
     
-            }
+        //     }
     
-            //Ambil Data Vendor
-            $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
-            $user =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id',$manifestHead->id_vendor)->where('status_user','A')->get();
-            $cc=[];
-            //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
-            foreach($user as $u)
-            {
-                if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
-                    $cc[] =$u->username;
-                    $sended[] = $u->username;
-                }
-            }
+        //     //Ambil Data Vendor
+        //     $vendor = Vendor::where('id_vendor',$manifestHead->id_vendor)->first();
+        //     $user =  MasterUser::whereIn('role_id',$allowed)->where('foreign_id',$manifestHead->id_vendor)->where('status_user','A')->get();
+        //     $cc=[];
+        //     //Kirim Email Ke Pengguna yang dapat mengakses Delivery Schedule
+        //     foreach($user as $u)
+        //     {
+        //         if (filter_var($u->username, FILTER_VALIDATE_EMAIL)) {
+        //             $cc[] =$u->username;
+        //             $sended[] = $u->username;
+        //         }
+        //     }
     
-            //Kirim Ke Akun Vendor
-            // $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
+        //     //Kirim Ke Akun Vendor
+        //     // $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->limit(1)->get();
     
-            // foreach($vendor_user as $vendor_user){
-            //     if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
-            //         if(!in_array($vendor_user->username,$sended))
-            //         {
-            //             Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
-            //         }
-            //     }
-            // }
+        //     // foreach($vendor_user as $vendor_user){
+        //     //     if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+        //     //         if(!in_array($vendor_user->username,$sended))
+        //     //         {
+        //     //             Mail::to($vendor_user->username)->cc($cc)->send(new ManifestMail($manifestHead,$vendor));
+        //     //         }
+        //     //     }
+        //     // }
 
-            $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->where('status_user','A')->whereIn('role_id',$allowed)->get();
-            $vendEmail = [];
-            foreach($vendor_user as $vendor_user){
-                if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
+        //     $vendor_user = MasterUser::where('foreign_id',$manifestHead->id_vendor)->where('status_user','A')->whereIn('role_id',$allowed)->get();
+        //     $vendEmail = [];
+        //     foreach($vendor_user as $vendor_user){
+        //         if (filter_var($vendor_user->username, FILTER_VALIDATE_EMAIL)) {
                    
-                        $vendEmail[] = $vendor_user->username;
+        //                 $vendEmail[] = $vendor_user->username;
                        
-                }
-            }
+        //         }
+        //     }
 
-            // var_dump($vendEmail);
-            if(empty($vendEmail)) {
-                $id = $manifestHead->_id;
+        //     // var_dump($vendEmail);
+        //     if(empty($vendEmail)) {
+        //         $id = $manifestHead->_id;
 
-                ManifestHeader::find($id)->delete();
-                ManifestDetail::where('manifest', $manifest)->delete();
+        //         ManifestHeader::find($id)->delete();
+        //         ManifestDetail::where('manifest', $manifest)->delete();
 
-                return false;
-            } else {
-                // Mail::to($vendEmail)->send(new ManifestMail($manifestHead,$vendor));
-                Mail::to($vendEmail)->cc($cc)->bcc(env('BCC_MAIL'))->send(new ManifestMail($manifestHead,$vendor));
-                ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
+        //         return false;
+        //     } else {
+        //         // Mail::to($vendEmail)->send(new ManifestMail($manifestHead,$vendor));
+        //         Mail::to($vendEmail)->cc($cc)->bcc(env('BCC_MAIL'))->send(new ManifestMail($manifestHead,$vendor));
+        //         ManifestHeader::where('_id',$manifestHead->_id)->update(['sent' => date('Y-m-d H:i:s')]);
                 
-                $log = [];
-                $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." has been sended to ".json_encode($vendEmail)." | cc ". json_encode($cc)." | bcc : ".env('BCC_MAIL',"BCC is not set in .env");
-                \Log::info($log);
+        //         $log = [];
+        //         $log['message'] = "[EMAIL-SYSTEM] Manifest ".$manifest." has been sended to ".json_encode($vendEmail)." | cc ". json_encode($cc)." | bcc : ".env('BCC_MAIL',"BCC is not set in .env");
+        //         \Log::info($log);
 
-                return true;
-            }
+        //         return true;
+        //     }
 
-        } else {
+        // } else {
 
-            return false;
-        }
+        //     return false;
+        // }
         
     }
 
