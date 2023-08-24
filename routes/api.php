@@ -25,6 +25,7 @@ Route::get('/outstanding', 'ManifestController@outstanding');
 Route::get('manifest', 'ManifestController@manifestHeader');
 Route::get('manifest/{manifest}', 'ManifestController@manifestDetail');
 Route::get('check-kanban', 'ManifestController@checkKanban');
+Route::post('insert-temp-manifest', 'ManifestController@insertTempHistory');
 Route::post('/send-manifest', 'ManifestController@sendManifest');
 Route::post('/send-manifest-multiple', 'ManifestController@sendManifestMultiple');
 Route::post('/resend-mail-manifest', 'ManifestController@resendEmailManifest');

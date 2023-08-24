@@ -753,14 +753,11 @@ class ManifestController extends Controller
             ];
         });
      
-
         $payload = json_encode(["IT_INPUT" => $data_parsed]);
 
         $logger->step = "1-E";
         $logger->messages = "END Get Detail Manifest";
         $logger->trace(); // END 
-
-
 
         $logger->step = "2-S"; // START
         $logger->messages = "Start Send Data To SAP";
@@ -769,8 +766,9 @@ class ManifestController extends Controller
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, 'http://erpqas-dp.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
-        // curl_setopt($curl, CURLOPT_URL, 'http://erpprd-app1.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
         curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain=erpqas-dp.dharmap.com;');
+        // curl_setopt($curl, CURLOPT_URL, 'http://erpprd-app1.dharmap.com:8001/sap/zapi/zmm_goodsmvt_createv1?sap-client=300');
+        // curl_setopt($curl, CURLOPT_COOKIE, 'sap-usercontext=sap-client=300; Path=/; Domain=erpprd-app1.dharmap.com;');
         // curl_setopt($curl, CURLOPT_COOKIE, $get_header['cookie']);
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $payload);
@@ -829,7 +827,6 @@ class ManifestController extends Controller
             // }
             foreach ($result as $index => $data_result) {
                 $matdoc = !empty($data_result['matdoc']) ? $data_result['matdoc'] : '-';
-                // if
                 $merge[] = [
                     "mnnum" => $it_input[$index]['mnnum'],
                     "material" => $data_result['material'],
@@ -869,27 +866,14 @@ class ManifestController extends Controller
             if($result[0]['type'] === 'S')
            {
 
-                foreach ($result as $index => $detail) {
+                $this->insertTempHistory(json_decode($payload), $request);
                 
-
-                    $kanbanNo = $it_input[$index]['kbnno'];
-                    $manifestNo = $request->manifest;
-                    $user = empty($request->issued_by) ? "-":$request->issued_by;
-
-                    SendManifestSapHistory::create(['manifest' => $manifestNo,'kanban_no' => $kanbanNo,'created_by' => $user,'is_processed' => null]);
-
-
-                } 
            } else{
              return response()->json(['message' => $result[0]['message'], 'result'=> $result], 422);
            }
         }
       
-
-       
-
         return response()->json(['result' => $merge, 'data-result' => $result, 'data-input' => $it_input]);
-        // }
 
     }
 
@@ -1172,6 +1156,17 @@ class ManifestController extends Controller
         return response()->json(['result' => $merge]);
         // }
 
+    }
+
+    public function insertTempHistory($payload, $request) {
+        $data = $payload->IT_INPUT;
+        foreach ($data as $key => $value) {
+            $kanbanNo = $value->KBNNO;
+            $manifestNo = $value->MNNUM;
+            $user = empty($request->issued_by) ? "-":$request->issued_by;
+
+            SendManifestSapHistory::create(['manifest' => $manifestNo,'kanban_no' => $kanbanNo,'created_by' => $user,'is_processed' => null]);
+        }
     }
 
 }
