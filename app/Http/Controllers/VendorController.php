@@ -65,7 +65,7 @@ class VendorController extends Controller
         ]);
     }
 
-    public function store(Request $request)
+    public function storeOld(Request $request)
     {
         // $request->validate([
         //     // 'username' => 'required|string|unique:users,username,'.$id.',_id',
@@ -100,6 +100,107 @@ class VendorController extends Controller
             'type' => 'success',
             'message' => 'Data updated successfully!'
         ], 201);
+    }
+
+    public function store(Request $request)
+    {
+
+        try {
+            // $input = $request->all();
+            // $validator = Validator::make($input, [
+            //     'id_vendor' => 'required'
+            // ]);
+
+            // if ($validator->fails()) {
+            //     return response()->json([
+            //         'data' => $validator->errors(),
+            //         'response' => 401,
+            //         'status' => 'error',
+            //     ]);
+            // }
+
+            $vendorExist = Vendor::firstOrNew(['id_vendor' => $request->id_vendor]);
+        
+            //protect 1 BOM hanya bisa punya 1 part_number, part_child, dan unit yg sama dalam 1 record//
+            if ($vendorExist->exists()) {
+                $existData = Vendor::where('id_vendor', $request->id_vendor)->exists();
+            } else {
+                $existData = false;
+            }
+
+            if (!$vendorExist->exists() || ($vendorExist->exists() && !$existData)) {
+
+                $vendor = new Vendor();
+        
+                // $bom->id = time();
+                $vendor->id_vendor = $request->id_vendor;
+                $vendor->purch_org = $request->purch_org;
+                $vendor->nm_vendor = $request->nm_vendor;
+                $vendor->vend_email = $request->vend_email;
+                $vendor->allias = $request->allias;
+                $vendor->street = $request->street;
+                $vendor->district = $request->district;
+                $vendor->postal_code = $request->postal_code;
+                $vendor->city = $request->city;
+                $vendor->country = $request->country;
+                $vendor->region = $request->region;
+                $vendor->phone_1 = $request->phone_1;
+                $vendor->vat_reg = $request->vat_reg;
+                $vendor->order_curr = $request->order_curr;
+                $vendor->pay_term = $request->pay_term;
+                $vendor->sales_person = $request->sales_person;
+                $vendor->phone_2 = $request->phone_2;
+                $vendor->status_vendor = $request->status_vendor;
+                $vendor->save();
+
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'message' => "Berhasil Menambah Data Vendors",
+                    ],
+                    200
+                );
+
+            } else {
+                $vendor = Vendor::firstOrNew([
+                    'id_vendor' => $request->id_vendor
+                ]);
+
+                $vendor->purch_org = $request->purch_org;
+                $vendor->nm_vendor = $request->nm_vendor;
+                $vendor->vend_email = $request->vend_email;
+                $vendor->allias = $request->allias;
+                $vendor->street = $request->street;
+                $vendor->district = $request->district;
+                $vendor->postal_code = $request->postal_code;
+                $vendor->city = $request->city;
+                $vendor->country = $request->country;
+                $vendor->region = $request->region;
+                $vendor->phone_1 = $request->phone_1;
+                $vendor->vat_reg = $request->vat_reg;
+                $vendor->order_curr = $request->order_curr;
+                $vendor->pay_term = $request->pay_term;
+                $vendor->sales_person = $request->sales_person;
+                $vendor->phone_2 = $request->phone_2;
+                $vendor->status_vendor = $request->status_vendor;
+                $vendor->save();
+
+                return response()->json(
+                    [
+                        'status' => 'success',
+                        'message' => "Berhasil Menambah Data Vendor",
+                    ],
+                    200
+                );
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'type' => 'error',
+                'message' => $e->getMessage(),
+            ], 422);
+        } 
+
+        
     }
 
     // public function showGetVendor(Request $request, $vendor_code)

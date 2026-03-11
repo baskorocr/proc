@@ -7,6 +7,22 @@ use Illuminate\Support\Facades\Cache;
 use App\Helpers\IsoHelper;
 use App\Helpers\Logger;
 use Illuminate\Support\Facades\RateLimiter;
+use App\Http\Controllers\MasterData\CustomerController;
+use App\Http\Controllers\MasterData\ProjectController;
+use App\Http\Controllers\MasterData\VendorController;
+use App\Http\Controllers\MasterData\AssetTypeController;
+use App\Http\Controllers\MasterData\PartController;
+use App\Http\Controllers\MasterData\ProsesController;
+use App\Http\Controllers\MasterData\PemilikController;
+use App\Http\Controllers\MasterData\AssetsController;
+use App\Http\Controllers\MasterData\PhotoController;
+use App\Http\Controllers\MasterData\RiwayatController;
+use App\Http\Controllers\MasterData\UserManagementController;
+use App\Http\Controllers\CronController;
+
+use App\Models\masterData\Riwayat;
+
+
 Route::get('/test-f', function(){
   $logger = new Logger();
     $logger->menu = "SEND-MANIFEST-TO-SAP";
@@ -58,6 +74,11 @@ Route::get('/', function () {
     }
     return view('eproc.login');
 })->name('login');
+
+// Cron route for auto update asset status
+Route::get('/cron/update-asset-status', [CronController::class, 'updateAssetStatus'])
+    ->name('cron.update-asset-status');
+Route::get('/auth/callback',[AuthController::class,'handleSSOCallback']);
 Route::group(['middleware' => ['auth']], function () {
      
     Route::get('/logout',[AuthController::class,'logout'])->name('logout');
@@ -159,7 +180,6 @@ Route::group(['middleware' => ['auth','route_protect','lockscreen']], function (
         //Datatables
         Route::get('/datatables/get-email-group', [App\Http\Controllers\EmailGroupController::class, 'getDataEmailGroup'])->name('datatables.regis-user.email.group');
 
-
         //Email List Group
         Route::get('/email-list-group', [App\Http\Controllers\EmailListGroupController::class, 'getEmailListGroup'])->name('regis-user.email-listemail');
         Route::post('/add-list-group', [App\Http\Controllers\EmailListGroupController::class, 'listemailAdd'])->name('api.regis-user.create.listemail');
@@ -238,6 +258,132 @@ Route::group(['middleware' => ['auth','route_protect','lockscreen']], function (
 
 
     Route::group(['middleware' => ['auth']], function () {
+        //Master Data MT
+        Route::prefix('master-data-mt')->group(function(){
+            Route::get('customers', [CustomerController::class, 'index'])->name('customers.index');
+            Route::get('customers/create', [CustomerController::class, 'create'])->name('customers.create');
+            Route::post('customers', [CustomerController::class, 'store'])->name('customers.store');
+            Route::get('customers/{customer}', [CustomerController::class, 'show'])->name('customers.show');
+            Route::get('customers/{customer}/edit', [CustomerController::class, 'edit'])->name('customers.edit');
+            Route::put('customers/{customer}', [CustomerController::class, 'update'])->name('customers.update');
+            Route::delete('customers/{customer}', [CustomerController::class, 'destroy'])->name('customers.destroy');
+        
+            // Projects
+            Route::get('projects', [ProjectController::class, 'index'])->name('projects.index');
+            Route::get('projects/create', [ProjectController::class, 'create'])->name('projects.create');
+            Route::post('projects', [ProjectController::class, 'store'])->name('projects.store');
+            Route::get('projects/{project}', [ProjectController::class, 'show'])->name('projects.show');
+            Route::get('projects/{project}/edit', [ProjectController::class, 'edit'])->name('projects.edit');
+            Route::put('projects/{project}', [ProjectController::class, 'update'])->name('projects.update');
+            Route::delete('projects/{project}', [ProjectController::class, 'destroy'])->name('projects.destroy');
+        
+            // Vendors
+            Route::get('vendors', [VendorController::class, 'index'])->name('vendors.index');
+            Route::get('vendors/create', [VendorController::class, 'create'])->name('vendors.create');
+            Route::post('vendors', [VendorController::class, 'store'])->name('vendors.store');
+            Route::get('vendors/{vendor}', [VendorController::class, 'show'])->name('vendors.show');
+            Route::get('vendors/{vendor}/edit', [VendorController::class, 'edit'])->name('vendors.edit');
+            Route::put('vendors/{vendor}', [VendorController::class, 'update'])->name('vendors.update');
+            Route::delete('vendors/{vendor}', [VendorController::class, 'destroy'])->name('vendors.destroy');
+        
+            // Asset Types
+            Route::get('asset-types', [AssetTypeController::class, 'index'])->name('asset-types.index');
+            Route::get('asset-types/create', [AssetTypeController::class, 'create'])->name('asset-types.create');
+            Route::post('asset-types', [AssetTypeController::class, 'store'])->name('asset-types.store');
+            Route::get('asset-types/{asset_type}', [AssetTypeController::class, 'show'])->name('asset-types.show');
+            Route::get('asset-types/{asset_type}/edit', [AssetTypeController::class, 'edit'])->name('asset-types.edit');
+            Route::put('asset-types/{asset_type}', [AssetTypeController::class, 'update'])->name('asset-types.update');
+            Route::delete('asset-types/{asset_type}', [AssetTypeController::class, 'destroy'])->name('asset-types.destroy');
+        
+            // Parts
+            Route::get('parts', [PartController::class, 'index'])->name('parts.index');
+            Route::post('parts/sync-sap', [PartController::class, 'syncFromSap'])->name('parts.sync-sap');
+            Route::get('parts/create', [PartController::class, 'create'])->name('parts.create');
+            Route::post('parts', [PartController::class, 'store'])->name('parts.store');
+            Route::get('parts/{part}', [PartController::class, 'show'])->name('parts.show');
+            Route::get('parts/{part}/edit', [PartController::class, 'edit'])->name('parts.edit');
+            Route::put('parts/{part}', [PartController::class, 'update'])->name('parts.update');
+            Route::delete('parts/{part}', [PartController::class, 'destroy'])->name('parts.destroy');
+        
+            // Proses
+            Route::get('proses', [ProsesController::class, 'index'])->name('proses.index');
+            Route::get('proses/create', [ProsesController::class, 'create'])->name('proses.create');
+            Route::post('proses', [ProsesController::class, 'store'])->name('proses.store');
+            Route::get('proses/{proses}', [ProsesController::class, 'show'])->name('proses.show');
+            Route::get('proses/{proses}/edit', [ProsesController::class, 'edit'])->name('proses.edit');
+            Route::put('proses/{proses}', [ProsesController::class, 'update'])->name('proses.update');
+            Route::delete('proses/{proses}', [ProsesController::class, 'destroy'])->name('proses.destroy');
+        
+            // Pemiliks
+            Route::get('pemiliks', [PemilikController::class, 'index'])->name('pemiliks.index');
+            Route::get('pemiliks/create', [PemilikController::class, 'create'])->name('pemiliks.create');
+            Route::post('pemiliks', [PemilikController::class, 'store'])->name('pemiliks.store');
+            Route::get('pemiliks/{pemilik}', [PemilikController::class, 'show'])->name('pemiliks.show');
+            Route::get('pemiliks/{pemilik}/edit', [PemilikController::class, 'edit'])->name('pemiliks.edit');
+            Route::put('pemiliks/{pemilik}', [PemilikController::class, 'update'])->name('pemiliks.update');
+            Route::delete('pemiliks/{pemilik}', [PemilikController::class, 'destroy'])->name('pemiliks.destroy');
+        
+            // Assets Part
+            Route::get('assetsPart', [AssetsController::class, 'index'])->name('assetsPart.index');
+            Route::get('assetsPart/create', [AssetsController::class, 'create'])->name('assetsPart.create');
+            Route::post('assetsPart', [AssetsController::class, 'store'])->name('assetsPart.store');
+            Route::post('assetsPart/import', [AssetsController::class, 'import'])->name('assetsPart.import');
+            Route::post('assetsPart/bulk-delete', [AssetsController::class, 'bulkDelete'])->name('assetsPart.bulkDelete');
+            Route::get('assetsPart/export', [AssetsController::class, 'export'])->name('assetsPart.export');
+            Route::get('assetsPart/{assetsPart}', [AssetsController::class, 'show'])->name('assetsPart.show');
+            Route::get('assetsPart/{assetsPart}/edit', [AssetsController::class, 'edit'])->name('assetsPart.edit');
+            Route::put('assetsPart/{assetsPart}', [AssetsController::class, 'update'])->name('assetsPart.update');
+            Route::delete('assetsPart/{assetsPart}', [AssetsController::class, 'destroy'])->name('assetsPart.destroy');
+        
+            // Move
+            Route::post('assetsPart/{no_assets}/move', [AssetsController::class, 'move'])->name('assetsPart.move');
+        
+            // Photos
+            Route::get('photos', [PhotoController::class, 'index'])->name('photos.index');
+            Route::get('photos/create', [PhotoController::class, 'create'])->name('photos.create');
+            Route::post('photos', [PhotoController::class, 'store'])->name('photos.store');
+            Route::get('photos/{photo}', [PhotoController::class, 'show'])->name('photos.show');
+            Route::get('photos/{photo}/edit', [PhotoController::class, 'edit'])->name('photos.edit');
+            Route::put('photos/{photo}', [PhotoController::class, 'update'])->name('photos.update');
+            Route::delete('photos/{photo}', [PhotoController::class, 'destroy'])->name('photos.destroy');
+        
+            // Riwayat
+            Route::get('riwayat', [RiwayatController::class, 'index'])->name('riwayat.index');
+            Route::get('riwayat/create', [RiwayatController::class, 'create'])->name('riwayat.create');
+            Route::post('riwayat', [RiwayatController::class, 'store'])->name('riwayat.store');
+            Route::get('riwayat/{riwayat}', [RiwayatController::class, 'show'])->name('riwayat.show');
+            Route::get('riwayat/{riwayat}/edit', [RiwayatController::class, 'edit'])->name('riwayat.edit');
+            Route::put('riwayat/{riwayat}', [RiwayatController::class, 'update'])->name('riwayat.update');
+            Route::delete('riwayat/{riwayat}', [RiwayatController::class, 'destroy'])->name('riwayat.destroy');
+        
+            // User Manajemen
+            Route::get('user-manajemen', [UserManagementController::class, 'index'])->name('user-manajemen.index');
+            Route::get('user-manajemen/create', [UserManagementController::class, 'create'])->name('user-manajemen.create');
+            Route::post('user-manajemen', [UserManagementController::class, 'store'])->name('user-manajemen.store');
+            Route::get('user-manajemen/{user}', [UserManagementController::class, 'show'])->name('user-manajemen.show');
+            Route::get('user-manajemen/{user}/edit', [UserManagementController::class, 'edit'])->name('user-manajemen.edit');
+            Route::put('user-manajemen/{user}', [UserManagementController::class, 'update'])->name('user-manajemen.update');
+            Route::delete('user-manajemen/{user}', [UserManagementController::class, 'destroy'])->name('user-manajemen.destroy');
+
+            
+
+        });
+
+        Route::prefix('mt-asset')->group(function(){   
+            Route::get('history', [App\Http\Controllers\Maintenance\MovementAssetsController::class,'history'])->name('mt-asset.history');
+            Route::get('action', [App\Http\Controllers\Maintenance\ActionMTController::class,'index'])->name('mt-asset.index');
+            Route::get('riwayat', [App\Http\Controllers\Maintenance\ActionMTController::class,'riwayat'])->name('mt-asset.riwayat');
+            Route::post('/kunjungan', [App\Http\Controllers\Maintenance\ActionMTController::class, 'kunjungan'])->name('kunjungan.schedule');
+            Route::delete('/kunjungan/{id}', [App\Http\Controllers\Maintenance\ActionMTController::class, 'KunjunganDestroy'])->name('kunjungan.destroy');
+            Route::post('/kunjungan/reschedule', [App\Http\Controllers\Maintenance\ActionMTController::class, 'reschedule'])->name('kunjungan.reschedule');
+            Route::post('/maintenance/upload', [App\Http\Controllers\Maintenance\ActionMTController::class, 'uploadMaintenance'])->name('maintenance.upload');
+            Route::get('/verification', [App\Http\Controllers\Maintenance\ActionMTController::class, 'verification'])->name('verification.index');
+            Route::put('/maintenance/verify/{id}/approve', [App\Http\Controllers\Maintenance\ActionMTController::class, 'approveMaintenance'])->name('maintenance.approve');
+            Route::put('/maintenance/verify/{id}/reject', [App\Http\Controllers\Maintenance\ActionMTController::class, 'rejectMaintenance'])->name('maintenance.reject');
+
+            
+           });
+        //CONFIG ROUTES
         Route::prefix('config')->group(function(){
             Route::get('/permission', [App\Http\Controllers\ConfigController::class, 'permission'])->name('config.permission');
             Route::get('/permission/delete/{id}', [App\Http\Controllers\ConfigController::class, 'deletePermission'])->name('config.permission.delete');
@@ -364,18 +510,13 @@ Route::group(['middleware' => ['auth','route_protect','lockscreen']], function (
 
     Route::prefix('purchasing-process')->group(function(){
         Route::get('/batch-mail-send', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.batch-mail');
-        // Route::get('/testMail', [App\Http\Controllers\PurchasingProcessController::class, 'sendmail'])->name('purchasing.process.uploadpo');
         Route::get('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'upload'])->name('purchasing.process.uploadpo');
-
         Route::post('/select-all-po', [App\Http\Controllers\PurchasingProcessController::class, 'selectAll'])->name('purchasing.process.selectAll');
         Route::get('/list-po', [App\Http\Controllers\PurchasingProcessController::class, 'index'])->name('purchasing.process.listpo');
         Route::get('/send-mail-po', [App\Http\Controllers\PurchasingProcessController::class, 'send_mail'])->name('purchasing.process.send.mail');
-        //Datatables
         Route::post('/datatables/get-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPo'])->name('datatables.purchasing.process.listpo');
         Route::post('/datatables/send-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getListPoSend'])->name('datatables.purchasing.process.listposend');
-
         Route::get('/download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'download'])->name('purchasing.process.download.listpo');
-        //Datatables
         Route::get('/datatables/get-download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'getDownloadListPo'])->name('datatables.purchasing.process.download.listpo');
         Route::post('/zip/download-list-po', [App\Http\Controllers\PurchasingProcessController::class, 'zipPurchasingProcess'])->name('purchasing.process.download.zip');
         Route::post('/upload-po', [App\Http\Controllers\PurchasingProcessController::class, 'importPo'])->name('purchasing.process.import.po');

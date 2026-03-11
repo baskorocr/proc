@@ -17,7 +17,7 @@ class MasterUser extends Model
 	
 	// protected $primaryKey = 'id_menu';
 
-	protected $fillable = ['id_user','nm_user','password','id_tipe_user','status_user','role','foreign_id','role_id','is_vendor','id_access_group'];
+	protected $fillable = ['id_user','nm_user','password','id_tipe_user','status_user','role','foreign_id','role_id','is_vendor','id_access_group','no_wa'];
 
 	public $dates = ['last_changed'];
 
@@ -44,5 +44,13 @@ class MasterUser extends Model
     {
         return $this->belongsTo(AccessGroup::class,'id_access_group','id_access_group');
     }
+    public function assets()
+{
+    return $this->hasMany(\App\Models\masterData\Asset::class, 'idUser', 'id_user');
+}
+public function scheduleKunjungans()
+{
+    return $this->hasMany(ScheduleKunjungan::class, 'idUser', '_id');
+}
 
 }

@@ -42,22 +42,22 @@ return [
     */
         'mf_directory' => [
                 'driver' => 'local',
-                'root'   => '/manifest/MI/QAS-MI', ///Lokasi File MF
+                'root'   => '/manifest/MI/PRD-MI', ///Lokasi File MF
             ],  
 
         'mf_qas_directory' => [
                 'driver' => 'local',
-                'root'   => '/manifest/MI/QAS-MI', ///Lokasi File MF
+                'root'   => '/manifest/MI/PRD-MI', ///Lokasi File MF
             ], 
 
         'mf_kanban_directory' => [
                 'driver' => 'local',
-                'root'   => '/manifest/MI-KANBAN/QAS-MI-KANBAN', ///Lokasi File MF
+                'root'   => '/manifest/MI-KANBAN/PRD-MI-KANBAN', ///Lokasi File MF
             ], 
 
         'mf_qas_kanban_directory' => [
                 'driver' => 'local',
-                'root'   => '/manifest/MI-KANBAN/QAS-MI-KANBAN', ///Lokasi File MF
+                'root'   => '/manifest/MI-KANBAN/PRD-MI-KANBAN', ///Lokasi File MF
             ],
      /////////////////////////////////////////////////////////////////////////
             
@@ -70,22 +70,22 @@ return [
     */
         'so_directory' => [
                 'driver' => 'local',
-                'root'   => '/manifest/SO/QAS-SO', ///Lokasi File MF
+                'root'   => '/manifest/SO/PRD-SO', ///Lokasi File MF
             ], 
 
         'so_kanban_directory' => [
                 'driver' => 'local',
-                'root'   => '/manifest/SO-KANBAN/QAS-SO-KANBAN', ///Lokasi File MF
+                'root'   => '/manifest/SO-KANBAN/PRD-SO-KANBAN', ///Lokasi File MF
             ],
 
         'so_qas_directory' => [
                 'driver' => 'local',
-                'root'   => '/manifest/SO/QAS-SO', ///Lokasi File MF
+                'root'   => '/manifest/SO/PRD-SO', ///Lokasi File MF
             ], 
 
         'so_qas_kanban_directory' => [
                 'driver' => 'local',
-                'root'   => '/manifest/SO-KANBAN/QAS-SO-KANBAN', ///Lokasi File MF
+                'root'   => '/manifest/SO-KANBAN/PRD-SO-KANBAN', ///Lokasi File MF
             ],
     /*
     |--------------------------------------------------------------------------
@@ -95,11 +95,11 @@ return [
     */
         'po_directory' => [
                 'driver' => 'local',
-                'root'   => '/popdf/QAS-PROC', ///Lokasi File PO
+                'root'   => '/popdf/PRD-PROC', ///Lokasi File PO
             ],  
         'po_qas_directory' => [
                 'driver' => 'local',
-                'root'   => '/popdf/QAS-PROC', ///Lokasi File PO
+                'root'   => '/popdf/PRD-PURC', ///Lokasi File PO
             ], 
 
     /////////////////////////////////////////////////////////////////////////
