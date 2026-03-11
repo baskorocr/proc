@@ -372,6 +372,7 @@ Route::group(['middleware' => ['auth','route_protect','lockscreen']], function (
         Route::prefix('mt-asset')->group(function(){   
             Route::get('history', [App\Http\Controllers\Maintenance\MovementAssetsController::class,'history'])->name('mt-asset.history');
             Route::get('action', [App\Http\Controllers\Maintenance\ActionMTController::class,'index'])->name('mt-asset.index');
+            Route::get('action/export', [App\Http\Controllers\Maintenance\ActionMTController::class,'export'])->name('mt-asset.export');
             Route::get('riwayat', [App\Http\Controllers\Maintenance\ActionMTController::class,'riwayat'])->name('mt-asset.riwayat');
             Route::post('/kunjungan', [App\Http\Controllers\Maintenance\ActionMTController::class, 'kunjungan'])->name('kunjungan.schedule');
             Route::delete('/kunjungan/{id}', [App\Http\Controllers\Maintenance\ActionMTController::class, 'KunjunganDestroy'])->name('kunjungan.destroy');

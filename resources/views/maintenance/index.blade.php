@@ -56,7 +56,12 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Other Recent Assets</h5>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h5 class="card-title">Other Recent Assets</h5>
+                            <a href="{{ route('mt-asset.export') }}" class="btn btn-success btn-sm">
+                                <i class="fa fa-file-excel"></i> Export Excel
+                            </a>
+                        </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-sm" id="recent-assets-table">
                                 <thead>

@@ -10,6 +10,9 @@ use App\Models\scheduleKunjungan;
 use App\Models\Maintenance;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Models\masterData\Proses;
 
 class ActionMTController extends Controller
 {
@@ -327,6 +330,85 @@ public function riwayat()
         ->get();
 
     return view('maintenance.riwayat', compact('maintenances'));
+}
+
+public function export()
+{
+    $idUser = auth()->user();
+    
+    // Get assets based on user role
+    if($idUser->role == "Admin"){
+        $assets = Asset::with(['part', 'vendor', 'scheduleKunjungans'])->get();
+    } elseif($idUser->role == "vendor"){
+        $assets = Asset::with(['part', 'vendor', 'scheduleKunjungans'])
+            ->where('vendor_id', $idUser->foreign_id)
+            ->get();
+    } else {
+        $assets = collect();
+    }
+
+    $spreadsheet = new Spreadsheet();
+    $sheet = $spreadsheet->getActiveSheet();
+    
+    // Header
+    $sheet->setCellValue('A1', '#');
+    $sheet->setCellValue('B1', 'Asset No');
+    $sheet->setCellValue('C1', 'Vendor');
+    $sheet->setCellValue('D1', 'Part');
+    $sheet->setCellValue('E1', 'Dies');
+    $sheet->setCellValue('F1', 'Process');
+    $sheet->setCellValue('G1', 'Quantity');
+    $sheet->setCellValue('H1', 'Next Maintenance');
+    $sheet->setCellValue('I1', 'Status');
+    
+    // Data
+    $row = 2;
+    foreach ($assets as $index => $asset) {
+        // Get process names
+        $prosesNames = [];
+        if(is_array($asset->proses_id)) {
+            foreach($asset->proses_id as $pid) {
+                $p = Proses::find($pid);
+                if($p) $prosesNames[] = $p->proses_name;
+            }
+        } elseif($asset->proses_id) {
+            $p = Proses::find($asset->proses_id);
+            if($p) $prosesNames[] = $p->proses_name;
+        }
+        $prosesName = !empty($prosesNames) ? implode(', ', $prosesNames) : '-';
+        
+        // Determine status
+        $status = 'Belum Dijadwalkan';
+        if($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan) {
+            $waktuKunjungan = Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
+            if($waktuKunjungan->isToday() || $waktuKunjungan->isPast()) {
+                $status = 'Maintenance Segera';
+            } else {
+                $status = 'Terjadwal';
+            }
+        }
+        
+        $sheet->setCellValue('A' . $row, $index + 1);
+        $sheet->setCellValue('B' . $row, $asset->no_assets ?? '-');
+        $sheet->setCellValue('C' . $row, optional($asset->vendor)->nm_vendor ?? '-');
+        $sheet->setCellValue('D' . $row, optional($asset->part)->part_name ?? '-');
+        $sheet->setCellValue('E' . $row, (!empty($asset->dies) && $asset->dies !== 'nan') ? $asset->dies : '-');
+        $sheet->setCellValue('F' . $row, $prosesName);
+        $sheet->setCellValue('G' . $row, $asset->jumlah ?? '-');
+        $sheet->setCellValue('H' . $row, optional($asset->scheduleKunjungans)->waktu_kunjungan ?? '-');
+        $sheet->setCellValue('I' . $row, $status);
+        $row++;
+    }
+    
+    $writer = new Xlsx($spreadsheet);
+    $filename = 'maintenance_assets_' . date('YmdHis') . '.xlsx';
+    
+    header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    header('Content-Disposition: attachment;filename="' . $filename . '"');
+    header('Cache-Control: max-age=0');
+    
+    $writer->save('php://output');
+    exit;
 }
 
 }
