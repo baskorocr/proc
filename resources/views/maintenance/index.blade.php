@@ -65,11 +65,11 @@
                                         <th>Asset No</th>
                                         <th>Vendor</th>
                                         <th>Part</th>
-                                        <th>Photo</th>
-                                        <th>Quantity</th>
                                        
+                                        <th>Dies</th>
+                                        <th>Process</th>
+                                        <th>Quantity</th>
                                         <th>Next Maintenance</th>
-                                    
                                         <th>status</th>
                                         <th>Action</th>
                                     </tr>
@@ -82,15 +82,22 @@
                                         <td>{{ optional( $asset->vendor)->nm_vendor ?? '-' }}</td>
 
                                         <td>{{ $asset->part->part_name ?? '-' }}</td>
+                                       
+                                        <td>{{ (!empty($asset->dies) && $asset->dies !== 'nan') ? $asset->dies : '-' }}</td>
                                         <td>
-                                            @if(optional($asset->part)->photo)
-                                            <img src="{{ asset('storage/parts/' . $asset->part->photo) }}"
-                                                 alt="photo" class="img-thumbnail" width="50"
-                                                 data-bs-toggle="modal" data-bs-target="#photoModal"
-                                                 data-photo="{{ asset('storage/parts/' . $asset->part->photo) }}">
-                                            @else
-                                            <span class="text-muted">No Photo</span>
-                                            @endif
+                                            @php
+                                                $prosesNames = [];
+                                                if(is_array($asset->proses_id)) {
+                                                    foreach($asset->proses_id as $pid) {
+                                                        $p = \App\Models\masterData\Proses::find($pid);
+                                                        if($p) $prosesNames[] = $p->proses_name;
+                                                    }
+                                                } elseif($asset->proses_id) {
+                                                    $p = \App\Models\masterData\Proses::find($asset->proses_id);
+                                                    if($p) $prosesNames[] = $p->proses_name;
+                                                }
+                                            @endphp
+                                            {{ !empty($prosesNames) ? implode(', ', $prosesNames) : '-' }}
                                         </td>
                                         <td>{{ $asset->jumlah }}</td>
                            

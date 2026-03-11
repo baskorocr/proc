@@ -31,18 +31,54 @@ class AssetsController extends Controller
         // Handle search
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
-            $query->where(function($q) use ($searchTerm) {
-                $q->where('no_assets', 'regex', new \MongoDB\BSON\Regex($searchTerm, 'i'))
-                  ->orWhereHas('project.customer', function($subQ) use ($searchTerm) {
-                      $subQ->where('name', 'regex', new \MongoDB\BSON\Regex($searchTerm, 'i'));
-                  })
-                  ->orWhereHas('part', function($subQ) use ($searchTerm) {
-                      $subQ->where('part_name', 'regex', new \MongoDB\BSON\Regex($searchTerm, 'i'));
-                  });
+            
+            // Get vendor IDs that match search
+            $vendorIds = Vendor::where('nm_vendor', 'like', '%' . $searchTerm . '%')
+                              ->pluck('id_vendor')
+                              ->toArray();
+            
+            // Get project IDs that match search
+            $projectIds = Project::where('name_project', 'like', '%' . $searchTerm . '%')
+                                ->pluck('_id')
+                                ->toArray();
+            
+            // Get customer IDs that match search
+            $customerProjects = Project::whereHas('customer', function($q) use ($searchTerm) {
+                                    $q->where('name', 'like', '%' . $searchTerm . '%');
+                                })
+                                ->pluck('_id')
+                                ->toArray();
+            
+            // Get part IDs that match search
+            $partIds = Part::where(function($q) use ($searchTerm) {
+                            $q->where('part_name', 'like', '%' . $searchTerm . '%')
+                              ->orWhere('idPart', 'like', '%' . $searchTerm . '%');
+                        })
+                        ->pluck('idPart')
+                        ->toArray();
+            
+            $query->where(function($q) use ($searchTerm, $vendorIds, $projectIds, $customerProjects, $partIds) {
+                $q->where('no_assets', 'like', '%' . $searchTerm . '%');
+                
+                if (!empty($vendorIds)) {
+                    $q->orWhereIn('vendor_id', $vendorIds);
+                }
+                
+                if (!empty($projectIds)) {
+                    $q->orWhereIn('project_id', $projectIds);
+                }
+                
+                if (!empty($customerProjects)) {
+                    $q->orWhereIn('project_id', $customerProjects);
+                }
+                
+                if (!empty($partIds)) {
+                    $q->orWhereIn('idPart', $partIds);
+                }
             });
         }
         
-        $assets = $query->paginate(15);
+        $assets = $query->paginate(15)->appends(['search' => $request->search]);
 
         // Ambil semua vendor dan pemilik
         $vendors = Vendor::all();

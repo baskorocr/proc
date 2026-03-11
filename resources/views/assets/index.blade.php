@@ -62,6 +62,20 @@
                                     <i class="fa fa-trash"></i> Delete Selected
                                 </button>
                             </div>
+                            <div>
+                                <form action="{{ route('assetsPart.index') }}" method="GET" class="d-flex gap-2">
+                                    <input type="text" name="search" class="form-control form-control-sm" 
+                                           placeholder="Search..." value="{{ request('search') }}" style="width: 250px;">
+                                    <button type="submit" class="btn btn-primary btn-sm">
+                                        <i class="fa fa-search"></i>
+                                    </button>
+                                    @if(request('search'))
+                                    <a href="{{ route('assetsPart.index') }}" class="btn btn-secondary btn-sm">
+                                        <i class="fa fa-times"></i>
+                                    </a>
+                                    @endif
+                                </form>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-bordered nowrap table-striped table-sm" id="assets-table">
@@ -323,6 +337,7 @@ $(document).ready(function() {
         autoWidth: false,
         paging: false,
         info: false,
+        searching: false,
         language: {
             processing: "<i class='fa fa-spinner fa-spin'></i> Loading..."
         },

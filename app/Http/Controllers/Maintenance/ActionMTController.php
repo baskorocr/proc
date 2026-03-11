@@ -47,6 +47,7 @@ class ActionMTController extends Controller
            
                 $assetsRecent = Asset::with([
                     'part',
+                    'vendor',
                     'scheduleKunjungans',
                     'maintenances' => function($q) {
                         $q->latest()->limit(1); // ambil hanya maintenance terbaru
@@ -94,6 +95,7 @@ class ActionMTController extends Controller
           
             $assetsRecent = Asset::with([
                 'part',
+                'vendor',
                 'scheduleKunjungans',
                 'maintenances' => function($q) {
                     $q->latest()->limit(1); // ambil hanya maintenance terbaru
