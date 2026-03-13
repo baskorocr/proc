@@ -566,19 +566,58 @@ class AssetsController extends Controller
     {
         $query = Asset::with(['vendor', 'project.customer', 'assetType', 'pemilik', 'part']);
         
+        // Apply same search logic as index method
         if ($request->has('search') && !empty($request->search)) {
             $searchTerm = $request->search;
             
-            // Simple search on main fields only
-            $assets = Asset::with(['vendor', 'project.customer', 'assetType', 'pemilik', 'part'])
-                ->where(function($q) use ($searchTerm) {
-                    $q->where('no_assets', 'regex', new \MongoDB\BSON\Regex($searchTerm, 'i'))
-                      ->orWhere('machine', 'regex', new \MongoDB\BSON\Regex($searchTerm, 'i'));
-                })
-                ->get();
-        } else {
-            $assets = $query->get();
+            // Get vendor IDs that match search
+            $vendorIds = Vendor::where('nm_vendor', 'like', '%' . $searchTerm . '%')
+                              ->pluck('id_vendor')
+                              ->toArray();
+            
+            // Get project IDs that match search
+            $projectIds = Project::where('name_project', 'like', '%' . $searchTerm . '%')
+                                ->pluck('_id')
+                                ->toArray();
+            
+            // Get customer IDs that match search
+            $customerProjects = Project::whereHas('customer', function($q) use ($searchTerm) {
+                                    $q->where('name', 'like', '%' . $searchTerm . '%');
+                                })
+                                ->pluck('_id')
+                                ->toArray();
+            
+            // Get part IDs that match search
+            $partIds = Part::where(function($q) use ($searchTerm) {
+                            $q->where('part_name', 'like', '%' . $searchTerm . '%')
+                              ->orWhere('idPart', 'like', '%' . $searchTerm . '%');
+                        })
+                        ->pluck('idPart')
+                        ->toArray();
+            
+            $query->where(function($q) use ($searchTerm, $vendorIds, $projectIds, $customerProjects, $partIds) {
+                $q->where('no_assets', 'like', '%' . $searchTerm . '%');
+                
+                if (!empty($vendorIds)) {
+                    $q->orWhereIn('vendor_id', $vendorIds);
+                }
+                
+                if (!empty($projectIds)) {
+                    $q->orWhereIn('project_id', $projectIds);
+                }
+                
+                if (!empty($customerProjects)) {
+                    $q->orWhereIn('project_id', $customerProjects);
+                }
+                
+                if (!empty($partIds)) {
+                    $q->orWhereIn('idPart', $partIds);
+                }
+            });
         }
+        
+        // Get ALL data without pagination
+        $assets = $query->get();
 
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();

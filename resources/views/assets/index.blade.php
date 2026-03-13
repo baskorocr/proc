@@ -355,9 +355,14 @@ $(document).ready(function() {
         ]
     });
     
-    // Export to Excel
+    // Export to Excel - redirect to backend export route
     $('#exportExcel').on('click', function() {
-        table.button(0).trigger();
+        var searchParam = '{{ request("search") }}';
+        var url = '{{ route("assetsPart.export") }}';
+        if (searchParam) {
+            url += '?search=' + encodeURIComponent(searchParam);
+        }
+        window.location.href = url;
     });
     
     $('#photoModal').on('show.bs.modal', function(event) {
