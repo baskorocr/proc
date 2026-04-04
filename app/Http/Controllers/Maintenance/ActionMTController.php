@@ -311,14 +311,20 @@ public function rejectMaintenance(Request $request, $id)
             return redirect()->back()->withErrors(['error' => 'Data maintenance tidak ditemukan']);
         }
         
-        $maintenance->status = null; // Status rejected
+        $maintenance->status = 1; // Status rejected
         $maintenance->deskripsi = $request->reject_reason;
         $maintenance->save();
+
+        // Restore jadwal kunjungan agar vendor bisa upload ulang
+        $scheduleKunjungan = scheduleKunjungan::where('asset_id', $maintenance->asset_no)->first();
+        if($scheduleKunjungan) {
+            $scheduleKunjungan->waktu_kunjungan = Carbon::now()->format('d-m-Y');
+            $scheduleKunjungan->save();
+        }
         
         return redirect()->back()->with('success', 'Maintenance berhasil ditolak untuk Asset: ' . $maintenance->asset_no);
         
     } catch (\Exception $e) {
-        dd($e);
         return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
     }
 }

@@ -158,7 +158,7 @@
                                                             Maintenance
                                                         </button>
                                                     @endif
-                                                @elseif($latestMaintenance && $latestMaintenance->status === null)
+                                                @elseif($latestMaintenance && $latestMaintenance->status == 1)
                                                     <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#maintenanceUploadModal"

@@ -55,6 +55,8 @@
                                         <td>
                                             @if($maintenance->status == 0)
                                             <span class="badge bg-warning">Pending</span>
+                                            @elseif($maintenance->status == 1)
+                                            <span class="badge bg-danger">Ditolak</span>
                                             @elseif($maintenance->status == 2)
                                             <span class="badge bg-success">Approved</span>
                                             @else
