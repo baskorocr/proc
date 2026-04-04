@@ -140,58 +140,47 @@
                                         </td>
                                         <td>
                                             @if(auth()->user()->is_vendor == true)
-
-                                            @php
-                                                    $waktuKunjungan = \Carbon\Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
-                                                    $now = \Carbon\Carbon::now();
-                                                    $latestMaintenance = $asset->maintenances->sortByDesc('created_at')->first();
+                                                @php
+                                                    $latestMaintenance = $asset->maintenances ? $asset->maintenances->sortByDesc('created_at')->first() : null;
                                                 @endphp
-                                            @if($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan)
-                                        
-                                                
-                                                
-                                                @if($waktuKunjungan->isToday() || $waktuKunjungan->isPast() )
-
-                                                    <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
-                                                            data-bs-toggle="modal" 
-                                                            data-bs-target="#maintenanceUploadModal"
-                                                               data-asset-status="{{ 0 }}"
-                                                            data-asset-id="{{ $asset->no_assets }}"
-                                                            data-asset-no="{{ $asset->no_assets }}"
-                                                            data-vendor-id="{{ $asset->vendor_id }}">
-                                                        Maintenance
-                                                    </button>
-                                                @else
-                                                
-                                                @endif
-                                            @elseif(optional($latestMaintenance)->status === null)
-                                                <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
-                                                    data-bs-toggle="modal" 
-                                                    data-bs-target="#maintenanceUploadModal"
-                                                    data-asset-status = "{{ 1 }}"
-                                                    data-asset-id="{{ $asset->no_assets }}"
-                                                    data-asset-no="{{ $asset->no_assets }}"
-                                                    data-vendor-id="{{ $asset->vendor_id }}">
-                                                Upload ulang
-                                            </button>
-                                            @endif
-                                            @else
-                                                {{-- Button reschedule untuk non-vendor ketika status Terjadwal atau Maintenance Segera --}}
                                                 @if($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan)
                                                     @php
                                                         $waktuKunjungan = \Carbon\Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
-                                                        $now = \Carbon\Carbon::now();
                                                     @endphp
-                                                    {{-- Tampilkan button reschedule untuk status Terjadwal dan Maintenance Segera --}}
-                                                    @if(!$waktuKunjungan->isToday() && !$waktuKunjungan->isPast() || $waktuKunjungan->isToday() || $waktuKunjungan->isPast())
-                                                        <button type="button" class="btn btn-sm btn-warning btn-reschedule" 
+                                                    @if($waktuKunjungan->isToday() || $waktuKunjungan->isPast())
+                                                        <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
                                                                 data-bs-toggle="modal" 
-                                                                data-bs-target="#rescheduleModal"
-                                                                data-id="{{ $asset->scheduleKunjungans->id }}"
-                                                                data-waktu="{{ $asset->scheduleKunjungans->waktu_kunjungan }}">
-                                                            Reschedule
+                                                                data-bs-target="#maintenanceUploadModal"
+                                                                data-asset-status="{{ 0 }}"
+                                                                data-asset-id="{{ $asset->no_assets }}"
+                                                                data-asset-no="{{ $asset->no_assets }}"
+                                                                data-vendor-id="{{ $asset->vendor_id }}">
+                                                            Maintenance
                                                         </button>
                                                     @endif
+                                                @elseif($latestMaintenance && $latestMaintenance->status === null)
+                                                    <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#maintenanceUploadModal"
+                                                        data-asset-status="{{ 1 }}"
+                                                        data-asset-id="{{ $asset->no_assets }}"
+                                                        data-asset-no="{{ $asset->no_assets }}"
+                                                        data-vendor-id="{{ $asset->vendor_id }}">
+                                                        Upload ulang
+                                                    </button>
+                                                @endif
+                                            @else
+                                                @if($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan)
+                                                    @php
+                                                        $waktuKunjungan = \Carbon\Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
+                                                    @endphp
+                                                    <button type="button" class="btn btn-sm btn-warning btn-reschedule" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#rescheduleModal"
+                                                            data-id="{{ $asset->scheduleKunjungans->id }}"
+                                                            data-waktu="{{ $asset->scheduleKunjungans->waktu_kunjungan }}">
+                                                        Reschedule
+                                                    </button>
                                                 @endif
                                             @endif
                                         </td>
@@ -320,7 +309,7 @@
         });
         
         // Handle maintenance upload modal
-        $('.btn-maintenance').on('click', function () {
+        $(document).on('click', '.btn-maintenance', function () {
             const assetId = $(this).data('asset-id');
             const assetNo = $(this).data('asset-no');
             const vendorId = $(this).data('vendor-id');
