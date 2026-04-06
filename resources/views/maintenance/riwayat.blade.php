@@ -31,6 +31,7 @@
                                         <th>Vendor</th>
                                         <th>File Maintenance</th>
                                         <th>Deskripsi</th>
+                                        <th>Alasan Reject</th>
                                         <th>Status</th>
                                         <th>Waktu Upload</th>
                                     </tr>
@@ -52,6 +53,7 @@
                                             @endif
                                         </td>
                                         <td>{{ $maintenance->deskripsi ?? '-' }}</td>
+                                        <td>{{ $maintenance->alasan_reject ?? ($maintenance->status == 1 ? $maintenance->deskripsi : '-') }}</td>
                                         <td>
                                             @if($maintenance->status == 0)
                                             <span class="badge bg-warning">Pending</span>

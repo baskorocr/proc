@@ -81,9 +81,9 @@ class Asset extends Model
         return $this->belongsTo(MasterUser::class, 'idUser', 'id_user');
     }
     public function scheduleKunjungans()
-{
-    return $this->hasOne(ScheduleKunjungan::class, 'asset_id', 'no_assets');
-}
+    {
+        return $this->hasOne(ScheduleKunjungan::class, 'asset_id', 'no_assets')->latest('_id');
+    }
 public function maintenances()
 {
     return $this->hasMany(Maintenance::class, 'asset_no', 'no_assets');

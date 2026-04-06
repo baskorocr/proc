@@ -58,9 +58,12 @@
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <h5 class="card-title">Other Recent Assets</h5>
-                            <a href="{{ route('mt-asset.export') }}" class="btn btn-success btn-sm">
-                                <i class="fa fa-file-excel"></i> Export Excel
-                            </a>
+                            <div>
+                                
+                                <a href="{{ route('mt-asset.export') }}" class="btn btn-success btn-sm">
+                                    <i class="fa fa-file-excel"></i> Export Excel
+                                </a>
+                            </div>
                         </div>
                         <div class="table-responsive">
                             <table class="table table-striped table-bordered table-sm" id="recent-assets-table">
@@ -139,49 +142,59 @@
                                             @endif
                                         </td>
                                         <td>
-                                            @if(auth()->user()->is_vendor == true)
-                                                @php
-                                                    $latestMaintenance = $asset->maintenances ? $asset->maintenances->sortByDesc('created_at')->first() : null;
-                                                @endphp
-                                                @if($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan)
-                                                    @php
-                                                        $waktuKunjungan = \Carbon\Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
-                                                    @endphp
-                                                    @if($waktuKunjungan->isToday() || $waktuKunjungan->isPast())
-                                                        <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
-                                                                data-bs-toggle="modal" 
-                                                                data-bs-target="#maintenanceUploadModal"
-                                                                data-asset-status="{{ 0 }}"
-                                                                data-asset-id="{{ $asset->no_assets }}"
-                                                                data-asset-no="{{ $asset->no_assets }}"
-                                                                data-vendor-id="{{ $asset->vendor_id }}">
-                                                            Maintenance
-                                                        </button>
-                                                    @endif
-                                                @elseif($latestMaintenance && $latestMaintenance->status == 1)
-                                                    <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
+                                            @php
+                                                $latestMaintenance = $asset->maintenances ? $asset->maintenances->sortByDesc('created_at')->first() : null;
+                                                $hasSchedule = $asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan;
+                                                $waktuKunjungan = $hasSchedule ? \Carbon\Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan) : null;
+                                                $isOverdue = $waktuKunjungan && ($waktuKunjungan->isToday() || $waktuKunjungan->isPast());
+                                            @endphp
+
+                                            {{-- Tombol Maintenance: muncul saat Maintenance Segera --}}
+                                            @if($hasSchedule && $isOverdue)
+                                                <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
                                                         data-bs-toggle="modal" 
                                                         data-bs-target="#maintenanceUploadModal"
-                                                        data-asset-status="{{ 1 }}"
+                                                        data-asset-status="{{ 0 }}"
                                                         data-asset-id="{{ $asset->no_assets }}"
                                                         data-asset-no="{{ $asset->no_assets }}"
                                                         data-vendor-id="{{ $asset->vendor_id }}">
-                                                        Upload ulang
-                                                    </button>
-                                                @endif
+                                                    Maintenance
+                                                </button>
+                                            @endif
+
+                                            {{-- Tombol Upload ulang: muncul saat maintenance ditolak --}}
+                                            @if($latestMaintenance && $latestMaintenance->status == 1)
+                                                <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
+                                                    data-bs-toggle="modal" 
+                                                    data-bs-target="#maintenanceUploadModal"
+                                                    data-asset-status="{{ 1 }}"
+                                                    data-asset-id="{{ $asset->no_assets }}"
+                                                    data-asset-no="{{ $asset->no_assets }}"
+                                                    data-vendor-id="{{ $asset->vendor_id }}">
+                                                    Upload ulang
+                                                </button>
+                                            @endif
+
+                                            {{-- Tombol Reschedule: muncul saat ada jadwal (Terjadwal atau Maintenance Segera) --}}
+                                            @if($hasSchedule)
+                                                <button type="button" class="btn btn-sm btn-warning btn-reschedule" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#rescheduleModal"
+                                                        data-id="{{ $asset->scheduleKunjungans->id }}"
+                                                        data-asset="{{ $asset->no_assets }}"
+                                                        data-waktu="{{ $asset->scheduleKunjungans->waktu_kunjungan }}">
+                                                    Reschedule
+                                                </button>
                                             @else
-                                                @if($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan)
-                                                    @php
-                                                        $waktuKunjungan = \Carbon\Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
-                                                    @endphp
-                                                    <button type="button" class="btn btn-sm btn-warning btn-reschedule" 
-                                                            data-bs-toggle="modal" 
-                                                            data-bs-target="#rescheduleModal"
-                                                            data-id="{{ $asset->scheduleKunjungans->id }}"
-                                                            data-waktu="{{ $asset->scheduleKunjungans->waktu_kunjungan }}">
-                                                        Reschedule
-                                                    </button>
-                                                @endif
+                                                {{-- Tombol Schedule: muncul saat belum dijadwalkan --}}
+                                                <button type="button" class="btn btn-sm btn-success btn-reschedule" 
+                                                        data-bs-toggle="modal" 
+                                                        data-bs-target="#rescheduleModal"
+                                                        data-id=""
+                                                        data-asset="{{ $asset->no_assets }}"
+                                                        data-waktu="">
+                                                    Schedule
+                                                </button>
                                             @endif
                                         </td>
                                     </tr>
@@ -213,6 +226,7 @@
         <form action="{{ route('kunjungan.reschedule') }}" method="POST">
             @csrf
             <input type="hidden" name="kunjungan_id" id="modal_kunjungan_id">
+            <input type="hidden" name="asset_id" id="modal_asset_id">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="rescheduleModalLabel">Reschedule Kunjungan</h5>
@@ -320,14 +334,13 @@
             $('#upload_asset_no').text(assetNo);
             $('#upload_vendor_id').val(vendorId);
         });
-        $('.btn-reschedule').on('click', function () {
-            var kunjunganId = $(this).data('id'); // Ambil ID kunjungan
-            var waktuKunjungan = $(this).data('waktu'); // Ambil waktu kunjungan
+        $(document).on('click', '.btn-reschedule', function () {
+            var kunjunganId = $(this).data('id');
+            var waktuKunjungan = $(this).data('waktu');
+            var assetId = $(this).data('asset');
 
-            // Set data ID kunjungan di input hidden modal
             $('#modal_kunjungan_id').val(kunjunganId);
-
-            // Set waktu kunjungan pada input datetime-local
+            $('#modal_asset_id').val(assetId);
             $('#new_waktu_kunjungan').val(waktuKunjungan);
         });
     });

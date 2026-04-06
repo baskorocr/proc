@@ -377,6 +377,7 @@ Route::group(['middleware' => ['auth','route_protect','lockscreen']], function (
             Route::post('/kunjungan', [App\Http\Controllers\Maintenance\ActionMTController::class, 'kunjungan'])->name('kunjungan.schedule');
             Route::delete('/kunjungan/{id}', [App\Http\Controllers\Maintenance\ActionMTController::class, 'KunjunganDestroy'])->name('kunjungan.destroy');
             Route::post('/kunjungan/reschedule', [App\Http\Controllers\Maintenance\ActionMTController::class, 'reschedule'])->name('kunjungan.reschedule');
+            Route::get('riwayat-reschedule', [App\Http\Controllers\Maintenance\ActionMTController::class, 'riwayatReschedule'])->name('mt-asset.riwayat-reschedule');
             Route::post('/maintenance/upload', [App\Http\Controllers\Maintenance\ActionMTController::class, 'uploadMaintenance'])->name('maintenance.upload');
             Route::get('/verification', [App\Http\Controllers\Maintenance\ActionMTController::class, 'verification'])->name('verification.index');
             Route::put('/maintenance/verify/{id}/approve', [App\Http\Controllers\Maintenance\ActionMTController::class, 'approveMaintenance'])->name('maintenance.approve');

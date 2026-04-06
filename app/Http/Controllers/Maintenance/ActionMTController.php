@@ -8,6 +8,7 @@ use App\Models\masterData\Asset;
 use Carbon\Carbon;
 use App\Models\scheduleKunjungan;
 use App\Models\Maintenance;
+use App\Models\RescheduleLog;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -53,17 +54,19 @@ class ActionMTController extends Controller
                     'vendor',
                     'scheduleKunjungans',
                     'maintenances' => function($q) {
-                        $q->latest()->limit(1); // ambil hanya maintenance terbaru
+                        $q->latest()->limit(1);
                     }
                 ])
                 ->get()
                 ->sortBy(function($asset) {
-                    if ($asset->scheduleKunjungans && $asset->scheduleKunjungans->count() > 0) {
-                        return $asset->scheduleKunjungans
-                            ->whereBetween('waktu_kunjungan', [Carbon::now(), Carbon::now()->addDays(7)])
-                            ->min('waktu_kunjungan') ?? now()->addYears(100);
+                    if ($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan) {
+                        $waktu = Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
+                        if ($waktu->isToday() || $waktu->isPast()) {
+                            return '0_' . $waktu->format('Y-m-d');
+                        }
+                        return '1_' . $waktu->format('Y-m-d');
                     }
-                    return now()->addYears(100);
+                    return '2_9999-12-31';
                 })
                 ->values();
 
@@ -101,17 +104,19 @@ class ActionMTController extends Controller
                 'vendor',
                 'scheduleKunjungans',
                 'maintenances' => function($q) {
-                    $q->latest()->limit(1); // ambil hanya maintenance terbaru
+                    $q->latest()->limit(1);
                 }
             ])->where('vendor_id', $user->foreign_id)
             ->get()
             ->sortBy(function($asset) {
-                if ($asset->scheduleKunjungans && $asset->scheduleKunjungans->count() > 0) {
-                    return $asset->scheduleKunjungans
-                        ->whereBetween('waktu_kunjungan', [Carbon::now(), Carbon::now()->addDays(7)])
-                        ->min('waktu_kunjungan') ?? now()->addYears(100);
+                if ($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan) {
+                    $waktu = Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
+                    if ($waktu->isToday() || $waktu->isPast()) {
+                        return '0_' . $waktu->format('Y-m-d');
+                    }
+                    return '1_' . $waktu->format('Y-m-d');
                 }
-                return now()->addYears(100);
+                return '2_9999-12-31';
             })
             ->values();
         }
@@ -162,9 +167,7 @@ public function KunjunganDestroy(Request $request)
 }
 public function reschedule (Request $request)
 {
-   
     $validator = Validator::make($request->all(), [
-        'kunjungan_id' => 'required',
         'new_waktu_kunjungan' => 'required|date',
     ]);
 
@@ -172,11 +175,57 @@ public function reschedule (Request $request)
         return redirect()->back()->withErrors($validator)->withInput();
     }
 
-    $kunjungan = scheduleKunjungan::find($request->kunjungan_id);
-    $kunjungan->waktu_kunjungan = $request->new_waktu_kunjungan;
-    $kunjungan->save();
+    $kunjungan = null;
+    $oldDate = null;
+    $assetId = null;
+
+    if ($request->kunjungan_id) {
+        // Reschedule existing
+        $kunjungan = scheduleKunjungan::find($request->kunjungan_id);
+        $oldDate = $kunjungan->waktu_kunjungan;
+        $assetId = $kunjungan->asset_id;
+    } else {
+        // Buat jadwal baru
+        $assetId = $request->asset_id;
+        $kunjungan = scheduleKunjungan::create([
+            'asset_id' => $assetId,
+            'idUser' => auth()->user()->id,
+            'waktu_kunjungan' => $request->new_waktu_kunjungan,
+        ]);
+    }
+
+    // Simpan log reschedule
+    $asset = Asset::where('no_assets', $assetId)->first();
+    RescheduleLog::create([
+        'asset_id' => $assetId,
+        'vendor_id' => $asset ? $asset->vendor_id : null,
+        'user_id' => auth()->user()->id,
+        'user_name' => auth()->user()->nm_user ?? auth()->user()->name ?? '-',
+        'old_date' => $oldDate instanceof \Carbon\Carbon ? $oldDate->format('Y-m-d H:i:s') : (string) ($oldDate ?? 'Belum Dijadwalkan'),
+        'new_date' => (string) $request->new_waktu_kunjungan,
+    ]);
+
+    if ($request->kunjungan_id) {
+        $kunjungan->waktu_kunjungan = $request->new_waktu_kunjungan;
+        $kunjungan->save();
+    }
 
     return redirect()->back()->with('success', 'Jadwal berhasil direschedule!');
+}
+
+public function riwayatReschedule(Request $request)
+{
+    $query = RescheduleLog::with(['asset.part', 'vendor'])
+        ->orderBy('created_at', 'desc');
+
+    if ($request->has('vendor_id') && !empty($request->vendor_id)) {
+        $query->where('vendor_id', $request->vendor_id);
+    }
+
+    $logs = $query->get();
+    $vendors = \App\Models\Vendor::orderBy('nm_vendor')->get();
+
+    return view('maintenance.riwayat_reschedule', compact('logs', 'vendors'));
 }
 
 public function uploadMaintenance(Request $request)
@@ -265,31 +314,40 @@ public function verification()
 
 public function approveMaintenance($id)
 {
-
     try {
         $maintenance = Maintenance::find($id);
-        $scheduleKunjungan = ScheduleKunjungan::where('asset_id', $maintenance->asset_no)->first();
-
-        $target = Carbon::now('Asia/Jakarta')
-        ->addMonthsNoOverflow(2)
-        ->timezone('UTC')
-        ->format('d-m-Y');
-
         
         if (!$maintenance) {
             return redirect()->back()->withErrors(['error' => 'Data maintenance tidak ditemukan']);
         }
+
+        $asset = Asset::where('no_assets', $maintenance->asset_no)->first();
+
+        // CF = +6 bulan, Dies = +2 bulan
+        $addMonths = ($asset && strtoupper($asset->dies) === 'CF') ? 6 : 2;
+
+        $target = Carbon::now('Asia/Jakarta')
+            ->addMonthsNoOverflow($addMonths)
+            ->timezone('UTC')
+            ->format('d-m-Y');
         
-        $maintenance->status = 2; // Status approved
-        $maintenance->deskripsi =  "All done";
+        $maintenance->status = 2;
+        $maintenance->deskripsi = "All done";
         $maintenance->save();
 
-        $scheduleKunjungan->waktu_kunjungan = $target;
-        $scheduleKunjungan->save();
-
+        // Update semua scheduleKunjungan untuk asset ini
+        $updated = ScheduleKunjungan::where('asset_id', $maintenance->asset_no)
+            ->update(['waktu_kunjungan' => $target]);
         
+        if ($updated == 0) {
+            ScheduleKunjungan::create([
+                'asset_id' => $maintenance->asset_no,
+                'idUser' => auth()->user()->id,
+                'waktu_kunjungan' => $target,
+            ]);
+        }
         
-        return redirect()->back()->with('success', 'Maintenance berhasil disetujui untuk Asset: ' . $maintenance->asset_no);
+        return redirect()->back()->with('success', 'Maintenance berhasil disetujui untuk Asset: ' . $maintenance->asset_no . ' (Next: +' . $addMonths . ' bulan)');
         
     } catch (\Exception $e) {
         return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
@@ -312,7 +370,7 @@ public function rejectMaintenance(Request $request, $id)
         }
         
         $maintenance->status = 1; // Status rejected
-        $maintenance->deskripsi = $request->reject_reason;
+        $maintenance->alasan_reject = $request->reject_reason;
         $maintenance->save();
 
         // Restore jadwal kunjungan agar vendor bisa upload ulang
