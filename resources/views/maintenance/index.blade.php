@@ -268,9 +268,9 @@
                         <p><strong>Asset No:</strong> <span id="upload_asset_no"></span></p>
                         
                         <div class="mb-3">
-                            <label for="maintenance_file" class="form-label">Upload File (PNG/PDF)</label>
+                            <label for="maintenance_file" class="form-label">Upload File (PDF)</label>
                             <input type="file" class="form-control" name="maintenance_file" id="maintenance_file" 
-                                   accept=".png,.pdf" required>
+                                   accept=".pdf" required>
                             <div class="form-text">File yang diizinkan: PNG dan PDF (maksimal 10MB)</div>
                         </div>
                         

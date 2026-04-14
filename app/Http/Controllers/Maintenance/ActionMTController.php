@@ -236,7 +236,7 @@ public function uploadMaintenance(Request $request)
         $validator = Validator::make($request->all(), [
             'asset_id' => 'required',
             'vendor_id' => 'required',
-            'maintenance_file' => 'required|file|mimes:png,pdf|max:10240',
+            'maintenance_file' => 'required|file|mimes:pdf|max:10240',
             'description' => 'nullable|string|max:500'
         ]);
 
