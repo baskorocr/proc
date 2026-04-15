@@ -117,25 +117,21 @@
                                       
 
                                         <td>
-                                            @if($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan)
+                                            @php
+                                                $latestMt = $asset->maintenances ? $asset->maintenances->sortByDesc('created_at')->first() : null;
+                                                $isPending = $latestMt && $latestMt->status == 0;
+                                            @endphp
+
+                                            @if($isPending)
+                                                <span class="badge bg-warning">Menunggu Approval</span>
+                                            @elseif($asset->scheduleKunjungans && $asset->scheduleKunjungans->waktu_kunjungan)
                                                 @php
                                                     $waktuKunjungan = \Carbon\Carbon::parse($asset->scheduleKunjungans->waktu_kunjungan);
-                                                    $now = \Carbon\Carbon::now();
                                                 @endphp
-                                                
-                                                @php
-                                                    $daysDiff = $now->diffInDays($waktuKunjungan, false);
-                                                @endphp
-                                                
                                                 @if($waktuKunjungan->isToday() || $waktuKunjungan->isPast())
-                                                    
-                                                       
-                                                 
-                                                        <span class="badge bg-danger">Maintenance Segera</span>
-                                               
-                                          
+                                                    <span class="badge bg-danger">Maintenance Segera</span>
                                                 @else
-                                                <span class="badge bg-success">Terjadwal</span>
+                                                    <span class="badge bg-success">Terjadwal</span>
                                                 @endif
                                             @else
                                                 <span class="badge bg-secondary">Belum Dijadwalkan</span>
@@ -149,21 +145,35 @@
                                                 $isOverdue = $waktuKunjungan && ($waktuKunjungan->isToday() || $waktuKunjungan->isPast());
                                             @endphp
 
-                                            {{-- Tombol Maintenance: muncul saat Maintenance Segera --}}
-                                            @if($hasSchedule && $isOverdue)
-                                                <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
-                                                        data-bs-toggle="modal" 
-                                                        data-bs-target="#maintenanceUploadModal"
-                                                        data-asset-status="{{ 0 }}"
-                                                        data-asset-id="{{ $asset->no_assets }}"
-                                                        data-asset-no="{{ $asset->no_assets }}"
-                                                        data-vendor-id="{{ $asset->vendor_id }}">
-                                                    Maintenance
-                                                </button>
+                                            @php
+                                                $isPendingAction = $latestMaintenance && $latestMaintenance->status == 0;
+                                            @endphp
+
+                                            @php
+                                                $isRejected = $latestMaintenance && $latestMaintenance->status == 1;
+                                            @endphp
+
+                                            {{-- Tombol Maintenance: muncul saat Maintenance Segera, hide jika pending/rejected --}}
+                                            @if($hasSchedule && $isOverdue && !$isRejected)
+                                                @if($isPendingAction)
+                                                    <button type="button" class="btn btn-sm btn-secondary" disabled>
+                                                        Menunggu Approval
+                                                    </button>
+                                                @else
+                                                    <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
+                                                            data-bs-toggle="modal" 
+                                                            data-bs-target="#maintenanceUploadModal"
+                                                            data-asset-status="{{ 0 }}"
+                                                            data-asset-id="{{ $asset->no_assets }}"
+                                                            data-asset-no="{{ $asset->no_assets }}"
+                                                            data-vendor-id="{{ $asset->vendor_id }}">
+                                                        Maintenance
+                                                    </button>
+                                                @endif
                                             @endif
 
                                             {{-- Tombol Upload ulang: muncul saat maintenance ditolak --}}
-                                            @if($latestMaintenance && $latestMaintenance->status == 1)
+                                            @if($isRejected)
                                                 <button type="button" class="btn btn-sm btn-primary btn-maintenance" 
                                                     data-bs-toggle="modal" 
                                                     data-bs-target="#maintenanceUploadModal"
@@ -281,7 +291,7 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-success">Upload File</button>
+                        <button type="submit" class="btn btn-success" id="btn-upload-submit">Upload File</button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
                     </div>
                 </div>
@@ -333,6 +343,12 @@
             $('#upload_asset_id').val(assetId);
             $('#upload_asset_no').text(assetNo);
             $('#upload_vendor_id').val(vendorId);
+        });
+
+        // Disable button upload saat submit agar tidak double klik
+        $('#maintenanceUploadModal form').on('submit', function () {
+            var btn = $('#btn-upload-submit');
+            btn.prop('disabled', true).text('Uploading...');
         });
         $(document).on('click', '.btn-reschedule', function () {
             var kunjunganId = $(this).data('id');

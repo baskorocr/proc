@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Storage;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\masterData\Proses;
+use App\Models\MaintenanceSetting;
 
 class ActionMTController extends Controller
 {
@@ -323,8 +324,9 @@ public function approveMaintenance($id)
 
         $asset = Asset::where('no_assets', $maintenance->asset_no)->first();
 
-        // CF = +6 bulan, Dies = +2 bulan
-        $addMonths = ($asset && strtoupper($asset->dies) === 'CF') ? 6 : 2;
+        $intervalDefault = MaintenanceSetting::getValue('interval_default', 2);
+        $intervalCF = MaintenanceSetting::getValue('interval_cf', 6);
+        $addMonths = ($asset && strtoupper($asset->dies) === 'CF') ? $intervalCF : $intervalDefault;
 
         $target = Carbon::now('Asia/Jakarta')
             ->addMonthsNoOverflow($addMonths)
@@ -389,9 +391,15 @@ public function rejectMaintenance(Request $request, $id)
 
 public function riwayat()
 {
-    $maintenances = Maintenance::with(['asset.part', 'vendor'])
-        ->orderBy('created_at', 'desc')
-        ->get();
+    $query = Maintenance::with(['asset.part', 'vendor'])
+        ->orderBy('created_at', 'desc');
+
+    // Vendor hanya lihat miliknya
+    if (auth()->user()->role === 'vendor') {
+        $query->where('vendor_id', auth()->user()->foreign_id);
+    }
+
+    $maintenances = $query->get();
 
     return view('maintenance.riwayat', compact('maintenances'));
 }

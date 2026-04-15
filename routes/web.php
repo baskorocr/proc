@@ -383,7 +383,8 @@ Route::group(['middleware' => ['auth','route_protect','lockscreen']], function (
             Route::put('/maintenance/verify/{id}/approve', [App\Http\Controllers\Maintenance\ActionMTController::class, 'approveMaintenance'])->name('maintenance.approve');
             Route::put('/maintenance/verify/{id}/reject', [App\Http\Controllers\Maintenance\ActionMTController::class, 'rejectMaintenance'])->name('maintenance.reject');
 
-            
+            Route::get('setting', [App\Http\Controllers\Maintenance\MaintenanceSettingController::class, 'index'])->name('mt-asset.setting');
+            Route::post('setting', [App\Http\Controllers\Maintenance\MaintenanceSettingController::class, 'update'])->name('mt-asset.setting.update');
            });
         //CONFIG ROUTES
         Route::prefix('config')->group(function(){

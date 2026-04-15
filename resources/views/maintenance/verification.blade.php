@@ -131,7 +131,7 @@
                         @method('PUT')
                         <div class="mb-3">
                             <label for="reason-{{ $maintenance->_id }}" class="form-label">Reason for Rejection <span class="text-danger">*</span></label>
-                            <textarea class="form-control" id="reason-{{ $maintenance->_id }}" name="reason" rows="4" 
+                            <textarea class="form-control" id="reason-{{ $maintenance->_id }}" name="reject_reason" rows="4" 
                                 placeholder="Please provide a reason for rejecting this maintenance record..." required></textarea>
                         </div>
                     </div>
