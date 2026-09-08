@@ -414,6 +414,7 @@ class PoController extends Controller
         //$vendor = Vendor::where('id_vendor', $request->id_vendor)->first();
         $po = Po::where('po_num', $request->po_num)->where('revno',$request->revno)->first();
         $user = User::where('foreign_id', $request->id_vendor)->where('is_vendor',true)->where('status_user','A')->get();
+        $msg_data = 'PO resend to eproc processed.';
 
         if(count($user) > 0){
                 //Mail::to($vendor->vend_email)->send(new PoMail($po, $vendor));

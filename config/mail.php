@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('MAIL_MAILER', 'smtp'),
+    'default' => env('MAIL_MAILER', 'msgraph'),
 
     /*
     |--------------------------------------------------------------------------
@@ -77,6 +77,10 @@ return [
                 'smtp',
                 'log',
             ],
+        ],
+
+        'msgraph' => [
+            'transport' => 'msgraph',
         ],
     ],
 

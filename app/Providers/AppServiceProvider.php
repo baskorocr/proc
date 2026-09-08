@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Mail\Transport\MsGraphTransport;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Pagination\Paginator;
 
@@ -25,5 +26,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Paginator::useBootstrap();
+        \Illuminate\Support\Facades\Mail::extend('msgraph', fn() => new MsGraphTransport());
     }
 }
