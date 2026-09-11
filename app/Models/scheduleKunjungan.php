@@ -18,6 +18,8 @@ class scheduleKunjungan extends Model
         'asset_id',
         'idUser',
         'waktu_kunjungan',
+        'moving_type',
+        'status',
     ];
 
     protected $casts = [

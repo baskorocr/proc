@@ -137,6 +137,7 @@ class ActionMTController extends Controller
     $validator = Validator::make($request->all(), [
         'asset_id' => 'required',
         'waktu_kunjungan' => 'required|date',
+        'moving_type' => 'required|in:slow_moving,standar_moving,fast_moving',
     ]);
 
     if ($validator->fails()) {
@@ -149,6 +150,7 @@ class ActionMTController extends Controller
         $scheduleKunjungan = new ScheduleKunjungan();
         $scheduleKunjungan->asset_id = $request->asset_id;
         $scheduleKunjungan->waktu_kunjungan = $request->waktu_kunjungan; // Fix nama field
+        $scheduleKunjungan->moving_type = $request->moving_type;
         $scheduleKunjungan->idUser = auth()->user()->id;
         $scheduleKunjungan->save();
 
@@ -168,50 +170,104 @@ public function KunjunganDestroy(Request $request)
 }
 public function reschedule (Request $request)
 {
-    $validator = Validator::make($request->all(), [
-        'new_waktu_kunjungan' => 'required|date',
-    ]);
-
-    if ($validator->fails()) {
-        return redirect()->back()->withErrors($validator)->withInput();
-    }
-
-    $kunjungan = null;
-    $oldDate = null;
-    $assetId = null;
-
-    if ($request->kunjungan_id) {
-        // Reschedule existing
-        $kunjungan = scheduleKunjungan::find($request->kunjungan_id);
-        $oldDate = $kunjungan->waktu_kunjungan;
-        $assetId = $kunjungan->asset_id;
-    } else {
-        // Buat jadwal baru
-        $assetId = $request->asset_id;
-        $kunjungan = scheduleKunjungan::create([
-            'asset_id' => $assetId,
-            'idUser' => auth()->user()->id,
-            'waktu_kunjungan' => $request->new_waktu_kunjungan,
+    try {
+        \Log::info('Reschedule Request Data', $request->all());
+        
+        $validator = Validator::make($request->all(), [
+            'new_waktu_kunjungan' => 'required|date',
+            'moving_type' => 'required|in:slow_moving,standar_moving,fast_moving',
         ]);
+
+        if ($validator->fails()) {
+            \Log::error('Reschedule Validation Failed', $validator->errors()->toArray());
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $kunjungan = null;
+        $oldDate = null;
+        $assetId = null;
+
+        if ($request->kunjungan_id) {
+            // Reschedule existing schedule
+            \Log::info('Reschedule existing schedule', ['kunjungan_id' => $request->kunjungan_id]);
+            $kunjungan = scheduleKunjungan::find($request->kunjungan_id);
+            
+            if (!$kunjungan) {
+                \Log::error('Schedule not found', ['kunjungan_id' => $request->kunjungan_id]);
+                return redirect()->back()->withErrors(['error' => 'Schedule tidak ditemukan']);
+            }
+            
+            $oldDate = $kunjungan->waktu_kunjungan;
+            $assetId = $kunjungan->asset_id;
+            
+            // Update existing schedule
+            $kunjungan->waktu_kunjungan = $request->new_waktu_kunjungan;
+            $kunjungan->moving_type = $request->moving_type;
+            $kunjungan->status = null; // Reset status
+            $kunjungan->save();
+            \Log::info('Schedule updated', ['id' => $kunjungan->id]);
+            
+        } else {
+            // Create new schedule (first time scheduling)
+            \Log::info('Create new schedule', ['asset_id' => $request->asset_id]);
+            $assetId = $request->asset_id;
+            
+            // Check if schedule already exists for this asset
+            $existingSchedule = scheduleKunjungan::where('asset_id', $assetId)->first();
+            
+            if ($existingSchedule) {
+                // Update existing instead of creating duplicate
+                \Log::info('Existing schedule found, updating', ['id' => $existingSchedule->id]);
+                $oldDate = $existingSchedule->waktu_kunjungan;
+                $existingSchedule->waktu_kunjungan = $request->new_waktu_kunjungan;
+                $existingSchedule->moving_type = $request->moving_type;
+                $existingSchedule->status = null;
+                $existingSchedule->save();
+                $kunjungan = $existingSchedule;
+            } else {
+                // Create new schedule
+                \Log::info('Creating new schedule');
+                $kunjungan = scheduleKunjungan::create([
+                    'asset_id' => $assetId,
+                    'idUser' => auth()->user()->id,
+                    'waktu_kunjungan' => $request->new_waktu_kunjungan,
+                    'moving_type' => $request->moving_type,
+                ]);
+                \Log::info('New schedule created', ['id' => $kunjungan->id]);
+            }
+        }
+
+        // Simpan log reschedule
+        \Log::info('Creating reschedule log', ['asset_id' => $assetId]);
+        $asset = Asset::where('no_assets', $assetId)->first();
+        
+        if (!$asset) {
+            \Log::warning('Asset not found for reschedule log', ['asset_id' => $assetId]);
+        }
+        
+        RescheduleLog::create([
+            'asset_id' => $assetId,
+            'vendor_id' => $asset ? $asset->vendor_id : null,
+            'user_id' => auth()->user()->id,
+            'user_name' => auth()->user()->nm_user ?? auth()->user()->name ?? '-',
+            'old_date' => $oldDate instanceof \Carbon\Carbon ? $oldDate->format('Y-m-d H:i:s') : (string) ($oldDate ?? 'Belum Dijadwalkan'),
+            'new_date' => (string) $request->new_waktu_kunjungan,
+        ]);
+        
+        \Log::info('Reschedule log created successfully');
+
+        return redirect()->back()->with('success', 'Jadwal berhasil direschedule!');
+        
+    } catch (\Exception $e) {
+        \Log::error('Reschedule Exception', [
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
     }
-
-    // Simpan log reschedule
-    $asset = Asset::where('no_assets', $assetId)->first();
-    RescheduleLog::create([
-        'asset_id' => $assetId,
-        'vendor_id' => $asset ? $asset->vendor_id : null,
-        'user_id' => auth()->user()->id,
-        'user_name' => auth()->user()->nm_user ?? auth()->user()->name ?? '-',
-        'old_date' => $oldDate instanceof \Carbon\Carbon ? $oldDate->format('Y-m-d H:i:s') : (string) ($oldDate ?? 'Belum Dijadwalkan'),
-        'new_date' => (string) $request->new_waktu_kunjungan,
-    ]);
-
-    if ($request->kunjungan_id) {
-        $kunjungan->waktu_kunjungan = $request->new_waktu_kunjungan;
-        $kunjungan->save();
-    }
-
-    return redirect()->back()->with('success', 'Jadwal berhasil direschedule!');
 }
 
 public function riwayatReschedule(Request $request)
@@ -319,40 +375,58 @@ public function approveMaintenance($id)
         $maintenance = Maintenance::find($id);
         
         if (!$maintenance) {
-            return redirect()->back()->withErrors(['error' => 'Data maintenance tidak ditemukan']);
+            return redirect()->back()->with('error', 'Data maintenance tidak ditemukan');
         }
 
         $asset = Asset::where('no_assets', $maintenance->asset_no)->first();
+        
+        // Get existing schedule to get moving_type
+        $schedule = ScheduleKunjungan::where('asset_id', $maintenance->asset_no)->first();
+        $movingType = $schedule && $schedule->moving_type ? $schedule->moving_type : 'standar_moving';
+        
+        // Get interval based on moving type
+        $addMonths = MaintenanceSetting::getIntervalByMovingType($movingType);
 
-        $intervalDefault = MaintenanceSetting::getValue('interval_default', 2);
-        $intervalCF = MaintenanceSetting::getValue('interval_cf', 6);
-        $addMonths = ($asset && strtoupper($asset->dies) === 'CF') ? $intervalCF : $intervalDefault;
-
+        // Calculate next maintenance date (keep in Asia/Jakarta timezone)
         $target = Carbon::now('Asia/Jakarta')
             ->addMonthsNoOverflow($addMonths)
-            ->timezone('UTC')
-            ->format('d-m-Y');
+            ->format('Y-m-d H:i:s');
         
         $maintenance->status = 2;
         $maintenance->deskripsi = "All done";
         $maintenance->save();
 
-        // Update semua scheduleKunjungan untuk asset ini
-        $updated = ScheduleKunjungan::where('asset_id', $maintenance->asset_no)
-            ->update(['waktu_kunjungan' => $target]);
-        
-        if ($updated == 0) {
+        // Update atau create schedule dengan moving_type
+        if ($schedule) {
+            $schedule->waktu_kunjungan = $target;
+            $schedule->moving_type = $movingType;
+            $schedule->status = null; // Reset status
+            $schedule->save();
+        } else {
             ScheduleKunjungan::create([
                 'asset_id' => $maintenance->asset_no,
                 'idUser' => auth()->user()->id,
                 'waktu_kunjungan' => $target,
+                'moving_type' => $movingType,
             ]);
         }
         
-        return redirect()->back()->with('success', 'Maintenance berhasil disetujui untuk Asset: ' . $maintenance->asset_no . ' (Next: +' . $addMonths . ' bulan)');
+        \Log::info('Maintenance approved and next schedule updated', [
+            'asset_id' => $maintenance->asset_no,
+            'moving_type' => $movingType,
+            'interval_months' => $addMonths,
+            'next_maintenance' => $target
+        ]);
+        
+        return redirect()->back()->with('success', 'Maintenance berhasil disetujui untuk Asset: ' . $maintenance->asset_no);
         
     } catch (\Exception $e) {
-        return redirect()->back()->withErrors(['error' => 'Terjadi kesalahan: ' . $e->getMessage()]);
+        \Log::error('Approve maintenance failed', [
+            'error' => $e->getMessage(),
+            'trace' => $e->getTraceAsString()
+        ]);
+        
+        return redirect()->back()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
     }
 }
 

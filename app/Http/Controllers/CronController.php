@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\scheduleKunjungan;
+use App\Models\MaintenanceSetting;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Mail;
 
@@ -225,5 +226,62 @@ class CronController extends Controller
         });
         
         \Log::info('Email sent successfully to: ' . $vendorEmail);
+    }
+    
+    /**
+     * Auto-create next maintenance schedule based on moving type
+     * Called when maintenance is completed
+     */
+    public function autoScheduleNextMaintenance($assetId, $movingType)
+    {
+        try {
+            \Log::info('Auto scheduling next maintenance', [
+                'asset_id' => $assetId,
+                'moving_type' => $movingType
+            ]);
+
+            // Get interval based on moving type
+            $intervalMonths = MaintenanceSetting::getIntervalByMovingType($movingType);
+            
+            // Calculate next maintenance date
+            $nextMaintenanceDate = Carbon::now('Asia/Jakarta')->addMonths($intervalMonths);
+            
+            // Check if schedule already exists
+            $existingSchedule = scheduleKunjungan::where('asset_id', $assetId)->first();
+            
+            if ($existingSchedule) {
+                // Update existing schedule
+                $existingSchedule->waktu_kunjungan = $nextMaintenanceDate;
+                $existingSchedule->moving_type = $movingType;
+                $existingSchedule->status = null; // Reset status
+                $existingSchedule->save();
+                
+                \Log::info('Updated existing schedule', [
+                    'asset_id' => $assetId,
+                    'next_date' => $nextMaintenanceDate->toDateTimeString()
+                ]);
+            } else {
+                // Create new schedule
+                scheduleKunjungan::create([
+                    'asset_id' => $assetId,
+                    'waktu_kunjungan' => $nextMaintenanceDate,
+                    'moving_type' => $movingType,
+                    'idUser' => null, // System generated
+                ]);
+                
+                \Log::info('Created new schedule', [
+                    'asset_id' => $assetId,
+                    'next_date' => $nextMaintenanceDate->toDateTimeString()
+                ]);
+            }
+            
+            return true;
+        } catch (\Exception $e) {
+            \Log::error('Failed to auto schedule next maintenance', [
+                'asset_id' => $assetId,
+                'error' => $e->getMessage()
+            ]);
+            return false;
+        }
     }
 }

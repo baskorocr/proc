@@ -77,6 +77,7 @@
                                         <th>Dies</th>
                                         <th>Process</th>
                                         <th>Quantity</th>
+                                        <th>Moving Type</th>
                                         <th>Next Maintenance</th>
                                         <th>status</th>
                                         <th>Action</th>
@@ -110,6 +111,20 @@
                                         <td>{{ $asset->jumlah }}</td>
                            
                                    
+                                        <td>
+                                            @if($asset->scheduleKunjungans && $asset->scheduleKunjungans->moving_type)
+                                                @php
+                                                    $movingTypeLabel = [
+                                                        'slow_moving' => '<span class="badge bg-info">Slow Moving</span>',
+                                                        'standar_moving' => '<span class="badge bg-primary">Standar Moving</span>',
+                                                        'fast_moving' => '<span class="badge bg-warning">Fast Moving</span>',
+                                                    ];
+                                                @endphp
+                                                {!! $movingTypeLabel[$asset->scheduleKunjungans->moving_type] ?? '<span class="badge bg-secondary">-</span>' !!}
+                                            @else
+                                                <span class="badge bg-secondary">-</span>
+                                            @endif
+                                        </td>
                                         <td>{{ optional($asset->scheduleKunjungans)->waktu_kunjungan }}</td>
 
 
@@ -192,7 +207,8 @@
                                                         data-bs-target="#rescheduleModal"
                                                         data-id="{{ $asset->scheduleKunjungans->id }}"
                                                         data-asset="{{ $asset->no_assets }}"
-                                                        data-waktu="{{ $asset->scheduleKunjungans->waktu_kunjungan }}">
+                                                        data-waktu="{{ $asset->scheduleKunjungans->waktu_kunjungan }}"
+                                                        data-moving-type="{{ $asset->scheduleKunjungans->moving_type ?? '' }}">
                                                     Reschedule
                                                 </button>
                                             @else
@@ -202,7 +218,8 @@
                                                         data-bs-target="#rescheduleModal"
                                                         data-id=""
                                                         data-asset="{{ $asset->no_assets }}"
-                                                        data-waktu="">
+                                                        data-waktu=""
+                                                        data-moving-type="">
                                                     Schedule
                                                 </button>
                                             @endif
@@ -246,6 +263,15 @@
                     <div class="mb-3">
                         <label for="new_waktu_kunjungan" class="form-label">Reschedule</label>
                         <input type="datetime-local" class="form-control" id="new_waktu_kunjungan" name="new_waktu_kunjungan" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="moving_type" class="form-label">Moving Type</label>
+                        <select class="form-select" id="moving_type" name="moving_type" required>
+                            <option value="">-- Pilih Moving Type --</option>
+                            <option value="slow_moving">Slow Moving</option>
+                            <option value="standar_moving">Standar Moving</option>
+                            <option value="fast_moving">Fast Moving</option>
+                        </select>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -354,10 +380,12 @@
             var kunjunganId = $(this).data('id');
             var waktuKunjungan = $(this).data('waktu');
             var assetId = $(this).data('asset');
+            var movingType = $(this).data('moving-type');
 
             $('#modal_kunjungan_id').val(kunjunganId);
             $('#modal_asset_id').val(assetId);
             $('#new_waktu_kunjungan').val(waktuKunjungan);
+            $('#moving_type').val(movingType);
         });
     });
 </script>

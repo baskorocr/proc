@@ -21,20 +21,26 @@
 
                 <div class="card">
                     <div class="card-body">
-                        <h5 class="card-title">Interval Maintenance</h5>
+                        <h5 class="card-title">Interval Maintenance Berdasarkan Moving Type</h5>
                         <form method="POST" action="{{ route('mt-asset.setting.update') }}">
                             @csrf
                             <div class="mb-3">
-                                <label class="form-label">Interval Default (bulan)</label>
-                                <input type="number" class="form-control" name="interval_default"
-                                    value="{{ old('interval_default', $intervalDefault) }}" min="1" max="24" required>
-                                <small class="text-muted">Berlaku untuk semua asset (selain dies CF)</small>
+                                <label class="form-label fw-bold">Interval Slow Moving (bulan)</label>
+                                <input type="number" class="form-control" name="interval_slow_moving"
+                                    value="{{ old('interval_slow_moving', $intervalSlowMoving) }}" min="1" max="24" required>
+                                <small class="text-muted">Berlaku untuk asset dengan kategori Slow Moving</small>
                             </div>
                             <div class="mb-3">
-                                <label class="form-label">Interval Dies CF (bulan)</label>
-                                <input type="number" class="form-control" name="interval_cf"
-                                    value="{{ old('interval_cf', $intervalCF) }}" min="1" max="24" required>
-                                <small class="text-muted">Berlaku untuk asset dengan dies = CF</small>
+                                <label class="form-label fw-bold">Interval Standar Moving (bulan)</label>
+                                <input type="number" class="form-control" name="interval_standar_moving"
+                                    value="{{ old('interval_standar_moving', $intervalStandarMoving) }}" min="1" max="24" required>
+                                <small class="text-muted">Berlaku untuk asset dengan kategori Standar Moving</small>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Interval Fast Moving (bulan)</label>
+                                <input type="number" class="form-control" name="interval_fast_moving"
+                                    value="{{ old('interval_fast_moving', $intervalFastMoving) }}" min="1" max="24" required>
+                                <small class="text-muted">Berlaku untuk asset dengan kategori Fast Moving</small>
                             </div>
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-save"></i> Simpan

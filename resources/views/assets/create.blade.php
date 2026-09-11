@@ -88,7 +88,7 @@
 
                                 <div class="col-md-6 mb-3">
                                     <label for="idPart" class="form-label">Part</label>
-                                    <select name="idPart" class="form-control" required>
+                                    <select name="idPart" id="idPart" class="form-control" required>
                                         <option value="">Select Part</option>
                                         @foreach($parts as $part)
                                         <option value="{{ $part->idPart }}"
@@ -97,6 +97,7 @@
                                         </option>
                                         @endforeach
                                     </select>
+                                    <small class="text-muted">Ketik untuk mencari part</small>
                                 </div>
 
                                 <div class="col-md-6 mb-3">
@@ -188,6 +189,14 @@
 <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
 $(document).ready(function() {
+    // Initialize Select2 for Part
+    $('#idPart').select2({
+        placeholder: 'Cari dan pilih part...',
+        allowClear: true,
+        width: '100%'
+    });
+
+    // Initialize Select2 for Process (multiple)
     $('#proses_id').select2({
         placeholder: 'Cari dan pilih proses...',
         allowClear: true,
